@@ -1,0 +1,14 @@
+{
+  "appId": "com.rockbrazil.game",
+  "appName": "RockBrazil",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#08080c",
+    "allowMixedContent": true,
+    "captureInput": true
+  }
+}

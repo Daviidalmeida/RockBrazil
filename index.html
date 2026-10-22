@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>RockBrazil V4 - Rhythm Guitar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <div id="game-app">
+
+    <!-- ========================================================
+         TOP & SIDE HUD LAYER (IN-GAME)
+         ======================================================== -->
+    <header id="hud" class="hud-layer hidden">
+      <!-- Top Center Bar -->
+      <div class="hud-top-bar">
+        <div class="song-progress-wrapper">
+          <div id="song-progress-bar" class="song-progress-bar"></div>
+        </div>
+        <button id="btn-pause" class="icon-button hud-pause-btn" aria-label="Pausar">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <rect x="6" y="4" width="4" height="16" rx="2"></rect>
+            <rect x="14" y="4" width="4" height="16" rx="2"></rect>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Left Side HUD: Score, Combo, Multiplier -->
+      <div class="hud-left-panel">
+        <div class="hud-score-box">
+          <span class="hud-label">PONTOS</span>
+          <span id="hud-score" class="hud-value">0</span>
+        </div>
+        <div class="hud-combo-box">
+          <div id="hud-multiplier" class="multiplier-badge mult-1x">1X</div>
+          <div id="hud-combo-container" class="combo-container hidden">
+            <span id="hud-combo-number" class="combo-number">0</span>
+            <span class="combo-text">COMBO</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side HUD: Vertical Rock Performance Meter -->
+      <div class="hud-right-panel">
+        <div class="vertical-rock-meter-container">
+          <div class="meter-frame">
+            <div class="meter-zone zone-green"></div>
+            <div class="meter-zone zone-yellow"></div>
+            <div class="meter-zone zone-red"></div>
+            <!-- Dynamic Needle / Pointer -->
+            <div id="rock-meter-needle" class="meter-needle" style="bottom: 50%;">
+              <div class="needle-pointer"></div>
+            </div>
+            <!-- Danger Blinking LED -->
+            <div id="rock-meter-danger-led" class="danger-led hidden"></div>
+          </div>
+          <span class="meter-title">ROCK</span>
+          <span id="rock-meter-pct-text" class="meter-pct">50%</span>
+        </div>
+      </div>
+
+      <!-- Accuracy Popup Text -->
+      <div class="hud-feedback-area">
+        <div id="hud-accuracy-feedback" class="accuracy-text"></div>
+      </div>
+    </header>
+
+    <!-- Canvas Highway Render Area (With Stage Concert Background) -->
+    <main id="canvas-container" class="gameplay-stage-bg">
+      <canvas id="game-canvas"></canvas>
+    </main>
+
+    <!-- 5 Circular Fret Buttons (Bottom) -->
+    <footer id="fret-board" class="fret-board-layer">
+      <div class="fret-button lane-0" data-lane="0">
+        <div class="fret-circle">
+          <div class="fret-outer-ring"></div>
+          <div class="fret-inner-core"></div>
+        </div>
+        <span class="pc-key-hint">A</span>
+      </div>
+      <div class="fret-button lane-1" data-lane="1">
+        <div class="fret-circle">
+          <div class="fret-outer-ring"></div>
+          <div class="fret-inner-core"></div>
+        </div>
+        <span class="pc-key-hint">S</span>
+      </div>
+      <div class="fret-button lane-2" data-lane="2">
+        <div class="fret-circle">
+          <div class="fret-outer-ring"></div>
+          <div class="fret-inner-core"></div>
+        </div>
+        <span class="pc-key-hint">J</span>
+      </div>
+      <div class="fret-button lane-3" data-lane="3">
+        <div class="fret-circle">
+          <div class="fret-outer-ring"></div>
+          <div class="fret-inner-core"></div>
+        </div>
+        <span class="pc-key-hint">K</span>
+      </div>
+      <div class="fret-button lane-4" data-lane="4">
+        <div class="fret-circle">
+          <div class="fret-outer-ring"></div>
+          <div class="fret-inner-core"></div>
+        </div>
+        <span class="pc-key-hint">L</span>
+      </div>
+    </footer>
+
+    <!-- ========================================================
+         OVERLAY SCREENS
+         ======================================================== -->
+
+    <!-- 1. MAIN MENU (Exact Image Background with Interactive Button Hotspots) -->
+    <div id="screen-menu" class="overlay-screen active menu-screen-container">
+      <div class="menu-image-wrapper">
+        <!-- Profile Pill (Top Left) -->
+        <button id="btn-menu-profile" class="profile-header-pill">
+          <span id="menu-profile-avatar" class="profile-avatar-icon">🎸</span>
+          <span id="menu-profile-name" class="profile-player-name">Rockeiro</span>
+          <span class="profile-switch-hint">Trocar</span>
+        </button>
+
+        <!-- 6 Interactive Hotspot Buttons perfectly positioned over menu-bg.jpg -->
+        <button id="hotspot-jogar" class="menu-hotspot hotspot-jogar" aria-label="Jogar"></button>
+        <button id="hotspot-musicas" class="menu-hotspot hotspot-musicas" aria-label="Minhas Músicas"></button>
+        <button id="hotspot-config" class="menu-hotspot hotspot-config" aria-label="Configurações"></button>
+        <button id="hotspot-ranking" class="menu-hotspot hotspot-ranking" aria-label="Ranking"></button>
+        <button id="hotspot-tutorial" class="menu-hotspot hotspot-tutorial" aria-label="Tutorial"></button>
+        <button id="hotspot-sair" class="menu-hotspot hotspot-sair" aria-label="Sair"></button>
+      </div>
+    </div>
+
+    <!-- 2. SONG SELECT LIBRARY -->
+    <div id="screen-song-select" class="overlay-screen hidden">
+      <div class="library-container">
+        <div class="library-header">
+          <button id="btn-song-select-back" class="icon-button" aria-label="Voltar">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+          </button>
+          <h2 id="library-screen-title" class="section-title">BIBLIOTECA DE MÚSICAS</h2>
+          <label for="mp3-file-input" class="btn-import">
+            <span>📁 IMPORTAR MP3</span>
+          </label>
+          <input type="file" id="mp3-file-input" accept="audio/*" style="display: none;">
+        </div>
+
+        <!-- Filter Tabs: Todas / Minhas Músicas -->
+        <div class="library-filter-tabs">
+          <button id="tab-songs-all" class="filter-tab active">TODAS AS FAIXAS</button>
+          <button id="tab-songs-custom" class="filter-tab">MINHAS MÚSICAS (MP3)</button>
+        </div>
+
+        <!-- Song Cards Scroll List -->
+        <div id="songs-list" class="songs-scroll-list"></div>
+      </div>
+    </div>
+
+    <!-- 3. DIFFICULTY SELECT MODAL -->
+    <div id="modal-difficulty" class="modal-backdrop hidden">
+      <div class="dialog-card difficulty-dialog">
+        <div class="diff-header">
+          <span class="diff-subtitle">ESCOLHA A DIFICULDADE</span>
+          <h2 id="diff-song-title" class="diff-song-title">Fúria Tropical</h2>
+          <span id="diff-song-artist" class="diff-song-artist">RockBrazil Band</span>
+        </div>
+
+        <div class="difficulty-grid">
+          <button class="btn-diff-choice diff-easy" data-diff="EASY">
+            <div class="diff-badge">FÁCIL</div>
+            <div class="diff-desc">Poucas notas • Janela generosa • Baixa perda de vida</div>
+            <div class="diff-record" id="record-easy">-</div>
+          </button>
+
+          <button class="btn-diff-choice diff-medium" data-diff="MEDIUM">
+            <div class="diff-badge">MÉDIO</div>
+            <div class="diff-desc">Mais riffs • Acordes simples • Desafio moderado</div>
+            <div class="diff-record" id="record-medium">-</div>
+          </button>
+
+          <button class="btn-diff-choice diff-hard" data-diff="HARD">
+            <div class="diff-badge">DIFÍCIL</div>
+            <div class="diff-desc">Sequências rápidas • Acordes frequentes • Notas longas</div>
+            <div class="diff-record" id="record-hard">-</div>
+          </button>
+
+          <button class="btn-diff-choice diff-expert" data-diff="EXPERT">
+            <div class="diff-badge">EXPERT</div>
+            <div class="diff-desc">Máxima fidelidade • Alta densidade • Solos técnicos</div>
+            <div class="diff-record" id="record-expert">-</div>
+          </button>
+        </div>
+
+        <div class="diff-actions">
+          <button id="btn-diff-cancel" class="btn-ghost">VOLTAR</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. MODAL ANÁLISE AUTOMÁTICA DE GUITARRA -->
+    <div id="modal-analysis-progress" class="modal-backdrop hidden">
+      <div class="dialog-card analysis-card">
+        <div class="analysis-spinner">⚡</div>
+        <h2 class="analysis-title">ANALISANDO GUITARRA...</h2>
+        <p id="analysis-step-desc" class="analysis-desc">Detectando ataques, riffs e acordes...</p>
+        <div class="analysis-bar-wrapper">
+          <div id="analysis-progress-fill" class="analysis-progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. SISTEMA DE PERFIS (PRIMEIRA EXECUÇÃO / CRIAR PERFIL) -->
+    <div id="modal-profile-create" class="modal-backdrop hidden">
+      <div class="dialog-card profile-card">
+        <div class="brand-badge">BEM-VINDO AO ROCKBRAZIL</div>
+        <h2>CRIE SEU PERFIL</h2>
+        <p class="profile-subtitle">Escolha seu nome de palco e avatar para salvar seus recordes.</p>
+
+        <div class="profile-input-group">
+          <label for="profile-name-input">Seu Nome / Apelido:</label>
+          <input type="text" id="profile-name-input" maxlength="18" placeholder="Ex: Guitar Hero BR" class="rock-text-input">
+        </div>
+
+        <div class="avatar-selection-group">
+          <label>Escolha seu Avatar:</label>
+          <div class="avatar-grid">
+            <button class="avatar-option selected" data-avatar="🎸">🎸</button>
+            <button class="avatar-option" data-avatar="⚡">⚡</button>
+            <button class="avatar-option" data-avatar="🔥">🔥</button>
+            <button class="avatar-option" data-avatar="💀">💀</button>
+            <button class="avatar-option" data-avatar="👑">👑</button>
+            <button class="avatar-option" data-avatar="🤘">🤘</button>
+          </div>
+        </div>
+
+        <button id="btn-confirm-create-profile" class="btn-primary">CONFIRMAR E COMEÇAR</button>
+      </div>
+    </div>
+
+    <!-- 6. GERENCIADOR DE PERFIS (ALTERNAR / NOVO) -->
+    <div id="modal-profile-manager" class="modal-backdrop hidden">
+      <div class="dialog-card profile-mgr-card">
+        <h2>PERFIS DE JOGADOR</h2>
+        <div id="profiles-scroll-list" class="profiles-list-scroll"></div>
+
+        <div class="dialog-buttons">
+          <button id="btn-open-create-new-profile" class="btn-secondary">+ NOVO PERFIL</button>
+          <button id="btn-close-profile-manager" class="btn-ghost">FECHAR</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. RANKING E ESTATÍSTICAS -->
+    <div id="screen-ranking" class="overlay-screen hidden">
+      <div class="library-container">
+        <div class="library-header">
+          <button id="btn-ranking-back" class="icon-button" aria-label="Voltar">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+          </button>
+          <h2 class="section-title">RANKING & HISTÓRICO</h2>
+          <button id="btn-export-profile-json" class="btn-small">EXPORTAR DADOS</button>
+        </div>
+
+        <div class="ranking-filter-row">
+          <select id="ranking-song-select" class="rock-select"></select>
+          <select id="ranking-diff-select" class="rock-select">
+            <option value="EASY">FÁCIL</option>
+            <option value="MEDIUM" selected>MÉDIO</option>
+            <option value="HARD">DIFÍCIL</option>
+            <option value="EXPERT">EXPERT</option>
+          </select>
+        </div>
+
+        <!-- Leaderboard Table -->
+        <div id="ranking-list" class="ranking-list-container"></div>
+      </div>
+    </div>
+
+    <!-- 8. COUNTDOWN OVERLAY -->
+    <div id="screen-countdown" class="overlay-screen hidden">
+      <div class="countdown-display">
+        <span id="countdown-number">3</span>
+      </div>
+    </div>
+
+    <!-- 9. PAUSE MENU -->
+    <div id="screen-pause" class="overlay-screen hidden">
+      <div class="dialog-card">
+        <h2>PAUSADO</h2>
+        <div class="dialog-buttons">
+          <button id="btn-resume" class="btn-primary">CONTINUAR</button>
+          <button id="btn-restart-pause" class="btn-secondary">REINICIAR</button>
+          <button id="btn-config-pause" class="btn-secondary">CONFIGURAÇÕES</button>
+          <button id="btn-songs-pause" class="btn-ghost">SAIR DA MÚSICA</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. DERROTA (GAME OVER: ROCK METER = 0%) -->
+    <div id="screen-game-over" class="overlay-screen hidden">
+      <div class="dialog-card gameover-dialog">
+        <div class="gameover-icon">💀</div>
+        <h2 class="gameover-title">VOCÊ PERDEU!</h2>
+        <p class="gameover-subtitle">O Rock Meter chegou ao mínimo.</p>
+
+        <div class="gameover-stats">
+          <div class="gameover-metric">
+            <span class="gameover-metric-val" id="gameover-score">0</span>
+            <span class="gameover-metric-lbl">Pontuação</span>
+          </div>
+          <div class="gameover-metric">
+            <span class="gameover-metric-val" id="gameover-combo">0</span>
+            <span class="gameover-metric-lbl">Maior Combo</span>
+          </div>
+        </div>
+
+        <div class="dialog-buttons">
+          <button id="btn-retry-gameover" class="btn-primary">TENTAR NOVAMENTE</button>
+          <button id="btn-songs-gameover" class="btn-secondary">VOLTAR ÀS MÚSICAS</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. FINAL DA MÚSICA (SHOW CONCLUÍDO) -->
+    <div id="screen-result" class="overlay-screen hidden">
+      <div class="dialog-card result-dialog">
+        <div class="result-badge">MÚSICA CONCLUÍDA!</div>
+        <h2 id="result-song-title" class="result-song-name">Fúria Tropical</h2>
+
+        <!-- 1 to 5 Stars Glow Rating -->
+        <div id="result-stars-row" class="stars-row">
+          <span class="star-item">⭐</span>
+          <span class="star-item">⭐</span>
+          <span class="star-item">⭐</span>
+          <span class="star-item">⭐</span>
+          <span class="star-item">⭐</span>
+        </div>
+
+        <div class="result-score-block">
+          <span class="result-label">PONTUAÇÃO FINAL</span>
+          <span id="result-score" class="result-val">0</span>
+        </div>
+
+        <div class="result-stats-grid">
+          <div class="stat-item">
+            <span class="stat-num" id="result-accuracy">100%</span>
+            <span class="stat-name">Precisão</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num" id="result-maxcombo">0</span>
+            <span class="stat-name">Maior Combo</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num stat-perfect" id="result-perfect">0</span>
+            <span class="stat-name">Perfeito</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num stat-great" id="result-great">0</span>
+            <span class="stat-name">Ótimo</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num stat-good" id="result-good">0</span>
+            <span class="stat-name">Bom</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num stat-miss" id="result-miss">0</span>
+            <span class="stat-name">Erros</span>
+          </div>
+        </div>
+
+        <div class="dialog-buttons">
+          <button id="btn-play-again" class="btn-primary">JOGAR NOVAMENTE</button>
+          <button id="btn-next-song" class="btn-secondary">PRÓXIMA MÚSICA</button>
+          <button id="btn-menu-result" class="btn-ghost">VOLTAR AO MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12. CONFIGURAÇÕES -->
+    <div id="screen-settings" class="overlay-screen hidden">
+      <div class="dialog-card settings-card">
+        <h2 class="settings-title">CONFIGURAÇÕES</h2>
+
+        <div class="settings-group">
+          <label for="cfg-volume-music">Volume da Música: <span id="val-cfg-music">85%</span></label>
+          <input type="range" id="cfg-volume-music" min="0" max="100" value="85" class="rock-slider">
+        </div>
+
+        <div class="settings-group">
+          <label for="cfg-volume-sfx">Volume dos Efeitos de Menu: <span id="val-cfg-sfx">90%</span></label>
+          <input type="range" id="cfg-volume-sfx" min="0" max="100" value="90" class="rock-slider">
+        </div>
+
+        <div class="settings-group">
+          <label for="cfg-offset">Calibração de Áudio (Offset): <span id="val-cfg-offset">0 ms</span></label>
+          <div class="offset-control">
+            <input type="range" id="cfg-offset" min="-200" max="200" step="5" value="0" class="rock-slider">
+            <button id="btn-test-beep" class="btn-small">TESTAR BEEP</button>
+          </div>
+          <span class="settings-hint">Ajuste se o áudio estiver adiantado ou atrasado no seu fone/Bluetooth.</span>
+        </div>
+
+        <div class="settings-group">
+          <label for="cfg-speed">Velocidade Visual das Notas: <span id="val-cfg-speed">1.0x</span></label>
+          <input type="range" id="cfg-speed" min="8" max="20" step="1" value="10" class="rock-slider">
+        </div>
+
+        <div class="settings-group toggle-group">
+          <label for="cfg-fx">Efeitos Visuais e Chamas</label>
+          <input type="checkbox" id="cfg-fx" checked class="rock-toggle">
+        </div>
+
+        <div class="dialog-buttons">
+          <button id="btn-save-settings" class="btn-primary">SALVAR E FECHAR</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13. TUTORIAL (COMO JOGAR) -->
+    <div id="screen-howtoplay" class="overlay-screen hidden">
+      <div class="dialog-card tutorial-card">
+        <h2>TUTORIAL & AJUDA</h2>
+        <div class="tutorial-content">
+          <div class="tutorial-step">
+            <div class="step-badge">1</div>
+            <div>
+              <strong>5 Pistas Verticais:</strong> Toque diretamente nos 5 botões circulares coloridos na base da tela quando a nota passar na linha de julgamento.
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-badge">2</div>
+            <div>
+              <strong>Notas Longas (Sustain):</strong> Mantenha o botão circular pressionado enquanto a cauda elétrica atravessa a linha.
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-badge">3</div>
+            <div>
+              <strong>Acordes Multitoque:</strong> Use múltiplos dedos simultaneamente quando duas ou mais notas descerem juntas.
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-badge">4</div>
+            <div>
+              <strong>Medidor Vertical de Rock:</strong> O medidor lateral começa em nível intermediário. Acertos sobem o ponteiro para a zona verde; erros derrubam para a zona vermelha. Se chegar a zero: DERROTA!
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-badge">5</div>
+            <div>
+              <strong>Teclado no PC:</strong> Use as teclas <kbd>A</kbd> <kbd>S</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> ou <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> <kbd>5</kbd>.
+            </div>
+          </div>
+        </div>
+        <button id="btn-close-howtoplay" class="btn-primary">VOLTAR AO MENU</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

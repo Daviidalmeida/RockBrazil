@@ -1,0 +1,29 @@
+# Dependências e Builds
+node_modules/
+dist/
+dist-ssr/
+
+# Arquivos de áudio comercial (não versionar publicamente)
+public/custom-songs/*.mp3
+public/custom-songs/*.wav
+public/custom-songs/*.ogg
+public/custom-songs/*.m4a
+*.mp3
+*.wav
+
+# Logs e arquivos temporários
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.system_generated/
+.user_uploaded/
+scratch/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+*.local
+.env
+.env.*.local
