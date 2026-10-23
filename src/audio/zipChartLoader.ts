@@ -171,7 +171,8 @@ export class ZipChartLoader {
    * Loads the authentic AC/DC - T.N.T. AutoChart package already extracted on disk
    */
   public static async loadLocalTNT(ctx: AudioContext): Promise<LoadedSongPackage> {
-    const basePath = '/custom-songs/acdc_tnt/ACDC - T.N.T';
+    const base = import.meta.env.BASE_URL;
+    const basePath = `${base}custom-songs/acdc_tnt/ACDC - T.N.T`;
 
     // 1. Fetch notes.mid
     const midiRes = await fetch(`${basePath}/notes.mid`);
@@ -200,7 +201,7 @@ export class ZipChartLoader {
 
     // Fallback to TNT.mp3 if stems failed
     if (decodedBuffers.length === 0) {
-      const fallbackRes = await fetch('/custom-songs/TNT.mp3');
+      const fallbackRes = await fetch(`${base}custom-songs/TNT.mp3`);
       if (fallbackRes.ok) {
         const arr = await fallbackRes.arrayBuffer();
         const buf = await ctx.decodeAudioData(arr);

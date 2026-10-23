@@ -98,8 +98,9 @@ class RockBrazilGame {
 
   private async autoDetectTNTFile(): Promise<void> {
     try {
-      const resMidi = await fetch('/custom-songs/acdc_tnt/ACDC - T.N.T/notes.mid', { method: 'HEAD' });
-      const resMp3 = await fetch('/custom-songs/TNT.mp3', { method: 'HEAD' });
+      const base = import.meta.env.BASE_URL;
+      const resMidi = await fetch(`${base}custom-songs/acdc_tnt/ACDC - T.N.T/notes.mid`, { method: 'HEAD' });
+      const resMp3 = await fetch(`${base}custom-songs/TNT.mp3`, { method: 'HEAD' });
 
       if (resMidi.ok || resMp3.ok) {
         const song = this.library.getSongById('tnt-acdc');
