@@ -686,15 +686,15 @@ class RockBrazilGame {
     this.startNewMatch(this.currentSong, this.currentDifficulty);
   }
 
-  private handleGameOver(stats: any): void {
+  private async handleGameOver(stats: any): Promise<void> {
     this.clearCountdown();
     this.audio.stop();
     this.audio.playSfxGameOver();
     this.state = GameState.GAME_OVER;
     this.ui.showGameOver(stats);
 
-    // Record defeat in profile history
-    this.profileManager.recordMatch(
+    // Record defeat in profile history (cleared = false)
+    await this.profileManager.recordMatch(
       this.currentSong.id,
       this.currentSong.title,
       this.currentDifficulty,
@@ -743,7 +743,7 @@ class RockBrazilGame {
     requestAnimationFrame(this.gameLoop);
   };
 
-  private finishSong(): void {
+  private async finishSong(): Promise<void> {
     this.clearCountdown();
     this.audio.stop();
     this.audio.playSfxVictory();
@@ -752,7 +752,7 @@ class RockBrazilGame {
     const stats = this.engine.getStats();
 
     // Salva recordes isolados para esta partida no perfil
-    this.profileManager.recordMatch(
+    const recordResult = await this.profileManager.recordMatch(
       this.currentSong.id,
       this.currentSong.title,
       this.currentDifficulty,
@@ -760,15 +760,10 @@ class RockBrazilGame {
       true
     );
 
-    this.library.saveSongRecord(this.currentSong.id, this.currentDifficulty, {
-      score: stats.score,
-      stars: stats.stars || 1,
-      accuracy: stats.accuracy || 0,
-      maxCombo: stats.maxCombo
-    });
+    this.library.saveSongRecord(this.currentSong.id, this.currentDifficulty, recordResult.record);
 
-    // Exibe tela de resultados exclusiva da partida que acabou de terminar
-    this.ui.showResults(this.currentSong, stats);
+    // Exibe tela de resultados exclusiva da partida que acabou de terminar com celebração de recorde
+    this.ui.showResults(this.currentSong, stats, recordResult);
   }
 }
 

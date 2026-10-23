@@ -68,10 +68,24 @@ export interface GameStats {
 }
 
 export interface SongRecord {
+  // Legacy aliases for backwards compatibility
   score: number;
   stars: number;
   accuracy: number;
   maxCombo: number;
+
+  // V5.3 Enhanced Personal Record Fields
+  bestScore: number;
+  lastScore: number;
+  bestStars: number;
+  lastStars: number;
+  bestMaxCombo: number;
+  lastMaxCombo: number;
+  bestAccuracy: number;
+  lastAccuracy: number;
+  bestDate: number;
+  lastDate: number;
+  playCount: number;
 }
 
 export interface SongMetadata {

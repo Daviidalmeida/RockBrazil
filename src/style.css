@@ -14,6 +14,15 @@
   --border-neon: rgba(255, 255, 255, 0.16);
   --font-display: 'Teko', sans-serif;
   --font-ui: 'Montserrat', sans-serif;
+
+  /* V5.3 Classic 2000s Rock Notebook Theme Variables */
+  --font-rock: 'Permanent Marker', cursive, sans-serif;
+  --font-hand: 'Kalam', cursive, sans-serif;
+  --font-marker: 'Caveat', cursive, sans-serif;
+  --color-notebook-ink: #1a1a1a;
+  --color-notebook-red: #c62828;
+  --color-notebook-star: #f59e0b;
+  --color-notebook-paper: #fbf5e8;
 }
 
 * {
@@ -474,132 +483,220 @@ html, body {
 }
 
 /* ========================================================
-   MAIN MENU WITH IMAGE BACKGROUND & INTERACTIVE HOTSPOTS
+   V5.3 CLASSIC 2000s ROCK NOTEBOOK THEME & MENUS
+   ======================================================== */
+.notebook-page {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/images/notebook-bg.png') center top / cover no-repeat !important;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--color-notebook-ink);
+  font-family: var(--font-hand);
+}
+
+.notebook-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Notebook Dialog Cards & Popups */
+.notebook-dialog-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: #fcf8ee url('/images/notebook-bg.png') center center / cover no-repeat;
+  border: 2.5px solid #1a1a1a;
+  border-radius: 8px 18px 10px 16px;
+  padding: 20px 18px;
+  color: #1a1a1a;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85), 3px 4px 0 #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: slide-up 0.22s ease-out;
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
+.notebook-page-title, .notebook-dialog-title {
+  font-family: var(--font-rock);
+  color: #1a1a1a;
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 1.1;
+  font-size: 26px;
+  margin: 0;
+}
+
+.notebook-dialog-subtitle {
+  font-family: var(--font-hand);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #b71c1c;
+  text-transform: uppercase;
+}
+
+.notebook-dialog-song-title {
+  font-family: var(--font-rock);
+  font-size: 22px;
+  color: #1a1a1a;
+  margin: 2px 0 0;
+}
+
+.notebook-dialog-song-artist {
+  font-family: var(--font-hand);
+  font-size: 13px;
+  color: #4b5563;
+  font-weight: 700;
+}
+
+.marker-underline {
+  width: 65%;
+  max-width: 220px;
+  height: 4px;
+  margin: 4px auto 10px;
+  background: linear-gradient(90deg, #d32f2f, #b71c1c);
+  border-radius: 2px;
+  transform: rotate(-0.5deg);
+}
+
+.marker-underline.small {
+  width: 35%;
+  height: 3px;
+  margin: 3px auto 8px;
+}
+
+/* ========================================================
+   1. MAIN MENU (Notebook Theme)
    ======================================================== */
 .menu-screen-container {
   padding: 0;
-  background: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-.menu-image-wrapper {
+.menu-notebook-wrapper {
   position: relative;
   width: 100%;
-  max-width: 480px;
   height: 100%;
-  max-height: 100dvh;
-  background: url('/images/menu-bg.jpg') center center / cover no-repeat;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px 14px 24px;
 }
 
-.profile-header-pill {
+.notebook-profile-pill {
   position: absolute;
   top: 14px;
   left: 14px;
-  background: rgba(14, 15, 24, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  padding: 5px 12px;
+  background: #fff;
+  border: 2px solid #1a1a1a;
+  border-radius: 6px 14px 4px 10px;
+  padding: 4px 10px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #fff;
+  gap: 6px;
+  color: #1a1a1a;
+  font-family: var(--font-rock);
+  box-shadow: 2px 2px 0 #1a1a1a;
   cursor: pointer;
-  backdrop-filter: blur(8px);
   z-index: 10;
-  transition: transform 0.12s ease;
+  transition: transform 0.1s ease;
 }
 
-.profile-header-pill:active {
+.notebook-profile-pill:active {
   transform: scale(0.96);
 }
 
-.profile-avatar-icon { font-size: 16px; }
-.profile-player-name { font-size: 12px; font-weight: 800; letter-spacing: 0.5px; }
-.profile-switch-hint { font-size: 9px; color: #ffe600; text-transform: uppercase; font-weight: 700; }
+.menu-notebook-header {
+  margin-top: 48px;
+  text-align: center;
+}
 
-/* 6 Hotspot Buttons (Invisible overlays with active glow) */
-.menu-hotspot {
-  position: absolute;
-  background: transparent;
-  border: 2px solid transparent;
-  border-radius: 14px;
+.menu-rock-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.menu-rock-title {
+  font-family: var(--font-rock);
+  font-size: 38px;
+  color: #1a1a1a;
+  letter-spacing: 1px;
+  margin: 0;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.rock-lightning {
+  font-size: 26px;
+  color: #d97706;
+}
+
+.menu-rock-subtitle {
+  font-family: var(--font-hand);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #374151;
+  margin-top: 2px;
+}
+
+.red-marker-scribble {
+  width: 75%;
+  max-width: 250px;
+  height: 5px;
+  margin: 6px auto 14px;
+}
+
+.menu-notebook-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 88%;
+  margin: 0 auto 24px;
+}
+
+.notebook-menu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 2px solid #1a1a1a;
+  border-radius: 4px 14px 6px 10px;
+  font-family: var(--font-rock);
+  font-size: 18px;
+  color: #1a1a1a;
+  box-shadow: 2.5px 3px 0 #1a1a1a;
   cursor: pointer;
-  outline: none;
   transition: all 0.12s ease;
+  text-align: left;
 }
 
-.menu-hotspot:hover, .menu-hotspot:focus, .menu-hotspot:active {
-  transform: scale(1.03);
-  background: rgba(255, 255, 255, 0.08);
+.notebook-menu-item:hover, .notebook-menu-item:active {
+  background: linear-gradient(90deg, rgba(220, 38, 38, 0.75) 0%, rgba(239, 68, 68, 0.5) 85%, transparent 100%);
+  transform: scale(1.02) rotate(-0.5deg);
+  box-shadow: 1.5px 2px 0 #1a1a1a;
 }
 
-.hotspot-jogar {
-  top: 36.8%;
-  left: 18%;
-  width: 64%;
-  height: 8.5%;
-}
-.hotspot-jogar:hover, .hotspot-jogar:active {
-  box-shadow: 0 0 25px rgba(255, 230, 0, 0.9), inset 0 0 15px rgba(255, 230, 0, 0.4);
-  border-color: #ffe600;
+.notebook-menu-item .item-num {
+  color: #c62828;
+  font-weight: 900;
+  font-size: 16px;
 }
 
-.hotspot-musicas {
-  top: 46.8%;
-  left: 18%;
-  width: 64%;
-  height: 7.2%;
-}
-.hotspot-musicas:hover, .hotspot-musicas:active {
-  box-shadow: 0 0 22px rgba(0, 208, 255, 0.8), inset 0 0 12px rgba(0, 208, 255, 0.3);
-  border-color: #00d0ff;
-}
-
-.hotspot-config {
-  top: 54.8%;
-  left: 18%;
-  width: 64%;
-  height: 7.2%;
-}
-.hotspot-config:hover, .hotspot-config:active {
-  box-shadow: 0 0 22px rgba(255, 255, 255, 0.8), inset 0 0 12px rgba(255, 255, 255, 0.3);
-  border-color: #ffffff;
-}
-
-.hotspot-ranking {
-  top: 62.8%;
-  left: 18%;
-  width: 64%;
-  height: 7.2%;
-}
-.hotspot-ranking:hover, .hotspot-ranking:active {
-  box-shadow: 0 0 22px rgba(255, 42, 95, 0.8), inset 0 0 12px rgba(255, 42, 95, 0.3);
-  border-color: #ff2a5f;
-}
-
-.hotspot-tutorial {
-  top: 70.8%;
-  left: 18%;
-  width: 64%;
-  height: 7.2%;
-}
-.hotspot-tutorial:hover, .hotspot-tutorial:active {
-  box-shadow: 0 0 22px rgba(0, 255, 136, 0.8), inset 0 0 12px rgba(0, 255, 136, 0.3);
-  border-color: #00ff88;
-}
-
-.hotspot-sair {
-  top: 78.8%;
-  left: 18%;
-  width: 64%;
-  height: 7.2%;
-}
-.hotspot-sair:hover, .hotspot-sair:active {
-  box-shadow: 0 0 22px rgba(255, 123, 0, 0.8), inset 0 0 12px rgba(255, 123, 0, 0.3);
-  border-color: #ff7b00;
+.notebook-menu-item .item-text {
+  flex: 1;
 }
 
 /* ========================================================
@@ -741,260 +838,379 @@ html, body {
 }
 
 /* ========================================================
-   SONG LIBRARY & FILTERS
+   2. SONG LIBRARY (NOTEBOOK THEME - IMAGE 2 REPLICATION)
    ======================================================== */
-.library-container {
+.library-notebook-wrapper {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 16px 14px 12px;
+  position: relative;
+  background: transparent;
 }
 
-.library-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 4px 14px 4px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.notebook-header {
+  text-align: center;
+  margin-bottom: 6px;
 }
 
-.section-title {
-  font-family: var(--font-display);
-  font-size: 26px;
-  letter-spacing: 1.5px;
-  color: #fff;
-}
-
-.btn-import {
-  padding: 8px 12px;
-  background: linear-gradient(135deg, #00d0ff, #0088cc);
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 800;
-  cursor: pointer;
-  color: #fff;
-}
-
-.library-filter-tabs {
+.notebook-filter-row {
   display: flex;
   gap: 8px;
-  padding: 10px 4px 6px 4px;
+  justify-content: center;
+  margin-bottom: 8px;
 }
 
-.filter-tab {
-  flex: 1;
-  padding: 8px 10px;
-  border-radius: 8px;
-  background: #171827;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #8c90a3;
-  font-size: 11px;
+.notebook-filter-tab {
+  font-family: var(--font-hand);
+  font-size: 12px;
   font-weight: 700;
+  padding: 4px 14px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1.5px solid #222;
+  border-radius: 4px 10px 4px 8px;
+  color: #222;
   cursor: pointer;
+  box-shadow: 1px 1px 0 #1a1a1a;
+  transition: all 0.1s ease;
 }
 
-.filter-tab.active {
-  background: #25283d;
-  border-color: #00d0ff;
+.notebook-filter-tab.active {
+  background: #c62828;
   color: #fff;
+  border-color: #7f1d1d;
 }
 
-.songs-scroll-list {
+.notebook-songs-list {
   flex: 1;
   overflow-y: auto;
-  padding: 8px 4px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 2px;
+  padding: 4px 2px 8px 2px;
 }
 
-.song-card {
-  background: #161826;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 16px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.song-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.song-style-badge {
-  font-size: 9px;
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffe600;
-}
-
-.song-title-text {
-  font-size: 16px;
-  font-weight: 800;
-  color: #fff;
-  margin-top: 4px;
-}
-
-.song-artist-text {
-  font-size: 12px;
-  color: #8c90a3;
-}
-
-.song-meta-row {
-  display: flex;
-  gap: 12px;
-  font-size: 11px;
-  color: #7b8094;
-}
-
-.song-status-box {
-  background: rgba(0, 0, 0, 0.35);
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-size: 11px;
-  color: #ffe600;
+/* Each Song Row (Aligned to notebook lines) */
+.notebook-song-row {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.btn-song-play {
-  width: 100%;
-  height: 44px;
-  background: linear-gradient(135deg, #00ff88, #00b35f);
-  color: #050508;
-  border: none;
-  border-radius: 10px;
-  font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 1px;
+  padding: 8px 10px 8px 30px; /* Leaves space on the left for the sketched arrow */
+  border-bottom: 1.5px dashed rgba(35, 35, 35, 0.35);
   cursor: pointer;
+  transition: background 0.12s ease, transform 0.1s ease;
+  border-radius: 4px;
 }
 
-/* ========================================================
-   DIFFICULTY MODAL
-   ======================================================== */
-.difficulty-dialog {
-  max-width: 380px;
+/* Sketched Black Arrow pointing to Selected Song (Image 2) */
+.notebook-song-row .row-arrow {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  font-weight: 900;
+  color: #1a1a1a;
+  display: none;
+  font-family: var(--font-rock);
+  user-select: none;
 }
 
-.diff-subtitle {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  color: #00d0ff;
+/* Selected Song with Irregular Red Highlighter Brush Stroke (Image 2) */
+.notebook-song-row.selected {
+  background: linear-gradient(90deg, rgba(220, 38, 38, 0.72) 0%, rgba(239, 68, 68, 0.55) 75%, rgba(220, 38, 38, 0.12) 98%, transparent 100%);
+  border-radius: 4px 18px 8px 14px;
+  transform: rotate(-0.35deg);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.28);
+  border-bottom-color: transparent;
 }
 
-.diff-song-title {
-  font-family: var(--font-display);
-  font-size: 28px;
-  line-height: 1;
-  color: #fff;
+.notebook-song-row.selected .row-arrow {
+  display: block;
 }
 
-.diff-song-artist {
+.row-song-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  flex: 1;
+  min-width: 0;
+}
+
+.row-song-title {
+  font-family: var(--font-rock);
+  font-size: 18px;
+  color: #1a1a1a;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row-song-artist {
+  font-family: var(--font-hand);
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  line-height: 1.1;
+}
+
+.row-song-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.row-stars {
+  color: #d97706;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.row-stars .empty-star {
+  color: rgba(0, 0, 0, 0.22);
+}
+
+.row-score {
+  font-family: var(--font-rock);
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 0.5px;
+}
+
+.row-score.unplayed {
+  color: #b71c1c;
+  font-family: var(--font-hand);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Expandable Details Container when Selected */
+.row-expanded-details {
+  width: 100%;
+  padding: 6px 10px;
+  margin: 4px 0 6px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  font-family: var(--font-hand);
   font-size: 11px;
-  color: #8c90a3;
+  color: #222;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  justify-content: space-between;
+  box-shadow: 1px 1.5px 0 rgba(0, 0, 0, 0.2);
 }
 
-.difficulty-grid {
-  width: 100%;
+.song-link-box {
+  background: #fef08a;
+  border: 1.5px dashed #ca8a04;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #854d0e;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 14px 0;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  width: 100%;
 }
 
-.btn-diff-choice {
-  width: 100%;
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1.5px solid transparent;
-  background: #171827;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+.btn-link-file {
+  background: #dc2626;
+  color: #fff;
+  font-family: var(--font-rock);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-.diff-easy .diff-badge { color: #00ff88; }
-.diff-easy:active { border-color: #00ff88; background: #162923; }
-
-.diff-medium .diff-badge { color: #ffe600; }
-.diff-medium:active { border-color: #ffe600; background: #282717; }
-
-.diff-hard .diff-badge { color: #ff2a5f; }
-.diff-hard:active { border-color: #ff2a5f; background: #2e1620; }
-
-.diff-expert .diff-badge { color: #b700ff; }
-.diff-expert:active { border-color: #b700ff; background: #281433; }
-
-.diff-badge {
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 1px;
+/* Footer Action Bar (Image 2 Replica) */
+.notebook-footer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 2px solid #1a1a1a;
+  margin-top: 6px;
+  background: transparent;
 }
 
-.diff-desc {
-  font-size: 10px;
-  color: #8c90a3;
+.notebook-bar-btn {
+  font-family: var(--font-rock);
+  font-size: 14px;
+  padding: 8px 14px;
+  background: #fff;
+  border: 2px solid #1a1a1a;
+  border-radius: 4px 12px 6px 10px;
+  color: #1a1a1a;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #1a1a1a;
+  transition: all 0.1s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
 }
 
-.diff-record {
-  font-size: 10px;
-  font-weight: 700;
-  color: #ffe600;
-  margin-top: 3px;
+.notebook-bar-btn:hover, .notebook-bar-btn:active {
+  transform: translate(1px, 1px) scale(0.98);
+  box-shadow: 1px 1px 0 #1a1a1a;
+  background: #fee2e2;
+}
+
+.notebook-bar-btn.btn-select {
+  background: #fef08a;
+  color: #1a1a1a;
+  font-size: 15px;
+  padding: 8px 18px;
+}
+
+.notebook-bar-btn.btn-select:hover {
+  background: #fde047;
+}
+
+.notebook-bar-btn.btn-back {
+  background: #f3f4f6;
+}
+
+.notebook-bar-btn.btn-guest {
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  color: #fff;
+  width: 100%;
+  border-color: #075985;
+}
+
+.notebook-bar-mini-btn {
+  font-size: 16px;
+  padding: 6px 10px;
+  border: 2px solid #1a1a1a;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 1.5px 1.5px 0 #1a1a1a;
 }
 
 /* ========================================================
-   PROFILE SYSTEM MODALS
+   3. DIFFICULTY SELECT MODAL (NOTEBOOK THEME)
    ======================================================== */
-.profile-card {
-  max-width: 380px;
+.notebook-diff-btn {
+  width: 100%;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 2px solid #1a1a1a;
+  border-radius: 6px 14px 6px 10px;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 2px 2px 0 #1a1a1a;
+  transition: all 0.12s ease;
+  margin-bottom: 8px;
+}
+
+.notebook-diff-btn:hover, .notebook-diff-btn:active {
+  transform: scale(1.02);
+  background: #fef9c3;
+}
+
+.diff-btn-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notebook-diff-btn .diff-badge {
+  font-family: var(--font-rock);
+  font-size: 16px;
+  color: #1a1a1a;
+}
+
+.diff-easy .diff-badge { color: #15803d; }
+.diff-medium .diff-badge { color: #b45309; }
+.diff-hard .diff-badge { color: #b91c1c; }
+.diff-expert .diff-badge { color: #6d28d9; }
+
+.notebook-diff-btn .diff-lanes {
+  font-family: var(--font-hand);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.notebook-diff-btn .diff-desc {
+  font-family: var(--font-hand);
+  font-size: 11px;
+  color: #4b5563;
+  margin: 2px 0 4px;
+}
+
+.notebook-diff-btn .diff-record {
+  font-family: var(--font-rock);
+  font-size: 13px;
+  color: #b71c1c;
+  font-weight: 700;
+}
+
+/* ========================================================
+   PROFILE SYSTEM MODALS (NOTEBOOK THEME)
+   ======================================================== */
+.profile-card, .profile-mgr-card {
+  max-width: 400px;
   text-align: left;
 }
 
 .profile-subtitle {
-  font-size: 11px;
-  color: #8c90a3;
-  margin-bottom: 16px;
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: #374151;
+  margin-bottom: 14px;
 }
 
 .profile-input-group {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 14px;
+  gap: 4px;
+  margin-bottom: 12px;
+  font-family: var(--font-hand);
+  font-weight: 700;
 }
 
 .rock-text-input {
   width: 100%;
-  height: 44px;
-  background: #171827;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
+  height: 42px;
+  background: #fff;
+  border: 2px solid #1a1a1a;
+  border-radius: 6px;
   padding: 0 12px;
-  color: #fff;
-  font-size: 14px;
+  color: #1a1a1a;
+  font-family: var(--font-rock);
+  font-size: 16px;
   outline: none;
+  box-shadow: 1.5px 1.5px 0 #1a1a1a;
 }
 
 .rock-text-input:focus {
-  border-color: #00ff88;
+  border-color: #c62828;
 }
 
 .avatar-selection-group {
   width: 100%;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
+  font-family: var(--font-hand);
+  font-weight: 700;
 }
 
 .avatar-grid {
@@ -1005,20 +1221,23 @@ html, body {
 }
 
 .avatar-option {
-  height: 44px;
-  border-radius: 10px;
-  background: #171827;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  height: 42px;
+  border-radius: 8px;
+  background: #fff;
+  border: 2px solid #1a1a1a;
   font-size: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 1.5px 1.5px 0 #1a1a1a;
+  transition: transform 0.1s ease;
 }
 
 .avatar-option.selected {
-  border-color: #ffe600;
-  background: #282717;
+  border-color: #b91c1c;
+  background: #fee2e2;
+  transform: scale(1.08) rotate(-2deg);
 }
 
 .profiles-list-scroll {
@@ -1028,81 +1247,86 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin: 14px 0;
+  margin: 12px 0;
 }
 
 .profile-list-item {
-  background: #171827;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
-  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 2px solid #1a1a1a;
+  border-radius: 8px;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
+  box-shadow: 1.5px 1.5px 0 #1a1a1a;
 }
 
 .profile-list-item.active {
-  border-color: #00ff88;
-  background: #142821;
+  border-color: #15803d;
+  background: #dcfce7;
 }
 
 /* ========================================================
-   RANKING SCREEN
+   RANKING SCREEN (NOTEBOOK THEME)
    ======================================================== */
 .ranking-filter-row {
   display: flex;
   gap: 8px;
-  padding: 8px 4px;
+  padding: 6px 2px;
 }
 
 .rock-select {
   flex: 1;
-  height: 40px;
-  background: #171827;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  color: #fff;
-  padding: 0 10px;
-  font-size: 12px;
+  height: 38px;
+  background: #fff;
+  border: 2px solid #1a1a1a;
+  border-radius: 6px;
+  color: #1a1a1a;
+  padding: 0 8px;
+  font-family: var(--font-rock);
+  font-size: 13px;
+  box-shadow: 1.5px 1.5px 0 #1a1a1a;
 }
 
 .ranking-list-container {
   flex: 1;
   overflow-y: auto;
-  padding: 8px 4px;
+  padding: 6px 2px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .ranking-row {
-  background: #171827;
-  border-radius: 12px;
-  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 2px solid #1a1a1a;
+  border-radius: 8px;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-shadow: 1.5px 1.5px 0 #1a1a1a;
 }
 
 .ranking-rank {
-  font-family: var(--font-display);
-  font-size: 24px;
-  color: #ffe600;
+  font-family: var(--font-rock);
+  font-size: 20px;
+  color: #b91c1c;
   width: 28px;
 }
 
 /* ========================================================
-   DERROTA (GAME OVER)
+   DERROTA (GAME OVER) (NOTEBOOK THEME)
    ======================================================== */
 .gameover-dialog {
-  border-color: rgba(255, 42, 95, 0.45);
-  box-shadow: 0 0 45px rgba(255, 42, 95, 0.4);
+  border-color: #991b1b;
+  background: #fef2f2 url('/images/notebook-bg.png') center center / cover no-repeat;
 }
 
 .gameover-icon {
-  font-size: 54px;
-  margin-bottom: 4px;
+  font-size: 50px;
+  margin-bottom: 2px;
   animation: shake-head 0.8s infinite alternate ease-in-out;
 }
 
@@ -1112,169 +1336,252 @@ html, body {
 }
 
 .gameover-title {
-  font-family: var(--font-display);
-  font-size: 52px;
-  line-height: 0.9;
-  color: #ff2a5f;
-  text-shadow: 0 0 20px rgba(255, 42, 95, 0.8);
+  font-family: var(--font-rock);
+  font-size: 40px;
+  line-height: 0.95;
+  color: #991b1b;
+  margin: 0;
 }
 
 .gameover-subtitle {
+  font-family: var(--font-hand);
   font-size: 12px;
-  color: #8c90a3;
-  margin-bottom: 14px;
+  color: #4b5563;
+  margin: 4px 0 12px;
 }
 
 .gameover-stats {
   display: flex;
   justify-content: space-around;
   width: 100%;
-  background: #171827;
-  border-radius: 14px;
-  padding: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #1a1a1a;
+  border-radius: 10px;
+  padding: 8px;
   margin-bottom: 12px;
+  box-shadow: 2px 2px 0 #1a1a1a;
 }
 
 .gameover-metric-val {
-  font-family: var(--font-display);
-  font-size: 30px;
+  font-family: var(--font-rock);
+  font-size: 24px;
   font-weight: 700;
-  color: #fff;
+  color: #1a1a1a;
   display: block;
 }
 
 .gameover-metric-lbl {
-  font-size: 10px;
-  color: #7b8094;
+  font-family: var(--font-hand);
+  font-size: 11px;
+  color: #4b5563;
 }
 
 /* ========================================================
-   RESULTS SCREEN
+   RESULTS SCREEN (NOTEBOOK THEME)
    ======================================================== */
 .result-dialog {
-  max-width: 400px;
+  max-width: 410px;
 }
 
 .result-badge {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  color: #00ff88;
+  font-family: var(--font-rock);
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #15803d;
 }
 
 .result-song-name {
-  font-family: var(--font-display);
-  font-size: 28px;
-  color: #fff;
-  margin: 4px 0 8px 0;
+  font-family: var(--font-rock);
+  font-size: 24px;
+  color: #1a1a1a;
+  margin: 2px 0 6px 0;
+}
+
+/* Celebratory New Record Stamp / Banner (Phase 8 & 11) */
+.notebook-record-banner {
+  width: 90%;
+  margin: 6px auto 10px;
+  padding: 8px 12px;
+  background: #fee2e2;
+  border: 2.5px dashed #b91c1c;
+  border-radius: 8px;
+  transform: rotate(-1.5deg);
+  box-shadow: 2px 3px 0 rgba(185, 28, 28, 0.4);
+  animation: stamp-pop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes stamp-pop {
+  0% { transform: scale(1.6) rotate(-12deg); opacity: 0; }
+  100% { transform: scale(1) rotate(-1.5deg); opacity: 1; }
+}
+
+.record-banner-title {
+  font-family: var(--font-rock);
+  font-size: 18px;
+  color: #b91c1c;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.record-banner-detail {
+  font-family: var(--font-hand);
+  font-size: 12px;
+  font-weight: 700;
+  color: #7f1d1d;
+  margin-top: 2px;
 }
 
 .stars-row {
   display: flex;
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .star-item {
-  font-size: 32px;
-  filter: grayscale(1) opacity(0.3);
-  transition: all 0.3s ease;
+  font-size: 28px;
+  color: rgba(0, 0, 0, 0.2);
+  transition: all 0.25s ease;
 }
 
 .star-item.active {
-  filter: grayscale(0) opacity(1) drop-shadow(0 0 8px #ffe600);
+  color: #f59e0b;
+  text-shadow: 1px 1px 0 #78350f;
+  transform: scale(1.1);
 }
 
 .result-score-block {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .result-label {
   display: block;
-  font-size: 10px;
+  font-family: var(--font-hand);
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.5px;
-  color: #8c90a3;
+  color: #4b5563;
 }
 
 .result-val {
-  font-family: var(--font-display);
-  font-size: 42px;
+  font-family: var(--font-rock);
+  font-size: 38px;
   line-height: 1;
-  font-weight: 700;
-  color: #fff;
+  color: #1a1a1a;
 }
 
 .result-stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: 6px;
   width: 100%;
   margin-bottom: 10px;
 }
 
 .stat-item {
-  background: #171827;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1.5px solid #1a1a1a;
+  border-radius: 8px;
   padding: 6px 10px;
+  box-shadow: 1.5px 1.5px 0 #1a1a1a;
   display: flex;
   flex-direction: column;
 }
 
 .stat-num {
-  font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1;
+  font-family: var(--font-rock);
+  font-size: 20px;
+  line-height: 1.1;
+  color: #1a1a1a;
 }
 
-.stat-perfect { color: #ffe600; }
-.stat-great { color: #00ff88; }
-.stat-good { color: #00d0ff; }
-.stat-miss { color: #ff2a5f; }
+.stat-perfect { color: #b45309; }
+.stat-great { color: #15803d; }
+.stat-good { color: #0284c7; }
+.stat-miss { color: #b91c1c; }
 
 .stat-name {
-  font-size: 9px;
+  font-family: var(--font-hand);
+  font-size: 10px;
   font-weight: 700;
-  color: #7d8299;
+  color: #4b5563;
 }
 
 /* ========================================================
-   SETTINGS SCREEN
+   SETTINGS & TUTORIAL MODALS (NOTEBOOK THEME)
    ======================================================== */
 .settings-card {
   max-width: 400px;
   text-align: left;
-  align-items: stretch;
-}
-
-.settings-title {
-  font-family: var(--font-display);
-  font-size: 32px;
-  letter-spacing: 1.5px;
-  text-align: center;
-  margin-bottom: 16px;
 }
 
 .settings-group {
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
+  font-family: var(--font-hand);
+  font-weight: 700;
 }
 
 .settings-group label {
-  font-size: 11px;
-  font-weight: 700;
-  color: #8c90a3;
+  font-size: 12px;
+  color: #1a1a1a;
   display: flex;
   justify-content: space-between;
+}
+
+.settings-hint {
+  font-size: 10px;
+  color: #6b7280;
+}
+
+.tutorial-card {
+  max-width: 420px;
+  text-align: left;
+}
+
+.tutorial-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px 0 16px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.tutorial-step {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-family: var(--font-hand);
+  font-size: 12px;
+  line-height: 1.35;
+  color: #1a1a1a;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid #222;
+  border-radius: 8px;
+  padding: 8px 10px;
+  box-shadow: 1.5px 1.5px 0 #1a1a1a;
+}
+
+.step-badge {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #c62828;
+  color: #fff;
+  font-family: var(--font-rock);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .rock-slider {
   width: 100%;
   height: 6px;
-  accent-color: #ff2a5f;
+  accent-color: #c62828;
   cursor: pointer;
 }
 
@@ -1298,47 +1605,7 @@ html, body {
 .rock-toggle {
   width: 20px;
   height: 20px;
-  accent-color: #00ff88;
-}
-
-/* ========================================================
-   TUTORIAL SCREEN
-   ======================================================== */
-.tutorial-card {
-  max-width: 420px;
-  text-align: left;
-}
-
-.tutorial-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin: 16px 0;
-  max-height: 380px;
-  overflow-y: auto;
-}
-
-.tutorial-step {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  font-size: 11px;
-  line-height: 1.4;
-  color: #cbd0e2;
-}
-
-.step-badge {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #ff2a5f;
-  color: #fff;
-  font-weight: 900;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  accent-color: #15803d;
 }
 
 /* ========================================================

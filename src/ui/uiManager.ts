@@ -1,5 +1,5 @@
 import { GameStats, HitJudgment, GameState, Lane, SongMetadata, Difficulty, GameSettings } from '../types';
-import { PlayerProfile, LeaderboardEntry } from '../game/profileManager';
+import { PlayerProfile, LeaderboardEntry, RecordMatchResult } from '../game/profileManager';
 
 export class UIManager {
   // In-Game HUD Elements
@@ -39,6 +39,7 @@ export class UIManager {
   private menuProfileAvatar: HTMLElement;
   private menuProfileName: HTMLElement;
   private profilesScrollList: HTMLElement;
+  private currentActiveProfile: PlayerProfile | null = null;
 
   // Song Select elements
   private songsListContainer: HTMLElement;
@@ -259,22 +260,30 @@ export class UIManager {
       }
     });
 
-    // Song select back
+    // Song select back & play
     document.getElementById('btn-song-select-back')?.addEventListener('click', () => {
       this.onReturnToMenuClicked?.();
+    });
+
+    document.getElementById('btn-song-select-play')?.addEventListener('click', () => {
+      if (this.currentSelectedSong && this.currentSelectedSong.isAvailable) {
+        this.openDifficultyModal(this.currentSelectedSong, this.currentActiveProfile);
+      } else if (this.currentSelectedSong && !this.currentSelectedSong.isAvailable) {
+        alert(`O áudio para "${this.currentSelectedSong.title}" ainda não foi carregado. Utilize o botão "VINCULAR" ou "IMPORTAR MÚSICA" para selecionar seu arquivo.`);
+      }
     });
 
     // Filter tabs
     document.getElementById('tab-songs-all')?.addEventListener('click', (e) => {
       this.currentFilter = 'all';
-      document.querySelectorAll('.filter-tab').forEach((t) => t.classList.remove('active'));
+      document.querySelectorAll('.notebook-filter-tab, .filter-tab').forEach((t) => t.classList.remove('active'));
       (e.currentTarget as HTMLElement).classList.add('active');
       this.onOpenSongSelectClicked?.('all');
     });
 
     document.getElementById('tab-songs-custom')?.addEventListener('click', (e) => {
       this.currentFilter = 'custom';
-      document.querySelectorAll('.filter-tab').forEach((t) => t.classList.remove('active'));
+      document.querySelectorAll('.notebook-filter-tab, .filter-tab').forEach((t) => t.classList.remove('active'));
       (e.currentTarget as HTMLElement).classList.add('active');
       this.onOpenSongSelectClicked?.('custom');
     });
@@ -560,9 +569,9 @@ export class UIManager {
     this.showScreen(GameState.GAME_OVER);
   }
 
-  showResults(song: SongMetadata, stats: GameStats): void {
+  showResults(song: SongMetadata, stats: GameStats, recordResult?: RecordMatchResult): void {
     this.resultSongTitle.textContent = `${song.title} - ${song.artist}`;
-    this.resultScore.textContent = stats.score.toLocaleString('pt-BR');
+    this.resultScore.textContent = `${stats.score.toLocaleString('pt-BR')} PTS`;
     this.resultAccuracy.textContent = `${stats.accuracy || 0}%`;
     this.resultMaxCombo.textContent = stats.maxCombo.toString();
     this.resultPerfect.textContent = stats.perfectCount.toString();
@@ -576,84 +585,152 @@ export class UIManager {
       el.classList.toggle('active', idx < starCount);
     });
 
+    const bannerEl = document.getElementById('result-record-banner');
+    const detailEl = document.getElementById('result-record-detail');
+
+    if (bannerEl) {
+      if (recordResult?.isNewRecord) {
+        bannerEl.classList.remove('hidden');
+        if (detailEl) {
+          if (recordResult.previousBestScore > 0) {
+            detailEl.textContent = `Recorde anterior: ${recordResult.previousBestScore.toLocaleString('pt-BR')} PTS ➜ Novo: ${stats.score.toLocaleString('pt-BR')} PTS!`;
+          } else {
+            detailEl.textContent = `Primeiro recorde estabelecido com sucesso!`;
+          }
+        }
+      } else {
+        bannerEl.classList.add('hidden');
+      }
+    }
+
     this.showScreen(GameState.RESULTS);
   }
 
   renderSongLibrary(songs: SongMetadata[], activeProfile?: PlayerProfile | null): void {
+    if (activeProfile !== undefined) {
+      this.currentActiveProfile = activeProfile;
+    }
+    const profile = this.currentActiveProfile;
+
     const filtered = this.currentFilter === 'custom'
       ? songs.filter((s) => s.type === 'audio-file')
       : songs;
 
     const titleEl = document.getElementById('library-screen-title');
     if (titleEl) {
-      titleEl.textContent = this.currentFilter === 'custom' ? 'MINHAS MÚSICAS' : 'BIBLIOTECA DE MÚSICAS';
+      titleEl.textContent = this.currentFilter === 'custom' ? 'MINHAS MÚSICAS' : 'SELEÇÃO DE MÚSICAS';
     }
 
-    this.songsListContainer.innerHTML = filtered.map((song) => {
-      const mins = Math.floor(song.duration / 60);
-      const secs = Math.floor(song.duration % 60).toString().padStart(2, '0');
+    if (!this.currentSelectedSong || !filtered.some((s) => s.id === this.currentSelectedSong?.id)) {
+      this.currentSelectedSong = filtered[0] || null;
+    }
 
-      let statusHtml = '';
-      if (!song.isAvailable && song.requiresFile) {
-        statusHtml = `
-          <div class="song-status-box">
-            <span>Arquivo necessário: <strong>${song.requiresFile}</strong></span>
-            <label class="btn-small" style="cursor:pointer; background:#ff2a5f;">
-              VINCULAR ${song.requiresFile}
-              <input type="file" accept="audio/*" class="link-file-input" data-song-id="${song.id}" style="display:none;">
-            </label>
-          </div>
-        `;
-      } else if (song.id === 'tnt-acdc' && song.isAvailable) {
-        statusHtml = `<div class="song-status-box" style="color:#00ff88;">⚡ ÁUDIO TNT.mp3 VINCULADO COM SUCESSO!</div>`;
-      }
+    this.songsListContainer.innerHTML = filtered.map((song, index) => {
+      const isSelected = this.currentSelectedSong?.id === song.id;
 
-      // Best score on this song from profile
+      // Extract highest personal record across difficulties for library view
       let bestStars = 0;
       let bestScore = 0;
-      if (activeProfile?.records[song.id]) {
-        Object.values(activeProfile.records[song.id]).forEach((rec) => {
-          if (rec && rec.score > bestScore) {
-            bestScore = rec.score;
-            bestStars = rec.stars || 1;
+      let lastScore = 0;
+      let bestCombo = 0;
+      let playCount = 0;
+      let bestDiff: Difficulty | null = null;
+
+      if (profile?.records[song.id]) {
+        (['EASY', 'MEDIUM', 'HARD', 'EXPERT'] as Difficulty[]).forEach((d) => {
+          const rec = profile.records[song.id]?.[d];
+          if (rec) {
+            playCount += rec.playCount || 0;
+            const score = rec.bestScore ?? rec.score ?? 0;
+            if (score > bestScore) {
+              bestScore = score;
+              bestStars = rec.bestStars ?? rec.stars ?? 1;
+              bestCombo = rec.bestMaxCombo ?? rec.maxCombo ?? 0;
+              lastScore = rec.lastScore ?? 0;
+              bestDiff = d;
+            }
           }
         });
       }
 
+      // 5 Gold / Empty Stars
+      let starsHtml = '';
+      for (let s = 1; s <= 5; s++) {
+        if (s <= bestStars) {
+          starsHtml += `<span class="star filled">★</span>`;
+        } else {
+          starsHtml += `<span class="star empty-star">☆</span>`;
+        }
+      }
+
+      // Format score with dots
+      const scoreText = bestScore > 0 ? `${bestScore.toLocaleString('pt-BR')} PTS` : 'SEM RECORDE';
+      const scoreClass = bestScore > 0 ? 'row-score' : 'row-score unplayed';
+
+      let fileNoticeHtml = '';
+      if (!song.isAvailable && song.requiresFile) {
+        fileNoticeHtml = `
+          <div class="song-link-box">
+            <span>Arquivo necessário: <strong>${song.requiresFile}</strong></span>
+            <label class="btn-link-file">
+              VINCULAR
+              <input type="file" accept="audio/*" class="link-file-input" data-song-id="${song.id}" style="display:none;">
+            </label>
+          </div>
+        `;
+      }
+
+      // Details drawer when selected
+      let detailsDrawerHtml = '';
+      if (isSelected) {
+        detailsDrawerHtml = `
+          <div class="row-expanded-details">
+            <span><strong>RECORDE:</strong> ${bestScore > 0 ? `${bestScore.toLocaleString('pt-BR')} PTS (${bestDiff})` : 'SEM RECORDE'}</span>
+            <span><strong>ÚLTIMA:</strong> ${lastScore > 0 ? `${lastScore.toLocaleString('pt-BR')} PTS` : '---'}</span>
+            <span><strong>COMBO:</strong> ${bestCombo > 0 ? `${bestCombo}` : '---'}</span>
+            <span><strong>PARTIDAS:</strong> ${playCount}</span>
+          </div>
+        `;
+      }
+
       return `
-        <div class="song-card" data-song-id="${song.id}">
-          <div class="song-card-header">
-            <div>
-              <span class="song-style-badge">${song.style}</span>
-              <h3 class="song-title-text">${song.title}</h3>
-              <span class="song-artist-text">${song.artist}</span>
-            </div>
-            ${bestScore > 0 ? `<div style="text-align:right;"><div style="color:#ffe600; font-size:12px;">${'⭐'.repeat(bestStars)}</div><div style="font-size:10px; color:#8c90a3;">${bestScore.toLocaleString()} pts</div></div>` : ''}
+        <div class="notebook-song-row ${isSelected ? 'selected' : ''}" data-song-id="${song.id}">
+          <span class="row-arrow">➡</span>
+          <div class="row-song-info">
+            <span class="row-song-title">${index + 1}. ${song.title}</span>
+            <span class="row-song-artist">${song.artist}</span>
+            ${fileNoticeHtml}
+            ${detailsDrawerHtml}
           </div>
-
-          <div class="song-meta-row">
-            <span>⏱ ${mins}:${secs}</span>
-            <span>🥁 ${song.bpm} BPM</span>
-            <span>🎸 4 Dificuldades</span>
-          </div>
-
-          ${statusHtml}
-
-          <div class="song-card-actions">
-            <button class="btn-song-play" data-song-id="${song.id}" ${!song.isAvailable ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}>
-              TOCAR
-            </button>
+          <div class="row-song-stats">
+            <div class="row-stars">${starsHtml}</div>
+            <div class="${scoreClass}">${scoreText}</div>
           </div>
         </div>
       `;
     }).join('');
 
-    this.songsListContainer.querySelectorAll('.btn-song-play').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
+    // Row click listeners: select on click, open difficulty on double-click/second click
+    this.songsListContainer.querySelectorAll('.notebook-song-row').forEach((row) => {
+      row.addEventListener('click', (e) => {
+        // If clicked on input, don't re-select
+        if ((e.target as HTMLElement).tagName === 'INPUT' || (e.target as HTMLElement).classList.contains('btn-link-file')) {
+          return;
+        }
+
         const songId = (e.currentTarget as HTMLElement).dataset.songId;
         const song = songs.find((s) => s.id === songId);
-        if (song && song.isAvailable) {
-          this.openDifficultyModal(song, activeProfile);
+        if (!song) return;
+
+        if (this.currentSelectedSong?.id === song.id) {
+          if (song.isAvailable) {
+            this.openDifficultyModal(song, profile);
+          } else {
+            alert(`O arquivo de áudio de "${song.title}" não está disponível no servidor. Utilize "VINCULAR" ou "IMPORTAR MÚSICA" para carregar seu arquivo.`);
+          }
+        } else {
+          this.currentSelectedSong = song;
+          this.renderSongLibrary(songs, profile);
         }
       });
     });
@@ -670,6 +747,8 @@ export class UIManager {
 
   openDifficultyModal(song: SongMetadata, activeProfile?: PlayerProfile | null): void {
     this.currentSelectedSong = song;
+    const profile = activeProfile || this.currentActiveProfile;
+
     const titleEl = document.getElementById('diff-song-title');
     const artistEl = document.getElementById('diff-song-artist');
     if (titleEl) titleEl.textContent = song.title;
@@ -679,11 +758,17 @@ export class UIManager {
     diffs.forEach((d) => {
       const recEl = document.getElementById(`record-${d.toLowerCase()}`);
       if (recEl) {
-        const rec = activeProfile?.records[song.id]?.[d];
-        if (rec) {
-          recEl.textContent = `Recorde: ${rec.score.toLocaleString()} pts (${'⭐'.repeat(rec.stars || 1)})`;
+        const rec = profile?.records[song.id]?.[d];
+        const score = rec?.bestScore ?? rec?.score ?? 0;
+        const stars = rec?.bestStars ?? rec?.stars ?? 0;
+
+        if (rec && score > 0) {
+          const starsStr = '★'.repeat(stars) + '☆'.repeat(Math.max(0, 5 - stars));
+          recEl.textContent = `${score.toLocaleString('pt-BR')} PTS (${starsStr})`;
+          recEl.style.color = '#15803d';
         } else {
-          recEl.textContent = `Ainda não jogado`;
+          recEl.textContent = 'SEM RECORDE';
+          recEl.style.color = '#b71c1c';
         }
       }
     });

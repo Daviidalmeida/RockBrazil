@@ -34,6 +34,13 @@ export interface LeaderboardEntry {
   date: number;
 }
 
+export interface RecordMatchResult {
+  isNewRecord: boolean;
+  previousBestScore: number;
+  newScore: number;
+  record: SongRecord;
+}
+
 export class ProfileManager {
   private static DB_NAME = 'RockBrazilProfilesDB';
   private static STORE_NAME = 'profiles';
@@ -214,33 +221,100 @@ export class ProfileManager {
     }
   }
 
+  getSongRecord(songId: string, diff: Difficulty): SongRecord | null {
+    if (!this.activeProfile) return null;
+    return (this.activeProfile.records[songId]?.[diff] as SongRecord) || null;
+  }
+
   async recordMatch(
     songId: string,
     songTitle: string,
     diff: Difficulty,
     stats: GameStats,
     cleared: boolean
-  ): Promise<void> {
-    if (!this.activeProfile) return;
+  ): Promise<RecordMatchResult> {
+    const timestamp = Date.now();
 
-    const newRecord: SongRecord = {
-      score: stats.score,
-      stars: stats.stars || 1,
-      accuracy: stats.accuracy || 0,
-      maxCombo: stats.maxCombo
-    };
+    if (!this.activeProfile) {
+      const fallbackRecord: SongRecord = {
+        score: stats.score,
+        stars: stats.stars || 1,
+        accuracy: stats.accuracy || 0,
+        maxCombo: stats.maxCombo,
+        bestScore: stats.score,
+        lastScore: stats.score,
+        bestStars: stats.stars || 1,
+        lastStars: stats.stars || 1,
+        bestMaxCombo: stats.maxCombo,
+        lastMaxCombo: stats.maxCombo,
+        bestAccuracy: stats.accuracy || 0,
+        lastAccuracy: stats.accuracy || 0,
+        bestDate: timestamp,
+        lastDate: timestamp,
+        playCount: 1
+      };
+      return { isNewRecord: cleared, previousBestScore: 0, newScore: stats.score, record: fallbackRecord };
+    }
 
     if (!this.activeProfile.records[songId]) {
       this.activeProfile.records[songId] = {};
     }
 
-    const currentBest = this.activeProfile.records[songId][diff];
-    if (!currentBest || newRecord.score > currentBest.score) {
-      this.activeProfile.records[songId][diff] = newRecord;
+    const existing = this.activeProfile.records[songId][diff];
+    const previousPlayCount = existing?.playCount ?? (existing ? 1 : 0);
+    const previousBestScore = existing?.bestScore ?? existing?.score ?? 0;
+    const previousBestStars = existing?.bestStars ?? existing?.stars ?? 0;
+    const previousBestCombo = existing?.bestMaxCombo ?? existing?.maxCombo ?? 0;
+    const previousBestAcc = existing?.bestAccuracy ?? existing?.accuracy ?? 0;
+    const previousBestDate = existing?.bestDate ?? timestamp;
+
+    let isNewRecord = false;
+    let bestScore = previousBestScore;
+    let bestStars = previousBestStars;
+    let bestMaxCombo = previousBestCombo;
+    let bestAccuracy = previousBestAcc;
+    let bestDate = previousBestDate;
+
+    if (cleared) {
+      if (previousBestScore === 0 || stats.score > previousBestScore) {
+        isNewRecord = true;
+        bestScore = stats.score;
+        bestStars = stats.stars || 1;
+        bestMaxCombo = stats.maxCombo;
+        bestAccuracy = stats.accuracy || 0;
+        bestDate = timestamp;
+      }
     }
 
+    const lastScore = stats.score;
+    const lastStars = stats.stars || 1;
+    const lastMaxCombo = stats.maxCombo;
+    const lastAccuracy = stats.accuracy || 0;
+    const lastDate = timestamp;
+    const playCount = previousPlayCount + 1;
+
+    const newRecord: SongRecord = {
+      score: bestScore,
+      stars: bestStars,
+      accuracy: bestAccuracy,
+      maxCombo: bestMaxCombo,
+      bestScore,
+      lastScore,
+      bestStars,
+      lastStars,
+      bestMaxCombo,
+      lastMaxCombo,
+      bestAccuracy,
+      lastAccuracy,
+      bestDate,
+      lastDate,
+      playCount
+    };
+
+    this.activeProfile.records[songId][diff] = newRecord;
+
     const historyItem: MatchHistoryItem = {
-      id: `match_${Date.now()}`,
+      id: `match_${timestamp}`,
       songId,
       songTitle,
       difficulty: diff,
@@ -249,7 +323,7 @@ export class ProfileManager {
       maxCombo: stats.maxCombo,
       stars: stats.stars || 1,
       cleared,
-      date: Date.now()
+      date: timestamp
     };
 
     this.activeProfile.history.unshift(historyItem);
@@ -257,8 +331,15 @@ export class ProfileManager {
       this.activeProfile.history.pop();
     }
 
-    this.activeProfile.lastPlayedAt = Date.now();
+    this.activeProfile.lastPlayedAt = timestamp;
     await this.saveProfileToDB(this.activeProfile);
+
+    return {
+      isNewRecord,
+      previousBestScore,
+      newScore: stats.score,
+      record: newRecord
+    };
   }
 
   async getLeaderboard(songId: string, diff: Difficulty): Promise<LeaderboardEntry[]> {

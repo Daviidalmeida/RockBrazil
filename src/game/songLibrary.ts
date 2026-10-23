@@ -133,20 +133,17 @@ export class SongLibrary {
   }
 
   /**
-   * Save record (score, stars, combo)
+   * Save record (score, stars, combo, last/best stats)
    */
   saveSongRecord(songId: string, difficulty: Difficulty, record: SongRecord): void {
     const song = this.getSongById(songId);
     if (!song) return;
 
-    const existing = song.records[difficulty];
-    if (!existing || record.score > existing.score) {
-      song.records[difficulty] = record;
-      try {
-        localStorage.setItem(`rb_record_${songId}_${difficulty}`, JSON.stringify(record));
-      } catch {
-        // Ignore
-      }
+    song.records[difficulty] = record;
+    try {
+      localStorage.setItem(`rb_record_${songId}_${difficulty}`, JSON.stringify(record));
+    } catch {
+      // Ignore
     }
   }
 

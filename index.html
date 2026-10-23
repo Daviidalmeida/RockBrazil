@@ -7,10 +7,10 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0a0a0f">
-  <title>RockBrazil V5.1 - Rhythm Guitar</title>
+  <title>RockBrazil V5.3 - Rhythm Guitar</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Montserrat:wght@400;600;700;900&family=Permanent+Marker&family=Kalam:wght@400;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
@@ -121,108 +121,143 @@
          OVERLAY SCREENS
          ======================================================== -->
 
-    <!-- 1. MAIN MENU (Exact Image Background with Interactive Button Hotspots) -->
-    <div id="screen-menu" class="overlay-screen active menu-screen-container">
-      <div class="menu-image-wrapper">
+    <!-- 1. MAIN MENU (Notebook Theme) -->
+    <div id="screen-menu" class="overlay-screen active notebook-page menu-screen-container">
+      <div class="notebook-content menu-notebook-wrapper">
         <!-- Profile Pill (Top Left: ENTRAR / Perfil) -->
-        <button id="btn-menu-profile" class="profile-header-pill" aria-label="Entrar ou Trocar Perfil">
+        <button id="btn-menu-profile" class="notebook-profile-pill" aria-label="Entrar ou Trocar Perfil">
           <span id="menu-profile-avatar" class="profile-avatar-icon">👤</span>
           <span id="menu-profile-name" class="profile-player-name">ENTRAR</span>
           <span class="profile-switch-hint">Perfil</span>
         </button>
 
-        <!-- 6 Interactive Hotspot Buttons perfectly positioned over menu-bg.jpg -->
-        <button id="hotspot-jogar" class="menu-hotspot hotspot-jogar" aria-label="Jogar"></button>
-        <button id="hotspot-musicas" class="menu-hotspot hotspot-musicas" aria-label="Minhas Músicas"></button>
-        <button id="hotspot-config" class="menu-hotspot hotspot-config" aria-label="Configurações"></button>
-        <button id="hotspot-ranking" class="menu-hotspot hotspot-ranking" aria-label="Ranking"></button>
-        <button id="hotspot-tutorial" class="menu-hotspot hotspot-tutorial" aria-label="Tutorial"></button>
-        <button id="hotspot-sair" class="menu-hotspot hotspot-sair" aria-label="Sair"></button>
+        <!-- Rock Header Doodle Title -->
+        <div class="menu-notebook-header">
+          <div class="menu-rock-logo">
+            <span class="rock-lightning">⚡</span>
+            <h1 class="menu-rock-title">ROCKBRAZIL</h1>
+            <span class="rock-lightning">⚡</span>
+          </div>
+          <div class="menu-rock-subtitle">GUITAR HERO NOTEBOOK</div>
+          <div class="marker-underline red-marker-scribble"></div>
+        </div>
+
+        <!-- 6 Notebook Menu Buttons -->
+        <div class="menu-notebook-options">
+          <button id="hotspot-jogar" class="notebook-menu-item btn-jogar">
+            <span class="item-num">1.</span>
+            <span class="item-text">JOGAR</span>
+          </button>
+          <button id="hotspot-musicas" class="notebook-menu-item btn-musicas">
+            <span class="item-num">2.</span>
+            <span class="item-text">MINHAS MÚSICAS</span>
+          </button>
+          <button id="hotspot-config" class="notebook-menu-item btn-config">
+            <span class="item-num">3.</span>
+            <span class="item-text">CONFIGURAÇÕES</span>
+          </button>
+          <button id="hotspot-ranking" class="notebook-menu-item btn-ranking">
+            <span class="item-num">4.</span>
+            <span class="item-text">RANKING & HISTÓRICO</span>
+          </button>
+          <button id="hotspot-tutorial" class="notebook-menu-item btn-tutorial">
+            <span class="item-num">5.</span>
+            <span class="item-text">TUTORIAL</span>
+          </button>
+          <button id="hotspot-sair" class="notebook-menu-item btn-sair">
+            <span class="item-num">6.</span>
+            <span class="item-text">SAIR</span>
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- 2. SONG SELECT LIBRARY -->
-    <div id="screen-song-select" class="overlay-screen hidden">
-      <div class="library-container">
-        <div class="library-header">
-          <button id="btn-song-select-back" class="icon-button" aria-label="Voltar">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-            </svg>
-          </button>
-          <h2 id="library-screen-title" class="section-title">BIBLIOTECA DE MÚSICAS</h2>
-          <div class="library-header-actions" style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-            <label for="mp3-file-input" class="btn-import">
-              <span>📁 MP3</span>
-            </label>
-            <input type="file" id="mp3-file-input" accept="audio/*" style="display: none;">
-
-            <label for="zip-file-input" class="btn-import" style="background: linear-gradient(135deg, #ff7b00, #ff2a5f);">
-              <span>📦 ZIP AUTOCHART</span>
-            </label>
-            <input type="file" id="zip-file-input" accept=".zip,application/zip" style="display: none;">
-
-            <button id="btn-open-editor" class="btn-small" style="background:#00d0ff; color:#000; font-weight:800; padding:6px 10px; border-radius:6px; border:none; cursor:pointer;">
-              <span>🎼 EDITOR</span>
-            </button>
-          </div>
+    <!-- 2. SONG SELECT LIBRARY (Image 2 Exact Replica) -->
+    <div id="screen-song-select" class="overlay-screen hidden notebook-page">
+      <div class="notebook-content library-notebook-wrapper">
+        <div class="notebook-header">
+          <h2 id="library-screen-title" class="notebook-page-title">SELEÇÃO DE MÚSICAS</h2>
+          <div class="marker-underline"></div>
         </div>
 
         <!-- Filter Tabs: Todas / Minhas Músicas -->
-        <div class="library-filter-tabs">
-          <button id="tab-songs-all" class="filter-tab active">TODAS AS FAIXAS</button>
-          <button id="tab-songs-custom" class="filter-tab">MINHAS MÚSICAS (MP3)</button>
+        <div class="notebook-filter-row">
+          <button id="tab-songs-all" class="notebook-filter-tab active">TODAS AS FAIXAS</button>
+          <button id="tab-songs-custom" class="notebook-filter-tab">MINHAS MÚSICAS</button>
         </div>
 
-        <!-- Song Cards Scroll List -->
-        <div id="songs-list" class="songs-scroll-list"></div>
+        <!-- Song Rows Scroll List (Aligned with notebook lines) -->
+        <div id="songs-list" class="notebook-songs-list"></div>
+
+        <!-- Footer Buttons Bar (Image 2 Faithful Replication) -->
+        <div class="notebook-footer-bar">
+          <button id="btn-song-select-back" class="notebook-bar-btn btn-back">← VOLTAR</button>
+          <button id="btn-song-select-play" class="notebook-bar-btn btn-select">SELECIONAR</button>
+          <label for="zip-file-input" class="notebook-bar-btn btn-import">IMPORTAR MÚSICA</label>
+          <input type="file" id="zip-file-input" accept=".zip,application/zip" style="display: none;">
+          <input type="file" id="mp3-file-input" accept="audio/*" style="display: none;">
+          <button id="btn-open-editor" class="notebook-bar-mini-btn" title="Editor Visual de Notas">🎼</button>
+        </div>
       </div>
     </div>
 
     <!-- 3. DIFFICULTY SELECT MODAL -->
     <div id="modal-difficulty" class="modal-backdrop hidden">
-      <div class="dialog-card difficulty-dialog">
+      <div class="notebook-dialog-card difficulty-dialog">
         <div class="diff-header">
-          <span class="diff-subtitle">ESCOLHA A DIFICULDADE</span>
-          <h2 id="diff-song-title" class="diff-song-title">Fúria Tropical</h2>
-          <span id="diff-song-artist" class="diff-song-artist">RockBrazil Band</span>
+          <span class="notebook-dialog-subtitle">ESCOLHA A DIFICULDADE</span>
+          <h2 id="diff-song-title" class="notebook-dialog-song-title">Fúria Tropical</h2>
+          <span id="diff-song-artist" class="notebook-dialog-song-artist">RockBrazil Band</span>
+          <div class="marker-underline small"></div>
         </div>
 
         <div class="difficulty-grid">
-          <button class="btn-diff-choice diff-easy" data-diff="EASY">
-            <div class="diff-badge">FÁCIL</div>
-            <div class="diff-desc">Poucas notas • Janela generosa • Baixa perda de vida</div>
-            <div class="diff-record" id="record-easy">-</div>
+          <button class="btn-diff-choice notebook-diff-btn diff-easy" data-diff="EASY">
+            <div class="diff-btn-top">
+              <span class="diff-badge">FÁCIL</span>
+              <span class="diff-lanes">3 PISTAS</span>
+            </div>
+            <div class="diff-desc">Poucas notas • Janela generosa</div>
+            <div class="diff-record" id="record-easy">SEM RECORDE</div>
           </button>
 
-          <button class="btn-diff-choice diff-medium" data-diff="MEDIUM">
-            <div class="diff-badge">MÉDIO</div>
-            <div class="diff-desc">Mais riffs • Acordes simples • Desafio moderado</div>
-            <div class="diff-record" id="record-medium">-</div>
+          <button class="btn-diff-choice notebook-diff-btn diff-medium" data-diff="MEDIUM">
+            <div class="diff-btn-top">
+              <span class="diff-badge">MÉDIO</span>
+              <span class="diff-lanes">4 PISTAS</span>
+            </div>
+            <div class="diff-desc">Mais riffs • Acordes simples</div>
+            <div class="diff-record" id="record-medium">SEM RECORDE</div>
           </button>
 
-          <button class="btn-diff-choice diff-hard" data-diff="HARD">
-            <div class="diff-badge">DIFÍCIL</div>
-            <div class="diff-desc">Sequências rápidas • Acordes frequentes • Notas longas</div>
-            <div class="diff-record" id="record-hard">-</div>
+          <button class="btn-diff-choice notebook-diff-btn diff-hard" data-diff="HARD">
+            <div class="diff-btn-top">
+              <span class="diff-badge">DIFÍCIL</span>
+              <span class="diff-lanes">5 PISTAS</span>
+            </div>
+            <div class="diff-desc">Rápido • Notas longas • Solo</div>
+            <div class="diff-record" id="record-hard">SEM RECORDE</div>
           </button>
 
-          <button class="btn-diff-choice diff-expert" data-diff="EXPERT">
-            <div class="diff-badge">EXPERT</div>
-            <div class="diff-desc">Máxima fidelidade • Alta densidade • Solos técnicos</div>
-            <div class="diff-record" id="record-expert">-</div>
+          <button class="btn-diff-choice notebook-diff-btn diff-expert" data-diff="EXPERT">
+            <div class="diff-btn-top">
+              <span class="diff-badge">EXPERT</span>
+              <span class="diff-lanes">5 PISTAS</span>
+            </div>
+            <div class="diff-desc">Alta densidade • Solos técnicos</div>
+            <div class="diff-record" id="record-expert">SEM RECORDE</div>
           </button>
         </div>
 
         <div class="diff-actions">
-          <button id="btn-diff-cancel" class="btn-ghost">VOLTAR</button>
+          <button id="btn-diff-cancel" class="notebook-bar-btn">← VOLTAR</button>
         </div>
       </div>
     </div>
 
     <!-- 4. MODAL ANÁLISE AUTOMÁTICA DE GUITARRA -->
     <div id="modal-analysis-progress" class="modal-backdrop hidden">
-      <div class="dialog-card analysis-card">
+      <div class="notebook-dialog-card analysis-card">
         <div class="analysis-spinner">⚡</div>
         <h2 class="analysis-title">ANALISANDO GUITARRA...</h2>
         <p id="analysis-step-desc" class="analysis-desc">Detectando ataques, riffs e acordes...</p>
@@ -234,9 +269,9 @@
 
     <!-- 5. SISTEMA DE PERFIS (PRIMEIRA EXECUÇÃO / CRIAR PERFIL) -->
     <div id="modal-profile-create" class="modal-backdrop hidden">
-      <div class="dialog-card profile-card">
+      <div class="notebook-dialog-card profile-card">
         <div class="brand-badge">BEM-VINDO AO ROCKBRAZIL</div>
-        <h2>CRIE SEU PERFIL</h2>
+        <h2 class="notebook-dialog-title">CRIE SEU PERFIL</h2>
         <p class="profile-subtitle">Escolha seu nome de palco e avatar para salvar seus recordes.</p>
 
         <div class="profile-input-group">
@@ -257,42 +292,41 @@
         </div>
 
         <div style="display:flex; gap:8px; width:100%;">
-          <button id="btn-confirm-create-profile" class="btn-primary" style="flex:2;">CONFIRMAR E COMEÇAR</button>
-          <button id="btn-cancel-create-profile" class="btn-ghost" style="flex:1;">CANCELAR</button>
+          <button id="btn-confirm-create-profile" class="notebook-bar-btn btn-select" style="flex:2;">CONFIRMAR E COMEÇAR</button>
+          <button id="btn-cancel-create-profile" class="notebook-bar-btn btn-back" style="flex:1;">CANCELAR</button>
         </div>
       </div>
     </div>
 
     <!-- 6. GERENCIADOR DE PERFIS (ENTRAR / TROCAR / CONVIDADO) -->
     <div id="modal-profile-manager" class="modal-backdrop hidden">
-      <div class="dialog-card profile-mgr-card">
-        <h2>ENTRAR / PERFIS DE JOGADOR</h2>
-        <p class="profile-subtitle" style="font-size:12px; color:#8c90a3; margin-bottom:12px;">
+      <div class="notebook-dialog-card profile-mgr-card">
+        <h2 class="notebook-dialog-title">ENTRAR / PERFIS DE JOGADOR</h2>
+        <p class="profile-subtitle" style="font-size:12px; color:#444; margin-bottom:12px;">
           Selecione seu perfil ou jogue como convidado.
         </p>
         <div id="profiles-scroll-list" class="profiles-list-scroll"></div>
 
         <div class="dialog-buttons" style="flex-direction: column; gap: 8px;">
-          <button id="btn-play-as-guest" class="btn-primary" style="background: linear-gradient(135deg, #00d0ff, #0088cc); color: #fff;">👤 JOGAR COMO CONVIDADO</button>
+          <button id="btn-play-as-guest" class="notebook-bar-btn btn-guest">👤 JOGAR COMO CONVIDADO</button>
           <div style="display:flex; gap:8px; width:100%;">
-            <button id="btn-open-create-new-profile" class="btn-secondary" style="flex:1;">+ NOVO PERFIL</button>
-            <button id="btn-close-profile-manager" class="btn-ghost" style="flex:1;">FECHAR</button>
+            <button id="btn-open-create-new-profile" class="notebook-bar-btn" style="flex:1;">+ NOVO PERFIL</button>
+            <button id="btn-close-profile-manager" class="notebook-bar-btn btn-back" style="flex:1;">FECHAR</button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- 7. RANKING E ESTATÍSTICAS -->
-    <div id="screen-ranking" class="overlay-screen hidden">
-      <div class="library-container">
-        <div class="library-header">
-          <button id="btn-ranking-back" class="icon-button" aria-label="Voltar">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-            </svg>
-          </button>
-          <h2 class="section-title">RANKING & HISTÓRICO</h2>
-          <button id="btn-export-profile-json" class="btn-small">EXPORTAR DADOS</button>
+    <div id="screen-ranking" class="overlay-screen hidden notebook-page">
+      <div class="notebook-content library-notebook-wrapper">
+        <div class="notebook-header">
+          <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+            <button id="btn-ranking-back" class="notebook-bar-btn btn-back" style="padding:4px 10px;">← VOLTAR</button>
+            <h2 class="notebook-page-title" style="margin:0; font-size:24px;">RANKING & HISTÓRICO</h2>
+            <button id="btn-export-profile-json" class="notebook-bar-mini-btn" style="font-size:10px;">EXPORTAR</button>
+          </div>
+          <div class="marker-underline"></div>
         </div>
 
         <div class="ranking-filter-row">
@@ -319,20 +353,21 @@
 
     <!-- 9. PAUSE MENU -->
     <div id="screen-pause" class="overlay-screen hidden">
-      <div class="dialog-card">
-        <h2>PAUSADO</h2>
+      <div class="notebook-dialog-card pause-card">
+        <h2 class="notebook-dialog-title" style="color: #c62828;">PAUSADO</h2>
+        <div class="marker-underline small"></div>
         <div class="dialog-buttons">
-          <button id="btn-resume" class="btn-primary">CONTINUAR</button>
-          <button id="btn-restart-pause" class="btn-secondary">REINICIAR</button>
-          <button id="btn-config-pause" class="btn-secondary">CONFIGURAÇÕES</button>
-          <button id="btn-songs-pause" class="btn-ghost">SAIR DA MÚSICA</button>
+          <button id="btn-resume" class="notebook-bar-btn btn-select">CONTINUAR</button>
+          <button id="btn-restart-pause" class="notebook-bar-btn">REINICIAR</button>
+          <button id="btn-config-pause" class="notebook-bar-btn">CONFIGURAÇÕES</button>
+          <button id="btn-songs-pause" class="notebook-bar-btn btn-back">SAIR DA MÚSICA</button>
         </div>
       </div>
     </div>
 
     <!-- 10. DERROTA (GAME OVER: ROCK METER = 0%) -->
     <div id="screen-game-over" class="overlay-screen hidden">
-      <div class="dialog-card gameover-dialog">
+      <div class="notebook-dialog-card gameover-dialog">
         <div class="gameover-icon">💀</div>
         <h2 class="gameover-title">VOCÊ PERDEU!</h2>
         <p class="gameover-subtitle">O Rock Meter chegou ao mínimo.</p>
@@ -349,30 +384,36 @@
         </div>
 
         <div class="dialog-buttons">
-          <button id="btn-retry-gameover" class="btn-primary">TENTAR NOVAMENTE</button>
-          <button id="btn-songs-gameover" class="btn-secondary">VOLTAR ÀS MÚSICAS</button>
+          <button id="btn-retry-gameover" class="notebook-bar-btn btn-select">TENTAR NOVAMENTE</button>
+          <button id="btn-songs-gameover" class="notebook-bar-btn btn-back">VOLTAR ÀS MÚSICAS</button>
         </div>
       </div>
     </div>
 
     <!-- 11. FINAL DA MÚSICA (SHOW CONCLUÍDO) -->
-    <div id="screen-result" class="overlay-screen hidden">
-      <div class="dialog-card result-dialog">
+    <div id="screen-result" class="overlay-screen hidden notebook-page">
+      <div class="notebook-dialog-card result-dialog">
         <div class="result-badge">MÚSICA CONCLUÍDA!</div>
         <h2 id="result-song-title" class="result-song-name">Fúria Tropical</h2>
 
+        <!-- New Personal Record Celebratory Stamp Banner -->
+        <div id="result-record-banner" class="notebook-record-banner hidden">
+          <div class="record-banner-title">★ NOVO RECORDE PESSOAL! ★</div>
+          <div id="result-record-detail" class="record-banner-detail">Recorde anterior superado!</div>
+        </div>
+
         <!-- 1 to 5 Stars Glow Rating -->
         <div id="result-stars-row" class="stars-row">
-          <span class="star-item">⭐</span>
-          <span class="star-item">⭐</span>
-          <span class="star-item">⭐</span>
-          <span class="star-item">⭐</span>
-          <span class="star-item">⭐</span>
+          <span class="star-item">★</span>
+          <span class="star-item">★</span>
+          <span class="star-item">★</span>
+          <span class="star-item">★</span>
+          <span class="star-item">★</span>
         </div>
 
         <div class="result-score-block">
           <span class="result-label">PONTUAÇÃO FINAL</span>
-          <span id="result-score" class="result-val">0</span>
+          <span id="result-score" class="result-val">0 PTS</span>
         </div>
 
         <div class="result-stats-grid">
@@ -403,17 +444,18 @@
         </div>
 
         <div class="dialog-buttons">
-          <button id="btn-play-again" class="btn-primary">JOGAR NOVAMENTE</button>
-          <button id="btn-next-song" class="btn-secondary">PRÓXIMA MÚSICA</button>
-          <button id="btn-menu-result" class="btn-ghost">VOLTAR AO MENU</button>
+          <button id="btn-play-again" class="notebook-bar-btn btn-select">JOGAR NOVAMENTE</button>
+          <button id="btn-next-song" class="notebook-bar-btn">PRÓXIMA MÚSICA</button>
+          <button id="btn-menu-result" class="notebook-bar-btn btn-back">VOLTAR AO MENU</button>
         </div>
       </div>
     </div>
 
     <!-- 12. CONFIGURAÇÕES -->
-    <div id="screen-settings" class="overlay-screen hidden">
-      <div class="dialog-card settings-card">
-        <h2 class="settings-title">CONFIGURAÇÕES</h2>
+    <div id="screen-settings" class="overlay-screen hidden notebook-page">
+      <div class="notebook-dialog-card settings-card">
+        <h2 class="notebook-dialog-title">CONFIGURAÇÕES</h2>
+        <div class="marker-underline small"></div>
 
         <div class="settings-group">
           <label for="cfg-volume-music">Volume da Música: <span id="val-cfg-music">85%</span></label>
@@ -429,7 +471,7 @@
           <label for="cfg-offset">Calibração de Áudio (Offset): <span id="val-cfg-offset">0 ms</span></label>
           <div class="offset-control">
             <input type="range" id="cfg-offset" min="-200" max="200" step="5" value="0" class="rock-slider">
-            <button id="btn-test-beep" class="btn-small">TESTAR BEEP</button>
+            <button id="btn-test-beep" class="notebook-bar-mini-btn">TESTAR BEEP</button>
           </div>
           <span class="settings-hint">Ajuste se o áudio estiver adiantado ou atrasado no seu fone/Bluetooth.</span>
         </div>
@@ -445,20 +487,21 @@
         </div>
 
         <div class="dialog-buttons">
-          <button id="btn-save-settings" class="btn-primary">SALVAR E FECHAR</button>
+          <button id="btn-save-settings" class="notebook-bar-btn btn-select">SALVAR E FECHAR</button>
         </div>
       </div>
     </div>
 
     <!-- 13. TUTORIAL (COMO JOGAR) -->
-    <div id="screen-howtoplay" class="overlay-screen hidden">
-      <div class="dialog-card tutorial-card">
-        <h2>TUTORIAL & AJUDA</h2>
+    <div id="screen-howtoplay" class="overlay-screen hidden notebook-page">
+      <div class="notebook-dialog-card tutorial-card">
+        <h2 class="notebook-dialog-title">TUTORIAL & AJUDA</h2>
+        <div class="marker-underline small"></div>
         <div class="tutorial-content">
           <div class="tutorial-step">
             <div class="step-badge">1</div>
             <div>
-              <strong>5 Pistas Verticais:</strong> Toque diretamente nos 5 botões circulares coloridos na base da tela quando a nota passar na linha de julgamento.
+              <strong>Pistas Verticais:</strong> Toque nos botões circulares coloridos na base da tela quando a nota passar na linha de julgamento.
             </div>
           </div>
           <div class="tutorial-step">
@@ -476,7 +519,7 @@
           <div class="tutorial-step">
             <div class="step-badge">4</div>
             <div>
-              <strong>Medidor Vertical de Rock:</strong> O medidor lateral começa em nível intermediário. Acertos sobem o ponteiro para a zona verde; erros derrubam para a zona vermelha. Se chegar a zero: DERROTA!
+              <strong>Medidor Vertical de Rock:</strong> Acertos sobem o ponteiro para a zona verde; erros derrubam para a vermelha. Se chegar a zero: DERROTA!
             </div>
           </div>
           <div class="tutorial-step">
@@ -486,7 +529,7 @@
             </div>
           </div>
         </div>
-        <button id="btn-close-howtoplay" class="btn-primary">VOLTAR AO MENU</button>
+        <button id="btn-close-howtoplay" class="notebook-bar-btn btn-back">VOLTAR AO MENU</button>
       </div>
     </div>
 
