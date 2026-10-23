@@ -526,23 +526,32 @@ export class UIManager {
     }
   }
 
-  showHitFeedback(judgment: HitJudgment): void {
+  resetHUD(): void {
     if (this.feedbackTimer) clearTimeout(this.feedbackTimer);
+    this.hudScore.textContent = '0';
+    this.hudMultiplier.textContent = '1X';
+    this.hudMultiplier.className = 'multiplier-badge mult-1x';
+    this.hudProgressBar.style.width = '0%';
+    this.hudComboContainer.classList.add('hidden');
+    this.hudComboNumber.textContent = '0';
+    this.meterNeedle.style.bottom = '50%';
+    this.meterPctText.textContent = '50%';
+    this.meterDangerLed.classList.add('hidden');
+    if (this.hudAccuracyFeedback) {
+      this.hudAccuracyFeedback.textContent = '';
+      this.hudAccuracyFeedback.className = 'accuracy-text';
+    }
+    this.fretButtons.forEach((btn) => btn.classList.remove('pressed'));
+  }
 
-    const textMap: Record<HitJudgment, { label: string; cls: string }> = {
-      PERFECT: { label: 'PERFEITO!', cls: 'accuracy-perfect' },
-      GREAT: { label: 'ÓTIMO!', cls: 'accuracy-great' },
-      GOOD: { label: 'BOM!', cls: 'accuracy-good' },
-      MISS: { label: 'ERROU!', cls: 'accuracy-miss' }
-    };
-
-    const info = textMap[judgment];
-    this.hudAccuracyFeedback.textContent = info.label;
-    this.hudAccuracyFeedback.className = `accuracy-text show ${info.cls}`;
-
-    this.feedbackTimer = window.setTimeout(() => {
-      this.hudAccuracyFeedback.classList.remove('show');
-    }, 450);
+  showHitFeedback(_judgment: HitJudgment): void {
+    // V5.1: Textos flutuantes de julgamento removidos conforme Prioridade 2
+    // A visualização das notas fica 100% limpa, mantendo a precisão, combo,
+    // pontuação e feedback luminoso discreto nos botões.
+    if (this.hudAccuracyFeedback) {
+      this.hudAccuracyFeedback.textContent = '';
+      this.hudAccuracyFeedback.className = 'accuracy-text';
+    }
   }
 
   showGameOver(stats: GameStats): void {

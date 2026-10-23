@@ -88,13 +88,17 @@ export class AudioManager {
   }
 
   /**
-   * Play an AudioBuffer (imported MP3 or TNT.mp3)
+   * Play an AudioBuffer (imported MP3, AutoChart stems, or loaded file)
    */
   playAudioBuffer(buffer: AudioBuffer, offset = 0): void {
     this.stop();
     this.isUsingProcedural = false;
     this.currentAudioBuffer = buffer;
     if (!this.ctx) return;
+
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(() => {});
+    }
 
     this.fileStartTime = this.ctx.currentTime - offset;
     this.filePauseOffset = offset;
@@ -105,9 +109,17 @@ export class AudioManager {
     this.fileGainNode.gain.setValueAtTime(this.settings.musicVolume, this.ctx.currentTime);
     this.fileGainNode.connect(this.ctx.destination);
 
-    this.activeBufferSource = this.ctx.createBufferSource();
-    this.activeBufferSource.buffer = buffer;
-    this.activeBufferSource.connect(this.fileGainNode);
+    const source = this.ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(this.fileGainNode);
+
+    source.onended = () => {
+      if (this.activeBufferSource === source) {
+        this.isFilePlaying = false;
+      }
+    };
+
+    this.activeBufferSource = source;
     this.activeBufferSource.start(0, offset);
   }
 
@@ -120,6 +132,7 @@ export class AudioManager {
       this.filePauseOffset = this.ctx.currentTime - this.fileStartTime;
       if (this.activeBufferSource) {
         try {
+          this.activeBufferSource.onended = null;
           this.activeBufferSource.stop();
           this.activeBufferSource.disconnect();
         } catch {
@@ -144,9 +157,11 @@ export class AudioManager {
     this.isFilePlaying = false;
     this.isFilePaused = false;
     this.filePauseOffset = 0;
+    this.fileStartTime = 0;
 
     if (this.activeBufferSource) {
       try {
+        this.activeBufferSource.onended = null;
         this.activeBufferSource.stop();
         this.activeBufferSource.disconnect();
       } catch {

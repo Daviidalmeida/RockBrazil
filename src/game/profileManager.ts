@@ -56,6 +56,34 @@ export class ProfileManager {
     history: []
   };
 
+  private static getStorageItem(key: string): string | null {
+    try {
+      return typeof localStorage !== 'undefined' ? localStorage.getItem(key) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private static setStorageItem(key: string, val: string): void {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(key, val);
+      }
+    } catch {
+      // Ignore
+    }
+  }
+
+  private static removeStorageItem(key: string): void {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem(key);
+      }
+    } catch {
+      // Ignore
+    }
+  }
+
   private static async openDB(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
       const req = indexedDB.open(this.DB_NAME, 1);
@@ -78,20 +106,20 @@ export class ProfileManager {
       return { isFirstRun: true, activeProfile: ProfileManager.GUEST_PROFILE };
     }
 
-    const savedActiveId = localStorage.getItem('rb_active_profile_id');
+    const savedActiveId = ProfileManager.getStorageItem('rb_active_profile_id');
     let current = profiles.find((p) => p.id === savedActiveId);
     if (!current) {
       current = savedActiveId === 'guest' ? ProfileManager.GUEST_PROFILE : profiles[0];
     }
 
     this.activeProfile = current;
-    localStorage.setItem('rb_active_profile_id', current.id);
+    ProfileManager.setStorageItem('rb_active_profile_id', current.id);
     return { isFirstRun: false, activeProfile: current };
   }
 
   setGuestMode(): PlayerProfile {
     this.activeProfile = ProfileManager.GUEST_PROFILE;
-    localStorage.setItem('rb_active_profile_id', 'guest');
+    ProfileManager.setStorageItem('rb_active_profile_id', 'guest');
     return ProfileManager.GUEST_PROFILE;
   }
 
@@ -137,7 +165,7 @@ export class ProfileManager {
 
     await this.saveProfileToDB(newProfile);
     this.activeProfile = newProfile;
-    localStorage.setItem('rb_active_profile_id', newProfile.id);
+    ProfileManager.setStorageItem('rb_active_profile_id', newProfile.id);
     return newProfile;
   }
 
@@ -146,7 +174,7 @@ export class ProfileManager {
     const target = profiles.find((p) => p.id === id);
     if (target) {
       this.activeProfile = target;
-      localStorage.setItem('rb_active_profile_id', target.id);
+      ProfileManager.setStorageItem('rb_active_profile_id', target.id);
       return target;
     }
     return null;
@@ -175,9 +203,9 @@ export class ProfileManager {
       if (this.activeProfile?.id === id) {
         this.activeProfile = remaining.length > 0 ? remaining[0] : null;
         if (this.activeProfile) {
-          localStorage.setItem('rb_active_profile_id', this.activeProfile.id);
+          ProfileManager.setStorageItem('rb_active_profile_id', this.activeProfile.id);
         } else {
-          localStorage.removeItem('rb_active_profile_id');
+          ProfileManager.removeStorageItem('rb_active_profile_id');
         }
       }
       return true;
@@ -308,7 +336,7 @@ export class ProfileManager {
 
   private loadProfilesFallback(): PlayerProfile[] {
     try {
-      const data = localStorage.getItem('rb_profiles_fallback');
+      const data = ProfileManager.getStorageItem('rb_profiles_fallback');
       return data ? JSON.parse(data) : [];
     } catch {
       return [];
@@ -321,7 +349,7 @@ export class ProfileManager {
       const idx = profiles.findIndex((p) => p.id === profile.id);
       if (idx >= 0) profiles[idx] = profile;
       else profiles.push(profile);
-      localStorage.setItem('rb_profiles_fallback', JSON.stringify(profiles));
+      ProfileManager.setStorageItem('rb_profiles_fallback', JSON.stringify(profiles));
     } catch {
       // Ignore
     }

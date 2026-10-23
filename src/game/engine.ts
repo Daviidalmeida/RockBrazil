@@ -35,7 +35,13 @@ export class GameEngine {
   }
 
   reset(notes: Note[], difficulty: Difficulty = this.difficulty): void {
-    this.notes = notes.map((n) => ({ ...n }));
+    this.notes = notes.map((n) => ({
+      ...n,
+      hit: false,
+      missed: false,
+      sustainCompleted: false,
+      sustainHeldTime: 0
+    }));
     this.difficulty = difficulty;
     this.activePressedLanes.clear();
     this.score = 0;
@@ -48,6 +54,19 @@ export class GameEngine {
     this.missCount = 0;
     this.isDead = false;
     this.lastSustainTickTime = 0;
+  }
+
+  /**
+   * Returns true if there are still notes that have not been hit or missed
+   */
+  hasPendingNotes(rawCurrentTime: number): boolean {
+    const currentTime = this.adjustTime(rawCurrentTime);
+    const windows = this.getWindows();
+    return this.notes.some((n) => {
+      if (!n.hit && !n.missed && currentTime <= n.time + windows.good) return true;
+      if (n.hit && n.duration > 0 && !n.sustainCompleted && currentTime < n.time + n.duration) return true;
+      return false;
+    });
   }
 
   // Timing windows based on difficulty

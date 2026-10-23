@@ -28,7 +28,8 @@ class RockBrazilGame {
 
   private activeLanes: Set<Lane> = new Set();
   private pointerLaneMap: Map<number, Lane> = new Map();
-  private isLoopRunning = false;
+  private currentMatchSessionId = 0;
+  private countdownTimer: number | null = null;
 
   private keyLaneMap: Record<string, Lane> = {
     'a': 0, 'A': 0, '1': 0, 'd': 0, 'D': 0,
@@ -73,6 +74,9 @@ class RockBrazilGame {
     this.setupInputHandlers();
     this.setupWindowResize();
 
+    // Start continuous render/game loop
+    requestAnimationFrame(this.gameLoop);
+
     this.initGame();
   }
 
@@ -113,9 +117,8 @@ class RockBrazilGame {
 
   private setupEngineCallbacks(): void {
     this.engine.onHit = (result: HitResult) => {
-      this.ui.showHitFeedback(result.judgment);
+      // V5.1: Textos flutuantes de julgamento removidos conforme Prioridade 2
       this.renderer.spawnHitParticles(result.lane);
-      // Áudio artificial removido conforme regra: o som principal é a música!
 
       if (result.multiplier >= 3) {
         this.renderer.triggerShake(result.multiplier * 2);
@@ -123,7 +126,7 @@ class RockBrazilGame {
     };
 
     this.engine.onMiss = () => {
-      this.ui.showHitFeedback('MISS');
+      // V5.1: Textos flutuantes de julgamento removidos conforme Prioridade 2
       this.renderer.triggerShake(4);
     };
 
@@ -197,47 +200,7 @@ class RockBrazilGame {
 
     // Gameplay
     this.ui.onPlayGameRequested = async (song, diff) => {
-      this.currentSong = song;
-      this.currentDifficulty = diff;
-
-      // Se for música baseada em arquivo e ainda não carregou o áudio
-      if (song.type === 'audio-file' && !song.audioBuffer) {
-        if (song.id === 'tnt-acdc') {
-          try {
-            this.ui.showAnalysisProgress(true, 'Carregando áudio e mapa oficial de T.N.T. (AC/DC)...');
-            await this.audio.init();
-            const ctx = this.audio.audioContext;
-            if (!ctx) throw new Error('AudioContext não disponível.');
-
-            const pkg = await ZipChartLoader.loadLocalTNT(ctx);
-            this.library.attachAudioBuffer('tnt-acdc', pkg.audioBuffer, pkg.duration);
-            song.audioBuffer = pkg.audioBuffer;
-            song.duration = pkg.duration;
-            song.bpm = pkg.bpm;
-
-            // Salva as 4 dificuldades reais do MIDI (161, 305, 409, 599 notas)
-            (['EASY', 'MEDIUM', 'HARD', 'EXPERT'] as Difficulty[]).forEach((d) => {
-              this.beatmaps.saveBeatmap('tnt-acdc', d, pkg.charts[d]);
-            });
-            console.log(`⚡ T.N.T. carregado com sucesso (${pkg.notesCount[diff]} notas em ${diff})!`);
-          } catch (err: any) {
-            console.warn('Falha ao carregar pacote AutoChart, tentando fallback MP3:', err);
-            try {
-              const buffer = await this.audio.decodeAudioUrl('/custom-songs/TNT.mp3');
-              this.library.attachAudioBuffer('tnt-acdc', buffer, buffer.duration);
-              song.audioBuffer = buffer;
-            } catch (err2: any) {
-              this.ui.showAnalysisProgress(false);
-              alert('Não foi possível carregar T.N.T.: ' + (err2.message || err2));
-              return;
-            }
-          } finally {
-            this.ui.showAnalysisProgress(false);
-          }
-        }
-      }
-
-      this.startCountdown();
+      await this.startNewMatch(song, diff);
     };
 
     this.ui.onPlayAsGuestClicked = () => {
@@ -449,12 +412,12 @@ class RockBrazilGame {
 
     document.getElementById('btn-editor-test-play')?.addEventListener('click', () => {
       this.editor.close();
-      this.startCountdown();
+      this.startNewMatch(this.currentSong, this.currentDifficulty);
     });
 
-    this.editor.onTestPlayRequested = (_song, _diff, notes) => {
+    this.editor.onTestPlayRequested = (song, diff, notes) => {
       this.editor.close();
-      this.startCountdown(notes);
+      this.startNewMatch(song, diff, notes);
     };
   }
 
@@ -564,11 +527,80 @@ class RockBrazilGame {
     }
   }
 
-  private async startCountdown(customNotes?: Note[]): Promise<void> {
-    await this.audio.init();
+  private clearCountdown(): void {
+    if (this.countdownTimer !== null) {
+      clearInterval(this.countdownTimer);
+      this.countdownTimer = null;
+    }
+  }
 
+  private async startNewMatch(song: SongMetadata, difficulty: Difficulty, customNotes?: Note[]): Promise<void> {
+    const sessionId = ++this.currentMatchSessionId;
+    this.clearCountdown();
+    this.audio.stop();
+
+    this.currentSong = song;
+    this.currentDifficulty = difficulty;
+
+    // Se for música baseada em arquivo e ainda não carregou o áudio
+    if (song.type === 'audio-file' && !song.audioBuffer) {
+      if (song.id === 'tnt-acdc') {
+        try {
+          this.ui.showAnalysisProgress(true, 'Carregando áudio e mapa oficial de T.N.T. (AC/DC)...');
+          await this.audio.init();
+          const ctx = this.audio.audioContext;
+          if (!ctx) throw new Error('AudioContext não disponível.');
+
+          const pkg = await ZipChartLoader.loadLocalTNT(ctx);
+          if (sessionId !== this.currentMatchSessionId) return;
+
+          this.library.attachAudioBuffer('tnt-acdc', pkg.audioBuffer, pkg.duration);
+          song.audioBuffer = pkg.audioBuffer;
+          song.duration = pkg.duration;
+          song.bpm = pkg.bpm;
+
+          // Salva as 4 dificuldades reais do MIDI (161, 305, 409, 599 notas)
+          (['EASY', 'MEDIUM', 'HARD', 'EXPERT'] as Difficulty[]).forEach((d) => {
+            this.beatmaps.saveBeatmap('tnt-acdc', d, pkg.charts[d]);
+          });
+          console.log(`⚡ T.N.T. carregado com sucesso (${pkg.notesCount[difficulty]} notas em ${difficulty})!`);
+        } catch (err: any) {
+          console.warn('Falha ao carregar pacote AutoChart, tentando fallback MP3:', err);
+          try {
+            const buffer = await this.audio.decodeAudioUrl('/custom-songs/TNT.mp3');
+            if (sessionId !== this.currentMatchSessionId) return;
+            this.library.attachAudioBuffer('tnt-acdc', buffer, buffer.duration);
+            song.audioBuffer = buffer;
+          } catch (err2: any) {
+            this.ui.showAnalysisProgress(false);
+            alert('Não foi possível carregar o áudio de T.N.T.: ' + (err2.message || err2));
+            return;
+          }
+        } finally {
+          this.ui.showAnalysisProgress(false);
+        }
+      }
+    }
+
+    if (sessionId !== this.currentMatchSessionId) return;
+    await this.startCountdown(sessionId, customNotes);
+  }
+
+  private async startCountdown(sessionId: number, customNotes?: Note[]): Promise<void> {
+    this.clearCountdown();
+    this.audio.stop();
+
+    await this.audio.init();
+    if (sessionId !== this.currentMatchSessionId) return;
+
+    // Reinicializa o motor com notas independentes (cópia profunda)
     const notes = customNotes || this.beatmaps.getBeatmap(this.currentSong.id, this.currentDifficulty);
     this.engine.reset(notes, this.currentDifficulty);
+
+    // Reinicializa completamente o HUD e as entradas de toque
+    this.ui.resetHUD();
+    this.activeLanes.clear();
+    this.pointerLaneMap.clear();
 
     this.state = GameState.COUNTDOWN;
     this.ui.showScreen(GameState.COUNTDOWN);
@@ -577,7 +609,12 @@ class RockBrazilGame {
     this.ui.setCountdown(count.toString());
     this.audio.playSfxCountdown();
 
-    const timer = setInterval(() => {
+    this.countdownTimer = window.setInterval(() => {
+      if (sessionId !== this.currentMatchSessionId) {
+        this.clearCountdown();
+        return;
+      }
+
       count--;
       if (count > 0) {
         this.ui.setCountdown(count.toString());
@@ -586,13 +623,17 @@ class RockBrazilGame {
         this.ui.setCountdown('ROCK!');
         this.audio.playSfxRockStart();
       } else {
-        clearInterval(timer);
-        this.startGameplay();
+        this.clearCountdown();
+        if (sessionId === this.currentMatchSessionId) {
+          this.startGameplay(sessionId);
+        }
       }
     }, 850);
   }
 
-  private startGameplay(): void {
+  private startGameplay(sessionId: number): void {
+    if (sessionId !== this.currentMatchSessionId) return;
+
     this.state = GameState.PLAYING;
     this.ui.showScreen(GameState.PLAYING);
 
@@ -600,11 +641,6 @@ class RockBrazilGame {
       this.audio.playProceduralTrack(this.currentSong.proceduralTrackId, 0);
     } else if (this.currentSong.audioBuffer) {
       this.audio.playAudioBuffer(this.currentSong.audioBuffer, 0);
-    }
-
-    if (!this.isLoopRunning) {
-      this.isLoopRunning = true;
-      requestAnimationFrame(this.gameLoop);
     }
   }
 
@@ -623,11 +659,11 @@ class RockBrazilGame {
   }
 
   private restartGame(): void {
-    this.audio.stop();
-    this.startCountdown();
+    this.startNewMatch(this.currentSong, this.currentDifficulty);
   }
 
   private handleGameOver(stats: any): void {
+    this.clearCountdown();
     this.audio.stop();
     this.audio.playSfxGameOver();
     this.state = GameState.GAME_OVER;
@@ -645,31 +681,30 @@ class RockBrazilGame {
 
   private playNextSong(): void {
     const all = this.library.getSongs().filter((s) => s.isAvailable);
+    if (all.length === 0) return;
     const idx = all.findIndex((s) => s.id === this.currentSong.id);
     const nextIdx = (idx + 1) % all.length;
-    this.currentSong = all[nextIdx];
-    this.startCountdown();
+    const nextSong = all[nextIdx];
+    this.startNewMatch(nextSong, this.currentDifficulty);
   }
 
   private gameLoop = (): void => {
     if (this.state === GameState.PLAYING) {
       const currentTime = this.audio.getCurrentTime();
 
-      if (currentTime >= this.currentSong.duration) {
+      // Finaliza apenas quando atingir a duração total do áudio E não houver notas pendentes
+      if (currentTime >= this.currentSong.duration && !this.engine.hasPendingNotes(currentTime)) {
         this.finishSong();
-        return;
+      } else {
+        this.engine.update(currentTime);
+        this.renderer.render(
+          currentTime,
+          this.engine.getNotes(),
+          this.activeLanes,
+          this.currentSong.bpm
+        );
+        this.ui.updateHUD(this.engine.getStats(), currentTime, this.currentSong.duration);
       }
-
-      this.engine.update(currentTime);
-
-      this.renderer.render(
-        currentTime,
-        this.engine.getNotes(),
-        this.activeLanes,
-        this.currentSong.bpm
-      );
-
-      this.ui.updateHUD(this.engine.getStats(), currentTime, this.currentSong.duration);
     } else if (this.state === GameState.COUNTDOWN || this.state === GameState.PAUSED || this.state === GameState.MENU) {
       const currentTime = this.audio.getCurrentTime();
       this.renderer.render(
@@ -680,17 +715,19 @@ class RockBrazilGame {
       );
     }
 
+    // O loop continua executando continuamente sem travar em partidas consecutivas
     requestAnimationFrame(this.gameLoop);
   };
 
   private finishSong(): void {
+    this.clearCountdown();
     this.audio.stop();
     this.audio.playSfxVictory();
     this.state = GameState.RESULTS;
 
     const stats = this.engine.getStats();
 
-    // Save record in ProfileManager & SongLibrary
+    // Salva recordes isolados para esta partida no perfil
     this.profileManager.recordMatch(
       this.currentSong.id,
       this.currentSong.title,
@@ -706,6 +743,7 @@ class RockBrazilGame {
       maxCombo: stats.maxCombo
     });
 
+    // Exibe tela de resultados exclusiva da partida que acabou de terminar
     this.ui.showResults(this.currentSong, stats);
   }
 }
