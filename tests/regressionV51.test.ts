@@ -7,6 +7,7 @@ import { MidiChartParser } from '../src/audio/midiChartParser';
 import { Note, GameSettings, Difficulty, HitResult } from '../src/types';
 import * as fs from 'fs';
 import * as path from 'path';
+import { ensureFixtureFilesExist } from './fixtures/midiFixture';
 
 // Polyfill in-memory localStorage for node test runner
 if (typeof localStorage === 'undefined') {
@@ -38,20 +39,20 @@ describe('RockBrazil V5.1 - Testes de Regressão e Estabilização', () => {
     profileManager = new ProfileManager();
   });
 
-  // 1. Jogar T.N.T. e concluir
-  it('1. deve simular partida de T.N.T. e verificar conclusão', () => {
-    const midiPath = path.resolve(__dirname, '../public/custom-songs/acdc_tnt/ACDC - T.N.T/notes.mid');
+  // 1. Jogar partida com gráfico MIDI e verificar conclusão
+  it('1. deve simular partida com gráfico MIDI importado e verificar conclusão', () => {
+    const { midiPath } = ensureFixtureFilesExist();
     expect(fs.existsSync(midiPath)).toBe(true);
 
     const midiBuf = fs.readFileSync(midiPath);
     const charts = MidiChartParser.parse(midiBuf);
     const engine = new GameEngine(charts.EASY, 'EASY', settings);
 
-    // Simula passagem do tempo até o fim
-    engine.update(10.0);
+    // Simula passagem do tempo até o fim das notas
+    engine.update(charts.duration + 5.0);
     const stats = engine.getStats();
     expect(stats.rockMeter).toBeGreaterThanOrEqual(0);
-    expect(engine.hasPendingNotes(220.0)).toBe(false);
+    expect(engine.hasPendingNotes(charts.duration + 10.0)).toBe(false);
   });
 
   // 2. Voltar ao menu e iniciar outra música
@@ -75,9 +76,9 @@ describe('RockBrazil V5.1 - Testes de Regressão e Estabilização', () => {
     expect(engine.getNotes().length).toBe(trovaoNotes.length);
   });
 
-  // 3. Voltar e jogar T.N.T. novamente
-  it('3. deve permitir jogar T.N.T. repetidamente com notas frescas e independentes', () => {
-    const midiPath = path.resolve(__dirname, '../public/custom-songs/acdc_tnt/ACDC - T.N.T/notes.mid');
+  // 3. Voltar e jogar gráfico MIDI novamente
+  it('3. deve permitir jogar gráfico MIDI repetidamente com notas frescas e independentes', () => {
+    const { midiPath } = ensureFixtureFilesExist();
     const charts = MidiChartParser.parse(fs.readFileSync(midiPath));
 
     const engine = new GameEngine(charts.EASY, 'EASY', settings);
@@ -237,15 +238,15 @@ describe('RockBrazil V5.1 - Testes de Regressão e Estabilização', () => {
     expect(engine.getStats().score).toBeGreaterThan(hit0!.scoreGained + hit2!.scoreGained);
   });
 
-  // 12. Exibir todas as notas presentes no MIDI
-  it('12. deve carregar todas as 161, 305, 409 e 599 notas de T.N.T.', () => {
-    const midiPath = path.resolve(__dirname, '../public/custom-songs/acdc_tnt/ACDC - T.N.T/notes.mid');
+  // 12. Exibir todas as notas presentes no MIDI para todas as dificuldades
+  it('12. deve carregar todas as 12, 24, 36 e 48 notas da fixture MIDI nas 4 dificuldades', () => {
+    const { midiPath } = ensureFixtureFilesExist();
     const parsed = MidiChartParser.parse(fs.readFileSync(midiPath));
 
-    expect(parsed.EASY.length).toBe(161);
-    expect(parsed.MEDIUM.length).toBe(305);
-    expect(parsed.HARD.length).toBe(409);
-    expect(parsed.EXPERT.length).toBe(599);
+    expect(parsed.EASY.length).toBe(12);
+    expect(parsed.MEDIUM.length).toBe(24);
+    expect(parsed.HARD.length).toBe(36);
+    expect(parsed.EXPERT.length).toBe(48);
   });
 
   // 13. Encerrar apenas quando apropriado

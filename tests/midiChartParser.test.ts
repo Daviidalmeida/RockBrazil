@@ -1,44 +1,49 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { MidiChartParser } from '../src/audio/midiChartParser';
 import * as fs from 'fs';
 import * as path from 'path';
+import { ensureFixtureFilesExist } from './fixtures/midiFixture';
 
 describe('MidiChartParser - Leitor de Gráficos MIDI do Rock Band / Clone Hero', () => {
-  const midiPath = path.resolve(__dirname, '../public/custom-songs/acdc_tnt/ACDC - T.N.T/notes.mid');
-  const iniPath = path.resolve(__dirname, '../public/custom-songs/acdc_tnt/ACDC - T.N.T/song.ini');
+  let midiPath: string;
+  let iniPath: string;
 
-  it('deve extrair metadados do song.ini corretamente', () => {
-    if (fs.existsSync(iniPath)) {
-      const iniText = fs.readFileSync(iniPath, 'utf8');
-      const meta = MidiChartParser.parseSongIni(iniText);
-      expect(meta.name).toBe('T.N.T');
-      expect(meta.artist).toBe('ACDC');
-      expect(meta.charter).toBe('autochart.eu');
-    }
+  beforeAll(() => {
+    const fixtures = ensureFixtureFilesExist();
+    midiPath = fixtures.midiPath;
+    iniPath = fixtures.iniPath;
   });
 
-  it('deve analisar notes.mid e gerar notas para todas as 4 dificuldades', () => {
-    if (fs.existsSync(midiPath)) {
-      const buffer = fs.readFileSync(midiPath);
-      const parsed = MidiChartParser.parse(buffer);
+  it('deve extrair metadados do song.ini corretamente', () => {
+    expect(fs.existsSync(iniPath)).toBe(true);
+    const iniText = fs.readFileSync(iniPath, 'utf8');
+    const meta = MidiChartParser.parseSongIni(iniText);
+    expect(meta.name).toBe('Synthetic Rock Test');
+    expect(meta.artist).toBe('RockBrazil Engine');
+    expect(meta.charter).toBe('RockBrazil Core');
+  });
 
-      expect(parsed.EASY.length).toBe(161);
-      expect(parsed.MEDIUM.length).toBe(305);
-      expect(parsed.HARD.length).toBe(409);
-      expect(parsed.EXPERT.length).toBe(599);
+  it('deve analisar arquivo MIDI sintético e gerar notas para todas as 4 dificuldades', () => {
+    expect(fs.existsSync(midiPath)).toBe(true);
+    const buffer = fs.readFileSync(midiPath);
+    const parsed = MidiChartParser.parse(buffer);
 
-      expect(parsed.duration).toBeGreaterThan(210);
-      expect(parsed.bpm).toBe(124);
+    expect(parsed.EASY.length).toBe(12);
+    expect(parsed.MEDIUM.length).toBe(24);
+    expect(parsed.HARD.length).toBe(36);
+    expect(parsed.EXPERT.length).toBe(48);
 
-      // Validar notas individuais
-      const firstNote = parsed.EXPERT[0];
-      expect(firstNote.time).toBeGreaterThan(3.0);
-      expect(firstNote.lane).toBeGreaterThanOrEqual(0);
-      expect(firstNote.lane).toBeLessThanOrEqual(4);
+    expect(parsed.duration).toBeGreaterThanOrEqual(20);
+    expect(parsed.bpm).toBe(120);
 
-      // Verificar que existem notas com sustentação
-      const sustains = parsed.EXPERT.filter((n) => n.duration > 0);
-      expect(sustains.length).toBeGreaterThan(0);
-    }
+    // Validar notas individuais
+    const firstNote = parsed.EXPERT[0];
+    expect(firstNote.time).toBeGreaterThan(0);
+    expect(firstNote.lane).toBeGreaterThanOrEqual(0);
+    expect(firstNote.lane).toBeLessThanOrEqual(4);
+
+    // Verificar que existem notas com sustentação
+    const sustains = parsed.EXPERT.filter((n) => n.duration > 0);
+    expect(sustains.length).toBeGreaterThan(0);
   });
 });
