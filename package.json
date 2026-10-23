@@ -23,5 +23,9 @@
     "@capacitor/core": "^8.5.3",
     "@types/jszip": "^3.4.0",
     "jszip": "^3.10.2"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.64.12",
+    "@rollup/rollup-linux-x64-musl": "4.64.12"
   }
 }

@@ -36,4 +36,15 @@ describe('GitHub Pages & Production Build Verification', () => {
       expect(fs.existsSync(path.join(distPath, 'images/menu-bg.jpg'))).toBe(true);
     }
   });
+
+  it('package-lock.json contains @rollup/rollup-linux-x64-gnu with valid integrity for Linux CI', () => {
+    const lockPath = path.resolve(__dirname, '../package-lock.json');
+    expect(fs.existsSync(lockPath)).toBe(true);
+    const lockContent = fs.readFileSync(lockPath, 'utf-8');
+    const lock = JSON.parse(lockContent);
+    const linuxEntry = lock.packages?.['node_modules/@rollup/rollup-linux-x64-gnu'];
+    expect(linuxEntry).toBeDefined();
+    expect(linuxEntry.resolved).toContain('rollup-linux-x64-gnu');
+    expect(linuxEntry.integrity).toBeTruthy();
+  });
 });
