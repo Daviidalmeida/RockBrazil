@@ -39,6 +39,23 @@ export class ProfileManager {
   private static STORE_NAME = 'profiles';
   private activeProfile: PlayerProfile | null = null;
 
+  public static GUEST_PROFILE: PlayerProfile = {
+    id: 'guest',
+    name: 'Convidado',
+    avatar: '👤',
+    createdAt: 0,
+    lastPlayedAt: 0,
+    settings: {
+      musicVolume: 0.85,
+      sfxVolume: 0.9,
+      audioOffsetMs: 0,
+      noteSpeedMultiplier: 1.0,
+      visualEffectsEnabled: true
+    },
+    records: {},
+    history: []
+  };
+
   private static async openDB(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
       const req = indexedDB.open(this.DB_NAME, 1);
@@ -53,17 +70,18 @@ export class ProfileManager {
     });
   }
 
-  async init(): Promise<{ isFirstRun: boolean; activeProfile: PlayerProfile | null }> {
+  async init(): Promise<{ isFirstRun: boolean; activeProfile: PlayerProfile }> {
     const profiles = await this.getAllProfiles();
 
     if (profiles.length === 0) {
-      return { isFirstRun: true, activeProfile: null };
+      this.activeProfile = ProfileManager.GUEST_PROFILE;
+      return { isFirstRun: true, activeProfile: ProfileManager.GUEST_PROFILE };
     }
 
     const savedActiveId = localStorage.getItem('rb_active_profile_id');
     let current = profiles.find((p) => p.id === savedActiveId);
     if (!current) {
-      current = profiles[0];
+      current = savedActiveId === 'guest' ? ProfileManager.GUEST_PROFILE : profiles[0];
     }
 
     this.activeProfile = current;
@@ -71,8 +89,14 @@ export class ProfileManager {
     return { isFirstRun: false, activeProfile: current };
   }
 
-  getActiveProfile(): PlayerProfile | null {
-    return this.activeProfile;
+  setGuestMode(): PlayerProfile {
+    this.activeProfile = ProfileManager.GUEST_PROFILE;
+    localStorage.setItem('rb_active_profile_id', 'guest');
+    return ProfileManager.GUEST_PROFILE;
+  }
+
+  getActiveProfile(): PlayerProfile {
+    return this.activeProfile || ProfileManager.GUEST_PROFILE;
   }
 
   async getAllProfiles(): Promise<PlayerProfile[]> {

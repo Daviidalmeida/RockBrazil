@@ -28,9 +28,13 @@ export class AudioManager {
       this.ctx = new AudioCtx();
     }
     if (this.ctx.state === 'suspended') {
-      await this.ctx.resume();
+      try {
+        await this.ctx.resume();
+      } catch {
+        // Will be resumed on user gesture
+      }
     }
-    await this.synth.init();
+    await this.synth.init(this.ctx);
 
     if (!this.sfxGainNode) {
       this.sfxGainNode = this.ctx.createGain();

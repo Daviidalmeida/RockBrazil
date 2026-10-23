@@ -74,13 +74,19 @@ export class RockSynth {
     this.distortionCurve = this.makeDistortionCurve(52);
   }
 
-  async init(): Promise<void> {
-    if (!this.ctx) {
+  async init(existingCtx?: AudioContext): Promise<void> {
+    if (existingCtx) {
+      this.ctx = existingCtx;
+    } else if (!this.ctx) {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.ctx = new AudioCtx();
     }
-    if (this.ctx.state === 'suspended') {
-      await this.ctx.resume();
+    if (this.ctx && this.ctx.state === 'suspended') {
+      try {
+        await this.ctx.resume();
+      } catch {
+        // Will be resumed on next user interaction
+      }
     }
   }
 

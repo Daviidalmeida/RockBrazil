@@ -1,6 +1,88 @@
-# 🎸 RockBrazil V4 — Jogo de Ritmo de Guitarra (Preparação Android)
+# 🎸 RockBrazil V5 — Jogo de Ritmo de Guitarra Completo
 
-O **RockBrazil** é um jogo de ritmo de guitarra vertical desenvolvido para navegadores móveis e preparado para empacotamento nativo em Android (via Capacitor). Inspirado nas mecânicas clássicas de *Guitar Flash* e *Guitar Hero*, traz identidade visual própria de rock moderno, pipeline DSP de análise automática de guitarra para arquivos MP3, 4 níveis de dificuldade, medidor vertical de desempenho, perfis de jogadores persistentes e suporte a multitoque.
+O **RockBrazil V5** é a versão completa e profissional do jogo de ritmo vertical para navegadores móveis e empacotamento nativo em Android (via Capacitor). Inspirado nas mecânicas clássicas de *Guitar Flash* e *Guitar Hero*, traz identidade visual própria de rock moderno, suporte ao formato AutoChart / Clone Hero (MIDI + áudio multi-track de estúdio), editor visual integrado de mapas musicais, sistema de login com modo convidado, 4 níveis de dificuldade, medidor vertical de desempenho e suporte total a multitoque.
+
+---
+
+## ⚡ Novidades da Versão V5
+
+1. **AutoChart & MIDI Real:** Suporte nativo à leitura de pacotes `.zip` e arquivos `notes.mid` com interpretação precisa do mapa de tempo (`tempoMap`), compassos, acordes, notas simples e sustentações reais.
+2. **AC/DC — T.N.T. Oficial:** Integração completa do pacote AutoChart com trilhas multi-track de estúdio (`song.ogg`, `guitar.ogg`, `bass.ogg`, `drums.ogg`, `vocals.ogg`) e as 4 cartas autênticas:
+   - **Fácil:** 161 notas
+   - **Médio:** 305 notas
+   - **Difícil:** 409 notas
+   - **Expert:** 599 notas
+3. **Editor Visual de Mapas Musicais:** Editor embutido com timeline interativa de 5 pistas, snapping rítmico (1/4, 1/8, 1/16 beat ou livre), criação/movimentação de notas, ajuste de duração de notas longas, reprodução sincronizada com áudio e exportação/importação JSON.
+4. **Inicialização Direta & Modo Convidado:** O jogo abre imediatamente na tela principal. O botão **ENTRAR** no canto superior esquerdo permite alternar entre perfis de jogador ou jogar como **Convidado** sem necessidade de cadastro.
+5. **Integração Nativa Android:** Plataforma nativa Capacitor gerada na pasta `android/` com trava de orientação vertical (*portrait*) e scripts de sincronização automatizados.
+
+---
+
+## 🚀 Como Iniciar o Projeto
+
+### Requisitos
+- **Node.js** (v18 ou v20 LTS recomendado)
+- **Git**
+
+### Passo a Passo
+1. Instale as dependências:
+   ```bash
+   npm install
+   ```
+2. Inicie o servidor de desenvolvimento na rede local:
+   ```bash
+   npm run dev
+   # ou
+   npm start
+   ```
+3. O servidor estará disponível no computador e nos celulares conectados ao mesmo Wi-Fi:
+   - **No Computador:** `http://localhost:5173/`
+   - **No Celular Android:** `http://192.168.11.121:5173/` (ou o IP exibido no terminal)
+
+---
+
+## 🎼 Editor Visual de Mapas Musicais
+
+Para acessar o Editor:
+1. Na tela **BIBLIOTECA DE MÚSICAS**, clique no botão **🎼 EDITOR**.
+2. Escolha a música desejada e o nível de dificuldade.
+3. Recursos do Editor:
+   - **Adicionar Notas:** Clique/toque em qualquer pista para inserir uma nota.
+   - **Mover Notas:** Arraste horizontalmente para ajustar o tempo ou verticalmente para trocar de pista.
+   - **Notas Longas (Sustain):** Puxe a alça na ponta direita da nota para definir a duração da cauda.
+   - **Excluir:** Selecione a nota e pressione <kbd>Delete</kbd> ou toque em **🗑 EXCLUIR**.
+   - **Reprodução Sincronizada:** Use o botão **▶ REPRODUZIR** ou pressione <kbd>Espaço</kbd>.
+   - **Salvar / Testar:** Salve com **💾 SALVAR** ou jogue imediatamente o mapa criado com **⚡ TESTAR MAPA**.
+
+---
+
+## 📱 Preparação e Build para Android (Capacitor)
+
+O projeto nativo já está configurado na pasta `android/`.
+
+### Sincronização dos Arquivos Web:
+```bash
+npm run android:sync
+```
+
+### Para Compilar o APK de Debug:
+1. Abra a pasta `android/` no **Android Studio**:
+   ```bash
+   npm run android:open
+   ```
+2. No Android Studio, aguarde o sync do Gradle e selecione:  
+   **Build > Build Bundle(s) / APK(s) > Build APK(s)**.
+3. O APK gerado estará em:  
+   `android/app/build/outputs/apk/debug/app-debug.apk`.
+
+*(Nota: Para compilar via linha de comando com `gradlew assembleDebug`, certifique-se de que o JDK 17+ e o Android SDK estejam instalados e configurados no sistema).*
+
+---
+
+## 🔒 Segurança e Publicação Git
+
+- Músicas comerciais, stems de áudio e arquivos `.zip` estão devidamente ignorados no `.gitignore` para proteção de direitos autorais.
+- O repositório está preparado para commit e versionamento privado.
 
 ---
 

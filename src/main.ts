@@ -8,6 +8,8 @@ import { GameEngine } from './game/engine';
 import { GameRenderer } from './render/renderer';
 import { UIManager } from './ui/uiManager';
 import { GuitarPipeline } from './audio/analysis/guitarPipeline';
+import { VisualEditor } from './editor/visualEditor';
+import { ZipChartLoader } from './audio/zipChartLoader';
 
 class RockBrazilGame {
   private settingsManager: SettingsManager;
@@ -18,6 +20,7 @@ class RockBrazilGame {
   private engine: GameEngine;
   private renderer: GameRenderer;
   private ui: UIManager;
+  private editor: VisualEditor;
 
   private state: GameState = GameState.MENU;
   private currentSong: SongMetadata;
@@ -56,8 +59,17 @@ class RockBrazilGame {
     this.ui = new UIManager();
     this.ui.initSettingsValues(settings);
 
+    const editorCanvas = document.getElementById('editor-canvas') as HTMLCanvasElement;
+    this.editor = new VisualEditor(
+      document.getElementById('screen-editor')!,
+      editorCanvas,
+      this.beatmaps,
+      this.audio
+    );
+
     this.setupEngineCallbacks();
     this.setupUICallbacks();
+    this.setupEditorControls();
     this.setupInputHandlers();
     this.setupWindowResize();
 
@@ -65,31 +77,34 @@ class RockBrazilGame {
   }
 
   private async initGame(): Promise<void> {
-    // 1. Initialize Profile System
-    const { isFirstRun, activeProfile } = await this.profileManager.init();
-    if (isFirstRun || !activeProfile) {
-      this.ui.showProfileCreateModal();
-    } else {
-      this.ui.setProfileHeader(activeProfile);
-    }
+    // 1. Initialize Profile System (Boot direct to menu as guest or active profile)
+    const { activeProfile } = await this.profileManager.init();
+    this.ui.setProfileHeader(activeProfile);
 
-    // 2. Check for local TNT.mp3
+    // 2. Check for local TNT files (AutoChart package or TNT.mp3)
     await this.autoDetectTNTFile();
 
     // 3. Render initial Song Library & Dropdowns
     this.ui.renderSongLibrary(this.library.getSongs(), this.profileManager.getActiveProfile());
     this.ui.initRankingDropdowns(this.library.getSongs());
+
+    // 4. Open directly on the Main Menu!
     this.ui.showScreen(GameState.MENU);
   }
 
   private async autoDetectTNTFile(): Promise<void> {
     try {
-      const response = await fetch('/custom-songs/TNT.mp3', { method: 'HEAD' });
-      if (response.ok) {
-        const buffer = await this.audio.decodeAudioUrl('/custom-songs/TNT.mp3');
-        this.library.attachAudioBuffer('tnt-acdc', buffer, buffer.duration);
+      const resMidi = await fetch('/custom-songs/acdc_tnt/ACDC - T.N.T/notes.mid', { method: 'HEAD' });
+      const resMp3 = await fetch('/custom-songs/TNT.mp3', { method: 'HEAD' });
+
+      if (resMidi.ok || resMp3.ok) {
+        const song = this.library.getSongById('tnt-acdc');
+        if (song) {
+          song.isAvailable = true;
+          song.style = resMidi.ok ? '💣 AC/DC Multi-track (AutoChart)' : '💣 Classic Hard Rock';
+        }
         this.ui.renderSongLibrary(this.library.getSongs(), this.profileManager.getActiveProfile());
-        console.log('⚡ TNT.mp3 detectado e vinculado com sucesso!');
+        console.log('⚡ T.N.T. detectado e pronto para jogar!');
       }
     } catch {
       // Ignore
@@ -181,10 +196,92 @@ class RockBrazilGame {
     };
 
     // Gameplay
-    this.ui.onPlayGameRequested = (song, diff) => {
+    this.ui.onPlayGameRequested = async (song, diff) => {
       this.currentSong = song;
       this.currentDifficulty = diff;
+
+      // Se for música baseada em arquivo e ainda não carregou o áudio
+      if (song.type === 'audio-file' && !song.audioBuffer) {
+        if (song.id === 'tnt-acdc') {
+          try {
+            this.ui.showAnalysisProgress(true, 'Carregando áudio e mapa oficial de T.N.T. (AC/DC)...');
+            await this.audio.init();
+            const ctx = this.audio.audioContext;
+            if (!ctx) throw new Error('AudioContext não disponível.');
+
+            const pkg = await ZipChartLoader.loadLocalTNT(ctx);
+            this.library.attachAudioBuffer('tnt-acdc', pkg.audioBuffer, pkg.duration);
+            song.audioBuffer = pkg.audioBuffer;
+            song.duration = pkg.duration;
+            song.bpm = pkg.bpm;
+
+            // Salva as 4 dificuldades reais do MIDI (161, 305, 409, 599 notas)
+            (['EASY', 'MEDIUM', 'HARD', 'EXPERT'] as Difficulty[]).forEach((d) => {
+              this.beatmaps.saveBeatmap('tnt-acdc', d, pkg.charts[d]);
+            });
+            console.log(`⚡ T.N.T. carregado com sucesso (${pkg.notesCount[diff]} notas em ${diff})!`);
+          } catch (err: any) {
+            console.warn('Falha ao carregar pacote AutoChart, tentando fallback MP3:', err);
+            try {
+              const buffer = await this.audio.decodeAudioUrl('/custom-songs/TNT.mp3');
+              this.library.attachAudioBuffer('tnt-acdc', buffer, buffer.duration);
+              song.audioBuffer = buffer;
+            } catch (err2: any) {
+              this.ui.showAnalysisProgress(false);
+              alert('Não foi possível carregar T.N.T.: ' + (err2.message || err2));
+              return;
+            }
+          } finally {
+            this.ui.showAnalysisProgress(false);
+          }
+        }
+      }
+
       this.startCountdown();
+    };
+
+    this.ui.onPlayAsGuestClicked = () => {
+      const guest = this.profileManager.setGuestMode();
+      this.ui.setProfileHeader(guest);
+      this.ui.renderSongLibrary(this.library.getSongs(), guest);
+    };
+
+    this.ui.onOpenEditorClicked = () => {
+      this.state = GameState.NOTE_EDITOR;
+      this.ui.showScreen(GameState.NOTE_EDITOR);
+      this.editor.open(this.currentSong, this.currentDifficulty);
+    };
+
+    this.ui.onImportZipFile = async (file: File) => {
+      try {
+        await this.audio.init();
+        const ctx = this.audio.audioContext;
+        if (!ctx) throw new Error('AudioContext indisponível.');
+
+        this.ui.showAnalysisProgress(true, `Importando pacote AutoChart "${file.name}"...`);
+
+        const pkg = await ZipChartLoader.loadFromZipFile(file, ctx);
+
+        const newSong = this.library.addCustomSong({
+          title: pkg.title,
+          artist: pkg.artist,
+          duration: pkg.duration,
+          bpm: pkg.bpm,
+          buffer: pkg.audioBuffer
+        });
+
+        (['EASY', 'MEDIUM', 'HARD', 'EXPERT'] as Difficulty[]).forEach((d) => {
+          this.beatmaps.saveBeatmap(newSong.id, d, pkg.charts[d]);
+        });
+
+        this.ui.renderSongLibrary(this.library.getSongs(), this.profileManager.getActiveProfile());
+        alert(`⚡ Pacote "${pkg.title}" importado com sucesso!\nNotas: Fácil ${pkg.notesCount.EASY} | Médio ${pkg.notesCount.MEDIUM} | Difícil ${pkg.notesCount.HARD} | Expert ${pkg.notesCount.EXPERT}`);
+        this.ui.openDifficultyModal(newSong, this.profileManager.getActiveProfile());
+      } catch (err: any) {
+        alert('Erro ao importar ZIP AutoChart: ' + (err.message || err));
+      } finally {
+        this.ui.showAnalysisProgress(false);
+      }
     };
 
     this.ui.onPauseClicked = () => this.pauseGame();
@@ -276,6 +373,91 @@ class RockBrazilGame {
     }
   }
 
+  private setupEditorControls(): void {
+    const songSelect = document.getElementById('editor-song-select') as HTMLSelectElement;
+    const diffSelect = document.getElementById('editor-diff-select') as HTMLSelectElement;
+    const snapSelect = document.getElementById('editor-snap-select') as HTMLSelectElement;
+
+    if (songSelect) {
+      songSelect.innerHTML = this.library.getSongs().map((s) => `<option value="${s.id}">${s.title}</option>`).join('');
+      songSelect.addEventListener('change', () => {
+        const song = this.library.getSongById(songSelect.value);
+        if (song) {
+          this.currentSong = song;
+          this.editor.open(song, this.currentDifficulty);
+        }
+      });
+    }
+
+    if (diffSelect) {
+      diffSelect.addEventListener('change', () => {
+        this.currentDifficulty = diffSelect.value as Difficulty;
+        this.editor.open(this.currentSong, this.currentDifficulty);
+      });
+    }
+
+    if (snapSelect) {
+      snapSelect.addEventListener('change', () => {
+        this.editor.setSnapDivision(Number(snapSelect.value));
+      });
+    }
+
+    document.getElementById('btn-editor-back')?.addEventListener('click', () => {
+      this.editor.close();
+      this.state = GameState.SONG_SELECT;
+      this.ui.showScreen(GameState.SONG_SELECT);
+    });
+
+    document.getElementById('btn-editor-play')?.addEventListener('click', () => {
+      this.editor.togglePlayback();
+    });
+
+    document.getElementById('btn-editor-stop')?.addEventListener('click', () => {
+      this.editor.stopPlayback();
+      this.editor.seek(0);
+    });
+
+    document.getElementById('btn-editor-save')?.addEventListener('click', () => {
+      this.editor.saveToGame();
+    });
+
+    document.getElementById('btn-editor-delete-note')?.addEventListener('click', () => {
+      this.editor.deleteSelectedNote();
+    });
+
+    document.getElementById('btn-editor-clear-all')?.addEventListener('click', () => {
+      this.editor.clearAllNotes();
+    });
+
+    document.getElementById('btn-editor-export-json')?.addEventListener('click', () => {
+      this.editor.exportJSON();
+    });
+
+    const importInput = document.getElementById('editor-import-input') as HTMLInputElement;
+    importInput?.addEventListener('change', async (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (files && files[0]) {
+        const text = await files[0].text();
+        this.editor.importJSON(text);
+      }
+    });
+
+    const scrubber = document.getElementById('editor-time-scrubber') as HTMLInputElement;
+    scrubber?.addEventListener('input', () => {
+      this.editor.seek(Number(scrubber.value));
+    });
+
+    document.getElementById('btn-editor-test-play')?.addEventListener('click', () => {
+      this.editor.close();
+      this.startCountdown();
+    });
+
+    this.editor.onTestPlayRequested = (_song, _diff, notes) => {
+      this.editor.close();
+      this.startCountdown(notes);
+    };
+  }
+
   private setupWindowResize(): void {
     window.addEventListener('resize', () => {
       this.renderer.resize();
@@ -295,6 +477,15 @@ class RockBrazilGame {
   }
 
   private setupInputHandlers(): void {
+    // Unlock Web Audio context on the first touch or keypress
+    const unlockAudio = () => {
+      this.audio.init().catch(() => {});
+      window.removeEventListener('pointerdown', unlockAudio);
+      window.removeEventListener('keydown', unlockAudio);
+    };
+    window.addEventListener('pointerdown', unlockAudio, { once: true });
+    window.addEventListener('keydown', unlockAudio, { once: true });
+
     const fretBoard = document.getElementById('fret-board');
     if (!fretBoard) return;
 
@@ -519,6 +710,16 @@ class RockBrazilGame {
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  new RockBrazilGame();
-});
+function bootApp(): void {
+  try {
+    new RockBrazilGame();
+  } catch (err) {
+    console.error('Falha ao inicializar RockBrazil:', err);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootApp);
+} else {
+  bootApp();
+}

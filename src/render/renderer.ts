@@ -60,12 +60,12 @@ export class GameRenderer {
   resize(): void {
     const rect = this.canvas.parentElement?.getBoundingClientRect();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    if (rect) {
-      this.canvas.width = rect.width * dpr;
-      this.canvas.height = rect.height * dpr;
-      this.ctx.resetTransform();
-      this.ctx.scale(dpr, dpr);
-    }
+    const w = (rect && rect.width > 0) ? rect.width : (window.innerWidth || 360);
+    const h = (rect && rect.height > 0) ? rect.height : (window.innerHeight || 640);
+    this.canvas.width = w * dpr;
+    this.canvas.height = h * dpr;
+    this.ctx.resetTransform();
+    this.ctx.scale(dpr, dpr);
   }
 
   get width(): number {

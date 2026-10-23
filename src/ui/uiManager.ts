@@ -30,6 +30,7 @@ export class UIManager {
   private screenResult: HTMLElement;
   private screenSettings: HTMLElement;
   private screenHowToPlay: HTMLElement;
+  private screenEditor: HTMLElement;
 
   // Profile elements
   private profileNameInput: HTMLInputElement;
@@ -94,6 +95,11 @@ export class UIManager {
   public onSettingsChanged?: (settings: Partial<GameSettings>) => void;
   public onTestBeepClicked?: () => void;
 
+  // Editor callbacks
+  public onOpenEditorClicked?: () => void;
+  public onImportZipFile?: (file: File) => void;
+  public onPlayAsGuestClicked?: () => void;
+
   // Profile callbacks
   public onCreateProfileConfirmed?: (name: string, avatar: string) => void;
   public onSwitchProfileRequested?: (id: string) => void;
@@ -126,6 +132,7 @@ export class UIManager {
     this.screenResult = document.getElementById('screen-result')!;
     this.screenSettings = document.getElementById('screen-settings')!;
     this.screenHowToPlay = document.getElementById('screen-howtoplay')!;
+    this.screenEditor = document.getElementById('screen-editor')!;
 
     this.profileNameInput = document.getElementById('profile-name-input') as HTMLInputElement;
     this.profileAvatarGrid = document.querySelector('.avatar-grid')!;
@@ -229,6 +236,27 @@ export class UIManager {
 
     document.getElementById('btn-close-profile-manager')?.addEventListener('click', () => {
       this.modalProfileManager.classList.add('hidden');
+    });
+
+    document.getElementById('btn-play-as-guest')?.addEventListener('click', () => {
+      this.modalProfileManager.classList.add('hidden');
+      this.onPlayAsGuestClicked?.();
+    });
+
+    document.getElementById('btn-cancel-create-profile')?.addEventListener('click', () => {
+      this.modalProfileCreate.classList.add('hidden');
+    });
+
+    document.getElementById('btn-open-editor')?.addEventListener('click', () => {
+      this.onOpenEditorClicked?.();
+    });
+
+    const zipInput = document.getElementById('zip-file-input') as HTMLInputElement;
+    zipInput?.addEventListener('change', (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (files && files[0]) {
+        this.onImportZipFile?.(files[0]);
+      }
     });
 
     // Song select back
@@ -373,8 +401,17 @@ export class UIManager {
   }
 
   setProfileHeader(profile: PlayerProfile): void {
-    this.menuProfileAvatar.textContent = profile.avatar;
-    this.menuProfileName.textContent = profile.name;
+    if (profile.id === 'guest') {
+      this.menuProfileAvatar.textContent = '👤';
+      this.menuProfileName.textContent = 'ENTRAR';
+      const hint = document.querySelector('.profile-switch-hint');
+      if (hint) hint.textContent = 'Perfil';
+    } else {
+      this.menuProfileAvatar.textContent = profile.avatar;
+      this.menuProfileName.textContent = profile.name;
+      const hint = document.querySelector('.profile-switch-hint');
+      if (hint) hint.textContent = 'Trocar';
+    }
   }
 
   showProfileCreateModal(): void {
@@ -437,7 +474,8 @@ export class UIManager {
     this.screenResult.classList.toggle('hidden', state !== GameState.RESULTS);
     this.screenSettings.classList.toggle('hidden', state !== GameState.SETTINGS);
     this.screenHowToPlay.classList.toggle('hidden', state !== GameState.HOW_TO_PLAY);
-    this.screenRanking.classList.toggle('hidden', state !== GameState.NOTE_EDITOR && state !== ('RANKING' as any));
+    this.screenRanking.classList.toggle('hidden', (state as any) !== 'RANKING');
+    this.screenEditor.classList.toggle('hidden', state !== GameState.NOTE_EDITOR);
 
     if (state === GameState.PLAYING) {
       this.hudElement.classList.remove('hidden');

@@ -124,11 +124,11 @@
     <!-- 1. MAIN MENU (Exact Image Background with Interactive Button Hotspots) -->
     <div id="screen-menu" class="overlay-screen active menu-screen-container">
       <div class="menu-image-wrapper">
-        <!-- Profile Pill (Top Left) -->
-        <button id="btn-menu-profile" class="profile-header-pill">
-          <span id="menu-profile-avatar" class="profile-avatar-icon">🎸</span>
-          <span id="menu-profile-name" class="profile-player-name">Rockeiro</span>
-          <span class="profile-switch-hint">Trocar</span>
+        <!-- Profile Pill (Top Left: ENTRAR / Perfil) -->
+        <button id="btn-menu-profile" class="profile-header-pill" aria-label="Entrar ou Trocar Perfil">
+          <span id="menu-profile-avatar" class="profile-avatar-icon">👤</span>
+          <span id="menu-profile-name" class="profile-player-name">ENTRAR</span>
+          <span class="profile-switch-hint">Perfil</span>
         </button>
 
         <!-- 6 Interactive Hotspot Buttons perfectly positioned over menu-bg.jpg -->
@@ -151,10 +151,21 @@
             </svg>
           </button>
           <h2 id="library-screen-title" class="section-title">BIBLIOTECA DE MÚSICAS</h2>
-          <label for="mp3-file-input" class="btn-import">
-            <span>📁 IMPORTAR MP3</span>
-          </label>
-          <input type="file" id="mp3-file-input" accept="audio/*" style="display: none;">
+          <div class="library-header-actions" style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+            <label for="mp3-file-input" class="btn-import">
+              <span>📁 MP3</span>
+            </label>
+            <input type="file" id="mp3-file-input" accept="audio/*" style="display: none;">
+
+            <label for="zip-file-input" class="btn-import" style="background: linear-gradient(135deg, #ff7b00, #ff2a5f);">
+              <span>📦 ZIP AUTOCHART</span>
+            </label>
+            <input type="file" id="zip-file-input" accept=".zip,application/zip" style="display: none;">
+
+            <button id="btn-open-editor" class="btn-small" style="background:#00d0ff; color:#000; font-weight:800; padding:6px 10px; border-radius:6px; border:none; cursor:pointer;">
+              <span>🎼 EDITOR</span>
+            </button>
+          </div>
         </div>
 
         <!-- Filter Tabs: Todas / Minhas Músicas -->
@@ -245,19 +256,28 @@
           </div>
         </div>
 
-        <button id="btn-confirm-create-profile" class="btn-primary">CONFIRMAR E COMEÇAR</button>
+        <div style="display:flex; gap:8px; width:100%;">
+          <button id="btn-confirm-create-profile" class="btn-primary" style="flex:2;">CONFIRMAR E COMEÇAR</button>
+          <button id="btn-cancel-create-profile" class="btn-ghost" style="flex:1;">CANCELAR</button>
+        </div>
       </div>
     </div>
 
-    <!-- 6. GERENCIADOR DE PERFIS (ALTERNAR / NOVO) -->
+    <!-- 6. GERENCIADOR DE PERFIS (ENTRAR / TROCAR / CONVIDADO) -->
     <div id="modal-profile-manager" class="modal-backdrop hidden">
       <div class="dialog-card profile-mgr-card">
-        <h2>PERFIS DE JOGADOR</h2>
+        <h2>ENTRAR / PERFIS DE JOGADOR</h2>
+        <p class="profile-subtitle" style="font-size:12px; color:#8c90a3; margin-bottom:12px;">
+          Selecione seu perfil ou jogue como convidado.
+        </p>
         <div id="profiles-scroll-list" class="profiles-list-scroll"></div>
 
-        <div class="dialog-buttons">
-          <button id="btn-open-create-new-profile" class="btn-secondary">+ NOVO PERFIL</button>
-          <button id="btn-close-profile-manager" class="btn-ghost">FECHAR</button>
+        <div class="dialog-buttons" style="flex-direction: column; gap: 8px;">
+          <button id="btn-play-as-guest" class="btn-primary" style="background: linear-gradient(135deg, #00d0ff, #0088cc); color: #fff;">👤 JOGAR COMO CONVIDADO</button>
+          <div style="display:flex; gap:8px; width:100%;">
+            <button id="btn-open-create-new-profile" class="btn-secondary" style="flex:1;">+ NOVO PERFIL</button>
+            <button id="btn-close-profile-manager" class="btn-ghost" style="flex:1;">FECHAR</button>
+          </div>
         </div>
       </div>
     </div>
@@ -467,6 +487,90 @@
           </div>
         </div>
         <button id="btn-close-howtoplay" class="btn-primary">VOLTAR AO MENU</button>
+      </div>
+    </div>
+
+    <!-- 14. EDITOR VISUAL DE MAPAS MUSICAIS -->
+    <div id="screen-editor" class="overlay-screen hidden" style="padding: 8px; z-index: 60; background: rgba(8, 9, 14, 0.98);">
+      <div class="editor-screen-container" style="width: 100%; height: 100%; display: flex; flex-direction: column; gap: 8px;">
+        
+        <!-- Editor Top Header -->
+        <div class="editor-header" style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 6px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button id="btn-editor-back" class="icon-button" aria-label="Voltar">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+              </svg>
+            </button>
+            <h2 style="font-family: var(--font-display); font-size: 20px; color: #ffe600; margin: 0; letter-spacing: 1px;">EDITOR VISUAL DE NOTAS</h2>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <button id="btn-editor-test-play" class="btn-primary" style="padding: 5px 10px; font-size: 11px; background: linear-gradient(135deg, #00ff88, #00aa55); color: #000; font-weight: 800;">⚡ TESTAR MAPA</button>
+            <button id="btn-editor-save" class="btn-primary" style="padding: 5px 10px; font-size: 11px;">💾 SALVAR</button>
+          </div>
+        </div>
+
+        <!-- Editor Selectors Row -->
+        <div class="editor-selectors-row" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+          <div style="flex: 2; min-width: 130px;">
+            <label style="font-size: 9px; color: #8c90a3;">MÚSICA:</label>
+            <select id="editor-song-select" class="rock-select" style="width: 100%; padding: 3px 6px; font-size: 11px;"></select>
+          </div>
+          <div style="flex: 1; min-width: 80px;">
+            <label style="font-size: 9px; color: #8c90a3;">DIFICULDADE:</label>
+            <select id="editor-diff-select" class="rock-select" style="width: 100%; padding: 3px 6px; font-size: 11px;">
+              <option value="EASY">FÁCIL</option>
+              <option value="MEDIUM" selected>MÉDIO</option>
+              <option value="HARD">DIFÍCIL</option>
+              <option value="EXPERT">EXPERT</option>
+            </select>
+          </div>
+          <div style="flex: 1; min-width: 80px;">
+            <label style="font-size: 9px; color: #8c90a3;">GRID SNAP:</label>
+            <select id="editor-snap-select" class="rock-select" style="width: 100%; padding: 3px 6px; font-size: 11px;">
+              <option value="4" selected>1/4 Beat</option>
+              <option value="8">1/8 Beat</option>
+              <option value="16">1/16 Beat</option>
+              <option value="0">Livre</option>
+            </select>
+          </div>
+          <div style="flex: 1; min-width: 75px; text-align: right;">
+            <span id="editor-notes-count" style="font-size: 11px; font-weight: 800; color: #ffe600;">Notas: 0</span>
+          </div>
+        </div>
+
+        <!-- Interactive Canvas Timeline Container -->
+        <div class="editor-canvas-container" style="flex: 1; min-height: 250px; background: #0a0b12; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); overflow: hidden; position: relative;">
+          <canvas id="editor-canvas" style="width: 100%; height: 100%; display: block; cursor: crosshair;"></canvas>
+        </div>
+
+        <!-- Scrubbing & Time Display -->
+        <div class="editor-scrub-row" style="display: flex; align-items: center; gap: 8px;">
+          <span id="editor-time-display" style="font-family: var(--font-display); font-size: 16px; color: #fff; min-width: 100px;">00:00.0 / 00:00.0</span>
+          <input type="range" id="editor-time-scrubber" min="0" max="100" step="0.1" value="0" class="rock-slider" style="flex: 1;">
+        </div>
+
+        <!-- Editor Bottom Control Toolbar -->
+        <div class="editor-toolbar" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+          <div style="display: flex; gap: 4px;">
+            <button id="btn-editor-play" class="btn-primary" style="padding: 5px 12px; font-size: 11px;">▶ REPRODUZIR</button>
+            <button id="btn-editor-stop" class="btn-secondary" style="padding: 5px 8px; font-size: 11px;">⏹ INÍCIO</button>
+            <button id="btn-editor-delete-note" class="btn-secondary" style="padding: 5px 8px; font-size: 11px; color: #ff2a5f;">🗑 EXCLUIR</button>
+            <button id="btn-editor-clear-all" class="btn-ghost" style="padding: 5px 6px; font-size: 10px;">LIMPAR</button>
+          </div>
+          <div style="display: flex; gap: 4px;">
+            <button id="btn-editor-export-json" class="btn-small" style="padding: 4px 6px; font-size: 10px;">📤 EXPORTAR</button>
+            <label for="editor-import-input" class="btn-small" style="padding: 4px 6px; font-size: 10px; cursor: pointer; background: #374151;">
+              📥 IMPORTAR
+            </label>
+            <input type="file" id="editor-import-input" accept=".json" style="display: none;">
+          </div>
+        </div>
+
+        <div class="editor-hint" style="font-size: 9px; color: #8c90a3; text-align: center;">
+          💡 Clique na pista para criar nota. Arraste horizontalmente para tempo ou verticalmente para pista. Puxe a borda direita para notas longas. Espaço: play/pause. Delete: excluir.
+        </div>
+
       </div>
     </div>
 
