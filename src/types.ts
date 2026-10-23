@@ -2,6 +2,19 @@ export type Lane = 0 | 1 | 2 | 3 | 4;
 
 export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD' | 'EXPERT';
 
+export function getLanesForDifficulty(diff: Difficulty): Lane[] {
+  switch (diff) {
+    case 'EASY':
+      return [0, 1, 2];
+    case 'MEDIUM':
+      return [0, 1, 2, 3];
+    case 'HARD':
+    case 'EXPERT':
+    default:
+      return [0, 1, 2, 3, 4];
+  }
+}
+
 export type HitJudgment = 'PERFECT' | 'GREAT' | 'GOOD' | 'MISS';
 
 export interface Note {

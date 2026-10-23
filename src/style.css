@@ -124,14 +124,22 @@ html, body {
   pointer-events: auto;
 }
 
-/* Left Side Panel: Score, Multiplier, Combo */
+/* Left Side Panel: Score, Multiplier, Combo (FASE 4 - Reposicionado com destaque) */
 .hud-left-panel {
   position: absolute;
-  top: 36px;
-  left: 14px;
+  top: clamp(62px, 9.5vh, 88px);
+  left: clamp(10px, 3.5vw, 18px);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  background: rgba(12, 13, 24, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 8px 12px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  z-index: 10;
 }
 
 .hud-score-box {
@@ -227,8 +235,9 @@ html, body {
 /* Right Side Panel: Vertical Rock Performance Meter */
 .hud-right-panel {
   position: absolute;
-  top: 36px;
-  right: 12px;
+  top: clamp(62px, 9.5vh, 88px);
+  right: clamp(10px, 3.5vw, 14px);
+  z-index: 10;
 }
 
 .vertical-rock-meter-container {
@@ -389,15 +398,20 @@ html, body {
 .fret-button {
   position: relative;
   flex: 1;
-  max-width: 72px;
+  max-width: 96px;
   height: 80px;
-  margin: 0 3px;
+  margin: 0 4px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   touch-action: none;
+  transition: max-width 0.25s ease, opacity 0.2s ease;
+}
+
+.fret-button.hidden-lane {
+  display: none !important;
 }
 
 .fret-circle {

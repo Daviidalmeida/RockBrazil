@@ -723,4 +723,24 @@ export class UIManager {
       </div>
     `).join('');
   }
+
+  /**
+   * Adapts the fretboard buttons according to selected difficulty:
+   * EASY: 3 lanes (0, 1, 2)
+   * MEDIUM: 4 lanes (0, 1, 2, 3)
+   * HARD/EXPERT: 5 lanes (0, 1, 2, 3, 4)
+   */
+  setDifficultyLanes(diff: Difficulty): void {
+    const fretBoard = document.getElementById('fret-board');
+    if (!fretBoard) return;
+    const maxLane = diff === 'EASY' ? 2 : diff === 'MEDIUM' ? 3 : 4;
+    fretBoard.querySelectorAll<HTMLElement>('.fret-button').forEach((btn) => {
+      const lane = Number(btn.dataset.lane);
+      if (lane > maxLane) {
+        btn.classList.add('hidden-lane');
+      } else {
+        btn.classList.remove('hidden-lane');
+      }
+    });
+  }
 }

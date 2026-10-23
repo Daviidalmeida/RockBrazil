@@ -39,6 +39,12 @@ export class AudioImporter {
       throw new Error(validation.error);
     }
     const arrayBuffer = await file.arrayBuffer();
-    return await ctx.decodeAudioData(arrayBuffer);
+    const copy = arrayBuffer.slice(0);
+    return new Promise<AudioBuffer>((resolve, reject) => {
+      const res = ctx.decodeAudioData(copy, resolve, reject);
+      if (res && typeof res.then === 'function') {
+        res.then(resolve).catch(reject);
+      }
+    });
   }
 }

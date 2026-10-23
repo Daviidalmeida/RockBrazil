@@ -93,6 +93,8 @@ class RockBrazilGame {
     this.ui.initRankingDropdowns(this.library.getSongs());
 
     // 4. Open directly on the Main Menu!
+    this.renderer.setDifficulty(this.currentDifficulty);
+    this.ui.setDifficultyLanes(this.currentDifficulty);
     this.ui.showScreen(GameState.MENU);
   }
 
@@ -540,6 +542,9 @@ class RockBrazilGame {
     this.clearCountdown();
     this.audio.stop();
 
+    // Garante que o AudioContext seja desbloqueado imediatamente no clique do usuário
+    this.audio.ensureResumed().catch(() => {});
+
     this.currentSong = song;
     this.currentDifficulty = difficulty;
 
@@ -568,18 +573,21 @@ class RockBrazilGame {
         } catch (err: any) {
           console.warn('Falha ao carregar pacote AutoChart, tentando fallback MP3:', err);
           try {
-            const buffer = await this.audio.decodeAudioUrl('/custom-songs/TNT.mp3');
+            const buffer = await this.audio.decodeAudioUrl('custom-songs/TNT.mp3');
             if (sessionId !== this.currentMatchSessionId) return;
             this.library.attachAudioBuffer('tnt-acdc', buffer, buffer.duration);
             song.audioBuffer = buffer;
           } catch (err2: any) {
             this.ui.showAnalysisProgress(false);
-            alert('Não foi possível carregar o áudio de T.N.T.: ' + (err2.message || err2));
+            alert(`O arquivo de áudio de "${song.title}" não está presente no servidor (áudios protegidos são excluídos por segurança).\n\nUtilize o botão "VINCULAR ${song.requiresFile || 'ÁUDIO'}" ou "IMPORTAR MÚSICA" para selecionar seu arquivo MP3 ou ZIP local.`);
             return;
           }
         } finally {
           this.ui.showAnalysisProgress(false);
         }
+      } else {
+        alert(`O arquivo de áudio para "${song.title}" ainda não foi carregado. Por favor, importe ou vincule o arquivo de áudio (.mp3, .ogg ou .zip) para jogar.`);
+        return;
       }
     }
 
@@ -592,10 +600,25 @@ class RockBrazilGame {
     this.audio.stop();
 
     await this.audio.init();
+    await this.audio.ensureResumed();
     if (sessionId !== this.currentMatchSessionId) return;
 
+    // Configura pistas ativas por dificuldade (3 no Fácil, 4 no Médio, 5 no Difícil/Expert)
+    this.renderer.setDifficulty(this.currentDifficulty);
+    this.ui.setDifficultyLanes(this.currentDifficulty);
+
     // Reinicializa o motor com notas independentes (cópia profunda)
-    const notes = customNotes || this.beatmaps.getBeatmap(this.currentSong.id, this.currentDifficulty);
+    const rawNotes = customNotes || this.beatmaps.getBeatmap(this.currentSong.id, this.currentDifficulty);
+    // Adapta notas às pistas disponíveis na dificuldade sem perder nenhuma
+    const maxLane = this.currentDifficulty === 'EASY' ? 2 : this.currentDifficulty === 'MEDIUM' ? 3 : 4;
+    const notes = rawNotes.map((n) => ({
+      ...n,
+      lane: Math.min(maxLane, n.lane) as Lane,
+      hit: false,
+      missed: false,
+      sustainCompleted: false,
+      sustainHeldTime: 0
+    }));
     this.engine.reset(notes, this.currentDifficulty);
 
     // Reinicializa completamente o HUD e as entradas de toque
@@ -610,7 +633,7 @@ class RockBrazilGame {
     this.ui.setCountdown(count.toString());
     this.audio.playSfxCountdown();
 
-    this.countdownTimer = window.setInterval(() => {
+    this.countdownTimer = window.setInterval(async () => {
       if (sessionId !== this.currentMatchSessionId) {
         this.clearCountdown();
         return;
@@ -626,22 +649,22 @@ class RockBrazilGame {
       } else {
         this.clearCountdown();
         if (sessionId === this.currentMatchSessionId) {
-          this.startGameplay(sessionId);
+          await this.startGameplay(sessionId);
         }
       }
     }, 850);
   }
 
-  private startGameplay(sessionId: number): void {
+  private async startGameplay(sessionId: number): Promise<void> {
     if (sessionId !== this.currentMatchSessionId) return;
 
     this.state = GameState.PLAYING;
     this.ui.showScreen(GameState.PLAYING);
 
     if (this.currentSong.type === 'procedural' && this.currentSong.proceduralTrackId) {
-      this.audio.playProceduralTrack(this.currentSong.proceduralTrackId, 0);
+      await this.audio.playProceduralTrack(this.currentSong.proceduralTrackId, 0);
     } else if (this.currentSong.audioBuffer) {
-      this.audio.playAudioBuffer(this.currentSong.audioBuffer, 0);
+      await this.audio.playAudioBuffer(this.currentSong.audioBuffer, 0);
     }
   }
 

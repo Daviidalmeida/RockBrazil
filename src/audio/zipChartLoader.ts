@@ -67,6 +67,16 @@ export class ZipChartLoader {
     return mixed;
   }
 
+  private static async safeDecode(ctx: AudioContext, data: ArrayBuffer): Promise<AudioBuffer> {
+    const copy = data.slice(0);
+    return new Promise<AudioBuffer>((resolve, reject) => {
+      const res = ctx.decodeAudioData(copy, resolve, reject);
+      if (res && typeof res.then === 'function') {
+        res.then(resolve).catch(reject);
+      }
+    });
+  }
+
   /**
    * Processes an uploaded .zip AutoChart or Clone Hero pack
    */
@@ -122,7 +132,7 @@ export class ZipChartLoader {
     for (const audioEntry of audioEntries) {
       try {
         const audioData = await audioEntry.async('arraybuffer');
-        const buf = await ctx.decodeAudioData(audioData);
+        const buf = await ZipChartLoader.safeDecode(ctx, audioData);
         decodedBuffers.push(buf);
       } catch (err) {
         console.warn(`Falha ao decodificar trilha de áudio ${audioEntry.name}:`, err);
@@ -191,7 +201,7 @@ export class ZipChartLoader {
         const res = await fetch(`${basePath}/${stem}`);
         if (res.ok) {
           const arr = await res.arrayBuffer();
-          const buf = await ctx.decodeAudioData(arr);
+          const buf = await ZipChartLoader.safeDecode(ctx, arr);
           decodedBuffers.push(buf);
         }
       } catch (err) {
@@ -204,7 +214,7 @@ export class ZipChartLoader {
       const fallbackRes = await fetch(`${base}custom-songs/TNT.mp3`);
       if (fallbackRes.ok) {
         const arr = await fallbackRes.arrayBuffer();
-        const buf = await ctx.decodeAudioData(arr);
+        const buf = await ZipChartLoader.safeDecode(ctx, arr);
         decodedBuffers.push(buf);
       }
     }

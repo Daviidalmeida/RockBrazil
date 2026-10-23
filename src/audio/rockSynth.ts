@@ -69,6 +69,7 @@ export class RockSynth {
   private currentTrackId = 'furia-tropical';
   private currentBpm = 132;
   private currentDuration = 51.5;
+  private currentVolume = 0.85;
 
   constructor() {
     this.distortionCurve = this.makeDistortionCurve(52);
@@ -109,8 +110,9 @@ export class RockSynth {
   }
 
   setVolume(volume: number): void {
+    this.currentVolume = Math.max(0, Math.min(1, volume));
     if (this.masterGain && this.ctx) {
-      this.masterGain.gain.setValueAtTime(Math.max(0, Math.min(1, volume)), this.ctx.currentTime);
+      this.masterGain.gain.setValueAtTime(this.currentVolume, this.ctx.currentTime);
     }
   }
 
@@ -369,7 +371,7 @@ export class RockSynth {
     this.songStartTime = currentCtxTime - offsetSeconds;
 
     this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.85, currentCtxTime);
+    this.masterGain.gain.setValueAtTime(this.currentVolume, currentCtxTime);
     this.masterGain.connect(this.ctx.destination);
 
     const startT = this.songStartTime;

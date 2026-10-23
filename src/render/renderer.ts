@@ -1,4 +1,4 @@
-import { Note, Lane } from '../types';
+import { Note, Lane, Difficulty, getLanesForDifficulty } from '../types';
 
 interface Particle {
   x: number;
@@ -27,26 +27,34 @@ export class GameRenderer {
   private rings: RingEffect[] = [];
   private screenShake = 0;
 
-  // Lane Colors
+  // Active difficulty & dynamic lanes configuration
+  private difficulty: Difficulty = 'HARD';
+  private activeLanesList: Lane[] = [0, 1, 2, 3, 4];
+
+  // Modern vibrant Lane Colors
   readonly laneColors = [
-    { core: '#00ff88', glow: 'rgba(0, 255, 136, 0.7)', dark: '#008f4c' }, // 0: Green
-    { core: '#ff2a5f', glow: 'rgba(255, 42, 95, 0.7)',  dark: '#9e0029' }, // 1: Red
-    { core: '#ffe600', glow: 'rgba(255, 230, 0, 0.7)', dark: '#a69500' }, // 2: Yellow
-    { core: '#00d0ff', glow: 'rgba(0, 208, 255, 0.7)', dark: '#006b94' }, // 3: Blue
-    { core: '#ff7b00', glow: 'rgba(255, 123, 0, 0.7)', dark: '#944600' }  // 4: Orange
+    { core: '#00ff88', glow: 'rgba(0, 255, 136, 0.75)', dark: '#006636', light: '#80ffc4' }, // 0: Verde
+    { core: '#ff2a5f', glow: 'rgba(255, 42, 95, 0.75)',  dark: '#850022', light: '#ff85a3' }, // 1: Vermelho
+    { core: '#ffe600', glow: 'rgba(255, 230, 0, 0.75)', dark: '#807300', light: '#fff480' }, // 2: Amarelo
+    { core: '#00d0ff', glow: 'rgba(0, 208, 255, 0.75)', dark: '#005473', light: '#80e8ff' }, // 3: Azul
+    { core: '#ff7b00', glow: 'rgba(255, 123, 0, 0.75)', dark: '#803e00', light: '#ffbd80' }  // 4: Laranja
   ];
 
-  // Perspective parameters
-  readonly horizonYRatio = 0.08;   // Vanishing point Y
-  readonly strikeLineYRatio = 0.82; // Strike line Y
-  readonly highwayTopWidthRatio = 0.35; // Narrow at top
-  readonly highwayBottomWidthRatio = 0.94; // Wide at strike line
-  readonly baseNoteSpeed = 1.35; // Base seconds from horizon to strike line
+  // 3D Perspective parameters
+  readonly horizonYRatio = 0.085;       // Vanishing point Y (converging toward upper center)
+  readonly strikeLineYRatio = 0.82;     // Strike line Y (receptors location)
+  readonly highwayTopWidthRatio = 0.28; // Narrow top for deep perspective
+  readonly highwayBottomWidthRatio = 0.95; // Wide bottom for clear readability
+  readonly baseNoteSpeed = 1.35;        // Seconds from horizon to strike line
   public noteSpeedMultiplier = 1.0;
   public visualEffectsEnabled = true;
 
   get noteSpeed(): number {
     return this.baseNoteSpeed / Math.max(0.6, Math.min(2.5, this.noteSpeedMultiplier));
+  }
+
+  get laneCount(): number {
+    return this.activeLanesList.length;
   }
 
   constructor(canvas: HTMLCanvasElement) {
@@ -55,6 +63,14 @@ export class GameRenderer {
     if (!context) throw new Error('Could not get 2D context from canvas');
     this.ctx = context;
     this.resize();
+  }
+
+  /**
+   * Sets the active difficulty and adapts visible lanes (3 for EASY, 4 for MEDIUM, 5 for HARD/EXPERT)
+   */
+  setDifficulty(diff: Difficulty): void {
+    this.difficulty = diff;
+    this.activeLanesList = getLanesForDifficulty(diff);
   }
 
   resize(): void {
@@ -87,29 +103,32 @@ export class GameRenderer {
   spawnHitParticles(lane: Lane): void {
     if (!this.visualEffectsEnabled) return;
     const coords = this.getLanePositionAtProgress(lane, 1.0);
-    const color = this.laneColors[lane].core;
+    const color = this.laneColors[lane];
 
-    for (let i = 0; i < 22; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 5 + 2;
+    // Burst particles
+    const particleCount = 14;
+    for (let i = 0; i < particleCount; i++) {
+      const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.4;
+      const speed = Math.random() * 4.5 + 2.0;
       this.particles.push({
         x: coords.x,
         y: coords.y,
         vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - 1.5,
-        color,
-        size: Math.random() * 4 + 2,
+        vy: Math.sin(angle) * speed - 1.2,
+        color: i % 2 === 0 ? color.core : '#ffffff',
+        size: Math.random() * 3.5 + 2.0,
         alpha: 1.0,
-        decay: Math.random() * 0.03 + 0.02
+        decay: Math.random() * 0.035 + 0.03
       });
     }
 
+    // Expanding shockwave ring
     this.rings.push({
       x: coords.x,
       y: coords.y,
-      radius: coords.laneWidth * 0.35,
-      maxRadius: coords.laneWidth * 0.9,
-      color,
+      radius: coords.laneWidth * 0.3,
+      maxRadius: coords.laneWidth * 0.95,
+      color: color.core,
       alpha: 1.0
     });
   }
@@ -120,47 +139,54 @@ export class GameRenderer {
   spawnSustainSparks(lane: Lane): void {
     if (!this.visualEffectsEnabled) return;
     const coords = this.getLanePositionAtProgress(lane, 1.0);
-    const color = this.laneColors[lane].core;
+    const color = this.laneColors[lane];
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 2; i++) {
       this.particles.push({
-        x: coords.x + (Math.random() - 0.5) * coords.laneWidth * 0.5,
-        y: coords.y + (Math.random() - 0.5) * 8,
-        vx: (Math.random() - 0.5) * 3,
-        vy: -Math.random() * 4 - 2,
-        color,
-        size: Math.random() * 3 + 1.5,
+        x: coords.x + (Math.random() - 0.5) * coords.laneWidth * 0.45,
+        y: coords.y + (Math.random() - 0.5) * 6,
+        vx: (Math.random() - 0.5) * 2.5,
+        vy: -Math.random() * 4.5 - 2.5,
+        color: Math.random() > 0.4 ? color.core : '#ffffff',
+        size: Math.random() * 3.0 + 1.5,
         alpha: 0.9,
-        decay: 0.05
+        decay: 0.06
       });
     }
   }
 
   /**
-   * Calculates perspective position (x, y, scale, laneWidth) for a given lane and progress
+   * Calculates 3D perspective position (x, y, scale, laneWidth) for a given lane and progress
    * Progress: 0.0 at horizon, 1.0 at strike line
    */
-  private getLanePositionAtProgress(lane: Lane, progress: number): { x: number; y: number; laneWidth: number; scale: number } {
+  private getLanePositionAtProgress(
+    lane: Lane,
+    progress: number
+  ): { x: number; y: number; laneWidth: number; scale: number; currentWidth: number; highwayLeft: number } {
     const w = this.width;
     const h = this.height;
 
     const horizonY = h * this.horizonYRatio;
     const strikeY = h * this.strikeLineYRatio;
 
-    // Non-linear perspective interpolation
-    const persp = Math.pow(Math.max(0, Math.min(progress, 1.4)), 1.35);
+    // Non-linear natural foreshortening perspective
+    const persp = Math.pow(Math.max(0, Math.min(progress, 1.45)), 1.38);
     const currentY = horizonY + (strikeY - horizonY) * persp;
 
     const topWidth = w * this.highwayTopWidthRatio;
     const bottomWidth = w * this.highwayBottomWidthRatio;
     const currentWidth = topWidth + (bottomWidth - topWidth) * persp;
 
-    const laneWidth = currentWidth / 5;
+    const laneCount = Math.max(3, this.laneCount);
+    const laneWidth = currentWidth / laneCount;
     const highwayLeft = (w - currentWidth) / 2;
-    const x = highwayLeft + laneWidth * (lane + 0.5);
-    const scale = 0.4 + 0.6 * persp;
 
-    return { x, y: currentY, laneWidth, scale };
+    // Constrain lane index to visible lane count
+    const laneIdx = Math.min(lane, laneCount - 1);
+    const x = highwayLeft + laneWidth * (laneIdx + 0.5);
+    const scale = 0.35 + 0.65 * persp;
+
+    return { x, y: currentY, laneWidth, scale, currentWidth, highwayLeft };
   }
 
   /**
@@ -189,19 +215,19 @@ export class GameRenderer {
     // 1. Clear background
     ctx.clearRect(0, 0, w, h);
 
-    // 2. Draw Highway Surface
-    this.drawHighway(ctx, activeLanes);
+    // 2. Draw 3D Highway Surface & Border Rails
+    this.drawHighway(ctx);
 
-    // 3. Draw Beat Measure Lines
+    // 3. Draw Beat Measure Lines (Fret Wires moving with tempo)
     this.drawBeatLines(ctx, currentTime, bpm);
 
     // 4. Draw Sustain Ribbons
     this.drawSustains(ctx, currentTime, notes);
 
-    // 5. Draw Strike Line & Target Rings
+    // 5. Draw Strike Line & Target Receptors
     this.drawStrikeTargets(ctx, activeLanes);
 
-    // 6. Draw Approaching Notes (Gems)
+    // 6. Draw Approaching 3D Notes (Gems)
     this.drawNotes(ctx, currentTime, notes);
 
     // 7. Draw Visual FX (Particles & Rings)
@@ -211,24 +237,25 @@ export class GameRenderer {
   }
 
   /**
-   * Draws the 3D-perspective highway board
+   * Draws the 3D-perspective highway board with neon rails and lane dividers
    */
-  private drawHighway(ctx: CanvasRenderingContext2D, activeLanes: Set<Lane>): void {
+  private drawHighway(ctx: CanvasRenderingContext2D): void {
     const w = this.width;
     const h = this.height;
     const horizonY = h * this.horizonYRatio;
-    const bottomY = h * 0.98;
+    const bottomY = h * 0.99;
 
     const topW = w * this.highwayTopWidthRatio;
-    const bottomW = w * (this.highwayBottomWidthRatio + 0.05);
+    const bottomW = w * this.highwayBottomWidthRatio;
 
     const topLeftX = (w - topW) / 2;
     const topRightX = topLeftX + topW;
     const bottomLeftX = (w - bottomW) / 2;
     const bottomRightX = bottomLeftX + bottomW;
 
-    // Highway Board Background
     ctx.save();
+
+    // 1. Highway Board Surface Gradient (Deep Stage Charcoal)
     ctx.beginPath();
     ctx.moveTo(topLeftX, horizonY);
     ctx.lineTo(topRightX, horizonY);
@@ -236,125 +263,193 @@ export class GameRenderer {
     ctx.lineTo(bottomLeftX, bottomY);
     ctx.closePath();
 
-    const grad = ctx.createLinearGradient(0, horizonY, 0, bottomY);
-    grad.addColorStop(0, 'rgba(12, 13, 22, 0.45)');
-    grad.addColorStop(0.5, 'rgba(19, 21, 34, 0.70)');
-    grad.addColorStop(1, 'rgba(27, 29, 46, 0.88)');
-    ctx.fillStyle = grad;
+    const surfaceGrad = ctx.createLinearGradient(0, horizonY, 0, bottomY);
+    surfaceGrad.addColorStop(0, 'rgba(8, 10, 18, 0.45)');
+    surfaceGrad.addColorStop(0.35, 'rgba(11, 13, 24, 0.75)');
+    surfaceGrad.addColorStop(1, 'rgba(6, 7, 14, 0.96)');
+    ctx.fillStyle = surfaceGrad;
     ctx.fill();
 
-    // Side Borders (Metallic neon rails)
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = '#484c6e';
-    ctx.stroke();
+    // 2. Center Stage Ambient Glow
+    const glowGrad = ctx.createRadialGradient(
+      w / 2, h * this.strikeLineYRatio * 0.9, 10,
+      w / 2, h * this.strikeLineYRatio * 0.9, bottomW * 0.6
+    );
+    glowGrad.addColorStop(0, 'rgba(0, 208, 255, 0.08)');
+    glowGrad.addColorStop(0.6, 'rgba(255, 42, 95, 0.04)');
+    glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = glowGrad;
+    ctx.fill();
 
-    // Highway Lane Dividers
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
-    ctx.lineWidth = 1.5;
-    for (let i = 1; i < 5; i++) {
-      const topX = topLeftX + (topW / 5) * i;
-      const bottomX = bottomLeftX + (bottomW / 5) * i;
+    // 3. Lane Dividing Laser Lines
+    const laneCount = this.laneCount;
+    for (let i = 1; i < laneCount; i++) {
+      const topX = topLeftX + (topW / laneCount) * i;
+      const bottomX = bottomLeftX + (bottomW / laneCount) * i;
+
       ctx.beginPath();
       ctx.moveTo(topX, horizonY);
       ctx.lineTo(bottomX, bottomY);
+
+      const divGrad = ctx.createLinearGradient(0, horizonY, 0, bottomY);
+      divGrad.addColorStop(0, 'rgba(255, 255, 255, 0.05)');
+      divGrad.addColorStop(0.6, 'rgba(255, 255, 255, 0.18)');
+      divGrad.addColorStop(1, 'rgba(255, 255, 255, 0.35)');
+
+      ctx.strokeStyle = divGrad;
+      ctx.lineWidth = 1.5;
       ctx.stroke();
     }
 
-    // Active Lane Light Beams (glows when button is pressed!)
-    activeLanes.forEach((lane) => {
-      const pTop = this.getLanePositionAtProgress(lane, 0);
-      const pBottom = this.getLanePositionAtProgress(lane, 1.05);
-      const color = this.laneColors[lane];
-
-      ctx.save();
-      const beamGrad = ctx.createLinearGradient(0, pBottom.y, 0, pTop.y);
-      beamGrad.addColorStop(0, color.glow);
-      beamGrad.addColorStop(0.7, 'rgba(255, 255, 255, 0.08)');
-      beamGrad.addColorStop(1, 'transparent');
-
+    // 4. Luminous Side Rails (Left & Right Glowing Bevels)
+    const drawSideRail = (startX: number, endX: number, isRight: boolean) => {
+      // Outer neon aura
       ctx.beginPath();
-      ctx.moveTo(pTop.x - pTop.laneWidth * 0.45, pTop.y);
-      ctx.lineTo(pTop.x + pTop.laneWidth * 0.45, pTop.y);
-      ctx.lineTo(pBottom.x + pBottom.laneWidth * 0.48, pBottom.y);
-      ctx.lineTo(pBottom.x - pBottom.laneWidth * 0.48, pBottom.y);
-      ctx.closePath();
-      ctx.fillStyle = beamGrad;
-      ctx.fill();
-      ctx.restore();
-    });
+      ctx.moveTo(startX, horizonY);
+      ctx.lineTo(endX, bottomY);
+      ctx.strokeStyle = 'rgba(0, 208, 255, 0.45)';
+      ctx.lineWidth = 6;
+      ctx.stroke();
+
+      // Inner electric core
+      ctx.beginPath();
+      ctx.moveTo(startX, horizonY);
+      ctx.lineTo(endX, bottomY);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Accent border
+      const offset = isRight ? 3 : -3;
+      ctx.beginPath();
+      ctx.moveTo(startX + offset * 0.3, horizonY);
+      ctx.lineTo(endX + offset, bottomY);
+      ctx.strokeStyle = isRight ? '#ff2a5f' : '#00ff88';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    };
+
+    drawSideRail(topLeftX, bottomLeftX, false);
+    drawSideRail(topRightX, bottomRightX, true);
 
     ctx.restore();
   }
 
   /**
-   * Draws rhythm measure / beat lines moving down the highway
+   * Draws rhythmically moving beat/fret lines down the perspective highway
    */
   private drawBeatLines(ctx: CanvasRenderingContext2D, currentTime: number, bpm: number): void {
-    const beatSec = 60 / bpm;
-    const currentBeat = currentTime / beatSec;
-    const startBeat = Math.floor(currentBeat);
-    const endBeat = startBeat + 8;
+    const secondsPerBeat = 60 / Math.max(60, bpm);
+    const currentBeat = currentTime / secondsPerBeat;
+    const startBeat = Math.floor(currentBeat - 1);
+    const endBeat = Math.ceil(currentBeat + this.noteSpeed / secondsPerBeat + 1);
 
-    for (let b = startBeat; b <= endBeat; b++) {
-      const beatTime = b * beatSec;
+    ctx.save();
+    for (let beat = startBeat; beat <= endBeat; beat++) {
+      const beatTime = beat * secondsPerBeat;
       const timeRemaining = beatTime - currentTime;
       const progress = 1.0 - (timeRemaining / this.noteSpeed);
 
-      if (progress >= 0 && progress <= 1.05) {
-        const p0 = this.getLanePositionAtProgress(0, progress);
-        const p4 = this.getLanePositionAtProgress(4, progress);
+      if (progress < 0.02 || progress > 1.05) continue;
 
-        const isMeasure = b % 4 === 0;
-        ctx.beginPath();
-        ctx.moveTo(p0.x - p0.laneWidth * 0.5, p0.y);
-        ctx.lineTo(p4.x + p4.laneWidth * 0.5, p4.y);
-        ctx.strokeStyle = isMeasure ? 'rgba(255, 255, 255, 0.22)' : 'rgba(255, 255, 255, 0.08)';
-        ctx.lineWidth = isMeasure ? 2.5 : 1.2;
-        ctx.stroke();
+      const p = this.getLanePositionAtProgress(0, progress);
+      const isMeasure = beat % 4 === 0;
+
+      const lineLeft = p.highwayLeft;
+      const lineRight = p.highwayLeft + p.currentWidth;
+
+      ctx.beginPath();
+      ctx.moveTo(lineLeft, p.y);
+      ctx.lineTo(lineRight, p.y);
+
+      if (isMeasure) {
+        ctx.strokeStyle = `rgba(255, 255, 255, ${0.4 * p.scale})`;
+        ctx.lineWidth = Math.max(1.5, 2.5 * p.scale);
+      } else {
+        ctx.strokeStyle = `rgba(255, 255, 255, ${0.16 * p.scale})`;
+        ctx.lineWidth = Math.max(1, 1.5 * p.scale);
       }
+      ctx.stroke();
     }
+    ctx.restore();
   }
 
   /**
-   * Draws the strike targets near the bottom
+   * Draws the strike line and circular target receptors for active lanes
    */
   private drawStrikeTargets(ctx: CanvasRenderingContext2D, activeLanes: Set<Lane>): void {
-    const strikeY = this.height * this.strikeLineYRatio;
+    const h = this.height;
+    const strikeY = h * this.strikeLineYRatio;
+    const pSample = this.getLanePositionAtProgress(0, 1.0);
 
-    // Glowing Strike Bar Line
-    const p0 = this.getLanePositionAtProgress(0, 1.0);
-    const p4 = this.getLanePositionAtProgress(4, 1.0);
-    const lineLeft = p0.x - p0.laneWidth * 0.55;
-    const lineRight = p4.x + p4.laneWidth * 0.55;
+    const lineLeft = pSample.highwayLeft;
+    const lineRight = pSample.highwayLeft + pSample.currentWidth;
 
     ctx.save();
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
-    ctx.lineWidth = 3;
+
+    // 1. Glowing Metallic Strike Bar across the highway
+    const barGrad = ctx.createLinearGradient(lineLeft, strikeY, lineRight, strikeY);
+    barGrad.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+    barGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.7)');
+    barGrad.addColorStop(1, 'rgba(255, 255, 255, 0.15)');
+
+    ctx.strokeStyle = barGrad;
+    ctx.lineWidth = 3.5;
     ctx.beginPath();
     ctx.moveTo(lineLeft, strikeY);
     ctx.lineTo(lineRight, strikeY);
     ctx.stroke();
 
-    // 5 Strike Targets
-    for (let lane = 0; lane < 5; lane++) {
-      const { x, y, laneWidth } = this.getLanePositionAtProgress(lane as Lane, 1.0);
-      const isPressed = activeLanes.has(lane as Lane);
+    // 2. Strike Target Receptors for each available difficulty lane
+    const laneCount = this.laneCount;
+    for (let laneIdx = 0; laneIdx < laneCount; laneIdx++) {
+      const lane = this.activeLanesList[laneIdx];
+      const { x, y, laneWidth } = this.getLanePositionAtProgress(lane, 1.0);
+      const isPressed = activeLanes.has(lane);
       const color = this.laneColors[lane];
-      const radius = laneWidth * 0.36;
+      const radius = laneWidth * 0.38;
 
       ctx.save();
-      // Outer Target Ring
+
+      // Outer Bezel Ring
       ctx.beginPath();
       ctx.arc(x, y, radius, 0, Math.PI * 2);
-      ctx.strokeStyle = isPressed ? color.core : 'rgba(255, 255, 255, 0.4)';
-      ctx.lineWidth = isPressed ? 4 : 2.5;
+      ctx.strokeStyle = isPressed ? color.core : 'rgba(255, 255, 255, 0.45)';
+      ctx.lineWidth = isPressed ? 4.5 : 2.5;
+      ctx.shadowColor = isPressed ? color.core : 'rgba(0, 0, 0, 0.6)';
+      ctx.shadowBlur = isPressed ? 20 : 6;
       ctx.stroke();
 
-      // Inner Target Indicator
+      // Inner Receptor Cup
+      ctx.beginPath();
+      ctx.arc(x, y, radius * 0.75, 0, Math.PI * 2);
       if (isPressed) {
-        ctx.fillStyle = color.glow;
+        // Active Laser Flare
+        const pressGrad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+        pressGrad.addColorStop(0, '#ffffff');
+        pressGrad.addColorStop(0.4, color.core);
+        pressGrad.addColorStop(1, color.dark);
+        ctx.fillStyle = pressGrad;
+        ctx.fill();
+
+        // Pulsing core light
+        ctx.beginPath();
+        ctx.arc(x, y, radius * 0.35, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
         ctx.shadowColor = color.core;
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 12;
+        ctx.fill();
+      } else {
+        // Inactive Dark Cup with Subtle Pip
+        ctx.fillStyle = 'rgba(14, 16, 28, 0.75)';
+        ctx.fill();
+        ctx.strokeStyle = color.glow;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(x, y, radius * 0.22, 0, Math.PI * 2);
+        ctx.fillStyle = color.core;
         ctx.fill();
       }
 
@@ -365,39 +460,40 @@ export class GameRenderer {
   }
 
   /**
-   * Draws sustain note ribbons/trails
+   * Draws sustain note ribbons/trails with 3D perspective and glowing energy core
    */
   private drawSustains(ctx: CanvasRenderingContext2D, currentTime: number, notes: Note[]): void {
     for (const note of notes) {
       if (note.duration <= 0) continue;
       // Skip if completely passed
-      if (note.time + note.duration < currentTime - 0.2) continue;
-      // Skip if not yet near horizon
-      if (note.time > currentTime + this.noteSpeed * 1.2) continue;
+      if (note.time + note.duration < currentTime - 0.25) continue;
+      // Skip if not yet in view
+      if (note.time > currentTime + this.noteSpeed * 1.25) continue;
 
-      const color = this.laneColors[note.lane];
+      const lane = note.lane;
+      const color = this.laneColors[lane];
 
-      // Calculate progress of head and tail
-      // Head progress is clamped if note is already hit and holding
       const headTimeRemaining = note.time - currentTime;
       const tailTimeRemaining = (note.time + note.duration) - currentTime;
 
       const rawHeadProgress = 1.0 - (headTimeRemaining / this.noteSpeed);
       const rawTailProgress = 1.0 - (tailTimeRemaining / this.noteSpeed);
 
-      // If note was hit, head locks to the strike line (progress 1.0) while tail approaches
+      // If note was hit, head locks to the strike line (1.0) while tail approaches
       const headProg = note.hit ? 1.0 : Math.min(1.0, rawHeadProgress);
       const tailProg = Math.max(0, rawTailProgress);
 
       if (headProg <= 0 || tailProg >= 1.05) continue;
 
-      const pHead = this.getLanePositionAtProgress(note.lane, headProg);
-      const pTail = this.getLanePositionAtProgress(note.lane, tailProg);
+      const pHead = this.getLanePositionAtProgress(lane, headProg);
+      const pTail = this.getLanePositionAtProgress(lane, tailProg);
 
-      const trailWHead = pHead.laneWidth * 0.38;
-      const trailWTail = pTail.laneWidth * 0.38;
+      const trailWHead = pHead.laneWidth * 0.36;
+      const trailWTail = pTail.laneWidth * 0.36;
 
       ctx.save();
+
+      // Ribbon Surface Polygon
       ctx.beginPath();
       ctx.moveTo(pTail.x - trailWTail * 0.5, pTail.y);
       ctx.lineTo(pTail.x + trailWTail * 0.5, pTail.y);
@@ -405,21 +501,22 @@ export class GameRenderer {
       ctx.lineTo(pHead.x - trailWHead * 0.5, pHead.y);
       ctx.closePath();
 
-      // Sustain Trail Gradient
-      const grad = ctx.createLinearGradient(0, pTail.y, 0, pHead.y);
-      grad.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
-      grad.addColorStop(0.5, color.glow);
-      grad.addColorStop(1, color.core);
+      const sustainGrad = ctx.createLinearGradient(0, pTail.y, 0, pHead.y);
+      sustainGrad.addColorStop(0, 'rgba(255, 255, 255, 0.25)');
+      sustainGrad.addColorStop(0.5, color.glow);
+      sustainGrad.addColorStop(1, color.core);
 
-      ctx.fillStyle = grad;
+      ctx.fillStyle = sustainGrad;
+      ctx.shadowColor = color.core;
+      ctx.shadowBlur = 10 * pHead.scale;
       ctx.fill();
 
-      // Electric center pulse line
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 2;
+      // Central Electric Laser Pulse Wire
       ctx.beginPath();
       ctx.moveTo(pTail.x, pTail.y);
       ctx.lineTo(pHead.x, pHead.y);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = Math.max(1.5, 2.5 * pHead.scale);
       ctx.stroke();
 
       ctx.restore();
@@ -427,51 +524,107 @@ export class GameRenderer {
   }
 
   /**
-   * Draws note gems descending down the highway
+   * Draws 3D note gems descending down the highway with depth, bevels, and chrome reflection
    */
   private drawNotes(ctx: CanvasRenderingContext2D, currentTime: number, notes: Note[]): void {
+    // Group notes by timestamp for chord connection beam
+    const visibleNotes: Note[] = [];
+
     for (const note of notes) {
       if (note.hit || note.missed) continue;
 
       const timeRemaining = note.time - currentTime;
       const progress = 1.0 - (timeRemaining / this.noteSpeed);
 
-      // Draw only visible notes between horizon and just past strike line
-      if (progress < -0.05 || progress > 1.12) continue;
+      if (progress < -0.06 || progress > 1.12) continue;
+      visibleNotes.push(note);
+    }
+
+    // 1. Draw Chord Connector Beams
+    const chordGroups = new Map<number, Note[]>();
+    for (const note of visibleNotes) {
+      const roundedTime = Math.round(note.time * 25) / 25; // 40ms quantization
+      if (!chordGroups.has(roundedTime)) chordGroups.set(roundedTime, []);
+      chordGroups.get(roundedTime)!.push(note);
+    }
+
+    ctx.save();
+    chordGroups.forEach((groupNotes) => {
+      if (groupNotes.length > 1) {
+        groupNotes.sort((a, b) => a.lane - b.lane);
+        const first = groupNotes[0];
+        const last = groupNotes[groupNotes.length - 1];
+
+        const pFirst = this.getLanePositionAtProgress(first.lane, 1.0 - ((first.time - currentTime) / this.noteSpeed));
+        const pLast = this.getLanePositionAtProgress(last.lane, 1.0 - ((last.time - currentTime) / this.noteSpeed));
+
+        ctx.beginPath();
+        ctx.moveTo(pFirst.x, pFirst.y);
+        ctx.lineTo(pLast.x, pLast.y);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+        ctx.lineWidth = Math.max(2, 4 * pFirst.scale);
+        ctx.shadowColor = '#ffffff';
+        ctx.shadowBlur = 12 * pFirst.scale;
+        ctx.stroke();
+      }
+    });
+    ctx.restore();
+
+    // 2. Draw 3D Note Gems
+    for (const note of visibleNotes) {
+      const timeRemaining = note.time - currentTime;
+      const progress = 1.0 - (timeRemaining / this.noteSpeed);
 
       const { x, y, laneWidth, scale } = this.getLanePositionAtProgress(note.lane, progress);
       const color = this.laneColors[note.lane];
-      const radiusX = laneWidth * 0.42 * scale;
-      const radiusY = laneWidth * 0.28 * scale;
+
+      const rx = laneWidth * 0.44 * scale;
+      const ry = laneWidth * 0.27 * scale;
 
       ctx.save();
 
-      // Note Glow Shadow
+      // Outer Glow Shadow
       ctx.shadowColor = color.core;
-      ctx.shadowBlur = 14 * scale;
+      ctx.shadowBlur = 16 * scale;
 
-      // Note 3D Gem Body (Ellipse with radial gradient)
+      // 3D Bottom Bevel (Darker base for depth volume)
       ctx.beginPath();
-      ctx.ellipse(x, y, radiusX, radiusY, 0, 0, Math.PI * 2);
+      ctx.ellipse(x, y + ry * 0.35, rx, ry * 0.9, 0, 0, Math.PI * 2);
+      ctx.fillStyle = color.dark;
+      ctx.fill();
+
+      // Main Gem Body (Rich Radial Gradient)
+      ctx.beginPath();
+      ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
 
       const gemGrad = ctx.createRadialGradient(
-        x - radiusX * 0.2,
-        y - radiusY * 0.2,
-        radiusX * 0.1,
-        x,
-        y,
-        radiusX
+        x - rx * 0.25, y - ry * 0.35, rx * 0.08,
+        x, y, rx
       );
       gemGrad.addColorStop(0, '#ffffff');
-      gemGrad.addColorStop(0.4, color.core);
+      gemGrad.addColorStop(0.35, color.light);
+      gemGrad.addColorStop(0.7, color.core);
       gemGrad.addColorStop(1, color.dark);
+
       ctx.fillStyle = gemGrad;
       ctx.fill();
 
-      // Chrome rim
+      // Chrome Rim
       ctx.lineWidth = Math.max(1.5, 2.5 * scale);
       ctx.strokeStyle = '#ffffff';
       ctx.stroke();
+
+      // Top Specular Highlight Pill (Jewel Glass Reflection)
+      ctx.beginPath();
+      ctx.ellipse(
+        x - rx * 0.15,
+        y - ry * 0.35,
+        rx * 0.48,
+        ry * 0.28,
+        0, 0, Math.PI * 2
+      );
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+      ctx.fill();
 
       ctx.restore();
     }
@@ -481,13 +634,13 @@ export class GameRenderer {
    * Renders hit particles & expanding rings
    */
   private renderEffects(ctx: CanvasRenderingContext2D): void {
-    // 1. Rings
+    // 1. Expanding Shockwave Rings
     for (let i = this.rings.length - 1; i >= 0; i--) {
       const ring = this.rings[i];
-      ring.radius += 2.2;
-      ring.alpha -= 0.05;
+      ring.radius += 2.5;
+      ring.alpha -= 0.055;
 
-      if (ring.alpha <= 0) {
+      if (ring.alpha <= 0 || ring.radius >= ring.maxRadius) {
         this.rings.splice(i, 1);
         continue;
       }
@@ -496,13 +649,15 @@ export class GameRenderer {
       ctx.beginPath();
       ctx.arc(ring.x, ring.y, ring.radius, 0, Math.PI * 2);
       ctx.strokeStyle = ring.color;
-      ctx.globalAlpha = ring.alpha;
+      ctx.globalAlpha = Math.max(0, ring.alpha);
       ctx.lineWidth = 3;
+      ctx.shadowColor = ring.color;
+      ctx.shadowBlur = 10;
       ctx.stroke();
       ctx.restore();
     }
 
-    // 2. Particles
+    // 2. Burst & Sustain Particles
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
       p.x += p.vx;
@@ -518,7 +673,7 @@ export class GameRenderer {
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
       ctx.fillStyle = p.color;
-      ctx.globalAlpha = p.alpha;
+      ctx.globalAlpha = Math.max(0, p.alpha);
       ctx.shadowColor = p.color;
       ctx.shadowBlur = 8;
       ctx.fill();

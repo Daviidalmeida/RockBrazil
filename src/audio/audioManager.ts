@@ -43,6 +43,22 @@ export class AudioManager {
     }
   }
 
+  /**
+   * Guarantees AudioContext exists and is in 'running' state
+   */
+  async ensureResumed(): Promise<void> {
+    if (!this.ctx) {
+      await this.init();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      try {
+        await this.ctx.resume();
+      } catch (err) {
+        console.warn('AudioContext.resume() aguardando gesto do usuário:', err);
+      }
+    }
+  }
+
   get audioContext(): AudioContext | null {
     return this.ctx;
   }
@@ -80,9 +96,10 @@ export class AudioManager {
   /**
    * Play a procedural track by ID
    */
-  playProceduralTrack(trackId: string, offset = 0): void {
+  async playProceduralTrack(trackId: string, offset = 0): Promise<void> {
     this.stop();
     this.isUsingProcedural = true;
+    await this.ensureResumed();
     this.synth.setVolume(this.settings.musicVolume);
     this.synth.startTrack(trackId, offset);
   }
@@ -90,15 +107,12 @@ export class AudioManager {
   /**
    * Play an AudioBuffer (imported MP3, AutoChart stems, or loaded file)
    */
-  playAudioBuffer(buffer: AudioBuffer, offset = 0): void {
+  async playAudioBuffer(buffer: AudioBuffer, offset = 0): Promise<void> {
     this.stop();
     this.isUsingProcedural = false;
     this.currentAudioBuffer = buffer;
+    await this.ensureResumed();
     if (!this.ctx) return;
-
-    if (this.ctx.state === 'suspended') {
-      this.ctx.resume().catch(() => {});
-    }
 
     this.fileStartTime = this.ctx.currentTime - offset;
     this.filePauseOffset = offset;
@@ -143,12 +157,13 @@ export class AudioManager {
     }
   }
 
-  resume(): void {
+  async resume(): Promise<void> {
+    await this.ensureResumed();
     if (this.isUsingProcedural) {
       this.synth.resumeTrack();
     } else {
       if (!this.isFilePlaying || !this.isFilePaused || !this.currentAudioBuffer) return;
-      this.playAudioBuffer(this.currentAudioBuffer, this.filePauseOffset);
+      await this.playAudioBuffer(this.currentAudioBuffer, this.filePauseOffset);
     }
   }
 
@@ -181,25 +196,49 @@ export class AudioManager {
   }
 
   /**
-   * Decodes an MP3 File from input
+   * Safe in-memory audio decoding supporting all modern and legacy browsers
    */
-  async decodeAudioFile(file: File): Promise<AudioBuffer> {
-    await this.init();
-    if (!this.ctx) throw new Error('AudioContext not available');
-    const arrayBuffer = await file.arrayBuffer();
-    return await this.ctx.decodeAudioData(arrayBuffer);
+  async decodeAudioBufferData(arrayBuffer: ArrayBuffer): Promise<AudioBuffer> {
+    await this.ensureResumed();
+    if (!this.ctx) throw new Error('AudioContext não disponível');
+
+    return new Promise<AudioBuffer>((resolve, reject) => {
+      // Use slice(0) to prevent arrayBuffer detachment issues
+      const copy = arrayBuffer.slice(0);
+      const res = this.ctx!.decodeAudioData(
+        copy,
+        (buf) => resolve(buf),
+        (err) => reject(err)
+      );
+      if (res && typeof res.then === 'function') {
+        res.then(resolve).catch(reject);
+      }
+    });
   }
 
   /**
-   * Fetches and decodes an audio file from URL
+   * Decodes an MP3 File from input
+   */
+  async decodeAudioFile(file: File): Promise<AudioBuffer> {
+    const arrayBuffer = await file.arrayBuffer();
+    return await this.decodeAudioBufferData(arrayBuffer);
+  }
+
+  /**
+   * Fetches and decodes an audio file from URL (respecting base path)
    */
   async decodeAudioUrl(url: string): Promise<AudioBuffer> {
-    await this.init();
-    if (!this.ctx) throw new Error('AudioContext not available');
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    await this.ensureResumed();
+    let finalUrl = url;
+    const base = import.meta.env.BASE_URL || '/';
+    if (url.startsWith('/') && !url.startsWith(base)) {
+      finalUrl = base.replace(/\/$/, '') + url;
+    }
+
+    const res = await fetch(finalUrl);
+    if (!res.ok) throw new Error(`HTTP error ${res.status} ao carregar áudio de ${finalUrl}`);
     const arrayBuffer = await res.arrayBuffer();
-    return await this.ctx.decodeAudioData(arrayBuffer);
+    return await this.decodeAudioBufferData(arrayBuffer);
   }
 
   // --- Sound Effects Synthesizer ---
