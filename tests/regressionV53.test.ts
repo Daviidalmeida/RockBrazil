@@ -330,4 +330,41 @@ describe('ROCKBRAZIL V5.3 — Sistema de Recordes e Validação do Caderno', () 
     const stagePath = path.resolve(__dirname, '../public/images/stage-bg.png');
     expect(fs.existsSync(stagePath)).toBe(true);
   });
+
+  // 15. Validar que a imagem oficial do menu principal (menu-bg.jpg) existe e tem tamanho válido
+  it('15. menu-bg.jpg deve existir fisicamente e ter tamanho superior a 200KB', () => {
+    const menuPath = path.resolve(__dirname, '../public/images/menu-bg.jpg');
+    expect(fs.existsSync(menuPath)).toBe(true);
+    const stats = fs.statSync(menuPath);
+    expect(stats.size).toBeGreaterThan(200000);
+  });
+
+  // 16. Validar que a tela inicial possui os 6 hotspots interativos e botão de perfil
+  it('16. index.html deve conter a tela inicial com os 6 hotspots interativos e botão de perfil', () => {
+    const htmlPath = path.resolve(__dirname, '../index.html');
+    const html = fs.readFileSync(htmlPath, 'utf-8');
+
+    expect(html).toContain('id="screen-menu"');
+    expect(html).toContain('class="menu-image-wrapper"');
+    expect(html).toContain('id="btn-menu-profile"');
+    expect(html).toContain('id="hotspot-jogar"');
+    expect(html).toContain('id="hotspot-musicas"');
+    expect(html).toContain('id="hotspot-config"');
+    expect(html).toContain('id="hotspot-ranking"');
+    expect(html).toContain('id="hotspot-tutorial"');
+    expect(html).toContain('id="hotspot-sair"');
+  });
+
+  // 17. Validar que os submenus continuam com o tema de caderno (notebook-page / notebook-dialog-card)
+  it('17. submenus devem preservar o visual de caderno aprovado', () => {
+    const htmlPath = path.resolve(__dirname, '../index.html');
+    const html = fs.readFileSync(htmlPath, 'utf-8');
+
+    expect(html).toContain('id="screen-song-select" class="overlay-screen hidden notebook-page"');
+    expect(html).toContain('id="screen-ranking" class="overlay-screen hidden notebook-page"');
+    expect(html).toContain('id="screen-result" class="overlay-screen hidden notebook-page"');
+    expect(html).toContain('class="notebook-dialog-card difficulty-dialog"');
+    expect(html).toContain('class="notebook-dialog-card profile-card"');
+    expect(html).toContain('id="result-record-banner"');
+  });
 });

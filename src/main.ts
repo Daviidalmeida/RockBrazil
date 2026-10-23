@@ -494,6 +494,32 @@ class RockBrazilGame {
         }
       }
 
+      // Keyboard navigation on main menu (1-6 or P)
+      if (this.state === GameState.MENU) {
+        if (e.key === '1') {
+          document.getElementById('hotspot-jogar')?.click();
+          return;
+        } else if (e.key === '2') {
+          document.getElementById('hotspot-musicas')?.click();
+          return;
+        } else if (e.key === '3') {
+          document.getElementById('hotspot-config')?.click();
+          return;
+        } else if (e.key === '4') {
+          document.getElementById('hotspot-ranking')?.click();
+          return;
+        } else if (e.key === '5') {
+          document.getElementById('hotspot-tutorial')?.click();
+          return;
+        } else if (e.key === '6') {
+          document.getElementById('hotspot-sair')?.click();
+          return;
+        } else if (e.key === 'p' || e.key === 'P') {
+          document.getElementById('btn-menu-profile')?.click();
+          return;
+        }
+      }
+
       const lane = this.keyLaneMap[e.key];
       if (lane !== undefined && this.state === GameState.PLAYING) {
         e.preventDefault();

@@ -576,127 +576,169 @@ html, body {
 }
 
 /* ========================================================
-   1. MAIN MENU (Notebook Theme)
+   1. MAIN MENU (DEFINITIVE STAGE HOME — 9:16 IMAGE & HOTSPOTS)
    ======================================================== */
 .menu-screen-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   padding: 0;
+  background: #050508;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  z-index: 50;
 }
 
-.menu-notebook-wrapper {
+.menu-image-wrapper {
   position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 16px 14px 24px;
+  max-width: min(480px, calc(100dvh * 9 / 16));
+  max-height: min(100dvh, calc(100vw * 16 / 9));
+  aspect-ratio: 9 / 16;
+  background: url('/images/menu-bg.jpg') center center / 100% 100% no-repeat;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.95);
+  margin: auto;
 }
 
-.notebook-profile-pill {
+/* Profile Pill (Top Left: ENTRAR / Perfil) */
+.profile-header-pill {
   position: absolute;
   top: 14px;
   left: 14px;
-  background: #fff;
-  border: 2px solid #1a1a1a;
-  border-radius: 6px 14px 4px 10px;
-  padding: 4px 10px;
+  background: rgba(14, 15, 24, 0.88);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  padding: 5px 12px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: #1a1a1a;
-  font-family: var(--font-rock);
-  box-shadow: 2px 2px 0 #1a1a1a;
+  gap: 8px;
+  color: #fff;
   cursor: pointer;
-  z-index: 10;
-  transition: transform 0.1s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 20;
+  transition: transform 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
 }
 
-.notebook-profile-pill:active {
+.profile-header-pill:hover, .profile-header-pill:focus {
+  border-color: #ffe600;
+  box-shadow: 0 0 14px rgba(255, 230, 0, 0.6);
+  outline: none;
+}
+
+.profile-header-pill:active {
   transform: scale(0.96);
 }
 
-.menu-notebook-header {
-  margin-top: 48px;
-  text-align: center;
-}
+.profile-avatar-icon { font-size: 16px; }
+.profile-player-name { font-size: 12px; font-weight: 800; letter-spacing: 0.5px; }
+.profile-switch-hint { font-size: 9px; color: #ffe600; text-transform: uppercase; font-weight: 700; }
 
-.menu-rock-logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.menu-rock-title {
-  font-family: var(--font-rock);
-  font-size: 38px;
-  color: #1a1a1a;
-  letter-spacing: 1px;
-  margin: 0;
-  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.8);
-}
-
-.rock-lightning {
-  font-size: 26px;
-  color: #d97706;
-}
-
-.menu-rock-subtitle {
-  font-family: var(--font-hand);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: #374151;
-  margin-top: 2px;
-}
-
-.red-marker-scribble {
-  width: 75%;
-  max-width: 250px;
-  height: 5px;
-  margin: 6px auto 14px;
-}
-
-.menu-notebook-options {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 88%;
-  margin: 0 auto 24px;
-}
-
-.notebook-menu-item {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.94);
-  border: 2px solid #1a1a1a;
-  border-radius: 4px 14px 6px 10px;
-  font-family: var(--font-rock);
-  font-size: 18px;
-  color: #1a1a1a;
-  box-shadow: 2.5px 3px 0 #1a1a1a;
+/* 6 Transparent Hotspot Buttons perfectly positioned over menu-bg.jpg */
+.menu-hotspot {
+  position: absolute;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 12px;
   cursor: pointer;
+  outline: none;
   transition: all 0.12s ease;
-  text-align: left;
+  z-index: 10;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.notebook-menu-item:hover, .notebook-menu-item:active {
-  background: linear-gradient(90deg, rgba(220, 38, 38, 0.75) 0%, rgba(239, 68, 68, 0.5) 85%, transparent 100%);
-  transform: scale(1.02) rotate(-0.5deg);
-  box-shadow: 1.5px 2px 0 #1a1a1a;
+.menu-hotspot:hover, .menu-hotspot:focus {
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(1.025);
 }
 
-.notebook-menu-item .item-num {
-  color: #c62828;
-  font-weight: 900;
-  font-size: 16px;
+.menu-hotspot:active {
+  transform: scale(0.98);
 }
 
-.notebook-menu-item .item-text {
-  flex: 1;
+/* 1. JOGAR (The giant yellow button) */
+.hotspot-jogar {
+  top: 36.8%;
+  left: 17%;
+  width: 66%;
+  height: 8.6%;
+  border-radius: 18px;
+}
+.hotspot-jogar:hover, .hotspot-jogar:focus, .hotspot-jogar:active {
+  box-shadow: 0 0 25px rgba(255, 230, 0, 0.85), inset 0 0 15px rgba(255, 230, 0, 0.4);
+  border-color: #ffe600;
+}
+
+/* 2. MINHAS MÚSICAS */
+.hotspot-musicas {
+  top: 46.5%;
+  left: 18%;
+  width: 64%;
+  height: 7.2%;
+  border-radius: 10px;
+}
+.hotspot-musicas:hover, .hotspot-musicas:focus, .hotspot-musicas:active {
+  box-shadow: 0 0 22px rgba(0, 208, 255, 0.75), inset 0 0 12px rgba(0, 208, 255, 0.3);
+  border-color: #00d0ff;
+}
+
+/* 3. CONFIGURAÇÕES */
+.hotspot-config {
+  top: 54.5%;
+  left: 18%;
+  width: 64%;
+  height: 7.2%;
+  border-radius: 10px;
+}
+.hotspot-config:hover, .hotspot-config:focus, .hotspot-config:active {
+  box-shadow: 0 0 22px rgba(255, 255, 255, 0.75), inset 0 0 12px rgba(255, 255, 255, 0.3);
+  border-color: #ffffff;
+}
+
+/* 4. RANKING */
+.hotspot-ranking {
+  top: 62.5%;
+  left: 18%;
+  width: 64%;
+  height: 7.2%;
+  border-radius: 10px;
+}
+.hotspot-ranking:hover, .hotspot-ranking:focus, .hotspot-ranking:active {
+  box-shadow: 0 0 22px rgba(255, 42, 95, 0.75), inset 0 0 12px rgba(255, 42, 95, 0.3);
+  border-color: #ff2a5f;
+}
+
+/* 5. TUTORIAL */
+.hotspot-tutorial {
+  top: 70.5%;
+  left: 18%;
+  width: 64%;
+  height: 7.2%;
+  border-radius: 10px;
+}
+.hotspot-tutorial:hover, .hotspot-tutorial:focus, .hotspot-tutorial:active {
+  box-shadow: 0 0 22px rgba(0, 255, 136, 0.75), inset 0 0 12px rgba(0, 255, 136, 0.3);
+  border-color: #00ff88;
+}
+
+/* 6. SAIR */
+.hotspot-sair {
+  top: 78.5%;
+  left: 18%;
+  width: 64%;
+  height: 7.2%;
+  border-radius: 10px;
+}
+.hotspot-sair:hover, .hotspot-sair:focus, .hotspot-sair:active {
+  box-shadow: 0 0 22px rgba(255, 123, 0, 0.75), inset 0 0 12px rgba(255, 123, 0, 0.3);
+  border-color: #ff7b00;
 }
 
 /* ========================================================
