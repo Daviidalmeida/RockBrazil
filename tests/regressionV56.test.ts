@@ -172,25 +172,25 @@ describe('ROCKBRAZIL V5.6 — TESTES MESTRE DEFINITIVOS', () => {
     });
 
     it('músicas sem chart de comunidade devem estar registradas com o motor inteligente RockBrazil', () => {
-      const fallbackChart = EnchorChartImporter.getChartInfo('pit-deja-vu', 'Pitty', 'Déjà Vu');
+      const fallbackChart = EnchorChartImporter.getChartInfo('cue-quem-matou-bozo', 'Cueio Limão', 'Quem Matou o Bozo');
       expect(fallbackChart.chartStatus).toBe('SMART_GUITAR_ENGINE');
       expect(fallbackChart.difficultiesAvailable.easy).toBe(true);
       expect(fallbackChart.difficultiesAvailable.medium).toBe(true);
       expect(fallbackChart.difficultiesAvailable.hard).toBe(true);
     });
 
-    it('resumo estatístico deve cobrir integralmente o catálogo das 43 músicas', () => {
+    it('resumo estatístico deve cobrir integralmente o catálogo das 31 músicas', () => {
       const summary = EnchorChartImporter.getSummaryStats();
-      expect(summary.totalSongs).toBe(43);
+      expect(summary.totalSongs).toBe(31);
       expect(summary.communityChartsFound).toBeGreaterThanOrEqual(25);
       expect(summary.smartGuitarEngineSongs).toBeGreaterThan(0);
       expect(summary.allDifficultiesValidated).toBe(true);
     });
   });
 
-  describe('5. Catálogo Oficial 43 Músicas Preservado (Fase 8)', () => {
-    it('deve conter exatamente 43 músicas com dados íntegros e YouTube IDs válidos', () => {
-      expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBe(43);
+  describe('5. Catálogo Oficial 31 Músicas Preservado (Fase 8)', () => {
+    it('deve conter exatamente 31 músicas com dados íntegros e YouTube IDs válidos', () => {
+      expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBe(31);
       const ytRegex = /^[a-zA-Z0-9_-]{11}$/;
 
       OFFICIAL_BRAZILIAN_CATALOG.forEach((song) => {

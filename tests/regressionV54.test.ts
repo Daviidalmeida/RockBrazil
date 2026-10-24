@@ -10,38 +10,36 @@ import * as path from 'path';
 
 describe('ROCKBRAZIL V5.4 — SUÍTE COMPLETA DE REGRESSÃO E CONFORMIDADE', () => {
 
-  describe('1. Catálogo Oficial Brasileiro (43 Músicas)', () => {
+  describe('1. Catálogo Oficial Brasileiro (31 Músicas)', () => {
     let library: SongLibrary;
 
     beforeEach(() => {
       library = new SongLibrary();
     });
 
-    it('deve conter exatamente 43 músicas no catálogo ativo oficial', () => {
+    it('deve conter exatamente 31 músicas no catálogo ativo oficial', () => {
       const activeSongs = library.getActiveSongs();
-      expect(activeSongs.length).toBe(43);
-      expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBe(43);
+      expect(activeSongs.length).toBe(31);
+      expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBe(31);
     });
 
     it('deve conter todos os 8 grupos e faixas bônus completas', () => {
       const songs = library.getActiveSongs();
 
-      // Grupo 1: 5 músicas
+      // Grupo 1: 4 músicas
       const g1 = songs.filter((s) => s.group === 1);
-      expect(g1.length).toBe(5);
+      expect(g1.length).toBe(4);
       expect(g1.some((s) => s.title === '1406' && s.artist === 'Mamonas Assassinas')).toBe(true);
       expect(g1.some((s) => s.title === 'À Sua Maneira' && s.artist === 'Capital Inicial')).toBe(true);
       expect(g1.some((s) => s.title === 'Admirável Chip Novo' && s.artist === 'Pitty')).toBe(true);
       expect(g1.some((s) => s.title === 'Anna Júlia' && s.artist === 'Los Hermanos')).toBe(true);
-      expect(g1.some((s) => s.title === "Bois Don't Cry" && s.encore)).toBe(true);
+      expect(g1.some((s) => s.title === 'Anna Júlia' && s.encore)).toBe(true);
 
-      // Grupo 2: 5 músicas
+      // Grupo 2: 3 músicas
       const g2 = songs.filter((s) => s.group === 2);
-      expect(g2.length).toBe(5);
-      expect(g2.some((s) => s.title === 'Cabeça de Bagre')).toBe(true);
+      expect(g2.length).toBe(3);
       expect(g2.some((s) => s.title === 'De Borest' && s.artist === 'Kuase Nada')).toBe(true);
       expect(g2.some((s) => s.title === 'Débil Metal')).toBe(true);
-      expect(g2.some((s) => s.title === 'Déjà Vu' && s.artist === 'Pitty')).toBe(true);
       expect(g2.some((s) => s.title === 'Chopis Centis' && s.encore)).toBe(true);
 
       // Grupo 3: 5 músicas
@@ -53,32 +51,25 @@ describe('ROCKBRAZIL V5.4 — SUÍTE COMPLETA DE REGRESSÃO E CONFORMIDADE', () 
       expect(g3.some((s) => s.title === 'Irreversível' && s.artist === 'CPM 22')).toBe(true);
       expect(g3.some((s) => s.title === 'Jumento Celestino' && s.encore)).toBe(true);
 
-      // Grupo 4: 5 músicas
+      // Grupo 4: 3 músicas
       const g4 = songs.filter((s) => s.group === 4);
-      expect(g4.length).toBe(5);
+      expect(g4.length).toBe(3);
       expect(g4.some((s) => s.title === 'Lata Velha' && s.artist === 'Landau')).toBe(true);
-      expect(g4.some((s) => s.title === 'Longe de Você' && s.artist === 'Charlie Brown Jr.')).toBe(true);
       expect(g4.some((s) => s.title === 'Não É Sério' && s.artist === 'Charlie Brown Jr.')).toBe(true);
-      expect(g4.some((s) => s.title.includes('Era Um Garoto') && s.artist === 'Engenheiros do Hawaii')).toBe(true);
-      expect(g4.some((s) => s.title === 'Lá Vem o Alemão' && s.encore)).toBe(true);
+      expect(g4.some((s) => s.title.includes('Era Um Garoto') && s.artist === 'Engenheiros do Hawaii' && s.encore)).toBe(true);
 
-      // Grupo 5: 5 músicas
+      // Grupo 5: 2 músicas
       const g5 = songs.filter((s) => s.group === 5);
-      expect(g5.length).toBe(5);
-      expect(g5.some((s) => s.title === 'Até Quando?' && s.artist === 'Gabriel o Pensador')).toBe(true);
+      expect(g5.length).toBe(2);
       expect(g5.some((s) => s.title === 'Champagne e Água Benta' && s.artist === 'Charlie Brown Jr.')).toBe(true);
-      expect(g5.some((s) => s.title === 'Equalize' && s.artist === 'Pitty')).toBe(true);
-      expect(g5.some((s) => s.title === 'Já Dizia o Raul' && s.artist === 'Velhas Virgens')).toBe(true);
-      expect(g5.some((s) => s.title === 'Uma Arlinda Mulher' && s.encore)).toBe(true);
+      expect(g5.some((s) => s.title === 'Equalize' && s.artist === 'Pitty' && s.encore)).toBe(true);
 
-      // Grupo 6: 5 músicas
+      // Grupo 6: 3 músicas
       const g6 = songs.filter((s) => s.group === 6);
-      expect(g6.length).toBe(5);
-      expect(g6.some((s) => s.title === 'Vira-Vira')).toBe(true);
+      expect(g6.length).toBe(3);
       expect(g6.some((s) => s.title === 'Tropa de Elite' && s.artist === 'Tihuana')).toBe(true);
       expect(g6.some((s) => s.title === 'Sabão Crá-Crá')).toBe(true);
-      expect(g6.some((s) => s.title === 'Só por uma Noite' && s.artist === 'Charlie Brown Jr.')).toBe(true);
-      expect(g6.some((s) => s.title === 'Sábado de Sol' && s.encore)).toBe(true);
+      expect(g6.some((s) => s.title === 'Só por uma Noite' && s.artist === 'Charlie Brown Jr.' && s.encore)).toBe(true);
 
       // Grupo 7: 5 músicas
       const g7 = songs.filter((s) => s.group === 7);
@@ -95,18 +86,16 @@ describe('ROCKBRAZIL V5.4 — SUÍTE COMPLETA DE REGRESSÃO E CONFORMIDADE', () 
       expect(g8.some((s) => s.title === 'Metal Is The Law' && s.artist === 'Massacration')).toBe(true);
       expect(g8.some((s) => s.title === 'Metal Milkshake' && s.artist === 'Massacration')).toBe(true);
       expect(g8.some((s) => s.title === 'Quem Matou o Bozo' && s.artist === 'Cueio Limão')).toBe(true);
-      expect(g8.some((s) => s.title === 'Dormi na Praça' && s.artist === 'Hardneja Sertacore')).toBe(true);
+      expect(g8.some((s) => s.title === 'Dormi na Praça' && s.artist === 'Hardneja Sertacore' && s.encore)).toBe(true);
 
-      // Bônus: 4 músicas
+      // Bônus: 2 músicas
       const bonus = songs.filter((s) => s.group === 'bonus');
-      expect(bonus.length).toBe(4);
+      expect(bonus.length).toBe(2);
       expect(bonus.some((s) => s.title === 'Máscara' && s.artist === 'Pitty')).toBe(true);
       expect(bonus.some((s) => s.title === 'Minha Juventude' && s.artist === 'Cueio Limão')).toBe(true);
-      expect(bonus.some((s) => s.title === 'Na Sua Estante' && s.artist === 'Pitty')).toBe(true);
-      expect(bonus.some((s) => s.title === 'Paraíso Proibido' && s.artist === 'Strike')).toBe(true);
     });
 
-    it('cada uma das 43 músicas deve ter ID de vídeo oficial do YouTube válido (11 caracteres)', () => {
+    it('cada uma das 31 músicas deve ter ID de vídeo oficial do YouTube válido (11 caracteres)', () => {
       const activeSongs = library.getActiveSongs();
       const ytIdRegex = /^[a-zA-Z0-9_-]{11}$/;
 
@@ -122,11 +111,11 @@ describe('ROCKBRAZIL V5.4 — SUÍTE COMPLETA DE REGRESSÃO E CONFORMIDADE', () 
   });
 
   describe('2. Localizador Automático (AutoMusicFinder)', () => {
-    it('deve gerar relatório completo de 43 músicas com todos os metadados exigidos', () => {
+    it('deve gerar relatório completo de 31 músicas com todos os metadados exigidos', () => {
       const finder = new AutoMusicFinder();
       const report = finder.generateReport();
 
-      expect(report.length).toBe(43);
+      expect(report.length).toBe(31);
 
       report.forEach((item) => {
         expect(item.id).toBeTruthy();

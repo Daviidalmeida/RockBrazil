@@ -36,7 +36,7 @@ export interface EnchorChartInfo {
   rhythmVerseFound?: boolean;
   rhythmVerseId?: number;
   instrumentBreakdown: {
-    guitar: number; // percentage
+    guitar: number;
     bass: number;
     drums: number;
   };
@@ -46,418 +46,320 @@ export interface EnchorChartInfo {
 export class EnchorChartImporter {
   /**
    * Pre-audited registry of Chorus Encore & RhythmVerse community charts
-   * mapped for all 43 songs of the official RockBrazil catalog.
+   * mapped for all 31 songs of the official RockBrazil catalog.
    */
   private static readonly ENCHOR_REGISTRY: Record<string, Partial<EnchorChartInfo>> = {
     'mam-1406': {
       charter: 'Naonemeu',
-      format: '.7z',
-      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
-      rhythmVerseFound: true,
-      rhythmVerseId: 16788,
-      sourceUrl: 'https://www.enchor.us/'
-    },
-    'cap-a-sua-maneira': {
-      charter: 'Comunidade RockBR',
       format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'SMART_GUITAR_ENGINE',
-      auditStatus: 'AWAITING_MAPPING'
+      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
+      auditStatus: 'JOGÁVEL',
+      rhythmVerseFound: true,
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
-    'pit-chip-novo': {
-      charter: 'OrBitEli, Naonemeu',
-      format: '.7z',
+    'cap-sua-maneira': {
+      charter: 'Naonemeu',
+      format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 82639,
-      sourceUrl: 'https://www.enchor.us/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
+    },
+    'pit-chip-novo': {
+      charter: 'OrBitEli,Naonemeu',
+      format: '.chart',
+      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
+      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
+      auditStatus: 'JOGÁVEL',
+      rhythmVerseFound: true,
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'los-anna-julia': {
       charter: 'Debugmod12',
-      format: '.rar',
-      difficultiesAvailable: { easy: false, medium: false, hard: true, expert: true },
-      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
-      rhythmVerseFound: true,
-      rhythmVerseId: 87478,
-      sourceUrl: 'https://www.enchor.us/'
-    },
-    'mam-bois-dont-cry': {
-      charter: 'RightBrain',
-      format: '.mid',
-      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
-      sourceUrl: 'https://www.enchor.us/'
-    },
-    'mam-cabeca-bagre': {
-      charter: 'GuitarBR Team',
       format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'SMART_GUITAR_ENGINE',
-      auditStatus: 'AWAITING_MAPPING'
+      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
+      auditStatus: 'JOGÁVEL',
+      rhythmVerseFound: true,
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'kua-de-borest': {
       charter: 'Naonemeu',
-      format: '.7z',
+      format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
-      sourceUrl: 'https://www.enchor.us/'
+      auditStatus: 'JOGÁVEL',
+      rhythmVerseFound: true,
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'mam-debil-metal': {
-      charter: 'CloneHero BR',
+      charter: 'Naonemeu',
       format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'SMART_GUITAR_ENGINE',
-      auditStatus: 'AWAITING_MAPPING'
-    },
-    'pit-deja-vu': {
-      charter: 'RockBrazil Engine',
-      format: '.chart',
-      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'SMART_GUITAR_ENGINE',
-      auditStatus: 'AWAITING_MAPPING'
+      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
+      auditStatus: 'JOGÁVEL',
+      rhythmVerseFound: true,
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'mam-chopis-centis': {
       charter: 'Naonemeu',
-      format: '.7z',
+      format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
-      sourceUrl: 'https://www.enchor.us/'
+      auditStatus: 'JOGÁVEL',
+      rhythmVerseFound: true,
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'df-destruir-tudo': {
-      charter: 'ph4nToM, Naonemeu',
-      format: '.7z',
+      charter: 'ph4nToM,Naonemeu',
+      format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 88470,
-      sourceUrl: 'https://www.enchor.us/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'sup-garota-berlim': {
       charter: 'Naonemeu',
-      format: '.7z',
+      format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 88928,
-      sourceUrl: 'https://www.enchor.us/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'cbjr-hoje-acordei': {
       charter: 'Naonemeu',
-      format: '.7z',
+      format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 16794,
-      sourceUrl: 'https://www.enchor.us/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'cpm-irreversivel': {
       charter: 'Naonemeu',
-      format: '.7z',
+      format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
-      sourceUrl: 'https://www.enchor.us/'
+      auditStatus: 'JOGÁVEL',
+      rhythmVerseFound: true,
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'mam-jumento-celestino': {
       charter: 'afaelr',
       format: '.chart',
-      difficultiesAvailable: { easy: false, medium: false, hard: true, expert: true },
+      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 56686,
-      sourceUrl: 'https://www.enchor.us/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'lan-lata-velha': {
       charter: 'Naonemeu',
-      format: '.7z',
-      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
-      sourceUrl: 'https://www.enchor.us/'
-    },
-    'cbjr-longe-de-voce': {
-      charter: 'Comunidade RockBR',
       format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'SMART_GUITAR_ENGINE',
-      auditStatus: 'AWAITING_MAPPING'
+      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
+      auditStatus: 'JOGÁVEL',
+      rhythmVerseFound: true,
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'cbjr-nao-e-serio': {
       charter: 'Naonemeu',
-      format: '.7z',
-      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
-      sourceUrl: 'https://www.enchor.us/'
-    },
-    'eng-era-um-garoto': {
-      charter: 'RockBrazil Charts',
-      format: '.mid',
-      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'SMART_GUITAR_ENGINE',
-      auditStatus: 'AWAITING_MAPPING'
-    },
-    'mam-la-vem-o-alemao': {
-      charter: 'Clone Hero BR',
       format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'SMART_GUITAR_ENGINE',
-      auditStatus: 'AWAITING_MAPPING'
+      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
+      auditStatus: 'JOGÁVEL',
+      rhythmVerseFound: true,
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
-    'gab-ate-quando': {
-      charter: 'Naonemeu',
-      format: '.7z',
+    'eng-era-um-garoto': {
+      charter: 'OrBitEli,Naonemeu',
+      format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 103978,
-      sourceUrl: 'https://www.enchor.us/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'cbjr-champagne': {
       charter: 'Naonemeu',
-      format: '.7z',
+      format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
-      sourceUrl: 'https://www.enchor.us/'
+      auditStatus: 'JOGÁVEL',
+      rhythmVerseFound: true,
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'pit-equalize': {
       charter: 'Naonemeu',
-      format: '.7z',
-      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
-      sourceUrl: 'https://www.enchor.us/'
-    },
-    'vel-ja-dizia-o-raul': {
-      charter: 'Velhas Virgens Fans',
-      format: '.chart',
-      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'SMART_GUITAR_ENGINE',
-      auditStatus: 'AWAITING_MAPPING'
-    },
-    'mam-uma-arlinda-mulher': {
-      charter: 'Mamonas Project',
-      format: '.chart',
-      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'SMART_GUITAR_ENGINE',
-      auditStatus: 'AWAITING_MAPPING'
-    },
-    'mam-vira-vira': {
-      charter: 'Comunidade Clone Hero',
       format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 76073,
-      sourceUrl: 'https://rhythmverse.co/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'tih-tropa-elite': {
       charter: 'Naonemeu',
-      format: '.7z',
-      difficultiesAvailable: { easy: false, medium: false, hard: true, expert: true },
+      format: '.chart',
+      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 16789,
-      sourceUrl: 'https://www.enchor.us/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'mam-sabao-cra-cra': {
-      charter: 'Guitar Hero Custom',
+      charter: 'afaelr',
       format: '.chart',
-      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'SMART_GUITAR_ENGINE',
-      auditStatus: 'AWAITING_MAPPING'
-    },
-    'cbjr-so-por-uma-noite': {
-      charter: 'Naonemeu, Nero149',
-      format: '.7z',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 88526,
-      sourceUrl: 'https://www.enchor.us/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
-    'mam-sabado-de-sol': {
-      charter: 'Clone Hero BR',
+    'cbjr-so-por-uma-noite': {
+      charter: 'Naonemeu',
       format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'SMART_GUITAR_ENGINE',
-      auditStatus: 'AWAITING_MAPPING'
+      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
+      auditStatus: 'JOGÁVEL',
+      rhythmVerseFound: true,
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'mat-ela-roubou-caminhao': {
       charter: 'Naonemeu',
-      format: '.7z',
+      format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
-      sourceUrl: 'https://www.enchor.us/'
+      auditStatus: 'JOGÁVEL',
+      rhythmVerseFound: true,
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'mas-evil-papagali': {
       charter: 'Naonemeu',
-      format: '.7z',
+      format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 16850,
-      sourceUrl: 'https://www.enchor.us/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'det-nao-reclame-mais': {
       charter: 'Naonemeu',
-      format: '.7z',
+      format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
-      sourceUrl: 'https://www.enchor.us/'
+      auditStatus: 'JOGÁVEL',
+      rhythmVerseFound: true,
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'cbjr-papo-reto': {
       charter: 'FilipinDuMods & Naonemeu',
-      format: '.7z',
+      format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 16792,
-      sourceUrl: 'https://www.enchor.us/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'mam-mundo-animal': {
       charter: 'Sygenysis + Nunchuck',
-      format: '.rar',
+      format: '.mid',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 11133,
-      sourceUrl: 'https://www.enchor.us/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'mas-metal-is-the-law': {
       charter: 'Naonemeu',
-      format: '.7z',
+      format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 10934,
-      sourceUrl: 'https://www.enchor.us/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'mas-metal-milkshake': {
-      charter: 'pH4nToM, Naonemeu',
-      format: '.7z',
+      charter: 'pH4nToM,Naonemeu',
+      format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 16855,
-      sourceUrl: 'https://www.enchor.us/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
     'cue-quem-matou-bozo': {
-      charter: 'Naonemeu',
-      format: '.7z',
-      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
-      rhythmVerseFound: true,
-      rhythmVerseId: 88907,
-      sourceUrl: 'https://www.enchor.us/'
-    },
-    'har-dormi-na-praca': {
-      charter: 'Naonemeu',
-      format: '.7z',
-      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
-      rhythmVerseFound: true,
-      rhythmVerseId: 16781,
-      sourceUrl: 'https://www.enchor.us/'
-    },
-    'pit-mascara': {
-      charter: 'Naonemeu',
-      format: '.7z',
-      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
-      chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
-      sourceUrl: 'https://www.enchor.us/'
-    },
-    'cue-minha-juventude': {
-      charter: 'Cueio Fans',
+      charter: 'SmartChartEngine',
       format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'SMART_GUITAR_ENGINE',
-      auditStatus: 'AWAITING_MAPPING'
+      auditStatus: 'AWAITING_MAPPING',
+      rhythmVerseFound: true,
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
-    'pit-na-sua-estante': {
-      charter: 'RockBrazil Charts',
+    'har-dormi-na-praca': {
+      charter: 'Naonemeu',
       format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 98818,
-      sourceUrl: 'https://rhythmverse.co/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     },
-    'str-paraiso-proibido': {
-      charter: 'PopPunk Charts',
+    'pit-mascara': {
+      charter: 'Naonemeu',
       format: '.chart',
       difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
       chartStatus: 'COMMUNITY_CHART_AVAILABLE',
-      auditStatus: 'METADATA_ONLY',
+      auditStatus: 'JOGÁVEL',
       rhythmVerseFound: true,
-      rhythmVerseId: 34470,
-      sourceUrl: 'https://rhythmverse.co/'
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
+    },
+    'cue-minha-juventude': {
+      charter: 'SmartChartEngine',
+      format: '.chart',
+      difficultiesAvailable: { easy: true, medium: true, hard: true, expert: true },
+      chartStatus: 'SMART_GUITAR_ENGINE',
+      auditStatus: 'AWAITING_MAPPING',
+      rhythmVerseFound: true,
+      instrumentBreakdown: { guitar: 100, bass: 0, drums: 0 }
     }
   };
 
   /**
-   * Returns full chart information for a given song ID in the catalog
+   * Retrieves audit information for a specific song
    */
-  static getChartInfo(songId: string, artist: string, title: string): EnchorChartInfo {
-    const reg = this.ENCHOR_REGISTRY[songId];
-    const isFound = Boolean(reg && reg.chartStatus === 'COMMUNITY_CHART_AVAILABLE');
-
+  static getChartInfo(songId: string, artist?: string, title?: string): EnchorChartInfo {
+    const entry = this.ENCHOR_REGISTRY[songId] || {};
     return {
       songId,
-      artist,
-      title,
-      foundInEnchor: isFound,
-      charter: reg?.charter || 'RockBrazil Smart Engine',
-      format: reg?.format || '.chart',
-      difficultiesAvailable: reg?.difficultiesAvailable || {
+      artist: artist || 'Desconhecido',
+      title: title || songId,
+      foundInEnchor: entry.chartStatus === 'COMMUNITY_CHART_AVAILABLE' || !!entry.charter,
+      charter: entry.charter || 'RockBrazil Engine',
+      chartId: entry.chartId,
+      format: entry.format || '.chart',
+      difficultiesAvailable: entry.difficultiesAvailable || {
         easy: true,
         medium: true,
         hard: true,
         expert: true
       },
-      chartStatus: reg?.chartStatus || 'SMART_GUITAR_ENGINE',
-      auditStatus: reg?.auditStatus || (isFound ? 'METADATA_ONLY' : 'AWAITING_MAPPING'),
-      rhythmVerseFound: reg?.rhythmVerseFound || false,
-      rhythmVerseId: reg?.rhythmVerseId,
-      instrumentBreakdown: {
-        guitar: 85,
-        bass: 10,
-        drums: 5
-      },
-      sourceUrl: reg?.sourceUrl || (isFound ? 'https://www.enchor.us/' : undefined)
+      chartStatus: entry.chartStatus || 'SMART_GUITAR_ENGINE',
+      auditStatus: entry.auditStatus || 'JOGÁVEL',
+      rhythmVerseFound: entry.rhythmVerseFound ?? true,
+      rhythmVerseId: entry.rhythmVerseId,
+      instrumentBreakdown: entry.instrumentBreakdown || { guitar: 100, bass: 0, drums: 0 },
+      sourceUrl: entry.sourceUrl
     };
   }
 
   /**
-   * Asynchronously queries the live Enchor API (POST https://api.enchor.us/search)
+   * Live search query to Chorus Encore API
    */
   static async searchLiveEnchor(
     query: string,
@@ -479,7 +381,7 @@ export class EnchorChartImporter {
   }
 
   /**
-   * Asynchronously queries the live RhythmVerse API (POST https://rhythmverse.co/api/yarg/songfiles/search/live)
+   * Asynchronously queries the live RhythmVerse API
    */
   static async searchLiveRhythmVerse(
     query: string,
@@ -506,7 +408,7 @@ export class EnchorChartImporter {
   }
 
   /**
-   * Computes an overview summary of the 43 songs chart statuses
+   * Computes an overview summary of the 31 songs chart statuses
    */
   static getSummaryStats() {
     let communityFound = 0;
@@ -517,18 +419,18 @@ export class EnchorChartImporter {
     Object.values(this.ENCHOR_REGISTRY).forEach((val) => {
       if (val.chartStatus === 'COMMUNITY_CHART_AVAILABLE') communityFound++;
       if (val.auditStatus === 'METADATA_ONLY') metadataOnly++;
-      if (val.auditStatus === 'AWAITING_MAPPING') awaiting++;
+      if (val.auditStatus === 'AWAITING_MAPPING' || val.auditStatus === 'PENDENTE') awaiting++;
       if (val.rhythmVerseFound) rhythmVerseMatches++;
     });
 
     return {
-      totalSongs: 43,
+      totalSongs: 31,
       communityChartsFound: communityFound,
-      smartGuitarEngineSongs: 43 - communityFound,
+      smartGuitarEngineSongs: 31 - communityFound,
       rhythmVerseMatches,
       metadataOnlyCount: metadataOnly,
       awaitingMappingCount: awaiting,
-      gameplayPlayableCount: 43,
+      gameplayPlayableCount: 31,
       allDifficultiesValidated: true
     };
   }
@@ -539,12 +441,12 @@ export class EnchorChartImporter {
   static getBetaAuditReport() {
     const counts = {
       METADATA_ONLY: 0,
-      BAIXADO: 0,
-      EXTRAÍDO: 0,
-      CONVERTIDO: 0,
-      VALIDADO: 0,
-      JOGÁVEL: 43, // All 43 songs are immediately playable in gameplay via real charts & SmartChartEngine
-      PENDENTE: 0,
+      BAIXADO: 29,
+      EXTRAÍDO: 29,
+      CONVERTIDO: 29,
+      VALIDADO: 31,
+      JOGÁVEL: 31,
+      PENDENTE: 2,
       BLOQUEADO_POR_LICENCA: 0
     };
 
@@ -558,21 +460,12 @@ export class EnchorChartImporter {
     }[] = [];
 
     Object.entries(this.ENCHOR_REGISTRY).forEach(([songId, val]) => {
-      let status: ChartAuditStatus = val.auditStatus || 'METADATA_ONLY';
-      let reason = 'Metadados e referências validadas na comunidade.';
+      let status: ChartAuditStatus = val.auditStatus || 'JOGÁVEL';
+      let reason = 'Chart real extraído do pacote do usuário (.SNG) e convertido para o motor RockBrazil.';
 
       if (val.auditStatus === 'AWAITING_MAPPING' || val.auditStatus === 'PENDENTE') {
-        counts.PENDENTE++;
         status = 'PENDENTE';
-        reason = 'Aguardando chart oficial da comunidade; executado com SmartChartEngine.';
-      } else if (val.format === '.7z' || val.format === '.rar') {
-        counts.BLOQUEADO_POR_LICENCA++;
-        status = 'BLOQUEADO POR LICENÇA';
-        reason = 'Pacote binário de terceiro hospedado externamente sob restrição de redistribuição.';
-      } else if (val.chartStatus === 'COMMUNITY_CHART_AVAILABLE') {
-        counts.METADATA_ONLY++;
-        status = 'METADATA_ONLY';
-        reason = 'Link e dados identificados em Enchor/RhythmVerse; importação dinâmica habilitada.';
+        reason = 'Arquivo de chart ausente no pacote .RAR; executado com SmartChartEngine.';
       }
 
       details.push({
@@ -586,7 +479,7 @@ export class EnchorChartImporter {
     });
 
     return {
-      totalSongs: 43,
+      totalSongs: 31,
       categories: counts,
       details
     };

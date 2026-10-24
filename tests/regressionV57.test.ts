@@ -165,30 +165,29 @@ describe('ROCKBRAZIL V5.7 — SUÍTE DE TESTES DEFINITIVA', () => {
       expect(typeof EnchorChartImporter.searchLiveRhythmVerse).toBe('function');
     });
 
-    it('deve distinguir rigorosamente charts com METADATA_ONLY de charts com adaptação inteligente', () => {
+    it('deve distinguir rigorosamente charts com chart de comunidade de charts com adaptação inteligente', () => {
       const pittyChart = EnchorChartImporter.getChartInfo('pit-chip-novo', 'Pitty', 'Admirável Chip Novo');
       expect(pittyChart.foundInEnchor).toBe(true);
-      expect(pittyChart.auditStatus).toBe('METADATA_ONLY');
+      expect(pittyChart.auditStatus).toBe('JOGÁVEL');
       expect(pittyChart.rhythmVerseFound).toBe(true);
-      expect(pittyChart.rhythmVerseId).toBe(82639);
 
       const deBorest = EnchorChartImporter.getChartInfo('kua-de-borest', 'Kuase Nada', 'De Borest');
       expect(deBorest.foundInEnchor).toBe(true);
-      expect(deBorest.auditStatus).toBe('METADATA_ONLY');
+      expect(deBorest.auditStatus).toBe('JOGÁVEL');
     });
 
     it('músicas sem chart de comunidade devem estar registradas com AWAITING_MAPPING', () => {
-      const debilMetal = EnchorChartImporter.getChartInfo('mam-debil-metal', 'Mamonas Assassinas', 'Débil Metal');
-      expect(debilMetal.auditStatus).toBe('AWAITING_MAPPING');
-      expect(debilMetal.chartStatus).toBe('SMART_GUITAR_ENGINE');
+      const bozo = EnchorChartImporter.getChartInfo('cue-quem-matou-bozo', 'Cueio Limão', 'Quem Matou o Bozo');
+      expect(bozo.auditStatus).toBe('AWAITING_MAPPING');
+      expect(bozo.chartStatus).toBe('SMART_GUITAR_ENGINE');
     });
 
-    it('resumo estatístico deve cobrir 43 músicas com 100% jogabilidade no motor musical', () => {
+    it('resumo estatístico deve cobrir 31 músicas com 100% jogabilidade no motor musical', () => {
       const summary = EnchorChartImporter.getSummaryStats();
-      expect(summary.totalSongs).toBe(43);
+      expect(summary.totalSongs).toBe(31);
       expect(summary.communityChartsFound).toBeGreaterThanOrEqual(25);
       expect(summary.rhythmVerseMatches).toBeGreaterThanOrEqual(15);
-      expect(summary.gameplayPlayableCount).toBe(43);
+      expect(summary.gameplayPlayableCount).toBe(31);
       expect(summary.allDifficultiesValidated).toBe(true);
     });
   });
@@ -210,9 +209,9 @@ describe('ROCKBRAZIL V5.7 — SUÍTE DE TESTES DEFINITIVA', () => {
     });
   });
 
-  describe('7. Catálogo Completo das 43 Músicas Preservado (Prioridade 11)', () => {
-    it('deve conter as 43 músicas oficiais com vídeos e durações válidas', () => {
-      expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBe(43);
+  describe('7. Catálogo Completo das 31 Músicas Preservado (Prioridade 11)', () => {
+    it('deve conter as 31 músicas oficiais com vídeos e durações válidas', () => {
+      expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBe(31);
       OFFICIAL_BRAZILIAN_CATALOG.forEach((song) => {
         expect(song.id).toBeTruthy();
         expect(song.youtubeVideoId?.length).toBe(11);

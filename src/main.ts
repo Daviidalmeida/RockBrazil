@@ -198,7 +198,7 @@ class RockBrazilGame {
     };
 
     this.ui.onRefreshLinksClicked = async () => {
-      this.ui.showAnalysisProgress(true, 'Verificando catálogo oficial de 43 músicas no YouTube...');
+      this.ui.showAnalysisProgress(true, 'Verificando catálogo oficial de 31 músicas no YouTube...');
       try {
         await this.musicFinder.refreshAllLinks((current, total, song) => {
           this.ui.showAnalysisProgress(true, `[${current}/${total}] Verificando "${song.title}" (${song.artist})...`);

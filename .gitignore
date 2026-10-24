@@ -10,6 +10,10 @@ public/custom-songs/**
 *.ogg
 *.mid
 *.zip
+*.rar
+*.sng
+charts-import/charts.rar
+charts-import/extracted/
 
 # Android build artifacts
 android/build/

@@ -84,7 +84,7 @@ export class AutoMusicFinder {
   }
 
   /**
-   * Admin function "ATUALIZAR LINKS" - batch verifies all 43 catalog links
+   * Admin function "ATUALIZAR LINKS" - batch verifies all 31 catalog links
    */
   async refreshAllLinks(progressCallback?: (current: number, total: number, song: SongMetadata) => void): Promise<CatalogReportItem[]> {
     for (let i = 0; i < this.songs.length; i++) {

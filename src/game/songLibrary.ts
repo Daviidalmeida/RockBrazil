@@ -86,7 +86,7 @@ export class SongLibrary {
   }
 
   private initDefaultSongs(): void {
-    // Official V5.4 Brazilian Catalog (43 songs)
+    // Official Brazilian Catalog (31 songs)
     const brazilianCatalog = OFFICIAL_BRAZILIAN_CATALOG.map((s) => ({
       ...s,
       records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
@@ -97,7 +97,7 @@ export class SongLibrary {
   }
 
   /**
-   * Returns active songs for the in-game library (43 Brazilian songs + custom imported songs)
+   * Returns active songs for the in-game library (31 Brazilian songs + custom imported songs)
    */
   getActiveSongs(): SongMetadata[] {
     return this.songs.filter((s) => s.type === 'youtube' || s.id.startsWith('custom-'));

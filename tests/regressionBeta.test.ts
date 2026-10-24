@@ -280,25 +280,64 @@ describe('ROCKBRAZIL BETA — SUÍTE DE TESTES MASTER DEFINITIVA', () => {
   });
 
   // 7. Integração Real com BeatmapManager e Gameplay
+  // 7. Integração Real com BeatmapManager e Gameplay
   describe('7. Integração Real com BeatmapManager & Fallback Inteligente', () => {
     it('músicas pré-convertidas devem ser carregadas diretamente do UniversalChartImporter', () => {
       const bm = new BeatmapManager();
 
-      // "À Sua Maneira" (cap-a-sua-maneira) tem chart real pré-convertido
-      const notesExpert = bm.getBeatmap('cap-a-sua-maneira', 'EXPERT');
+      // "À Sua Maneira" (cap-sua-maneira) tem chart real do pacote RAR
+      const notesExpert = bm.getBeatmap('cap-sua-maneira', 'EXPERT');
       expect(notesExpert.length).toBeGreaterThan(10);
-      expect(notesExpert[0].time).toBe(0);
+      expect(notesExpert[0].time).toBeGreaterThanOrEqual(0);
 
-      const notesEasy = bm.getBeatmap('cap-a-sua-maneira', 'EASY');
+      const notesEasy = bm.getBeatmap('cap-sua-maneira', 'EASY');
       expect(notesEasy.length).toBeGreaterThan(0);
       notesEasy.forEach((n) => expect([0, 1, 2]).toContain(n.lane));
     });
 
-    it('todas as 43 músicas do catálogo oficial devem ser 100% jogáveis nas 4 dificuldades', () => {
+    it('as 12 músicas excluídas pelo usuário não devem existir no catálogo oficial', () => {
+      const removedIds = [
+        'mam-bois-dont-cry',
+        'mam-cabeca-bagre',
+        'pit-deja-vu',
+        'cbjr-longe-de-voce',
+        'mam-la-vem-alemao',
+        'gab-ate-quando',
+        'vel-dizia-raul',
+        'mam-arlinda-mulher',
+        'mam-vira-vira',
+        'mam-sabado-de-sol',
+        'pit-na-sua-estante',
+        'str-paraiso-proibido'
+      ];
+      removedIds.forEach((id) => {
+        expect(OFFICIAL_BRAZILIAN_CATALOG.some((s) => s.id === id)).toBe(false);
+      });
+    });
+
+    it('exatamente 29 músicas devem possuir REAL_CHART e 2 devem usar SMART_CHART_FALLBACK', () => {
+      let realChartCount = 0;
+      let fallbackCount = 0;
+
+      OFFICIAL_BRAZILIAN_CATALOG.forEach((song) => {
+        if (UniversalChartImporter.hasConvertedChart(song.id)) {
+          realChartCount++;
+        } else {
+          fallbackCount++;
+        }
+      });
+
+      expect(realChartCount).toBe(29);
+      expect(fallbackCount).toBe(2);
+      expect(UniversalChartImporter.hasConvertedChart('cue-quem-matou-bozo')).toBe(false);
+      expect(UniversalChartImporter.hasConvertedChart('cue-minha-juventude')).toBe(false);
+    });
+
+    it('todas as 31 músicas do catálogo oficial devem ser 100% jogáveis nas 4 dificuldades', () => {
       const bm = new BeatmapManager();
       const diffs: Difficulty[] = ['EASY', 'MEDIUM', 'HARD', 'EXPERT'];
 
-      expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBe(43);
+      expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBe(31);
 
       OFFICIAL_BRAZILIAN_CATALOG.forEach((song) => {
         diffs.forEach((diff) => {
@@ -318,16 +357,16 @@ describe('ROCKBRAZIL BETA — SUÍTE DE TESTES MASTER DEFINITIVA', () => {
   describe('8. Relatório Canônico de 8 Status de Auditoria', () => {
     it('deve fornecer o relatório de auditoria cobrindo as 8 categorias oficiais do RockBrazil Beta', () => {
       const report = EnchorChartImporter.getBetaAuditReport();
-      expect(report.totalSongs).toBe(43);
+      expect(report.totalSongs).toBe(31);
 
       // Categorias requeridas
-      expect(report.categories.JOGÁVEL).toBe(43);
-      expect(report.categories.METADATA_ONLY).toBeGreaterThan(0);
-      expect(report.categories.BLOQUEADO_POR_LICENCA).toBeGreaterThan(0);
-      expect(report.categories.PENDENTE).toBeGreaterThan(0);
+      expect(report.categories.JOGÁVEL).toBe(31);
+      expect(report.categories.CONVERTIDO).toBe(29);
+      expect(report.categories.PENDENTE).toBe(2);
+      expect(report.categories.VALIDADO).toBe(31);
 
       // Validação das entradas individuais
-      expect(report.details.length).toBe(43);
+      expect(report.details.length).toBe(31);
       report.details.forEach((item) => {
         expect(item.songId).toBeTruthy();
         expect(item.title).toBeTruthy();

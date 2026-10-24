@@ -1,6 +1,7 @@
 import JSZip from 'jszip';
 import { Note, Lane, Difficulty, BeatmapByDifficulty, getLanesForDifficulty } from '../types';
 import { MidiChartParser } from './midiChartParser';
+import { REAL_COMMUNITY_CHARTS } from '../game/catalog/realChartsRegistry';
 
 export type InstrumentTrackType =
   | 'guitar'
@@ -79,13 +80,16 @@ export class UniversalChartImporter {
    * Parses a Clone Hero / Moonscraper text-based .chart file
    */
   public static parseChartText(chartText: string): UniversalChartResult {
+    if (chartText.charCodeAt(0) === 0xFEFF) {
+      chartText = chartText.slice(1);
+    }
     const lines = chartText.split(/\r?\n/);
 
     let currentSection = '';
     const sectionLines: Record<string, string[]> = {};
 
     for (const rawLine of lines) {
-      const line = rawLine.trim();
+      const line = rawLine.trim().replace(/^\uFEFF/, '');
       if (!line || line.startsWith('//')) continue;
 
       if (line.startsWith('[') && line.endsWith(']')) {
@@ -263,6 +267,12 @@ export class UniversalChartImporter {
           }
 
           if (lane !== null) {
+            // Enforce maximum allowable lanes for target difficulty
+            if (targetDiff === 'EASY' && lane > 2) {
+              lane = (lane % 3) as Lane;
+            } else if (targetDiff === 'MEDIUM' && lane > 3) {
+              lane = 3 as Lane;
+            }
             rawNotes.push({ tick, lane, lengthTicks });
           }
         }
@@ -561,7 +571,10 @@ export class UniversalChartImporter {
     // 3. MEDIUM (4 lanes: lanes 0-3, reduce chords to max 2 notes, downsample to 8th beats)
     let medium: Note[];
     if (charts.MEDIUM && charts.MEDIUM.length > 0) {
-      medium = charts.MEDIUM.map((n) => ({ ...n }));
+      medium = charts.MEDIUM.map((n) => ({
+        ...n,
+        lane: (n.lane > 3 ? 3 : n.lane) as Lane
+      }));
     } else {
       const allowedLanes = getLanesForDifficulty('MEDIUM'); // [0, 1, 2, 3]
       let lastTime = -999;
@@ -593,7 +606,10 @@ export class UniversalChartImporter {
     // 4. EASY (3 lanes: lanes 0-2, single notes only, quarter note spacing)
     let easy: Note[];
     if (charts.EASY && charts.EASY.length > 0) {
-      easy = charts.EASY.map((n) => ({ ...n }));
+      easy = charts.EASY.map((n) => ({
+        ...n,
+        lane: (n.lane > 2 ? (n.lane % 3) : n.lane) as Lane
+      }));
     } else {
       const allowedLanes = getLanesForDifficulty('EASY'); // [0, 1, 2]
       let lastTime = -999;
@@ -698,10 +714,10 @@ export class UniversalChartImporter {
   }
 
   public static getConvertedChart(songId: string): BeatmapByDifficulty | undefined {
-    return this.CONVERTED_REGISTRY.get(songId);
+    return this.CONVERTED_REGISTRY.get(songId) || REAL_COMMUNITY_CHARTS[songId];
   }
 
   public static hasConvertedChart(songId: string): boolean {
-    return this.CONVERTED_REGISTRY.has(songId);
+    return this.CONVERTED_REGISTRY.has(songId) || !!REAL_COMMUNITY_CHARTS[songId];
   }
 }
