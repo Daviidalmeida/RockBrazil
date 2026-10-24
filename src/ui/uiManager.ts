@@ -513,11 +513,11 @@ export class UIManager {
   updateHUD(stats: GameStats, currentTime: number, duration: number): void {
     this.hudScore.textContent = stats.score.toLocaleString('pt-BR');
 
-    // Horizontal Industrial Rock Performance Meter (0% to 100%)
+    // Vertical Industrial Rock Performance Meter (0% to 100%)
     const pct = Math.max(0, Math.min(100, Math.round(stats.rockMeter)));
     if (this.meterNeedle) {
-      this.meterNeedle.style.left = `${pct}%`;
-      this.meterNeedle.style.bottom = '';
+      this.meterNeedle.style.bottom = `${pct}%`;
+      this.meterNeedle.style.left = '';
     }
     if (this.meterPctText) {
       this.meterPctText.textContent = `${pct}%`;
@@ -571,8 +571,8 @@ export class UIManager {
     this.hudProgressBar.style.width = '0%';
     this.hudComboContainer.classList.add('hidden');
     this.hudComboNumber.textContent = '0';
-    this.meterNeedle.style.left = '50%';
-    this.meterNeedle.style.bottom = '';
+    this.meterNeedle.style.bottom = '50%';
+    this.meterNeedle.style.left = '';
     this.meterPctText.textContent = '50%';
     this.meterDangerLed?.classList.add('hidden');
     if (this.hudAccuracyFeedback) {

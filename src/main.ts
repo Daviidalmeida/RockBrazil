@@ -53,9 +53,8 @@ class RockBrazilGame {
     this.musicFinder = new AutoMusicFinder(this.library.getSongs());
 
     this.ytPlayer = new YouTubePlayerController({
-      onBuffering: (buffering) => {
-        const badge = document.getElementById('yt-buffering-indicator');
-        if (badge) badge.classList.toggle('hidden', !buffering);
+      onBuffering: (_buffering) => {
+        // V5.7: Buffering tratado internamente no relógio musical sem badge obstrutivo na tela
       },
       onEnded: () => {
         if (this.state === GameState.PLAYING) {
@@ -149,17 +148,12 @@ class RockBrazilGame {
 
   private setupEngineCallbacks(): void {
     this.engine.onHit = (result: HitResult) => {
-      // V5.1: Textos flutuantes de julgamento removidos conforme Prioridade 2
+      // Partículas visuais e faíscas sem alterar a geometria ou causar tremedeira na pista
       this.renderer.spawnHitParticles(result.lane);
-
-      if (result.multiplier >= 3) {
-        this.renderer.triggerShake(result.multiplier * 2);
-      }
     };
 
     this.engine.onMiss = () => {
-      // V5.1: Textos flutuantes de julgamento removidos conforme Prioridade 2
-      this.renderer.triggerShake(4);
+      // Falhas geram feedback auditivo/visual sem tremer o Canvas
     };
 
     this.engine.onSustainTick = (lane: Lane) => {
@@ -674,6 +668,9 @@ class RockBrazilGame {
       this.ytPlayer.stop();
       await this.ytPlayer.loadVideo(song.youtubeVideoId);
       this.ytPlayer.setVolume(this.settingsManager.getSettings().musicVolume * 100);
+      // RockBrazil Video Preparation System: Solicita reprodução antecipada e aguarda confirmação real de PLAYING
+      this.ytPlayer.play();
+      await this.ytPlayer.waitForPlaying(2000);
     }
 
     if (sessionId !== this.currentMatchSessionId) return;
@@ -683,11 +680,15 @@ class RockBrazilGame {
   private async startCountdown(sessionId: number, customNotes?: Note[]): Promise<void> {
     this.clearCountdown();
     this.audio.stop();
-    this.ytPlayer.stop();
 
     await this.audio.init();
     await this.audio.ensureResumed();
     if (sessionId !== this.currentMatchSessionId) return;
+
+    if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
+      this.ytPlayer.seekTo(0);
+      this.ytPlayer.play();
+    }
 
     // Configura pistas ativas por dificuldade (3 no Fácil, 4 no Médio, 5 no Difícil/Expert)
     this.renderer.setDifficulty(this.currentDifficulty);

@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0a0a0f">
-  <title>RockBrazil V5.6 - Rhythm Guitar</title>
+  <title>RockBrazil V5.7 - Rhythm Guitar</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Montserrat:wght@400;600;700;900&family=Permanent+Marker&family=Kalam:wght@400;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
@@ -20,11 +20,10 @@
          TOP & SIDE HUD LAYER (IN-GAME)
          ======================================================== -->
     <header id="hud" class="hud-layer hidden">
-      <!-- Top Left: YouTube Miniplayer -->
+      <!-- Top Left: YouTube Miniplayer (Sem badges obstrutivos sobre o vídeo) -->
       <div id="yt-player-container" class="yt-miniplayer-box">
         <div id="yt-player-frame"></div>
         <div class="yt-miniplayer-frame-decor"></div>
-        <div id="yt-buffering-indicator" class="yt-buffering-badge hidden">BUFFERING...</div>
       </div>
 
       <!-- Top Right: Pause button -->
@@ -59,18 +58,18 @@
         </div>
       </div>
 
-      <!-- Right Side HUD: New Exclusive Industrial ROCKBRAZIL Meter -->
+      <!-- Right Side HUD: Exclusive Industrial Vertical ROCKBRAZIL Meter -->
       <div class="hud-right-panel">
         <div class="industrial-rock-meter">
-          <div class="meter-casing">
+          <div class="meter-casing" id="meter-vertical-casing">
             <div class="casing-bolt top-left"></div>
             <div class="casing-bolt top-right"></div>
             <div class="casing-bolt bottom-left"></div>
             <div class="casing-bolt bottom-right"></div>
 
-            <div class="meter-header-row">
-              <span class="meter-brand-name">ROCKBRAZIL</span>
-              <div class="vacuum-tube-unit">
+            <!-- Top: Vacuum Tube with Glowing Filament -->
+            <div class="meter-top-tube">
+              <div class="vacuum-tube-unit" id="vertical-vacuum-tube">
                 <div class="tube-glass">
                   <div class="tube-filament"></div>
                   <div class="tube-glow"></div>
@@ -78,20 +77,27 @@
               </div>
             </div>
 
-            <div class="gauge-arc-track">
-              <div class="arc-zone zone-red"></div>
-              <div class="arc-zone zone-orange"></div>
-              <div class="arc-zone zone-yellow"></div>
-              <div class="arc-zone zone-green"></div>
-              <div id="rock-meter-needle" class="meter-mechanical-needle" style="left: 50%;">
+            <!-- Vertical Brand Label -->
+            <div class="meter-vertical-brand">
+              <span class="meter-brand-name">ROCK</span>
+            </div>
+
+            <!-- Vertical Gauge Track (Bottom: Red -> Orange -> Yellow -> Top: Green) -->
+            <div class="gauge-arc-track" id="gauge-vertical-track">
+              <div class="vertical-arc-zone zone-green"></div>
+              <div class="vertical-arc-zone zone-yellow"></div>
+              <div class="vertical-arc-zone zone-orange"></div>
+              <div class="vertical-arc-zone zone-red"></div>
+              <div id="rock-meter-needle" class="meter-vertical-needle" style="bottom: 50%;">
                 <div class="needle-tip"></div>
                 <div class="needle-pivot"></div>
               </div>
             </div>
 
-            <div class="meter-footer-row">
-              <span class="meter-status-text">DESEMPENHO</span>
+            <!-- Bottom: Percentage & Performance status -->
+            <div class="meter-vertical-footer">
               <span id="rock-meter-pct-text" class="meter-percentage-text">50%</span>
+              <span class="meter-status-text">DESEMPENHO</span>
             </div>
           </div>
         </div>

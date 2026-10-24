@@ -19,6 +19,11 @@ export class YouTubePlayerController {
   private isReady = false;
   private currentVideoId = '';
   private buffering = false;
+  private isPlayingState = false;
+
+  // High-precision smooth clock with monotonic interpolation & drift compensation
+  private smoothCurrentTime = 0;
+  private lastPerformanceNow = 0;
   private fallbackCurrentTime = 0;
   private fallbackStartTime = 0;
   private isFallbackPlaying = false;
@@ -106,7 +111,7 @@ export class YouTubePlayerController {
           onStateChange: (event: any) => {
             const state = event.data;
             if (state === 3) {
-              // BUFFERING
+              // BUFFERING: pause progression internally without penalty
               this.buffering = true;
               if (this.events.onBuffering) this.events.onBuffering(true);
             } else {
@@ -114,6 +119,15 @@ export class YouTubePlayerController {
                 this.buffering = false;
                 if (this.events.onBuffering) this.events.onBuffering(false);
               }
+            }
+
+            if (state === 1) {
+              // PLAYING
+              this.isPlayingState = true;
+              this.lastPerformanceNow = performance.now();
+            } else if (state === 2 || state === 0) {
+              // PAUSED or ENDED
+              this.isPlayingState = false;
             }
 
             if (state === 0) {
@@ -129,24 +143,85 @@ export class YouTubePlayerController {
           }
         }
       });
-    } catch (e) {
+    } catch {
       this.isReady = true;
     }
   }
 
+  /**
+   * Prepares and cues a video in advance (Video Preparation System)
+   */
   async loadVideo(videoId: string): Promise<void> {
     this.currentVideoId = videoId;
     this.fallbackCurrentTime = 0;
+    this.smoothCurrentTime = 0;
+    this.lastPerformanceNow = performance.now();
     this.isFallbackPlaying = false;
+    this.isPlayingState = false;
     this.buffering = false;
 
     if (this.player && this.player.cueVideoById) {
       try {
         this.player.cueVideoById(videoId);
       } catch {
-        // Ignore
+        // Fallback
       }
     }
+  }
+
+  /**
+   * Waits until the player actually transitions to PLAYING state before starting notes
+   */
+  async waitForPlaying(timeoutMs = 4000): Promise<boolean> {
+    if (this.isPlayingState) return true;
+
+    return new Promise<boolean>((resolve) => {
+      let resolved = false;
+
+      const checkState = () => {
+        if (resolved) return;
+        if (this.player && this.player.getPlayerState) {
+          try {
+            const state = this.player.getPlayerState();
+            if (state === 1) {
+              // PLAYING confirmed!
+              resolved = true;
+              this.isPlayingState = true;
+              this.lastPerformanceNow = performance.now();
+              resolve(true);
+              return;
+            }
+          } catch {
+            // Ignore
+          }
+        }
+      };
+
+      const interval = setInterval(checkState, 100);
+
+      const timer = setTimeout(() => {
+        if (!resolved) {
+          resolved = true;
+          clearInterval(interval);
+          // Fallback to true so gameplay proceeds even if offline or iframe API blocked
+          resolve(true);
+        }
+      }, timeoutMs);
+
+      // Also listen to state change callback
+      const origOnStateChange = this.events.onStateChange;
+      this.events.onStateChange = (st) => {
+        if (origOnStateChange) origOnStateChange(st);
+        if (st === 1 && !resolved) {
+          resolved = true;
+          clearInterval(interval);
+          clearTimeout(timer);
+          this.isPlayingState = true;
+          this.lastPerformanceNow = performance.now();
+          resolve(true);
+        }
+      };
+    });
   }
 
   play(): void {
@@ -158,7 +233,9 @@ export class YouTubePlayerController {
       }
     }
     this.fallbackStartTime = performance.now();
+    this.lastPerformanceNow = performance.now();
     this.isFallbackPlaying = true;
+    this.isPlayingState = true;
   }
 
   pause(): void {
@@ -173,6 +250,7 @@ export class YouTubePlayerController {
       this.fallbackCurrentTime += (performance.now() - this.fallbackStartTime) / 1000;
       this.isFallbackPlaying = false;
     }
+    this.isPlayingState = false;
   }
 
   resume(): void {
@@ -188,7 +266,9 @@ export class YouTubePlayerController {
       }
     }
     this.isFallbackPlaying = false;
+    this.isPlayingState = false;
     this.fallbackCurrentTime = 0;
+    this.smoothCurrentTime = 0;
     this.buffering = false;
   }
 
@@ -201,15 +281,41 @@ export class YouTubePlayerController {
       }
     }
     this.fallbackCurrentTime = seconds;
+    this.smoothCurrentTime = seconds;
     this.fallbackStartTime = performance.now();
+    this.lastPerformanceNow = performance.now();
   }
 
+  /**
+   * Returns smoothly interpolated musical time without 250ms jumps or jitter
+   */
   getCurrentTime(): number {
+    const now = performance.now();
+    if (this.lastPerformanceNow === 0) this.lastPerformanceNow = now;
+
+    const dt = Math.max(0, Math.min(0.1, (now - this.lastPerformanceNow) / 1000));
+    this.lastPerformanceNow = now;
+
+    // Advance smooth clock if playing and not buffering
+    if ((this.isPlayingState || this.isFallbackPlaying) && !this.buffering) {
+      this.smoothCurrentTime += dt;
+    }
+
+    // Read real player time and apply gradual low-pass drift smoothing
     if (this.player && this.player.getCurrentTime) {
       try {
-        const t = this.player.getCurrentTime();
-        if (typeof t === 'number' && !isNaN(t) && t > 0) {
-          return t;
+        const rawYtTime = this.player.getCurrentTime();
+        if (typeof rawYtTime === 'number' && !isNaN(rawYtTime) && rawYtTime > 0) {
+          const drift = rawYtTime - this.smoothCurrentTime;
+
+          if (Math.abs(drift) > 1.2) {
+            // Seeked or major desync: snap directly
+            this.smoothCurrentTime = rawYtTime;
+          } else if (Math.abs(drift) > 0.02) {
+            // Gradual correction: adjust by 8% per frame (prevents visual hopping/jitter)
+            this.smoothCurrentTime += drift * 0.08;
+          }
+          return this.smoothCurrentTime;
         }
       } catch {
         // Fallback
@@ -217,9 +323,9 @@ export class YouTubePlayerController {
     }
 
     if (this.isFallbackPlaying) {
-      return this.fallbackCurrentTime + (performance.now() - this.fallbackStartTime) / 1000;
+      return this.fallbackCurrentTime + (now - this.fallbackStartTime) / 1000;
     }
-    return this.fallbackCurrentTime;
+    return this.smoothCurrentTime || this.fallbackCurrentTime;
   }
 
   getDuration(): number {

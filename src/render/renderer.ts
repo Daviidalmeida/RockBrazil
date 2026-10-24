@@ -75,29 +75,30 @@ export class GameRenderer {
 
   resize(): void {
     const rect = this.canvas.parentElement?.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const w = (rect && rect.width > 0) ? rect.width : (window.innerWidth || 360);
-    const h = (rect && rect.height > 0) ? rect.height : (window.innerHeight || 640);
+    const dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 2) : 1;
+    const w = (rect && rect.width > 0) ? rect.width : (typeof window !== 'undefined' ? (window.innerWidth || 360) : 360);
+    const h = (rect && rect.height > 0) ? rect.height : (typeof window !== 'undefined' ? (window.innerHeight || 640) : 640);
     this.canvas.width = w * dpr;
     this.canvas.height = h * dpr;
-    this.ctx.resetTransform();
-    this.ctx.scale(dpr, dpr);
+    if (this.ctx.resetTransform) this.ctx.resetTransform();
+    if (this.ctx.scale) this.ctx.scale(dpr, dpr);
   }
 
   get width(): number {
-    return this.canvas.width / (Math.min(window.devicePixelRatio || 1, 2));
+    const dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 2) : 1;
+    return this.canvas.width / dpr;
   }
 
   get height(): number {
-    return this.canvas.height / (Math.min(window.devicePixelRatio || 1, 2));
+    const dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 2) : 1;
+    return this.canvas.height / dpr;
   }
 
   /**
-   * Triggers a screen shake effect
+   * Triggers a screen shake effect (V5.7: Desativado para garantir estabilidade absoluta das notas)
    */
-  triggerShake(intensity = 6): void {
-    if (!this.visualEffectsEnabled) return;
-    this.screenShake = intensity;
+  triggerShake(_intensity = 6): void {
+    this.screenShake = 0;
   }
 
   spawnHitParticles(lane: Lane): void {
@@ -202,15 +203,8 @@ export class GameRenderer {
     const w = this.width;
     const h = this.height;
 
-    // Apply Screen Shake
+    // V5.7: Geometria de renderização perfeitamente estável (sem tremedeira em combo alto)
     ctx.save();
-    if (this.screenShake > 0) {
-      const shakeX = (Math.random() - 0.5) * this.screenShake;
-      const shakeY = (Math.random() - 0.5) * this.screenShake;
-      ctx.translate(shakeX, shakeY);
-      this.screenShake *= 0.88;
-      if (this.screenShake < 0.2) this.screenShake = 0;
-    }
 
     // 1. Clear background
     ctx.clearRect(0, 0, w, h);
