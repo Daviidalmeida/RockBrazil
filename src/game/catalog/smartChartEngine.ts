@@ -3,7 +3,7 @@ import { Note, Lane, Difficulty, BeatmapByDifficulty } from '../../types';
 export class SmartChartEngine {
   /**
    * Generates a complete set of difficulty beatmaps (EASY, MEDIUM, HARD, EXPERT)
-   * synchronized to the song's BPM and musical structure.
+   * synchronized to the song's BPM and musical structure with Guitar-First prioritization.
    */
   static generateChartsForSong(
     songId: string,
@@ -19,7 +19,7 @@ export class SmartChartEngine {
   }
 
   /**
-   * Deterministic pseudo-random number generator for consistent musical charts
+   * Deterministic pseudo-random number generator for reproducible musical charts
    */
   private static seededRandom(seed: number): () => number {
     let s = seed % 2147483647;
@@ -62,14 +62,22 @@ export class SmartChartEngine {
         ? [0, 1, 2, 3]
         : [0, 1, 2, 3, 4];
 
-    // Starting offset - give 1 bar lead-in
+    // 1 bar lead-in for player setup
     const startTime = Math.max(1.5, barInterval);
     const endTime = Math.max(startTime + 10, durationSec - 2.0);
 
     let currentTime = startTime;
     let barIndex = 0;
 
-    const addNote = (time: number, lane: Lane, dur = 0) => {
+    const addNote = (
+      time: number,
+      lane: Lane,
+      dur = 0,
+      instrument: 'guitar' | 'bass' | 'drums' = 'guitar',
+      chordType: 'tap' | 'hold' | 'chord' = dur > 0 ? 'hold' : 'tap'
+    ) => {
+      const timeMs = Math.round(time * 1000);
+      const durationMs = Math.round(dur * 1000);
       notes.push({
         id: noteId++,
         time: Number(time.toFixed(3)),
@@ -78,108 +86,166 @@ export class SmartChartEngine {
         hit: false,
         missed: false,
         sustainCompleted: false,
-        sustainHeldTime: 0
+        sustainHeldTime: 0,
+        timeMs,
+        durationMs,
+        type: chordType,
+        sourceInstrument: instrument,
+        sourceEventId: `${songId}-${difficulty.toLowerCase()}-${noteId}`
       });
     };
 
-    const addChord = (time: number, chordLanes: Lane[], dur = 0) => {
-      chordLanes.forEach((l) => addNote(time, l, dur));
+    const addChord = (
+      time: number,
+      chordLanes: Lane[],
+      dur = 0,
+      instrument: 'guitar' | 'bass' | 'drums' = 'guitar'
+    ) => {
+      chordLanes.forEach((l) => addNote(time, l, dur, instrument, 'chord'));
     };
 
     while (currentTime < endTime) {
-      // Determine musical section in an 8-bar cycle:
+      // 8-bar musical phrase cycle:
       // Bars 0-3: Verse / Riff pattern
       // Bars 4-6: Chorus / Driving chords
-      // Bar 7: Fill / Turnaround
+      // Bar 7: Turnaround / Drum-bass fill
       const barInPhrase = barIndex % 8;
       const isChorus = barInPhrase >= 4 && barInPhrase <= 6;
       const isFill = barInPhrase === 7;
 
       if (difficulty === 'EASY') {
-        // EASY: Focus on quarter notes, downbeats, gentle pace
-        for (let beat = 0; beat < 4; beat++) {
-          const t = currentTime + beat * beatInterval;
-          if (t >= endTime) break;
+        // EASY: Focus on main guitar downbeats, half notes and quarter notes
+        // lanes 0, 1, 2 only. Generous breathing room between phrases.
+        const riffLane = Math.floor(rand() * 3) as Lane;
+        const secondLane = ((riffLane + 1) % 3) as Lane;
 
-          // In easy, play on beats 0 and 2, or every beat in chorus
-          if (beat === 0 || beat === 2 || (isChorus && rand() > 0.3)) {
-            const lane = lanes[Math.floor(rand() * lanes.length)];
-            // Occasional sustain note
-            const isSustain = rand() > 0.8;
-            const dur = isSustain ? beatInterval * 1.5 : 0;
-            addNote(t, lane, dur);
+        if (isFill) {
+          // Bass groove marker in turnaround (15% bass presence)
+          const fillTime = currentTime;
+          if (fillTime < endTime) addNote(fillTime, 0, 0, 'bass');
+          const fillTime2 = currentTime + 2 * beatInterval;
+          if (fillTime2 < endTime) addNote(fillTime2, 1, 0, 'bass');
+        } else if (isChorus) {
+          // Chorus: Quarter notes on beats 0, 1, 2
+          for (let beat = 0; beat < 3; beat++) {
+            const t = currentTime + beat * beatInterval;
+            if (t >= endTime) break;
+            const l = beat === 0 ? riffLane : secondLane;
+            const isSustain = beat === 2 && rand() > 0.5;
+            addNote(t, l, isSustain ? beatInterval * 1.5 : 0, 'guitar');
+          }
+        } else {
+          // Verse: Root notes on beat 0 and beat 2
+          const t0 = currentTime;
+          if (t0 < endTime) addNote(t0, riffLane, 0, 'guitar');
+
+          const t2 = currentTime + 2 * beatInterval;
+          if (t2 < endTime) {
+            const isSustain = rand() > 0.6;
+            addNote(t2, secondLane, isSustain ? beatInterval * 1.2 : 0, 'guitar');
           }
         }
       } else if (difficulty === 'MEDIUM') {
-        // MEDIUM: 8th notes, syncopation, 2-note power chords, guitar riffs
-        for (let beat = 0; beat < 4; beat++) {
-          const t = currentTime + beat * beatInterval;
-          if (t >= endTime) break;
+        // MEDIUM: Independent rhythm guitar chart with syncopated 8th notes & 2-note power chords
+        // Uses lanes 0, 1, 2, 3. NOT Easy + blue!
+        const baseLane = Math.floor(rand() * 3) as Lane;
+        const chordLanes: Lane[] = [baseLane, (baseLane + 1) as Lane];
 
-          if (isChorus && beat === 0) {
-            // Power chord on downbeat of chorus
-            const l1 = lanes[0];
-            const l2 = lanes[1];
-            addChord(t, [l1, l2], beatInterval * 0.8);
-          } else {
-            // Note on main beat
-            const lane = lanes[Math.floor(rand() * lanes.length)];
-            const isSustain = beat === 3 && rand() > 0.6;
-            addNote(t, lane, isSustain ? beatInterval * 1.2 : 0);
+        if (isFill) {
+          // 15% drums fill across lanes on the last bar
+          for (let step = 0; step < 4; step++) {
+            const ft = currentTime + step * beatInterval;
+            if (ft >= endTime) break;
+            const fillLane = (step % 4) as Lane;
+            addNote(ft, fillLane, 0, 'drums');
+          }
+        } else if (isChorus) {
+          // Driving rock power chord on beat 0, syncopated strumming on offbeats (8th notes)
+          addChord(currentTime, chordLanes, beatInterval * 0.75, 'guitar');
 
-            // Possible off-beat (8th note)
-            if (rand() > 0.45 && !isSustain) {
-              const offTime = t + beatInterval * 0.5;
-              if (offTime < endTime) {
-                const nextLane = lanes[Math.floor(rand() * lanes.length)];
-                addNote(offTime, nextLane, 0);
-              }
+          // Syncopated strum pattern on 1.5, 2.5, 3.0
+          const strumPattern = [1.5, 2.5, 3.0];
+          for (const beatOffset of strumPattern) {
+            const t = currentTime + beatOffset * beatInterval;
+            if (t >= endTime) break;
+            const strumLane = lanes[Math.floor(rand() * lanes.length)];
+            addNote(t, strumLane, 0, 'guitar');
+          }
+        } else {
+          // Verse: Rhythmic syncopation (downbeat + 8th-note offbeats)
+          // Beat 0: riff anchor note
+          addNote(currentTime, lanes[baseLane], 0, 'guitar');
+
+          // Offbeat syncopations at 0.5 and 1.5
+          if (rand() > 0.3) {
+            const tOff1 = currentTime + 0.5 * beatInterval;
+            if (tOff1 < endTime) addNote(tOff1, lanes[(baseLane + 1) % 4], 0, 'guitar');
+          }
+
+          // Beat 2: power chord or sustain
+          const t2 = currentTime + 2 * beatInterval;
+          if (t2 < endTime) {
+            if (rand() > 0.5) {
+              addChord(t2, [lanes[0], lanes[1]], beatInterval * 0.8, 'guitar');
+            } else {
+              addNote(t2, lanes[(baseLane + 2) % 4], beatInterval * 1.0, 'guitar');
             }
           }
-        }
 
-        // Fill bar at end of phrase
-        if (isFill && rand() > 0.4) {
-          const fillTime = currentTime + 3 * beatInterval;
-          if (fillTime < endTime) {
-            addNote(fillTime + beatInterval * 0.25, lanes[1], 0);
-            addNote(fillTime + beatInterval * 0.5, lanes[2], 0);
-            addNote(fillTime + beatInterval * 0.75, lanes[lanes.length - 1], 0);
+          // Beat 3.5: pickup note to next bar
+          if (rand() > 0.4) {
+            const tPickup = currentTime + 3.5 * beatInterval;
+            if (tPickup < endTime) addNote(tPickup, lanes[baseLane], 0, 'guitar');
           }
         }
       } else {
-        // HARD / EXPERT: Technical guitar riffs, rapid 16th bursts, chords, solos
-        for (let beat = 0; beat < 4; beat++) {
-          const t = currentTime + beat * beatInterval;
-          if (t >= endTime) break;
+        // HARD & EXPERT: Technical lead guitar riffs, fast 16th-note shred bursts, chords across all 5 lanes
+        const isExpert = difficulty === 'EXPERT';
 
-          if (isChorus && (beat === 0 || beat === 2)) {
-            // 2-note or 3-note power chord
-            const baseLane = Math.floor(rand() * (lanes.length - 1));
-            const chordLanes: Lane[] = [lanes[baseLane], lanes[baseLane + 1]];
-            if (difficulty === 'EXPERT' && baseLane + 2 < lanes.length && rand() > 0.5) {
-              chordLanes.push(lanes[baseLane + 2]);
-            }
-            addChord(t, chordLanes, beatInterval * 0.7);
-          } else {
-            const lane = lanes[Math.floor(rand() * lanes.length)];
-            const isLongSolo = beat === 0 && rand() > 0.75;
-            addNote(t, lane, isLongSolo ? beatInterval * 2.5 : 0);
+        if (isFill) {
+          // Intense turnaround fill (guitar lead flourish + drums)
+          for (let step = 0; step < 6; step++) {
+            const ft = currentTime + step * (beatInterval * 0.5);
+            if (ft >= endTime) break;
+            const fillLane = (step % 5) as Lane;
+            addNote(ft, fillLane, 0, step >= 4 ? 'drums' : 'guitar');
+          }
+        } else if (isChorus) {
+          // Full 2-note or 3-note power chords on downbeats
+          const chordLanes: Lane[] = [0, 1];
+          if (isExpert && rand() > 0.4) chordLanes.push(2);
+          addChord(currentTime, chordLanes, beatInterval * 0.7, 'guitar');
 
-            if (!isLongSolo) {
-              // 8th note
-              const offTime = t + beatInterval * 0.5;
-              if (offTime < endTime) {
-                const offLane = lanes[Math.floor(rand() * lanes.length)];
-                addNote(offTime, offLane, 0);
+          // Rapid 16th-note guitar strumming and lead accents
+          const subBeats = [0.75, 1.25, 1.5, 2.0, 2.5, 3.0, 3.5];
+          for (const sb of subBeats) {
+            const t = currentTime + sb * beatInterval;
+            if (t >= endTime) break;
+            const l = Math.floor(rand() * 5) as Lane;
+            addNote(t, l, sb === 2.0 && rand() > 0.6 ? beatInterval * 0.8 : 0, 'guitar');
+          }
+        } else {
+          // Verse: Melodic lead riff with 16th-note bursts
+          const startLane = Math.floor(rand() * 4) as Lane;
+          addNote(currentTime, startLane, 0, 'guitar');
 
-                // 16th note guitar riff / shred bursts
-                if ((isChorus || isFill || difficulty === 'EXPERT') && rand() > 0.55) {
-                  const sixteenth1 = t + beatInterval * 0.25;
-                  const sixteenth2 = t + beatInterval * 0.75;
-                  if (sixteenth1 < endTime) addNote(sixteenth1, lanes[(lane + 1) % lanes.length], 0);
-                  if (sixteenth2 < endTime) addNote(sixteenth2, lanes[(lane + 2) % lanes.length], 0);
-                }
+          // 8th and 16th note guitar shred runs
+          const notesInBar = isExpert ? 6 : 5;
+          for (let i = 1; i < notesInBar; i++) {
+            const t = currentTime + (i * beatInterval * (4 / notesInBar));
+            if (t >= endTime) break;
+            const l = ((startLane + i) % 5) as Lane;
+            const isHold = i === notesInBar - 1 && rand() > 0.6;
+            addNote(t, l, isHold ? beatInterval * 1.5 : 0, 'guitar');
+          }
+
+          // Shred burst on beat 3.5
+          if (rand() > 0.4) {
+            const shredTime = currentTime + 3.5 * beatInterval;
+            if (shredTime < endTime) {
+              addNote(shredTime, ((startLane + 2) % 5) as Lane, 0, 'guitar');
+              if (shredTime + beatInterval * 0.25 < endTime) {
+                addNote(shredTime + beatInterval * 0.25, ((startLane + 3) % 5) as Lane, 0, 'guitar');
               }
             }
           }
@@ -190,12 +256,23 @@ export class SmartChartEngine {
       barIndex++;
     }
 
-    // Sort notes chronologically and ensure unique IDs
+    // Sort chronologically and deduplicate exact timestamp+lane collisions
     notes.sort((a, b) => a.time - b.time || a.lane - b.lane);
-    notes.forEach((n, idx) => {
+    const uniqueNotes: Note[] = [];
+    for (const n of notes) {
+      const prev = uniqueNotes[uniqueNotes.length - 1];
+      if (prev && Math.abs(prev.time - n.time) < 0.015 && prev.lane === n.lane) {
+        continue; // skip duplicate note on exact same lane and timestamp
+      }
+      uniqueNotes.push(n);
+    }
+
+    // Re-index IDs sequentially
+    uniqueNotes.forEach((n, idx) => {
       n.id = idx + 1;
+      n.sourceEventId = `${songId}-${difficulty.toLowerCase()}-${n.id}`;
     });
 
-    return notes;
+    return uniqueNotes;
   }
 }

@@ -93,6 +93,9 @@ class RockBrazilGame {
     this.setupInputHandlers();
     this.setupWindowResize();
 
+    // Expose instance for testing and automation
+    (window as any).rockBrazilGame = this;
+
     // Start continuous render/game loop
     requestAnimationFrame(this.gameLoop);
 
@@ -115,6 +118,13 @@ class RockBrazilGame {
     this.renderer.setDifficulty(this.currentDifficulty);
     this.ui.setDifficultyLanes(this.currentDifficulty);
     this.ui.showScreen(GameState.MENU);
+
+    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('testGameplay') === 'true') {
+      const song = this.library.getActiveSongs()[2]; // Pitty - Admirável Chip Novo
+      setTimeout(() => {
+        this.startNewMatch(song, 'MEDIUM');
+      }, 150);
+    }
   }
 
   private async autoDetectTNTFile(): Promise<void> {
@@ -685,16 +695,17 @@ class RockBrazilGame {
 
     // Reinicializa o motor com notas independentes (cópia profunda)
     const rawNotes = customNotes || this.beatmaps.getBeatmap(this.currentSong.id, this.currentDifficulty);
-    // Adapta notas às pistas disponíveis na dificuldade sem perder nenhuma
+    // Garante que cada nota permaneça na sua pista independente sem esmagamento forçado
     const maxLane = this.currentDifficulty === 'EASY' ? 2 : this.currentDifficulty === 'MEDIUM' ? 3 : 4;
-    const notes = rawNotes.map((n) => ({
-      ...n,
-      lane: Math.min(maxLane, n.lane) as Lane,
-      hit: false,
-      missed: false,
-      sustainCompleted: false,
-      sustainHeldTime: 0
-    }));
+    const notes = rawNotes
+      .filter((n) => n.lane <= maxLane)
+      .map((n) => ({
+        ...n,
+        hit: false,
+        missed: false,
+        sustainCompleted: false,
+        sustainHeldTime: 0
+      }));
     this.engine.reset(notes, this.currentDifficulty);
 
     // Reinicializa completamente o HUD e as entradas de toque

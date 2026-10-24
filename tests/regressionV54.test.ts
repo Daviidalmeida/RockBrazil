@@ -277,7 +277,7 @@ describe('ROCKBRAZIL V5.4 — SUÍTE COMPLETA DE REGRESSÃO E CONFORMIDADE', () 
       const cssPath = path.resolve(__dirname, '../src/style.css');
       const css = fs.readFileSync(cssPath, 'utf-8');
 
-      expect(css).toContain('/images/stage-v54.jpg');
+      expect(css).toMatch(/\/images\/stage-(bg\.png|v54\.jpg)/);
       expect(css).toContain('.yt-miniplayer-box');
       expect(css).toContain('.industrial-rock-meter');
       expect(css).toContain('.vacuum-tube-unit');

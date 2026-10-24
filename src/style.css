@@ -75,7 +75,8 @@ html, body {
 }
 
 #canvas-container.gameplay-stage-bg {
-  background: url('/images/stage-v54.jpg') center top / cover no-repeat;
+  background: linear-gradient(180deg, rgba(8, 9, 14, 0.4) 0%, rgba(8, 9, 14, 0.72) 100%),
+              url('/images/stage-bg.png') center top / cover no-repeat;
 }
 
 #game-canvas {
@@ -200,7 +201,7 @@ html, body {
 /* 4. Left Side HUD: Score, Multiplier, Combo (Rock Distressed, NO Giant Black Box) */
 .hud-left-panel {
   position: absolute;
-  top: clamp(100px, 24vw, 134px);
+  top: calc(18px + clamp(140px, 38vw, 200px) * 9 / 16);
   left: 12px;
   display: flex;
   flex-direction: column;

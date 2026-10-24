@@ -27,6 +27,12 @@ export interface Note {
   sustainCompleted: boolean;
   sustainHeldTime: number;
   judgment?: HitJudgment;
+  // V5.6 Guitar-First Smart Chart Engine metadata:
+  timeMs?: number;
+  durationMs?: number;
+  type?: 'tap' | 'hold' | 'chord';
+  sourceInstrument?: 'guitar' | 'bass' | 'drums';
+  sourceEventId?: string | number;
 }
 
 export interface HitResult {
