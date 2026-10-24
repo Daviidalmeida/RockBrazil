@@ -708,22 +708,22 @@ class RockBrazilGame {
     this.currentSong = song;
     this.currentDifficulty = difficulty;
 
-    // Configura pistas ativas por dificuldade (3 no Fácil, 4 no Médio, 5 no Difícil/Expert)
-    this.renderer.setDifficulty(this.currentDifficulty);
-    this.ui.setDifficultyLanes(this.currentDifficulty);
-
-    // Reinicializa o motor com notas independentes da biblioteca
+    // Obtém notas autênticas do chart sem descartar notas legítimas
     const rawNotes = customNotes || this.beatmaps.getBeatmap(this.currentSong.id, this.currentDifficulty);
-    const maxLane = this.currentDifficulty === 'EASY' ? 2 : this.currentDifficulty === 'MEDIUM' ? 3 : 4;
-    const notes = rawNotes
-      .filter((n) => n.lane <= maxLane)
-      .map((n) => ({
-        ...n,
-        hit: false,
-        missed: false,
-        sustainCompleted: false,
-        sustainHeldTime: 0
-      }));
+    const maxLaneInNotes = rawNotes.reduce((max, n) => Math.max(max, n.lane), 0);
+
+    // Configura pistas ativas por dificuldade e acomoda pistas reais do chart
+    this.renderer.setDifficulty(this.currentDifficulty, maxLaneInNotes);
+    this.ui.setDifficultyLanes(this.currentDifficulty, maxLaneInNotes);
+
+    // Reinicializa o motor preservando 100% das notas autênticas
+    const notes = rawNotes.map((n) => ({
+      ...n,
+      hit: false,
+      missed: false,
+      sustainCompleted: false,
+      sustainHeldTime: 0
+    }));
     this.engine.reset(notes, this.currentDifficulty);
 
     // Reinicializa completamente o HUD e as entradas de toque

@@ -68,9 +68,14 @@ export class GameRenderer {
   /**
    * Sets the active difficulty and adapts visible lanes (3 for EASY, 4 for MEDIUM, 5 for HARD/EXPERT)
    */
-  setDifficulty(diff: Difficulty): void {
+  setDifficulty(diff: Difficulty, maxLaneOverride?: number): void {
     this.difficulty = diff;
-    this.activeLanesList = getLanesForDifficulty(diff);
+    const standard = getLanesForDifficulty(diff);
+    if (maxLaneOverride !== undefined && maxLaneOverride >= standard.length) {
+      this.activeLanesList = [0, 1, 2, 3, 4].slice(0, maxLaneOverride + 1) as Lane[];
+    } else {
+      this.activeLanesList = standard;
+    }
   }
 
   resize(): void {

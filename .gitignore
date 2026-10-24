@@ -8,12 +8,14 @@ public/custom-songs/**
 *.mp3
 *.wav
 *.ogg
+*.opus
 *.mid
 *.zip
 *.rar
 *.sng
 charts-import/charts.rar
 charts-import/extracted/
+charts-import/extracted-charts/audio-debug/
 
 # Android build artifacts
 android/build/

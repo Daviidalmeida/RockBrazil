@@ -342,23 +342,6 @@ export class UIManager {
       this.onOpenSongSelectClicked?.();
     });
 
-    // Pause calibration buttons
-    document.getElementById('btn-calib-minus-50')?.addEventListener('click', () => {
-      this.onCalibrationOffsetChange?.(-50);
-    });
-    document.getElementById('btn-calib-minus-10')?.addEventListener('click', () => {
-      this.onCalibrationOffsetChange?.(-10);
-    });
-    document.getElementById('btn-calib-reset')?.addEventListener('click', () => {
-      this.onCalibrationOffsetChange?.(0, true);
-    });
-    document.getElementById('btn-calib-plus-10')?.addEventListener('click', () => {
-      this.onCalibrationOffsetChange?.(10);
-    });
-    document.getElementById('btn-calib-plus-50')?.addEventListener('click', () => {
-      this.onCalibrationOffsetChange?.(50);
-    });
-
     // Autoplay unblock button
     document.getElementById('btn-unblock-audio')?.addEventListener('click', () => {
       this.showAutoplayUnblockPrompt(false);
@@ -885,10 +868,11 @@ export class UIManager {
    * MEDIUM: 4 lanes (0, 1, 2, 3)
    * HARD/EXPERT: 5 lanes (0, 1, 2, 3, 4)
    */
-  setDifficultyLanes(diff: Difficulty): void {
+  setDifficultyLanes(diff: Difficulty, maxLaneOverride?: number): void {
     const fretBoard = document.getElementById('fret-board');
     if (!fretBoard) return;
-    const maxLane = diff === 'EASY' ? 2 : diff === 'MEDIUM' ? 3 : 4;
+    const defaultMax = diff === 'EASY' ? 2 : diff === 'MEDIUM' ? 3 : 4;
+    const maxLane = maxLaneOverride !== undefined ? Math.max(defaultMax, maxLaneOverride) : defaultMax;
     fretBoard.querySelectorAll<HTMLElement>('.fret-button').forEach((btn) => {
       const lane = Number(btn.dataset.lane);
       if (lane > maxLane) {

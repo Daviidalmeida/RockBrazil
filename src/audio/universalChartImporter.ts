@@ -140,16 +140,24 @@ export class UniversalChartImporter {
       }
     }
 
-    // 2. Parse [SyncTrack] to build Chronological Tempo Map
+    // 2. Parse [SyncTrack] to build Chronological Tempo Map (BPM + Absolute Anchors)
     const tempoPoints: ChartTempoPoint[] = [];
+    const anchors = new Map<number, number>(); // tick -> absolute seconds
     const syncLines = sectionLines['SyncTrack'] || [];
 
     for (const line of syncLines) {
+      // e.g.: 2304 = A 6565444 (microseconds)
+      const matchA = line.match(/^(\d+)\s*=\s*A\s+(\d+)$/);
+      if (matchA) {
+        const tick = parseInt(matchA[1], 10);
+        const microsec = parseInt(matchA[2], 10);
+        anchors.set(tick, microsec / 1000000);
+      }
       // e.g.: 0 = B 120000
-      const match = line.match(/^(\d+)\s*=\s*B\s+(\d+)$/);
-      if (match) {
-        const tick = parseInt(match[1], 10);
-        const rawBpm = parseInt(match[2], 10);
+      const matchB = line.match(/^(\d+)\s*=\s*B\s+(\d+)$/);
+      if (matchB) {
+        const tick = parseInt(matchB[1], 10);
+        const rawBpm = parseInt(matchB[2], 10);
         const bpm = rawBpm / 1000;
         if (bpm > 0) {
           tempoPoints.push({ tick, bpm, timeSec: 0 });
@@ -162,19 +170,26 @@ export class UniversalChartImporter {
       tempoPoints.unshift({ tick: 0, bpm: 120, timeSec: 0 });
     }
 
-    // Calculate cumulative time for each tempo marker
+    // Calculate cumulative time for each tempo marker, locking to absolute anchors if present
     let cumTime = 0;
     for (let i = 0; i < tempoPoints.length; i++) {
+      const cur = tempoPoints[i];
       if (i > 0) {
         const prev = tempoPoints[i - 1];
-        const cur = tempoPoints[i];
         const deltaTicks = cur.tick - prev.tick;
         cumTime += (deltaTicks / resolution) * (60.0 / prev.bpm);
-        cur.timeSec = cumTime;
       }
+      if (anchors.has(cur.tick)) {
+        cumTime = anchors.get(cur.tick)!;
+      }
+      cur.timeSec = cumTime;
     }
 
     const tickToSeconds = (tick: number): number => {
+      // If direct absolute anchor exists for this tick, respect charter anchor down to microsecond
+      if (anchors.has(tick)) {
+        return anchors.get(tick)! + offsetSec;
+      }
       let segment = tempoPoints[0];
       for (let i = tempoPoints.length - 1; i >= 0; i--) {
         if (tick >= tempoPoints[i].tick) {
@@ -250,6 +265,9 @@ export class UniversalChartImporter {
       if (!lines || lines.length === 0) return [];
 
       const rawNotes: { tick: number; lane: Lane; lengthTicks: number }[] = [];
+      const hopoTicks = new Set<number>();
+      const strumTicks = new Set<number>();
+
       for (const line of lines) {
         // e.g.: 768 = N 1 96
         const match = line.match(/^(\d+)\s*=\s*N\s+(\d+)\s+(\d+)$/);
@@ -258,22 +276,18 @@ export class UniversalChartImporter {
           const rawLane = parseInt(match[2], 10);
           const lengthTicks = parseInt(match[3], 10);
 
-          let lane: Lane | null = null;
-          if (rawLane >= 0 && rawLane <= 4) {
-            lane = rawLane as Lane;
+          if (rawLane === 5) {
+            // Special marker 5: Force HOPO toggle
+            hopoTicks.add(tick);
+          } else if (rawLane === 6) {
+            // Special marker 6: Force Strum toggle
+            strumTicks.add(tick);
+          } else if (rawLane >= 0 && rawLane <= 4) {
+            // Preserve authentic lane without artificial remapping/modulo
+            rawNotes.push({ tick, lane: rawLane as Lane, lengthTicks });
           } else if (rawLane === 7) {
             // Open note mapped to lane 0
-            lane = 0;
-          }
-
-          if (lane !== null) {
-            // Enforce maximum allowable lanes for target difficulty
-            if (targetDiff === 'EASY' && lane > 2) {
-              lane = (lane % 3) as Lane;
-            } else if (targetDiff === 'MEDIUM' && lane > 3) {
-              lane = 3 as Lane;
-            }
-            rawNotes.push({ tick, lane, lengthTicks });
+            rawNotes.push({ tick, lane: 0 as Lane, lengthTicks });
           }
         }
       }
@@ -568,13 +582,10 @@ export class UniversalChartImporter {
         .map((n, i) => ({ ...n, id: i + 1 }));
     }
 
-    // 3. MEDIUM (4 lanes: lanes 0-3, reduce chords to max 2 notes, downsample to 8th beats)
+    // 3. MEDIUM (preserve authentic chart lanes if present)
     let medium: Note[];
     if (charts.MEDIUM && charts.MEDIUM.length > 0) {
-      medium = charts.MEDIUM.map((n) => ({
-        ...n,
-        lane: (n.lane > 3 ? 3 : n.lane) as Lane
-      }));
+      medium = charts.MEDIUM.map((n) => ({ ...n }));
     } else {
       const allowedLanes = getLanesForDifficulty('MEDIUM'); // [0, 1, 2, 3]
       let lastTime = -999;
@@ -603,13 +614,10 @@ export class UniversalChartImporter {
         });
     }
 
-    // 4. EASY (3 lanes: lanes 0-2, single notes only, quarter note spacing)
+    // 4. EASY (preserve authentic chart lanes if present)
     let easy: Note[];
     if (charts.EASY && charts.EASY.length > 0) {
-      easy = charts.EASY.map((n) => ({
-        ...n,
-        lane: (n.lane > 2 ? (n.lane % 3) : n.lane) as Lane
-      }));
+      easy = charts.EASY.map((n) => ({ ...n }));
     } else {
       const allowedLanes = getLanesForDifficulty('EASY'); // [0, 1, 2]
       let lastTime = -999;

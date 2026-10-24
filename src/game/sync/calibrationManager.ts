@@ -4,6 +4,13 @@ export class CalibrationManager {
   private static readonly STORAGE_KEY = 'rockbrazil_calibration_v1';
   private static cache: Record<string, SongCalibration> | null = null;
 
+  // Offsets verificados de estúdio entre a gravação do YouTube e o chart original
+  private static readonly VERIFIED_DEFAULTS: Record<string, number> = {
+    // Kuase Nada - De Borest: o vídeo no YouTube (CveouQkdSCs) possui ~135ms a menos de silêncio inicial
+    // Adiantar o tempo do chart em +135ms alinha o primeiro acorde aos 6.43s do vídeo.
+    'kua-de-borest': 135
+  };
+
   private static load(): Record<string, SongCalibration> {
     if (this.cache !== null) return this.cache;
 
@@ -33,13 +40,14 @@ export class CalibrationManager {
 
   public static getCalibration(songId: string, videoId = ''): SongCalibration {
     const data = this.load();
+    const defaultOffset = this.VERIFIED_DEFAULTS[songId] || 0;
     if (!data[songId]) {
       data[songId] = {
         songId,
         videoId,
-        chartOffsetMs: 0,
+        chartOffsetMs: defaultOffset,
         inputLatencyMs: 0,
-        calibrationStatus: 'DEFAULT',
+        calibrationStatus: defaultOffset !== 0 ? 'VERIFIED' : 'DEFAULT',
         lastCalibrated: Date.now()
       };
     }
@@ -73,9 +81,10 @@ export class CalibrationManager {
 
   public static resetOffsetMs(songId: string): void {
     const data = this.load();
+    const defaultOffset = this.VERIFIED_DEFAULTS[songId] || 0;
     if (data[songId]) {
-      data[songId].chartOffsetMs = 0;
-      data[songId].calibrationStatus = 'DEFAULT';
+      data[songId].chartOffsetMs = defaultOffset;
+      data[songId].calibrationStatus = defaultOffset !== 0 ? 'VERIFIED' : 'DEFAULT';
       data[songId].lastCalibrated = Date.now();
       this.persist();
     }
