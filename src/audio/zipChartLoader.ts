@@ -1,6 +1,7 @@
 import JSZip from 'jszip';
 import { Note, Difficulty } from '../types';
 import { MidiChartParser, MidiParsedCharts } from './midiChartParser';
+import { UniversalChartImporter } from './universalChartImporter';
 
 export interface LoadedSongPackage {
   id: string;
@@ -84,8 +85,9 @@ export class ZipChartLoader {
     const arrayBuffer = await file.arrayBuffer();
     const zip = await JSZip.loadAsync(arrayBuffer);
 
-    // 1. Locate notes.mid
+    // 1. Locate notes.mid or notes.chart
     let midiEntry: JSZip.JSZipObject | null = null;
+    let chartEntry: JSZip.JSZipObject | null = null;
     let iniEntry: JSZip.JSZipObject | null = null;
     let albumEntry: JSZip.JSZipObject | null = null;
     const audioEntries: JSZip.JSZipObject[] = [];
@@ -93,7 +95,9 @@ export class ZipChartLoader {
     zip.forEach((relativePath, entry) => {
       const lower = relativePath.toLowerCase();
       if (!entry.dir) {
-        if (lower.endsWith('notes.mid')) {
+        if (lower.endsWith('.chart')) {
+          chartEntry = entry;
+        } else if (lower.endsWith('notes.mid') || lower.endsWith('.mid') || lower.endsWith('.midi')) {
           midiEntry = entry;
         } else if (lower.endsWith('song.ini')) {
           iniEntry = entry;
@@ -106,11 +110,8 @@ export class ZipChartLoader {
       }
     });
 
-    if (!midiEntry) {
-      throw new Error('Arquivo notes.mid não encontrado no pacote ZIP.');
-    }
-    if (audioEntries.length === 0) {
-      throw new Error('Nenhum arquivo de áudio (.ogg, .mp3, .wav) encontrado no pacote ZIP.');
+    if (!midiEntry && !chartEntry) {
+      throw new Error('Nenhum arquivo de notas (notes.mid ou .chart) encontrado no pacote ZIP.');
     }
 
     // 2. Parse song.ini if present
@@ -123,27 +124,52 @@ export class ZipChartLoader {
       if (meta.artist) artist = meta.artist;
     }
 
-    // 3. Parse MIDI chart
-    const midiData = await (midiEntry as JSZip.JSZipObject).async('uint8array');
-    const parsedMidi: MidiParsedCharts = MidiChartParser.parse(midiData);
+    // 3. Parse Chart or MIDI
+    let parsedCharts: Record<Difficulty, Note[]>;
+    let chartBpm = 120;
 
-    // 4. Decode all audio stems
-    const decodedBuffers: AudioBuffer[] = [];
-    for (const audioEntry of audioEntries) {
-      try {
-        const audioData = await audioEntry.async('arraybuffer');
-        const buf = await ZipChartLoader.safeDecode(ctx, audioData);
-        decodedBuffers.push(buf);
-      } catch (err) {
-        console.warn(`Falha ao decodificar trilha de áudio ${audioEntry.name}:`, err);
+    if (chartEntry) {
+      const chartText = await (chartEntry as JSZip.JSZipObject).async('text');
+      const parsed = UniversalChartImporter.parseChartText(chartText);
+      parsedCharts = parsed.charts;
+      if (parsed.metadata.name && parsed.metadata.name !== 'Música Importada') title = parsed.metadata.name;
+      if (parsed.metadata.artist && parsed.metadata.artist !== 'Banda RockBrazil') artist = parsed.metadata.artist;
+    } else {
+      const midiData = await (midiEntry! as JSZip.JSZipObject).async('uint8array');
+      const parsedMidi: MidiParsedCharts = MidiChartParser.parse(midiData);
+      chartBpm = parsedMidi.bpm;
+      parsedCharts = {
+        EASY: parsedMidi.EASY,
+        MEDIUM: parsedMidi.MEDIUM,
+        HARD: parsedMidi.HARD,
+        EXPERT: parsedMidi.EXPERT
+      };
+    }
+
+    // 4. Decode audio stems if available, otherwise generate clean silent buffer
+    let mixedAudio: AudioBuffer;
+    if (audioEntries.length > 0) {
+      const decodedBuffers: AudioBuffer[] = [];
+      for (const audioEntry of audioEntries) {
+        try {
+          const audioData = await audioEntry.async('arraybuffer');
+          const buf = await ZipChartLoader.safeDecode(ctx, audioData);
+          decodedBuffers.push(buf);
+        } catch (err) {
+          console.warn(`Falha ao decodificar trilha de áudio ${audioEntry.name}:`, err);
+        }
       }
-    }
 
-    if (decodedBuffers.length === 0) {
-      throw new Error('Nenhuma faixa de áudio pôde ser decodificada com sucesso.');
+      if (decodedBuffers.length > 0) {
+        mixedAudio = ZipChartLoader.mixAudioBuffers(ctx, decodedBuffers);
+      } else {
+        const estDuration = Math.max(30, ...(['EXPERT', 'HARD', 'MEDIUM', 'EASY'] as Difficulty[]).map((d) => (parsedCharts[d]?.length ? parsedCharts[d][parsedCharts[d].length - 1].time + 5 : 30)));
+        mixedAudio = ctx.createBuffer(2, Math.round(ctx.sampleRate * estDuration), ctx.sampleRate);
+      }
+    } else {
+      const estDuration = Math.max(30, ...(['EXPERT', 'HARD', 'MEDIUM', 'EASY'] as Difficulty[]).map((d) => (parsedCharts[d]?.length ? parsedCharts[d][parsedCharts[d].length - 1].time + 5 : 30)));
+      mixedAudio = ctx.createBuffer(2, Math.round(ctx.sampleRate * estDuration), ctx.sampleRate);
     }
-
-    const mixedAudio = ZipChartLoader.mixAudioBuffers(ctx, decodedBuffers);
 
     // 5. Extract Album Cover
     let albumCoverUrl: string | undefined;
@@ -159,20 +185,15 @@ export class ZipChartLoader {
       title,
       artist,
       duration: Number(mixedAudio.duration.toFixed(1)),
-      bpm: parsedMidi.bpm,
-      charts: {
-        EASY: parsedMidi.EASY,
-        MEDIUM: parsedMidi.MEDIUM,
-        HARD: parsedMidi.HARD,
-        EXPERT: parsedMidi.EXPERT
-      },
+      bpm: chartBpm,
+      charts: parsedCharts,
       audioBuffer: mixedAudio,
       albumCoverUrl,
       notesCount: {
-        EASY: parsedMidi.EASY.length,
-        MEDIUM: parsedMidi.MEDIUM.length,
-        HARD: parsedMidi.HARD.length,
-        EXPERT: parsedMidi.EXPERT.length
+        EASY: parsedCharts.EASY.length,
+        MEDIUM: parsedCharts.MEDIUM.length,
+        HARD: parsedCharts.HARD.length,
+        EXPERT: parsedCharts.EXPERT.length
       }
     };
   }

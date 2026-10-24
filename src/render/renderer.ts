@@ -94,8 +94,12 @@ export class GameRenderer {
     return this.canvas.height / dpr;
   }
 
+  get screenShakeMagnitude(): number {
+    return this.screenShake;
+  }
+
   /**
-   * Triggers a screen shake effect (V5.7: Desativado para garantir estabilidade absoluta das notas)
+   * Triggers a screen shake effect (Desativado para garantir estabilidade absoluta das notas)
    */
   triggerShake(_intensity = 6): void {
     this.screenShake = 0;

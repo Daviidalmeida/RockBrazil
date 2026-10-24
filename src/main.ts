@@ -10,6 +10,7 @@ import { UIManager } from './ui/uiManager';
 import { GuitarPipeline } from './audio/analysis/guitarPipeline';
 import { VisualEditor } from './editor/visualEditor';
 import { ZipChartLoader } from './audio/zipChartLoader';
+import { UniversalChartImporter } from './audio/universalChartImporter';
 import { YouTubePlayerController } from './audio/youtubePlayer';
 import { AutoMusicFinder } from './game/catalog/musicFinder';
 
@@ -263,27 +264,55 @@ class RockBrazilGame {
         const ctx = this.audio.audioContext;
         if (!ctx) throw new Error('AudioContext indisponível.');
 
-        this.ui.showAnalysisProgress(true, `Importando pacote AutoChart "${file.name}"...`);
+        this.ui.showAnalysisProgress(true, `Importando arquivo "${file.name}"...`);
 
-        const pkg = await ZipChartLoader.loadFromZipFile(file, ctx);
+        const lowerName = file.name.toLowerCase();
 
-        const newSong = this.library.addCustomSong({
-          title: pkg.title,
-          artist: pkg.artist,
-          duration: pkg.duration,
-          bpm: pkg.bpm,
-          buffer: pkg.audioBuffer
-        });
+        if (lowerName.endsWith('.chart') || lowerName.endsWith('.mid') || lowerName.endsWith('.midi') || lowerName.endsWith('.sng')) {
+          const buffer = await file.arrayBuffer();
+          const parsed = await UniversalChartImporter.importFromRawData(buffer, file.name);
 
-        (['EASY', 'MEDIUM', 'HARD', 'EXPERT'] as Difficulty[]).forEach((d) => {
-          this.beatmaps.saveBeatmap(newSong.id, d, pkg.charts[d]);
-        });
+          // Create a custom song entry with silent audio buffer matching the chart duration
+          const duration = Math.max(30, parsed.validation.durationSec + 5);
+          const silentBuffer = ctx.createBuffer(2, Math.round(ctx.sampleRate * duration), ctx.sampleRate);
 
-        this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
-        alert(`⚡ Pacote "${pkg.title}" importado com sucesso!\nNotas: Fácil ${pkg.notesCount.EASY} | Médio ${pkg.notesCount.MEDIUM} | Difícil ${pkg.notesCount.HARD} | Expert ${pkg.notesCount.EXPERT}`);
-        this.ui.openDifficultyModal(newSong, this.profileManager.getActiveProfile());
+          const newSong = this.library.addCustomSong({
+            title: parsed.metadata.name || file.name.replace(/\.[^/.]+$/, ''),
+            artist: parsed.metadata.artist || 'Artista Importado',
+            duration,
+            bpm: 120,
+            buffer: silentBuffer
+          });
+
+          (['EASY', 'MEDIUM', 'HARD', 'EXPERT'] as Difficulty[]).forEach((d) => {
+            this.beatmaps.saveBeatmap(newSong.id, d, parsed.charts[d]);
+          });
+
+          this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
+          alert(`⚡ Chart "${newSong.title}" importado com sucesso!\nFormato: ${parsed.metadata.sourceFormat} | Instrumento: ${parsed.metadata.instrumentTrack}\nNotas: Fácil ${parsed.validation.noteCounts.EASY} | Médio ${parsed.validation.noteCounts.MEDIUM} | Difícil ${parsed.validation.noteCounts.HARD} | Expert ${parsed.validation.noteCounts.EXPERT}`);
+          this.ui.openDifficultyModal(newSong, this.profileManager.getActiveProfile());
+        } else {
+          // Standard .zip pack with audio stems or chart
+          const pkg = await ZipChartLoader.loadFromZipFile(file, ctx);
+
+          const newSong = this.library.addCustomSong({
+            title: pkg.title,
+            artist: pkg.artist,
+            duration: pkg.duration,
+            bpm: pkg.bpm,
+            buffer: pkg.audioBuffer
+          });
+
+          (['EASY', 'MEDIUM', 'HARD', 'EXPERT'] as Difficulty[]).forEach((d) => {
+            this.beatmaps.saveBeatmap(newSong.id, d, pkg.charts[d]);
+          });
+
+          this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
+          alert(`⚡ Pacote "${pkg.title}" importado com sucesso!\nNotas: Fácil ${pkg.notesCount.EASY} | Médio ${pkg.notesCount.MEDIUM} | Difícil ${pkg.notesCount.HARD} | Expert ${pkg.notesCount.EXPERT}`);
+          this.ui.openDifficultyModal(newSong, this.profileManager.getActiveProfile());
+        }
       } catch (err: any) {
-        alert('Erro ao importar ZIP AutoChart: ' + (err.message || err));
+        alert('Erro ao importar arquivo: ' + (err.message || err));
       } finally {
         this.ui.showAnalysisProgress(false);
       }

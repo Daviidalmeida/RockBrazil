@@ -7,7 +7,10 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0a0a0f">
-  <title>RockBrazil V5.7 - Rhythm Guitar</title>
+  <title>RockBrazil Beta - Rhythm Guitar</title>
+  <meta name="application-name" content="RockBrazil Beta">
+  <meta property="og:title" content="RockBrazil Beta - Rhythm Guitar">
+  <meta name="description" content="RockBrazil Beta - O jogo definitivo de ritmo do Rock Brasileiro.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Montserrat:wght@400;600;700;900&family=Permanent+Marker&family=Kalam:wght@400;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
@@ -203,8 +206,8 @@
         <div class="notebook-footer-bar">
           <button id="btn-song-select-back" class="notebook-bar-btn btn-back">← VOLTAR</button>
           <button id="btn-song-select-play" class="notebook-bar-btn btn-select">SELECIONAR</button>
-          <label for="zip-file-input" class="notebook-bar-btn btn-import">IMPORTAR MÚSICA</label>
-          <input type="file" id="zip-file-input" accept=".zip,application/zip" style="display: none;">
+          <label for="zip-file-input" class="notebook-bar-btn btn-import" title="Importar pacote .zip, .chart, .mid ou .sng">IMPORTAR CHART</label>
+          <input type="file" id="zip-file-input" accept=".zip,.chart,.mid,.midi,.sng,application/zip" style="display: none;">
           <input type="file" id="mp3-file-input" accept="audio/*" style="display: none;">
           <button id="btn-refresh-youtube-links" class="notebook-bar-mini-btn" title="Atualizar Links YouTube">🔄</button>
           <button id="btn-open-editor" class="notebook-bar-mini-btn" title="Editor Visual de Notas">🎼</button>
@@ -500,6 +503,9 @@
         <div class="dialog-buttons">
           <button id="btn-save-settings" class="notebook-bar-btn btn-select">SALVAR E FECHAR</button>
         </div>
+        <div style="text-align: center; margin-top: 14px; font-family: var(--font-display); font-size: 14px; color: #ffe600; letter-spacing: 2px;">
+          ROCKBRAZIL BETA
+        </div>
       </div>
     </div>
 
@@ -541,6 +547,9 @@
           </div>
         </div>
         <button id="btn-close-howtoplay" class="notebook-bar-btn btn-back">VOLTAR AO MENU</button>
+        <div style="text-align: center; margin-top: 14px; font-family: var(--font-display); font-size: 14px; color: #ffe600; letter-spacing: 2px;">
+          ROCKBRAZIL BETA
+        </div>
       </div>
     </div>
 

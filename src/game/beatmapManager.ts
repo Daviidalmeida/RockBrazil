@@ -1,11 +1,14 @@
 import { Note, Lane, Difficulty, BeatmapByDifficulty } from '../types';
 import { SmartChartEngine } from './catalog/smartChartEngine';
 import { OFFICIAL_BRAZILIAN_CATALOG } from './catalog/catalogData';
+import { UniversalChartImporter } from '../audio/universalChartImporter';
+import { initPreconvertedCharts } from './catalog/preconvertedCharts';
 
 export class BeatmapManager {
   private cache: Map<string, BeatmapByDifficulty> = new Map();
 
   constructor() {
+    initPreconvertedCharts();
     this.initDefaultMaps();
   }
 
@@ -22,6 +25,13 @@ export class BeatmapManager {
     const songMaps = this.cache.get(songId);
     if (songMaps && songMaps[difficulty]) {
       return songMaps[difficulty].map((n) => ({ ...n }));
+    }
+
+    // Check UniversalChartImporter for real converted community chart
+    const convertedChart = UniversalChartImporter.getConvertedChart(songId);
+    if (convertedChart && convertedChart[difficulty]) {
+      this.cache.set(songId, convertedChart);
+      return convertedChart[difficulty].map((n) => ({ ...n }));
     }
 
     // Check official Brazilian catalog for Smart Chart generation
