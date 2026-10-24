@@ -20,26 +20,37 @@
          TOP & SIDE HUD LAYER (IN-GAME)
          ======================================================== -->
     <header id="hud" class="hud-layer hidden">
-      <!-- Top Center Bar -->
-      <div class="hud-top-bar">
-        <div class="song-progress-wrapper">
-          <div id="song-progress-bar" class="song-progress-bar"></div>
-        </div>
+      <!-- Top Left: YouTube Miniplayer -->
+      <div id="yt-player-container" class="yt-miniplayer-box">
+        <div id="yt-player-frame"></div>
+        <div class="yt-miniplayer-frame-decor"></div>
+        <div id="yt-buffering-indicator" class="yt-buffering-badge hidden">BUFFERING...</div>
+      </div>
+
+      <!-- Top Right: Pause button -->
+      <div class="hud-top-right">
         <button id="btn-pause" class="icon-button hud-pause-btn" aria-label="Pausar">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
             <rect x="6" y="4" width="4" height="16" rx="2"></rect>
             <rect x="14" y="4" width="4" height="16" rx="2"></rect>
           </svg>
         </button>
       </div>
 
-      <!-- Left Side HUD: Score, Combo, Multiplier -->
-      <div class="hud-left-panel">
-        <div class="hud-score-box">
-          <span class="hud-label">PONTOS</span>
-          <span id="hud-score" class="hud-value">0</span>
+      <!-- Top Center Progress Bar -->
+      <div class="hud-center-progress">
+        <div class="song-progress-wrapper">
+          <div id="song-progress-bar" class="song-progress-bar"></div>
         </div>
-        <div class="hud-combo-box">
+      </div>
+
+      <!-- Left Side HUD: Score, Combo, Multiplier (Rock distressed look, no giant black box) -->
+      <div class="hud-left-panel">
+        <div class="hud-score-display">
+          <span class="hud-score-label">PONTOS</span>
+          <span id="hud-score" class="hud-score-value">0</span>
+        </div>
+        <div class="hud-streak-row">
           <div id="hud-multiplier" class="multiplier-badge mult-1x">1X</div>
           <div id="hud-combo-container" class="combo-container hidden">
             <span id="hud-combo-number" class="combo-number">0</span>
@@ -48,26 +59,45 @@
         </div>
       </div>
 
-      <!-- Right Side HUD: Vertical Rock Performance Meter -->
+      <!-- Right Side HUD: New Exclusive Industrial ROCKBRAZIL Meter -->
       <div class="hud-right-panel">
-        <div class="vertical-rock-meter-container">
-          <div class="meter-frame">
-            <div class="meter-zone zone-green"></div>
-            <div class="meter-zone zone-yellow"></div>
-            <div class="meter-zone zone-red"></div>
-            <!-- Dynamic Needle / Pointer -->
-            <div id="rock-meter-needle" class="meter-needle" style="bottom: 50%;">
-              <div class="needle-pointer"></div>
+        <div class="industrial-rock-meter">
+          <div class="meter-casing">
+            <div class="casing-bolt top-left"></div>
+            <div class="casing-bolt top-right"></div>
+            <div class="casing-bolt bottom-left"></div>
+            <div class="casing-bolt bottom-right"></div>
+
+            <div class="meter-header-row">
+              <span class="meter-brand-name">ROCKBRAZIL</span>
+              <div class="vacuum-tube-unit">
+                <div class="tube-glass">
+                  <div class="tube-filament"></div>
+                  <div class="tube-glow"></div>
+                </div>
+              </div>
             </div>
-            <!-- Danger Blinking LED -->
-            <div id="rock-meter-danger-led" class="danger-led hidden"></div>
+
+            <div class="gauge-arc-track">
+              <div class="arc-zone zone-red"></div>
+              <div class="arc-zone zone-orange"></div>
+              <div class="arc-zone zone-yellow"></div>
+              <div class="arc-zone zone-green"></div>
+              <div id="rock-meter-needle" class="meter-mechanical-needle" style="left: 50%;">
+                <div class="needle-tip"></div>
+                <div class="needle-pivot"></div>
+              </div>
+            </div>
+
+            <div class="meter-footer-row">
+              <span class="meter-status-text">DESEMPENHO</span>
+              <span id="rock-meter-pct-text" class="meter-percentage-text">50%</span>
+            </div>
           </div>
-          <span class="meter-title">ROCK</span>
-          <span id="rock-meter-pct-text" class="meter-pct">50%</span>
         </div>
       </div>
 
-      <!-- Accuracy Popup Text (Hidden in V5.1 per Priority 2 to keep note highway 100% visible) -->
+      <!-- Accuracy Popup Text -->
       <div class="hud-feedback-area" style="display: none;">
         <div id="hud-accuracy-feedback" class="accuracy-text"></div>
       </div>
@@ -77,6 +107,11 @@
     <main id="canvas-container" class="gameplay-stage-bg">
       <canvas id="game-canvas"></canvas>
     </main>
+
+    <!-- Horizontal Flame Line across the Hit Line -->
+    <div id="highway-flame-line" class="highway-flame-bar">
+      <div class="flame-line-glow"></div>
+    </div>
 
     <!-- 5 Circular Fret Buttons (Bottom) -->
     <footer id="fret-board" class="fret-board-layer">
@@ -165,6 +200,7 @@
           <label for="zip-file-input" class="notebook-bar-btn btn-import">IMPORTAR MÚSICA</label>
           <input type="file" id="zip-file-input" accept=".zip,application/zip" style="display: none;">
           <input type="file" id="mp3-file-input" accept="audio/*" style="display: none;">
+          <button id="btn-refresh-youtube-links" class="notebook-bar-mini-btn" title="Atualizar Links YouTube">🔄</button>
           <button id="btn-open-editor" class="notebook-bar-mini-btn" title="Editor Visual de Notas">🎼</button>
         </div>
       </div>
@@ -583,6 +619,16 @@
           💡 Clique na pista para criar nota. Arraste horizontalmente para tempo ou verticalmente para pista. Puxe a borda direita para notas longas. Espaço: play/pause. Delete: excluir.
         </div>
 
+      </div>
+    </div>
+
+    <!-- 8. SPECIAL FINALE: AQUI É ROCKBRAZIL! CELEBRATION OVERLAY -->
+    <div id="overlay-rockbrazil-celebration" class="celebration-overlay hidden">
+      <div class="celebration-content">
+        <div class="celebration-glow-radial"></div>
+        <div class="celebration-flames"></div>
+        <h1 class="celebration-title">AQUI É ROCKBRAZIL!</h1>
+        <div class="celebration-subtext">SHOW HISTÓRICO CONCLUÍDO!</div>
       </div>
     </div>
 

@@ -10,11 +10,15 @@ import { UIManager } from './ui/uiManager';
 import { GuitarPipeline } from './audio/analysis/guitarPipeline';
 import { VisualEditor } from './editor/visualEditor';
 import { ZipChartLoader } from './audio/zipChartLoader';
+import { YouTubePlayerController } from './audio/youtubePlayer';
+import { AutoMusicFinder } from './game/catalog/musicFinder';
 
 class RockBrazilGame {
   private settingsManager: SettingsManager;
   private profileManager: ProfileManager;
   private audio: AudioManager;
+  private ytPlayer: YouTubePlayerController;
+  private musicFinder: AutoMusicFinder;
   private beatmaps: BeatmapManager;
   private library: SongLibrary;
   private engine: GameEngine;
@@ -45,9 +49,24 @@ class RockBrazilGame {
 
     this.profileManager = new ProfileManager();
     this.audio = new AudioManager(settings);
-    this.beatmaps = new BeatmapManager();
     this.library = new SongLibrary();
-    this.currentSong = this.library.getSongs()[0];
+    this.musicFinder = new AutoMusicFinder(this.library.getSongs());
+
+    this.ytPlayer = new YouTubePlayerController({
+      onBuffering: (buffering) => {
+        const badge = document.getElementById('yt-buffering-indicator');
+        if (badge) badge.classList.toggle('hidden', !buffering);
+      },
+      onEnded: () => {
+        if (this.state === GameState.PLAYING) {
+          this.finishSong();
+        }
+      }
+    });
+    this.ytPlayer.init().catch(() => {});
+
+    this.beatmaps = new BeatmapManager();
+    this.currentSong = this.library.getActiveSongs()[0];
 
     const initialNotes = this.beatmaps.getBeatmap(this.currentSong.id, this.currentDifficulty);
     this.engine = new GameEngine(initialNotes, this.currentDifficulty, settings);
@@ -89,8 +108,8 @@ class RockBrazilGame {
     await this.autoDetectTNTFile();
 
     // 3. Render initial Song Library & Dropdowns
-    this.ui.renderSongLibrary(this.library.getSongs(), this.profileManager.getActiveProfile());
-    this.ui.initRankingDropdowns(this.library.getSongs());
+    this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
+    this.ui.initRankingDropdowns(this.library.getActiveSongs());
 
     // 4. Open directly on the Main Menu!
     this.renderer.setDifficulty(this.currentDifficulty);
@@ -146,7 +165,7 @@ class RockBrazilGame {
     // Navigation
     this.ui.onOpenSongSelectClicked = (filter) => {
       this.state = GameState.SONG_SELECT;
-      this.ui.renderSongLibrary(this.library.getSongs(), this.profileManager.getActiveProfile());
+      this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
       this.ui.showScreen(GameState.SONG_SELECT);
     };
 
@@ -168,22 +187,38 @@ class RockBrazilGame {
 
     this.ui.onReturnToMenuClicked = () => {
       this.audio.stop();
+      this.ytPlayer.stop();
       this.state = GameState.MENU;
       this.ui.showScreen(GameState.MENU);
+    };
+
+    this.ui.onRefreshLinksClicked = async () => {
+      this.ui.showAnalysisProgress(true, 'Verificando catálogo oficial de 43 músicas no YouTube...');
+      try {
+        await this.musicFinder.refreshAllLinks((current, total, song) => {
+          this.ui.showAnalysisProgress(true, `[${current}/${total}] Verificando "${song.title}" (${song.artist})...`);
+        });
+        this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
+        alert('⚡ Todos os links do YouTube foram validados e atualizados com sucesso!');
+      } catch (err: any) {
+        alert('Erro ao verificar links: ' + (err.message || err));
+      } finally {
+        this.ui.showAnalysisProgress(false);
+      }
     };
 
     // Profiles
     this.ui.onCreateProfileConfirmed = async (name, avatar) => {
       const created = await this.profileManager.createProfile(name, avatar);
       this.ui.setProfileHeader(created);
-      this.ui.renderSongLibrary(this.library.getSongs(), created);
+      this.ui.renderSongLibrary(this.library.getActiveSongs(), created);
     };
 
     this.ui.onSwitchProfileRequested = async (id) => {
       const switched = await this.profileManager.switchProfile(id);
       if (switched) {
         this.ui.setProfileHeader(switched);
-        this.ui.renderSongLibrary(this.library.getSongs(), switched);
+        this.ui.renderSongLibrary(this.library.getActiveSongs(), switched);
       }
     };
 
@@ -209,7 +244,7 @@ class RockBrazilGame {
     this.ui.onPlayAsGuestClicked = () => {
       const guest = this.profileManager.setGuestMode();
       this.ui.setProfileHeader(guest);
-      this.ui.renderSongLibrary(this.library.getSongs(), guest);
+      this.ui.renderSongLibrary(this.library.getActiveSongs(), guest);
     };
 
     this.ui.onOpenEditorClicked = () => {
@@ -240,7 +275,7 @@ class RockBrazilGame {
           this.beatmaps.saveBeatmap(newSong.id, d, pkg.charts[d]);
         });
 
-        this.ui.renderSongLibrary(this.library.getSongs(), this.profileManager.getActiveProfile());
+        this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
         alert(`⚡ Pacote "${pkg.title}" importado com sucesso!\nNotas: Fácil ${pkg.notesCount.EASY} | Médio ${pkg.notesCount.MEDIUM} | Difícil ${pkg.notesCount.HARD} | Expert ${pkg.notesCount.EXPERT}`);
         this.ui.openDifficultyModal(newSong, this.profileManager.getActiveProfile());
       } catch (err: any) {
@@ -268,6 +303,7 @@ class RockBrazilGame {
     this.ui.onSettingsChanged = (newSettings) => {
       const updated = this.settingsManager.saveSettings(newSettings);
       this.audio.updateSettings(updated);
+      this.ytPlayer.setVolume(updated.musicVolume * 100);
       this.engine.updateSettings(updated);
       this.renderer.noteSpeedMultiplier = updated.noteSpeedMultiplier;
       this.renderer.visualEffectsEnabled = updated.visualEffectsEnabled;
@@ -331,7 +367,7 @@ class RockBrazilGame {
         this.ui.openDifficultyModal(newSong, this.profileManager.getActiveProfile());
       }
 
-      this.ui.renderSongLibrary(this.library.getSongs(), this.profileManager.getActiveProfile());
+      this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
     } catch (err: any) {
       alert('Erro na análise de áudio: ' + (err.message || err));
     } finally {
@@ -536,12 +572,19 @@ class RockBrazilGame {
     });
   }
 
+  private getGameplayCurrentTime(): number {
+    if (this.currentSong?.type === 'youtube' && this.currentSong?.youtubeVideoId) {
+      return this.ytPlayer.getCurrentTime();
+    }
+    return this.audio.getCurrentTime();
+  }
+
   private pressLane(lane: Lane): void {
     this.activeLanes.add(lane);
     this.ui.setLaneVisualActive(lane, true);
 
     if (this.state === GameState.PLAYING) {
-      const currentTime = this.audio.getCurrentTime();
+      const currentTime = this.getGameplayCurrentTime();
       this.engine.handleLanePress(lane, currentTime);
     }
   }
@@ -551,7 +594,7 @@ class RockBrazilGame {
     this.ui.setLaneVisualActive(lane, false);
 
     if (this.state === GameState.PLAYING) {
-      const currentTime = this.audio.getCurrentTime();
+      const currentTime = this.getGameplayCurrentTime();
       this.engine.handleLaneRelease(lane, currentTime);
     }
   }
@@ -617,6 +660,12 @@ class RockBrazilGame {
       }
     }
 
+    if (song.type === 'youtube' && song.youtubeVideoId) {
+      this.ytPlayer.stop();
+      await this.ytPlayer.loadVideo(song.youtubeVideoId);
+      this.ytPlayer.setVolume(this.settingsManager.getSettings().musicVolume * 100);
+    }
+
     if (sessionId !== this.currentMatchSessionId) return;
     await this.startCountdown(sessionId, customNotes);
   }
@@ -624,6 +673,7 @@ class RockBrazilGame {
   private async startCountdown(sessionId: number, customNotes?: Note[]): Promise<void> {
     this.clearCountdown();
     this.audio.stop();
+    this.ytPlayer.stop();
 
     await this.audio.init();
     await this.audio.ensureResumed();
@@ -687,7 +737,9 @@ class RockBrazilGame {
     this.state = GameState.PLAYING;
     this.ui.showScreen(GameState.PLAYING);
 
-    if (this.currentSong.type === 'procedural' && this.currentSong.proceduralTrackId) {
+    if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
+      this.ytPlayer.play();
+    } else if (this.currentSong.type === 'procedural' && this.currentSong.proceduralTrackId) {
       await this.audio.playProceduralTrack(this.currentSong.proceduralTrackId, 0);
     } else if (this.currentSong.audioBuffer) {
       await this.audio.playAudioBuffer(this.currentSong.audioBuffer, 0);
@@ -698,12 +750,14 @@ class RockBrazilGame {
     if (this.state !== GameState.PLAYING) return;
     this.state = GameState.PAUSED;
     this.audio.pause();
+    this.ytPlayer.pause();
     this.ui.showScreen(GameState.PAUSED);
   }
 
   private resumeGame(): void {
     if (this.state !== GameState.PAUSED) return;
     this.audio.resume();
+    this.ytPlayer.resume();
     this.state = GameState.PLAYING;
     this.ui.showScreen(GameState.PLAYING);
   }
@@ -715,6 +769,7 @@ class RockBrazilGame {
   private async handleGameOver(stats: any): Promise<void> {
     this.clearCountdown();
     this.audio.stop();
+    this.ytPlayer.stop();
     this.audio.playSfxGameOver();
     this.state = GameState.GAME_OVER;
     this.ui.showGameOver(stats);
@@ -740,7 +795,20 @@ class RockBrazilGame {
 
   private gameLoop = (): void => {
     if (this.state === GameState.PLAYING) {
-      const currentTime = this.audio.getCurrentTime();
+      // If YouTube is buffering, pause game progression until buffered
+      if (this.currentSong.type === 'youtube' && this.ytPlayer.isBuffering()) {
+        const currentTime = this.getGameplayCurrentTime();
+        this.renderer.render(
+          currentTime,
+          this.engine.getNotes(),
+          this.activeLanes,
+          this.currentSong.bpm
+        );
+        requestAnimationFrame(this.gameLoop);
+        return;
+      }
+
+      const currentTime = this.getGameplayCurrentTime();
 
       // Finaliza apenas quando atingir a duração total do áudio E não houver notas pendentes
       if (currentTime >= this.currentSong.duration && !this.engine.hasPendingNotes(currentTime)) {
@@ -756,7 +824,7 @@ class RockBrazilGame {
         this.ui.updateHUD(this.engine.getStats(), currentTime, this.currentSong.duration);
       }
     } else if (this.state === GameState.COUNTDOWN || this.state === GameState.PAUSED || this.state === GameState.MENU) {
-      const currentTime = this.audio.getCurrentTime();
+      const currentTime = this.getGameplayCurrentTime();
       this.renderer.render(
         currentTime,
         this.engine.getNotes(),
@@ -772,8 +840,8 @@ class RockBrazilGame {
   private async finishSong(): Promise<void> {
     this.clearCountdown();
     this.audio.stop();
+    this.ytPlayer.stop();
     this.audio.playSfxVictory();
-    this.state = GameState.RESULTS;
 
     const stats = this.engine.getStats();
 
@@ -788,8 +856,11 @@ class RockBrazilGame {
 
     this.library.saveSongRecord(this.currentSong.id, this.currentDifficulty, recordResult.record);
 
-    // Exibe tela de resultados exclusiva da partida que acabou de terminar com celebração de recorde
-    this.ui.showResults(this.currentSong, stats, recordResult);
+    // Encerramento Especial "AQUI É ROCKBRAZIL!" com celebração antes do resultado
+    this.ui.showCelebration(() => {
+      this.state = GameState.RESULTS;
+      this.ui.showResults(this.currentSong, stats, recordResult);
+    });
   }
 }
 

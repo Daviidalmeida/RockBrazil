@@ -95,13 +95,26 @@ export interface SongMetadata {
   duration: number; // Seconds
   bpm: number;
   style: string;
-  type: 'procedural' | 'audio-file';
+  type: 'procedural' | 'audio-file' | 'youtube';
   proceduralTrackId?: string;
   audioUrl?: string;
   audioBuffer?: AudioBuffer;
   requiresFile?: string; // e.g. "TNT.mp3"
   isAvailable: boolean;
   records: Record<Difficulty, SongRecord | null>;
+
+  // V5.4 YouTube & Official Catalog Integration
+  group?: number | 'bonus';
+  encore?: boolean;
+  youtubeVideoId?: string;
+  youtubeUrl?: string;
+  youtubeChannel?: string;
+  youtubeDuration?: string;
+  matchConfidence?: number;
+  embeddingStatus?: 'ELIGIBLE_OFFICIAL' | 'VERIFIED' | 'COMMUNITY';
+  reviewStatus?: 'VERIFIED' | 'PENDING' | 'REJECTED';
+  licenseStatus?: 'EMBED_ALLOWED' | 'EMBED_RESTRICTED';
+  chartStatus?: 'SMART_CHART_READY' | 'CUSTOM' | 'MIDI';
 }
 
 export interface GameSettings {

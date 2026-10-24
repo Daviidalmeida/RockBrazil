@@ -1,4 +1,6 @@
 import { Note, Lane, Difficulty, BeatmapByDifficulty } from '../types';
+import { SmartChartEngine } from './catalog/smartChartEngine';
+import { OFFICIAL_BRAZILIAN_CATALOG } from './catalog/catalogData';
 
 export class BeatmapManager {
   private cache: Map<string, BeatmapByDifficulty> = new Map();
@@ -20,6 +22,18 @@ export class BeatmapManager {
     const songMaps = this.cache.get(songId);
     if (songMaps && songMaps[difficulty]) {
       return songMaps[difficulty].map((n) => ({ ...n }));
+    }
+
+    // Check official Brazilian catalog for Smart Chart generation
+    const officialSong = OFFICIAL_BRAZILIAN_CATALOG.find((s) => s.id === songId);
+    if (officialSong) {
+      const generated = SmartChartEngine.generateChartsForSong(
+        officialSong.id,
+        officialSong.bpm,
+        officialSong.duration
+      );
+      this.cache.set(officialSong.id, generated);
+      return generated[difficulty].map((n) => ({ ...n }));
     }
 
     // Fallback: generate default procedural map

@@ -11,8 +11,9 @@ export class UIManager {
   private hudComboContainer: HTMLElement;
   private hudComboNumber: HTMLElement;
   private meterNeedle: HTMLElement;
-  private meterDangerLed: HTMLElement;
+  private meterDangerLed: HTMLElement | null = null;
   private meterPctText: HTMLElement;
+  private overlayCelebration: HTMLElement | null = null;
   private feedbackTimer: number | null = null;
 
   // Screens & Modals
@@ -106,6 +107,7 @@ export class UIManager {
   public onSwitchProfileRequested?: (id: string) => void;
   public onExportDataRequested?: () => void;
   public onRankingFilterChanged?: (songId: string, diff: Difficulty) => void;
+  public onRefreshLinksClicked?: () => void;
 
   constructor() {
     this.hudElement = document.getElementById('hud')!;
@@ -116,8 +118,9 @@ export class UIManager {
     this.hudComboContainer = document.getElementById('hud-combo-container')!;
     this.hudComboNumber = document.getElementById('hud-combo-number')!;
     this.meterNeedle = document.getElementById('rock-meter-needle')!;
-    this.meterDangerLed = document.getElementById('rock-meter-danger-led')!;
+    this.meterDangerLed = document.getElementById('rock-meter-danger-led');
     this.meterPctText = document.getElementById('rock-meter-pct-text')!;
+    this.overlayCelebration = document.getElementById('overlay-rockbrazil-celebration');
 
     this.screenMenu = document.getElementById('screen-menu')!;
     this.screenSongSelect = document.getElementById('screen-song-select')!;
@@ -250,6 +253,10 @@ export class UIManager {
 
     document.getElementById('btn-open-editor')?.addEventListener('click', () => {
       this.onOpenEditorClicked?.();
+    });
+
+    document.getElementById('btn-refresh-youtube-links')?.addEventListener('click', () => {
+      this.onRefreshLinksClicked?.();
     });
 
     const zipInput = document.getElementById('zip-file-input') as HTMLInputElement;
@@ -506,13 +513,20 @@ export class UIManager {
   updateHUD(stats: GameStats, currentTime: number, duration: number): void {
     this.hudScore.textContent = stats.score.toLocaleString('pt-BR');
 
-    // Vertical Rock Performance Meter
+    // Horizontal Industrial Rock Performance Meter (0% to 100%)
     const pct = Math.max(0, Math.min(100, Math.round(stats.rockMeter)));
-    this.meterNeedle.style.bottom = `${pct}%`;
-    this.meterPctText.textContent = `${pct}%`;
+    if (this.meterNeedle) {
+      this.meterNeedle.style.left = `${pct}%`;
+      this.meterNeedle.style.bottom = '';
+    }
+    if (this.meterPctText) {
+      this.meterPctText.textContent = `${pct}%`;
+    }
 
-    // Danger LED when life < 30%
-    this.meterDangerLed.classList.toggle('hidden', pct >= 30);
+    // Danger LED (if present) when life < 30%
+    if (this.meterDangerLed) {
+      this.meterDangerLed.classList.toggle('hidden', pct >= 30);
+    }
 
     // Multiplier
     this.hudMultiplier.textContent = `${stats.multiplier}X`;
@@ -535,6 +549,20 @@ export class UIManager {
     }
   }
 
+  showCelebration(onComplete: () => void): void {
+    if (this.overlayCelebration) {
+      this.overlayCelebration.classList.remove('hidden');
+      setTimeout(() => {
+        if (this.overlayCelebration) {
+          this.overlayCelebration.classList.add('hidden');
+        }
+        onComplete();
+      }, 2500);
+    } else {
+      onComplete();
+    }
+  }
+
   resetHUD(): void {
     if (this.feedbackTimer) clearTimeout(this.feedbackTimer);
     this.hudScore.textContent = '0';
@@ -543,9 +571,10 @@ export class UIManager {
     this.hudProgressBar.style.width = '0%';
     this.hudComboContainer.classList.add('hidden');
     this.hudComboNumber.textContent = '0';
-    this.meterNeedle.style.bottom = '50%';
+    this.meterNeedle.style.left = '50%';
+    this.meterNeedle.style.bottom = '';
     this.meterPctText.textContent = '50%';
-    this.meterDangerLed.classList.add('hidden');
+    this.meterDangerLed?.classList.add('hidden');
     if (this.hudAccuracyFeedback) {
       this.hudAccuracyFeedback.textContent = '';
       this.hudAccuracyFeedback.className = 'accuracy-text';

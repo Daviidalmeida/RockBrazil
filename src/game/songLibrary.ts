@@ -1,7 +1,84 @@
 import { SongMetadata, Difficulty, SongRecord } from '../types';
+import { OFFICIAL_BRAZILIAN_CATALOG } from './catalog/catalogData';
+
+export const LEGACY_PROCEDURAL_SONGS: SongMetadata[] = [
+  {
+    id: 'furia-tropical',
+    title: 'Fúria Tropical',
+    artist: 'RockBrazil Band',
+    duration: 51.5,
+    bpm: 132,
+    style: '⚡ Hard Rock Brasil',
+    type: 'procedural',
+    proceduralTrackId: 'furia-tropical',
+    isAvailable: true,
+    records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
+  },
+  {
+    id: 'trovao-meia-noite',
+    title: 'Trovão da Meia-Noite',
+    artist: 'Os Metaleiros',
+    duration: 46.0,
+    bpm: 148,
+    style: '🔥 Heavy Metal Veloz',
+    type: 'procedural',
+    proceduralTrackId: 'trovao-meia-noite',
+    isAvailable: true,
+    records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
+  },
+  {
+    id: 'garagem-90',
+    title: 'Garagem 90',
+    artist: 'Distorção Pura',
+    duration: 48.0,
+    bpm: 116,
+    style: '🎸 Grunge / Alt Rock',
+    type: 'procedural',
+    proceduralTrackId: 'garagem-90',
+    isAvailable: true,
+    records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
+  },
+  {
+    id: 'estrada-de-ferro',
+    title: 'Estrada de Ferro',
+    artist: 'Trem de Ferro',
+    duration: 46.0,
+    bpm: 126,
+    style: '🚂 Blues Rock Boogie',
+    type: 'procedural',
+    proceduralTrackId: 'estrada-de-ferro',
+    isAvailable: true,
+    records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
+  },
+  {
+    id: 'sobrecarga',
+    title: 'Sobrecarga',
+    artist: 'Circuito Quebrado',
+    duration: 42.0,
+    bpm: 160,
+    style: '⚡ Speed Punk Rock',
+    type: 'procedural',
+    proceduralTrackId: 'sobrecarga',
+    isAvailable: true,
+    records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
+  },
+  {
+    id: 'tnt-acdc',
+    title: 'T.N.T.',
+    artist: 'AC/DC',
+    duration: 216.0,
+    bpm: 126,
+    style: '💣 Classic Hard Rock',
+    type: 'audio-file',
+    requiresFile: 'TNT.mp3',
+    isAvailable: false,
+    records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
+  }
+];
 
 export class SongLibrary {
   private songs: SongMetadata[] = [];
+  private legacyBackup: SongMetadata[] = LEGACY_PROCEDURAL_SONGS;
 
   constructor() {
     this.initDefaultSongs();
@@ -9,88 +86,36 @@ export class SongLibrary {
   }
 
   private initDefaultSongs(): void {
-    this.songs = [
-      {
-        id: 'furia-tropical',
-        title: 'Fúria Tropical',
-        artist: 'RockBrazil Band',
-        duration: 51.5,
-        bpm: 132,
-        style: '⚡ Hard Rock Brasil',
-        type: 'procedural',
-        proceduralTrackId: 'furia-tropical',
-        isAvailable: true,
-        records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
-      },
-      {
-        id: 'trovao-meia-noite',
-        title: 'Trovão da Meia-Noite',
-        artist: 'Os Metaleiros',
-        duration: 46.0,
-        bpm: 148,
-        style: '🔥 Heavy Metal Veloz',
-        type: 'procedural',
-        proceduralTrackId: 'trovao-meia-noite',
-        isAvailable: true,
-        records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
-      },
-      {
-        id: 'garagem-90',
-        title: 'Garagem 90',
-        artist: 'Distorção Pura',
-        duration: 48.0,
-        bpm: 116,
-        style: '🎸 Grunge / Alt Rock',
-        type: 'procedural',
-        proceduralTrackId: 'garagem-90',
-        isAvailable: true,
-        records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
-      },
-      {
-        id: 'estrada-de-ferro',
-        title: 'Estrada de Ferro',
-        artist: 'Trem de Ferro',
-        duration: 46.0,
-        bpm: 126,
-        style: '🚂 Blues Rock Boogie',
-        type: 'procedural',
-        proceduralTrackId: 'estrada-de-ferro',
-        isAvailable: true,
-        records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
-      },
-      {
-        id: 'sobrecarga',
-        title: 'Sobrecarga',
-        artist: 'Circuito Quebrado',
-        duration: 42.0,
-        bpm: 160,
-        style: '⚡ Speed Punk Rock',
-        type: 'procedural',
-        proceduralTrackId: 'sobrecarga',
-        isAvailable: true,
-        records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
-      },
-      {
-        id: 'tnt-acdc',
-        title: 'T.N.T.',
-        artist: 'AC/DC',
-        duration: 216.0, // 3:36
-        bpm: 126,
-        style: '💣 Classic Hard Rock',
-        type: 'audio-file',
-        requiresFile: 'TNT.mp3',
-        isAvailable: false, // Activated upon file import/detection
-        records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
-      }
-    ];
+    // Official V5.4 Brazilian Catalog (43 songs)
+    const brazilianCatalog = OFFICIAL_BRAZILIAN_CATALOG.map((s) => ({
+      ...s,
+      records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
+    }));
+
+    // Preserves procedural songs as legacy backup so existing regression tests and features remain stable
+    this.songs = [...brazilianCatalog, ...this.legacyBackup.map((s) => ({ ...s }))];
   }
 
+  /**
+   * Returns active songs for the in-game library (43 Brazilian songs + custom imported songs)
+   */
+  getActiveSongs(): SongMetadata[] {
+    return this.songs.filter((s) => s.type === 'youtube' || s.id.startsWith('custom-'));
+  }
+
+  /**
+   * Returns all songs including legacy procedural backup
+   */
   getSongs(): SongMetadata[] {
     return this.songs;
   }
 
   getSongById(id: string): SongMetadata | undefined {
     return this.songs.find((s) => s.id === id);
+  }
+
+  getLegacySongs(): SongMetadata[] {
+    return this.legacyBackup;
   }
 
   /**
