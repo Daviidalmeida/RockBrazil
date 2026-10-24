@@ -14,6 +14,8 @@ import { UniversalChartImporter } from './audio/universalChartImporter';
 import { YouTubePlayerController } from './audio/youtubePlayer';
 import { AutoMusicFinder } from './game/catalog/musicFinder';
 import { CalibrationManager } from './game/sync/calibrationManager';
+import { UnifiedMasterClock } from './game/sync/masterClock';
+import { PreStartSystem } from './game/sync/prestartSystem';
 
 class RockBrazilGame {
   private settingsManager: SettingsManager;
@@ -27,6 +29,8 @@ class RockBrazilGame {
   private renderer: GameRenderer;
   private ui: UIManager;
   private editor: VisualEditor;
+  private masterClock: UnifiedMasterClock;
+  private prestartSystem: PreStartSystem;
 
   private state: GameState = GameState.MENU;
   private currentSong: SongMetadata;
@@ -54,21 +58,24 @@ class RockBrazilGame {
     this.library = new SongLibrary();
     this.musicFinder = new AutoMusicFinder(this.library.getSongs());
 
+    this.masterClock = new UnifiedMasterClock();
+    this.prestartSystem = new PreStartSystem();
+
     this.ytPlayer = new YouTubePlayerController({
-      onBuffering: (_buffering) => {
-        // Buffering congelado de forma estável no relógio sem tremedeira nem penalização
+      onBuffering: (buffering) => {
+        this.masterClock.setBuffering(buffering);
       },
       onPlaybackConfirmed: (_videoTime) => {
-        // Áudio confirmado em avanço real: transição imediata para PLAYING
+        // Áudio confirmado em avanço real: transição imediata para PLAYING no Unified Master Clock
+        this.masterClock.startPlayback();
+        this.clearCountdown();
         if (this.state === GameState.COUNTDOWN || (this.state as any) === 'WAITING_FOR_AUDIO') {
-          this.clearCountdown();
           this.state = GameState.PLAYING;
           this.ui.showAutoplayUnblockPrompt(false);
           this.ui.showScreen(GameState.PLAYING);
         }
       },
       onAutoplayBlocked: () => {
-        // Navegador bloqueou reprodução automática: exibe prompt amigável
         if (this.state === GameState.COUNTDOWN || (this.state as any) === 'WAITING_FOR_AUDIO') {
           this.ui.showAutoplayUnblockPrompt(true);
         }
@@ -79,6 +86,14 @@ class RockBrazilGame {
         }
       }
     });
+
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && this.state === GameState.PLAYING) {
+          this.pauseGame();
+        }
+      });
+    }
     this.ytPlayer.init().catch(() => {});
 
     this.beatmaps = new BeatmapManager();
@@ -356,6 +371,12 @@ class RockBrazilGame {
       this.engine.updateSettings(updated);
       this.renderer.noteSpeedMultiplier = updated.noteSpeedMultiplier;
       this.renderer.visualEffectsEnabled = updated.visualEffectsEnabled;
+      if (this.currentSong) {
+        this.masterClock.setOffsets(
+          CalibrationManager.getSongOffsetMs(this.currentSong.id),
+          updated.audioOffsetMs || 0
+        );
+      }
       const active = this.profileManager.getActiveProfile();
       if (active) {
         this.profileManager.updateActiveProfile({ settings: updated });
@@ -639,33 +660,19 @@ class RockBrazilGame {
   }
 
   private getSongOffsetSec(): number {
-    if (!this.currentSong) return 0;
-    const songCalib = CalibrationManager.getSongOffsetMs(this.currentSong.id);
-    return songCalib / 1000;
+    return this.masterClock.getSongOffsetSec();
   }
 
   private getEffectiveVisualTime(chartTime: number): number {
-    const globalOffsetSec = (this.settingsManager.getSettings().audioOffsetMs || 0) / 1000;
-    return chartTime - globalOffsetSec;
+    return chartTime;
   }
 
   private getChartTime(): number {
-    if (!this.currentSong) return 0;
-    // As notas ficam estáticas e o relógio NÃO avança antes do áudio genuinamente avançar
-    if (this.state !== GameState.PLAYING && this.state !== GameState.PAUSED) {
-      return 0;
-    }
-    if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
-      if (this.ytPlayer.getPlaybackState() !== PlaybackState.PLAYING && this.ytPlayer.getPlaybackState() !== PlaybackState.PAUSED) {
-        return 0;
-      }
-      return Math.max(0, this.ytPlayer.getCurrentTime() + this.getSongOffsetSec());
-    }
-    return Math.max(0, this.audio.getCurrentTime() + this.getSongOffsetSec());
+    return this.masterClock.getTime();
   }
 
   private getGameplayCurrentTime(): number {
-    return this.getChartTime();
+    return this.masterClock.getTime();
   }
 
   private pressLane(lane: Lane): void {
@@ -693,6 +700,7 @@ class RockBrazilGame {
       clearInterval(this.countdownTimer);
       this.countdownTimer = null;
     }
+    this.prestartSystem.cancel();
   }
 
   private async startNewMatch(song: SongMetadata, difficulty: Difficulty, customNotes?: Note[]): Promise<void> {
@@ -707,6 +715,18 @@ class RockBrazilGame {
 
     this.currentSong = song;
     this.currentDifficulty = difficulty;
+
+    // Configura o Master Clock com a fonte correspondente e offsets verificados
+    this.masterClock.reset();
+    if (song.type === 'youtube') {
+      this.masterClock.setSource(this.ytPlayer);
+    } else {
+      this.masterClock.setSource(this.audio);
+    }
+    this.masterClock.setOffsets(
+      CalibrationManager.getSongOffsetMs(song.id),
+      this.settingsManager.getSettings().audioOffsetMs || 0
+    );
 
     // Obtém notas autênticas do chart sem descartar notas legítimas
     const rawNotes = customNotes || this.beatmaps.getBeatmap(this.currentSong.id, this.currentDifficulty);
@@ -774,11 +794,6 @@ class RockBrazilGame {
       }
     }
 
-    if (song.type === 'youtube' && song.youtubeVideoId) {
-      await this.ytPlayer.loadVideo(song.youtubeVideoId);
-      this.ytPlayer.setVolume(this.settingsManager.getSettings().musicVolume * 100);
-    }
-
     if (sessionId !== this.currentMatchSessionId) return;
     await this.startCountdown(sessionId);
   }
@@ -791,61 +806,76 @@ class RockBrazilGame {
     await this.audio.ensureResumed();
     if (sessionId !== this.currentMatchSessionId) return;
 
-    this.state = GameState.COUNTDOWN;
-    this.ui.showScreen(GameState.COUNTDOWN);
+    this.masterClock.startCountdown();
 
-    let count = 3;
-    this.ui.setCountdown(count.toString());
-    this.audio.playSfxCountdown();
-
-    this.countdownTimer = window.setInterval(async () => {
-      if (sessionId !== this.currentMatchSessionId) {
-        this.clearCountdown();
-        return;
-      }
-
-      count--;
-      if (count > 0) {
-        this.ui.setCountdown(count.toString());
-        this.audio.playSfxCountdown();
-      } else if (count === 0) {
-        this.ui.setCountdown('ROCK!');
-        this.audio.playSfxRockStart();
-
-        // Solicita início do áudio:
-        if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
-          this.ytPlayer.play();
-          // As notas só começam a se mover quando onPlaybackConfirmed confirmar progresso real!
-        } else if (this.currentSong.type === 'procedural' && this.currentSong.proceduralTrackId) {
-          await this.audio.playProceduralTrack(this.currentSong.proceduralTrackId, 0);
-          this.state = GameState.PLAYING;
-          this.ui.showScreen(GameState.PLAYING);
-        } else if (this.currentSong.audioBuffer) {
-          await this.audio.playAudioBuffer(this.currentSong.audioBuffer, 0);
-          this.state = GameState.PLAYING;
-          this.ui.showScreen(GameState.PLAYING);
-        }
-      } else {
-        this.clearCountdown();
-        if (sessionId !== this.currentMatchSessionId) return;
-
-        if (this.currentSong.type === 'youtube') {
-          // Se o áudio já confirmou avanço, transita para PLAYING
-          if (this.ytPlayer.getPlaybackState() === PlaybackState.PLAYING) {
+    await this.prestartSystem.prepareAndStart(
+      sessionId,
+      {
+        prepareChart: () => true,
+        prepareRenderer: () => {},
+        prepareAudio: async () => {
+          if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
+            await this.ytPlayer.loadVideo(this.currentSong.youtubeVideoId);
+            this.ytPlayer.setVolume(this.settingsManager.getSettings().musicVolume * 100);
+          }
+          return true;
+        },
+        startAudioPlayback: async () => {
+          if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
+            this.ytPlayer.play();
+          } else if (this.currentSong.type === 'procedural' && this.currentSong.proceduralTrackId) {
+            await this.audio.playProceduralTrack(this.currentSong.proceduralTrackId, 0);
+            this.masterClock.startPlayback();
             this.state = GameState.PLAYING;
             this.ui.showScreen(GameState.PLAYING);
-          } else {
-            // Continua aguardando o áudio avançar sem queimar notas antecipadas
-            this.ui.setCountdown('SINCRONIZANDO...');
+          } else if (this.currentSong.audioBuffer) {
+            await this.audio.playAudioBuffer(this.currentSong.audioBuffer, 0);
+            this.masterClock.startPlayback();
+            this.state = GameState.PLAYING;
+            this.ui.showScreen(GameState.PLAYING);
           }
+        },
+        isAudioPlaying: () => {
+          if (this.currentSong.type === 'youtube') {
+            return this.ytPlayer.getPlaybackState() === PlaybackState.PLAYING;
+          }
+          return true;
+        },
+        isAudioBuffering: () => {
+          if (this.currentSong.type === 'youtube') {
+            return this.ytPlayer.isBuffering();
+          }
+          return false;
+        }
+      },
+      {
+        onCountdownTick: (count) => {
+          this.state = GameState.COUNTDOWN;
+          this.ui.showScreen(GameState.COUNTDOWN);
+          this.ui.setCountdown(count.toString());
+          this.audio.playSfxCountdown();
+        },
+        onCountdownRock: () => {
+          this.ui.setCountdown('ROCK!');
+          this.audio.playSfxRockStart();
+        },
+        onSynchronizingWait: () => {
+          this.ui.setCountdown('SINCRONIZANDO...');
+        },
+        onGameStart: () => {
+          this.masterClock.startPlayback();
+          this.state = GameState.PLAYING;
+          this.ui.showAutoplayUnblockPrompt(false);
+          this.ui.showScreen(GameState.PLAYING);
         }
       }
-    }, 850);
+    );
   }
 
   private pauseGame(): void {
     if (this.state !== GameState.PLAYING && this.state !== GameState.COUNTDOWN) return;
     this.state = GameState.PAUSED;
+    this.masterClock.pause();
     this.audio.pause();
     this.ytPlayer.pause();
     if (this.currentSong) {
@@ -856,6 +886,7 @@ class RockBrazilGame {
 
   private resumeGame(): void {
     if (this.state !== GameState.PAUSED) return;
+    this.masterClock.resume();
     this.state = GameState.PLAYING;
     this.ui.showScreen(GameState.PLAYING);
     if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
@@ -899,38 +930,30 @@ class RockBrazilGame {
   private gameLoop = (): void => {
     if (this.state === GameState.PLAYING) {
       // Se o YouTube estiver em buffering, congela as notas e o progresso sem penalização
-      if (this.currentSong.type === 'youtube' && this.ytPlayer.isBuffering()) {
-        const visualTime = this.getEffectiveVisualTime(this.getChartTime());
-        this.renderer.render(
-          visualTime,
-          this.engine.getNotes(),
-          this.activeLanes,
-          this.currentSong.bpm
-        );
-        requestAnimationFrame(this.gameLoop);
-        return;
-      }
+      const isBuffering = this.currentSong.type === 'youtube' && this.ytPlayer.isBuffering();
+      this.masterClock.setBuffering(isBuffering);
 
-      const chartTime = this.getChartTime();
-      const visualTime = this.getEffectiveVisualTime(chartTime);
+      const clockTime = this.masterClock.getTime();
 
       // Finaliza apenas quando atingir a duração total do áudio E não houver notas pendentes
-      if (chartTime >= this.currentSong.duration && !this.engine.hasPendingNotes(chartTime)) {
+      if (clockTime >= this.currentSong.duration && !this.engine.hasPendingNotes(clockTime)) {
         this.finishSong();
       } else {
-        this.engine.update(chartTime);
+        if (!isBuffering) {
+          this.engine.update(clockTime);
+        }
         this.renderer.render(
-          visualTime,
+          clockTime,
           this.engine.getNotes(),
           this.activeLanes,
           this.currentSong.bpm
         );
-        this.ui.updateHUD(this.engine.getStats(), chartTime, this.currentSong.duration);
+        this.ui.updateHUD(this.engine.getStats(), clockTime, this.currentSong.duration);
       }
     } else if (this.state === GameState.PAUSED) {
-      const visualTime = this.getEffectiveVisualTime(this.getChartTime());
+      const clockTime = this.masterClock.getTime();
       this.renderer.render(
-        visualTime,
+        clockTime,
         this.engine.getNotes(),
         this.activeLanes,
         this.currentSong.bpm

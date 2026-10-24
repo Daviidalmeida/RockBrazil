@@ -456,20 +456,16 @@ export class YouTubePlayerController {
     // Clamp maximum forward extrapolation to 0.35s to prevent runaway clock during hitches
     const interpolated = this.lastObservedVideoTime + Math.min(0.35, dt);
 
-    // 4. Drift correction when YouTube provides a new timestamp
+    // 4. Zero-lag audio clock tracking when YouTube provides a new timestamp
     if (rawTime >= 0 && rawTime !== this.lastRawPlayerTime) {
       this.lastRawPlayerTime = rawTime;
       const drift = rawTime - interpolated;
 
-      if (Math.abs(drift) > 0.8) {
-        // Large desync or seek: snap instantly
+      // Pin directly to verified player time if drift exceeds 15ms to eliminate cumulative clock lag
+      if (Math.abs(drift) > 0.015) {
         this.lastObservedVideoTime = rawTime;
         this.lastObservedPerfTime = now;
         return rawTime;
-      } else if (Math.abs(drift) > 0.015) {
-        // Smooth gradual low-pass drift compensation (eliminates jitter and visual hops)
-        this.lastObservedVideoTime += drift * 0.25;
-        this.lastObservedPerfTime = now;
       }
     }
 

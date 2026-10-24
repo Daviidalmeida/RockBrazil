@@ -1,5 +1,5 @@
 import { RockSynth, PROCEDURAL_TRACKS } from './rockSynth';
-import { GameSettings } from '../types';
+import { GameSettings, PlaybackState } from '../types';
 
 export class AudioManager {
   private ctx: AudioContext | null = null;
@@ -91,6 +91,18 @@ export class AudioManager {
       rawTime = Math.max(0, this.ctx.currentTime - this.fileStartTime);
     }
     return rawTime;
+  }
+
+  getPlaybackState(): PlaybackState {
+    if (this.isFilePaused) return PlaybackState.PAUSED;
+    if (this.isFilePlaying || (this.isUsingProcedural && this.synth.getCurrentTime() > 0)) {
+      return PlaybackState.PLAYING;
+    }
+    return PlaybackState.READY;
+  }
+
+  isBuffering(): boolean {
+    return false;
   }
 
   /**
