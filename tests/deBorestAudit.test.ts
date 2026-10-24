@@ -11,13 +11,15 @@ describe('ROCKBRAZIL BETA — Kuase Nada: De Borest & Chart Audit', () => {
   const chartPath = path.resolve('charts-import/extracted-charts/kua-de-borest.chart');
   const sngPath = path.resolve('charts-import/extracted/charts/Kuase Nada - De Borest.sng');
 
-  it('1. Arquivos originais SNG e .chart localizados no workspace', () => {
+  it('1. Arquivo .chart extraído de Kuase Nada localizado no repositório', () => {
     expect(fs.existsSync(chartPath)).toBe(true);
-    expect(fs.existsSync(sngPath)).toBe(true);
     const chartStat = fs.statSync(chartPath);
-    const sngStat = fs.statSync(sngPath);
     expect(chartStat.size).toBeGreaterThan(50000); // 56,651 bytes
-    expect(sngStat.size).toBeGreaterThan(2500000); // 2,923,601 bytes
+    // SNG de referência local (se presente no workspace de desenvolvimento)
+    if (fs.existsSync(sngPath)) {
+      const sngStat = fs.statSync(sngPath);
+      expect(sngStat.size).toBeGreaterThan(2500000); // 2,923,601 bytes
+    }
   });
 
   it('2. Metadados do SNG e catálogo oficial', () => {
