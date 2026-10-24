@@ -8,7 +8,6 @@ export class BeatmapManager {
   private cache: Map<string, BeatmapByDifficulty> = new Map();
 
   constructor() {
-    initPreconvertedCharts();
     this.initDefaultMaps();
   }
 

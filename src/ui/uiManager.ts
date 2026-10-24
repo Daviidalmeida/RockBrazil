@@ -80,6 +80,8 @@ export class UIManager {
   private valSfx: HTMLElement;
   private valOffset: HTMLElement;
   private valSpeed: HTMLElement;
+  private pauseOffsetValue: HTMLElement | null = null;
+  private overlayUnblockAudio: HTMLElement | null = null;
 
   // Callbacks
   public onPlayGameRequested?: (song: SongMetadata, difficulty: Difficulty) => void;
@@ -96,6 +98,8 @@ export class UIManager {
   public onLinkTNTFile?: (file: File) => void;
   public onSettingsChanged?: (settings: Partial<GameSettings>) => void;
   public onTestBeepClicked?: () => void;
+  public onCalibrationOffsetChange?: (deltaMs: number, reset?: boolean) => void;
+  public onUnblockAudioClicked?: () => void;
 
   // Editor callbacks
   public onOpenEditorClicked?: () => void;
@@ -132,6 +136,8 @@ export class UIManager {
     this.screenCountdown = document.getElementById('screen-countdown')!;
     this.countdownNumber = document.getElementById('countdown-number')!;
     this.screenPause = document.getElementById('screen-pause')!;
+    this.pauseOffsetValue = document.getElementById('pause-offset-value');
+    this.overlayUnblockAudio = document.getElementById('overlay-unblock-audio');
     this.screenGameOver = document.getElementById('screen-game-over')!;
     this.screenResult = document.getElementById('screen-result')!;
     this.screenSettings = document.getElementById('screen-settings')!;
@@ -336,6 +342,29 @@ export class UIManager {
       this.onOpenSongSelectClicked?.();
     });
 
+    // Pause calibration buttons
+    document.getElementById('btn-calib-minus-50')?.addEventListener('click', () => {
+      this.onCalibrationOffsetChange?.(-50);
+    });
+    document.getElementById('btn-calib-minus-10')?.addEventListener('click', () => {
+      this.onCalibrationOffsetChange?.(-10);
+    });
+    document.getElementById('btn-calib-reset')?.addEventListener('click', () => {
+      this.onCalibrationOffsetChange?.(0, true);
+    });
+    document.getElementById('btn-calib-plus-10')?.addEventListener('click', () => {
+      this.onCalibrationOffsetChange?.(10);
+    });
+    document.getElementById('btn-calib-plus-50')?.addEventListener('click', () => {
+      this.onCalibrationOffsetChange?.(50);
+    });
+
+    // Autoplay unblock button
+    document.getElementById('btn-unblock-audio')?.addEventListener('click', () => {
+      this.showAutoplayUnblockPrompt(false);
+      this.onUnblockAudioClicked?.();
+    });
+
     // Game Over buttons
     document.getElementById('btn-retry-gameover')?.addEventListener('click', () => {
       this.onRestartClicked?.();
@@ -508,6 +537,18 @@ export class UIManager {
 
   setCountdown(text: string): void {
     this.countdownNumber.textContent = text;
+  }
+
+  setPauseCalibrationOffset(offsetMs: number): void {
+    if (this.pauseOffsetValue) {
+      this.pauseOffsetValue.textContent = `${offsetMs > 0 ? `+${offsetMs}` : offsetMs} ms`;
+    }
+  }
+
+  showAutoplayUnblockPrompt(show: boolean): void {
+    if (this.overlayUnblockAudio) {
+      this.overlayUnblockAudio.classList.toggle('hidden', !show);
+    }
   }
 
   updateHUD(stats: GameStats, currentTime: number, duration: number): void {

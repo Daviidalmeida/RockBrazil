@@ -58,6 +58,31 @@ export enum GameState {
   RESULTS = 'RESULTS'
 }
 
+/**
+ * ROCKBRAZIL BETA — AUDIO-DRIVEN GAMEPLAY STATE MACHINE
+ * Guarantees notes only move when audio is genuinely confirmed advancing
+ */
+export enum PlaybackState {
+  PREPARING = 'PREPARING',
+  READY = 'READY',
+  WAITING_FOR_AUDIO = 'WAITING_FOR_AUDIO',
+  PLAYING = 'PLAYING',
+  BUFFERING = 'BUFFERING',
+  PAUSED = 'PAUSED',
+  FINISHED = 'FINISHED',
+  ERROR = 'ERROR'
+}
+
+export interface SongCalibration {
+  songId: string;
+  videoId: string;
+  chartId?: string;
+  chartOffsetMs: number;
+  inputLatencyMs: number;
+  calibrationStatus: 'DEFAULT' | 'USER_CALIBRATED' | 'VERIFIED';
+  lastCalibrated?: number;
+}
+
 export interface GameStats {
   score: number;
   combo: number;

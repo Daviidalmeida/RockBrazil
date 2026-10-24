@@ -1,4 +1,4 @@
-import { GameState, Lane, HitResult, SongMetadata, Difficulty, Note } from './types';
+import { GameState, Lane, HitResult, SongMetadata, Difficulty, Note, PlaybackState } from './types';
 import { AudioManager } from './audio/audioManager';
 import { BeatmapManager } from './game/beatmapManager';
 import { SongLibrary } from './game/songLibrary';
@@ -13,6 +13,7 @@ import { ZipChartLoader } from './audio/zipChartLoader';
 import { UniversalChartImporter } from './audio/universalChartImporter';
 import { YouTubePlayerController } from './audio/youtubePlayer';
 import { AutoMusicFinder } from './game/catalog/musicFinder';
+import { CalibrationManager } from './game/sync/calibrationManager';
 
 class RockBrazilGame {
   private settingsManager: SettingsManager;
@@ -55,7 +56,22 @@ class RockBrazilGame {
 
     this.ytPlayer = new YouTubePlayerController({
       onBuffering: (_buffering) => {
-        // V5.7: Buffering tratado internamente no relógio musical sem badge obstrutivo na tela
+        // Buffering congelado de forma estável no relógio sem tremedeira nem penalização
+      },
+      onPlaybackConfirmed: (_videoTime) => {
+        // Áudio confirmado em avanço real: transição imediata para PLAYING
+        if (this.state === GameState.COUNTDOWN || (this.state as any) === 'WAITING_FOR_AUDIO') {
+          this.clearCountdown();
+          this.state = GameState.PLAYING;
+          this.ui.showAutoplayUnblockPrompt(false);
+          this.ui.showScreen(GameState.PLAYING);
+        }
+      },
+      onAutoplayBlocked: () => {
+        // Navegador bloqueou reprodução automática: exibe prompt amigável
+        if (this.state === GameState.COUNTDOWN || (this.state as any) === 'WAITING_FOR_AUDIO') {
+          this.ui.showAutoplayUnblockPrompt(true);
+        }
       },
       onEnded: () => {
         if (this.state === GameState.PLAYING) {
@@ -346,6 +362,23 @@ class RockBrazilGame {
       }
     };
 
+    this.ui.onCalibrationOffsetChange = (deltaMs: number, reset?: boolean) => {
+      if (!this.currentSong) return;
+      if (reset) {
+        CalibrationManager.resetOffsetMs(this.currentSong.id);
+      } else {
+        CalibrationManager.adjustOffsetMs(this.currentSong.id, deltaMs, this.currentSong.youtubeVideoId);
+      }
+      const updated = CalibrationManager.getSongOffsetMs(this.currentSong.id);
+      this.ui.setPauseCalibrationOffset(updated);
+    };
+
+    this.ui.onUnblockAudioClicked = () => {
+      if (this.currentSong?.type === 'youtube' && this.currentSong?.youtubeVideoId) {
+        this.ytPlayer.play();
+      }
+    };
+
     this.ui.onTestBeepClicked = () => {
       this.audio.playSfxCountdown();
     };
@@ -605,11 +638,34 @@ class RockBrazilGame {
     });
   }
 
-  private getGameplayCurrentTime(): number {
-    if (this.currentSong?.type === 'youtube' && this.currentSong?.youtubeVideoId) {
-      return this.ytPlayer.getCurrentTime();
+  private getSongOffsetSec(): number {
+    if (!this.currentSong) return 0;
+    const songCalib = CalibrationManager.getSongOffsetMs(this.currentSong.id);
+    return songCalib / 1000;
+  }
+
+  private getEffectiveVisualTime(chartTime: number): number {
+    const globalOffsetSec = (this.settingsManager.getSettings().audioOffsetMs || 0) / 1000;
+    return chartTime - globalOffsetSec;
+  }
+
+  private getChartTime(): number {
+    if (!this.currentSong) return 0;
+    // As notas ficam estáticas e o relógio NÃO avança antes do áudio genuinamente avançar
+    if (this.state !== GameState.PLAYING && this.state !== GameState.PAUSED) {
+      return 0;
     }
-    return this.audio.getCurrentTime();
+    if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
+      if (this.ytPlayer.getPlaybackState() !== PlaybackState.PLAYING && this.ytPlayer.getPlaybackState() !== PlaybackState.PAUSED) {
+        return 0;
+      }
+      return Math.max(0, this.ytPlayer.getCurrentTime() + this.getSongOffsetSec());
+    }
+    return Math.max(0, this.audio.getCurrentTime() + this.getSongOffsetSec());
+  }
+
+  private getGameplayCurrentTime(): number {
+    return this.getChartTime();
   }
 
   private pressLane(lane: Lane): void {
@@ -617,8 +673,8 @@ class RockBrazilGame {
     this.ui.setLaneVisualActive(lane, true);
 
     if (this.state === GameState.PLAYING) {
-      const currentTime = this.getGameplayCurrentTime();
-      this.engine.handleLanePress(lane, currentTime);
+      const chartTime = this.getChartTime();
+      this.engine.handleLanePress(lane, chartTime);
     }
   }
 
@@ -627,8 +683,8 @@ class RockBrazilGame {
     this.ui.setLaneVisualActive(lane, false);
 
     if (this.state === GameState.PLAYING) {
-      const currentTime = this.getGameplayCurrentTime();
-      this.engine.handleLaneRelease(lane, currentTime);
+      const chartTime = this.getChartTime();
+      this.engine.handleLaneRelease(lane, chartTime);
     }
   }
 
@@ -643,12 +699,37 @@ class RockBrazilGame {
     const sessionId = ++this.currentMatchSessionId;
     this.clearCountdown();
     this.audio.stop();
+    this.ytPlayer.stop();
+    this.ui.showAutoplayUnblockPrompt(false);
 
     // Garante que o AudioContext seja desbloqueado imediatamente no clique do usuário
     this.audio.ensureResumed().catch(() => {});
 
     this.currentSong = song;
     this.currentDifficulty = difficulty;
+
+    // Configura pistas ativas por dificuldade (3 no Fácil, 4 no Médio, 5 no Difícil/Expert)
+    this.renderer.setDifficulty(this.currentDifficulty);
+    this.ui.setDifficultyLanes(this.currentDifficulty);
+
+    // Reinicializa o motor com notas independentes da biblioteca
+    const rawNotes = customNotes || this.beatmaps.getBeatmap(this.currentSong.id, this.currentDifficulty);
+    const maxLane = this.currentDifficulty === 'EASY' ? 2 : this.currentDifficulty === 'MEDIUM' ? 3 : 4;
+    const notes = rawNotes
+      .filter((n) => n.lane <= maxLane)
+      .map((n) => ({
+        ...n,
+        hit: false,
+        missed: false,
+        sustainCompleted: false,
+        sustainHeldTime: 0
+      }));
+    this.engine.reset(notes, this.currentDifficulty);
+
+    // Reinicializa completamente o HUD e as entradas de toque
+    this.ui.resetHUD();
+    this.activeLanes.clear();
+    this.pointerLaneMap.clear();
 
     // Se for música baseada em arquivo e ainda não carregou o áudio
     if (song.type === 'audio-file' && !song.audioBuffer) {
@@ -694,54 +775,21 @@ class RockBrazilGame {
     }
 
     if (song.type === 'youtube' && song.youtubeVideoId) {
-      this.ytPlayer.stop();
       await this.ytPlayer.loadVideo(song.youtubeVideoId);
       this.ytPlayer.setVolume(this.settingsManager.getSettings().musicVolume * 100);
-      // RockBrazil Video Preparation System: Solicita reprodução antecipada e aguarda confirmação real de PLAYING
-      this.ytPlayer.play();
-      await this.ytPlayer.waitForPlaying(2000);
     }
 
     if (sessionId !== this.currentMatchSessionId) return;
-    await this.startCountdown(sessionId, customNotes);
+    await this.startCountdown(sessionId);
   }
 
-  private async startCountdown(sessionId: number, customNotes?: Note[]): Promise<void> {
+  private async startCountdown(sessionId: number): Promise<void> {
     this.clearCountdown();
     this.audio.stop();
 
     await this.audio.init();
     await this.audio.ensureResumed();
     if (sessionId !== this.currentMatchSessionId) return;
-
-    if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
-      this.ytPlayer.seekTo(0);
-      this.ytPlayer.play();
-    }
-
-    // Configura pistas ativas por dificuldade (3 no Fácil, 4 no Médio, 5 no Difícil/Expert)
-    this.renderer.setDifficulty(this.currentDifficulty);
-    this.ui.setDifficultyLanes(this.currentDifficulty);
-
-    // Reinicializa o motor com notas independentes (cópia profunda)
-    const rawNotes = customNotes || this.beatmaps.getBeatmap(this.currentSong.id, this.currentDifficulty);
-    // Garante que cada nota permaneça na sua pista independente sem esmagamento forçado
-    const maxLane = this.currentDifficulty === 'EASY' ? 2 : this.currentDifficulty === 'MEDIUM' ? 3 : 4;
-    const notes = rawNotes
-      .filter((n) => n.lane <= maxLane)
-      .map((n) => ({
-        ...n,
-        hit: false,
-        missed: false,
-        sustainCompleted: false,
-        sustainHeldTime: 0
-      }));
-    this.engine.reset(notes, this.currentDifficulty);
-
-    // Reinicializa completamente o HUD e as entradas de toque
-    this.ui.resetHUD();
-    this.activeLanes.clear();
-    this.pointerLaneMap.clear();
 
     this.state = GameState.COUNTDOWN;
     this.ui.showScreen(GameState.COUNTDOWN);
@@ -763,44 +811,58 @@ class RockBrazilGame {
       } else if (count === 0) {
         this.ui.setCountdown('ROCK!');
         this.audio.playSfxRockStart();
+
+        // Solicita início do áudio:
+        if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
+          this.ytPlayer.play();
+          // As notas só começam a se mover quando onPlaybackConfirmed confirmar progresso real!
+        } else if (this.currentSong.type === 'procedural' && this.currentSong.proceduralTrackId) {
+          await this.audio.playProceduralTrack(this.currentSong.proceduralTrackId, 0);
+          this.state = GameState.PLAYING;
+          this.ui.showScreen(GameState.PLAYING);
+        } else if (this.currentSong.audioBuffer) {
+          await this.audio.playAudioBuffer(this.currentSong.audioBuffer, 0);
+          this.state = GameState.PLAYING;
+          this.ui.showScreen(GameState.PLAYING);
+        }
       } else {
         this.clearCountdown();
-        if (sessionId === this.currentMatchSessionId) {
-          await this.startGameplay(sessionId);
+        if (sessionId !== this.currentMatchSessionId) return;
+
+        if (this.currentSong.type === 'youtube') {
+          // Se o áudio já confirmou avanço, transita para PLAYING
+          if (this.ytPlayer.getPlaybackState() === PlaybackState.PLAYING) {
+            this.state = GameState.PLAYING;
+            this.ui.showScreen(GameState.PLAYING);
+          } else {
+            // Continua aguardando o áudio avançar sem queimar notas antecipadas
+            this.ui.setCountdown('SINCRONIZANDO...');
+          }
         }
       }
     }, 850);
   }
 
-  private async startGameplay(sessionId: number): Promise<void> {
-    if (sessionId !== this.currentMatchSessionId) return;
-
-    this.state = GameState.PLAYING;
-    this.ui.showScreen(GameState.PLAYING);
-
-    if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
-      this.ytPlayer.play();
-    } else if (this.currentSong.type === 'procedural' && this.currentSong.proceduralTrackId) {
-      await this.audio.playProceduralTrack(this.currentSong.proceduralTrackId, 0);
-    } else if (this.currentSong.audioBuffer) {
-      await this.audio.playAudioBuffer(this.currentSong.audioBuffer, 0);
-    }
-  }
-
   private pauseGame(): void {
-    if (this.state !== GameState.PLAYING) return;
+    if (this.state !== GameState.PLAYING && this.state !== GameState.COUNTDOWN) return;
     this.state = GameState.PAUSED;
     this.audio.pause();
     this.ytPlayer.pause();
+    if (this.currentSong) {
+      this.ui.setPauseCalibrationOffset(CalibrationManager.getSongOffsetMs(this.currentSong.id));
+    }
     this.ui.showScreen(GameState.PAUSED);
   }
 
   private resumeGame(): void {
     if (this.state !== GameState.PAUSED) return;
-    this.audio.resume();
-    this.ytPlayer.resume();
     this.state = GameState.PLAYING;
     this.ui.showScreen(GameState.PLAYING);
+    if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
+      this.ytPlayer.resume();
+    } else {
+      this.audio.resume();
+    }
   }
 
   private restartGame(): void {
@@ -836,11 +898,11 @@ class RockBrazilGame {
 
   private gameLoop = (): void => {
     if (this.state === GameState.PLAYING) {
-      // If YouTube is buffering, pause game progression until buffered
+      // Se o YouTube estiver em buffering, congela as notas e o progresso sem penalização
       if (this.currentSong.type === 'youtube' && this.ytPlayer.isBuffering()) {
-        const currentTime = this.getGameplayCurrentTime();
+        const visualTime = this.getEffectiveVisualTime(this.getChartTime());
         this.renderer.render(
-          currentTime,
+          visualTime,
           this.engine.getNotes(),
           this.activeLanes,
           this.currentSong.bpm
@@ -849,25 +911,34 @@ class RockBrazilGame {
         return;
       }
 
-      const currentTime = this.getGameplayCurrentTime();
+      const chartTime = this.getChartTime();
+      const visualTime = this.getEffectiveVisualTime(chartTime);
 
       // Finaliza apenas quando atingir a duração total do áudio E não houver notas pendentes
-      if (currentTime >= this.currentSong.duration && !this.engine.hasPendingNotes(currentTime)) {
+      if (chartTime >= this.currentSong.duration && !this.engine.hasPendingNotes(chartTime)) {
         this.finishSong();
       } else {
-        this.engine.update(currentTime);
+        this.engine.update(chartTime);
         this.renderer.render(
-          currentTime,
+          visualTime,
           this.engine.getNotes(),
           this.activeLanes,
           this.currentSong.bpm
         );
-        this.ui.updateHUD(this.engine.getStats(), currentTime, this.currentSong.duration);
+        this.ui.updateHUD(this.engine.getStats(), chartTime, this.currentSong.duration);
       }
-    } else if (this.state === GameState.COUNTDOWN || this.state === GameState.PAUSED || this.state === GameState.MENU) {
-      const currentTime = this.getGameplayCurrentTime();
+    } else if (this.state === GameState.PAUSED) {
+      const visualTime = this.getEffectiveVisualTime(this.getChartTime());
       this.renderer.render(
-        currentTime,
+        visualTime,
+        this.engine.getNotes(),
+        this.activeLanes,
+        this.currentSong.bpm
+      );
+    } else {
+      // MENU, COUNTDOWN: renderiza notas estáticas em t=0 sem avançar a esteira
+      this.renderer.render(
+        0,
         this.engine.getNotes(),
         this.activeLanes,
         this.currentSong.bpm

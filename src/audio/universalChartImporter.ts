@@ -714,10 +714,10 @@ export class UniversalChartImporter {
   }
 
   public static getConvertedChart(songId: string): BeatmapByDifficulty | undefined {
-    return this.CONVERTED_REGISTRY.get(songId) || REAL_COMMUNITY_CHARTS[songId];
+    return REAL_COMMUNITY_CHARTS[songId] || this.CONVERTED_REGISTRY.get(songId);
   }
 
   public static hasConvertedChart(songId: string): boolean {
-    return this.CONVERTED_REGISTRY.has(songId) || !!REAL_COMMUNITY_CHARTS[songId];
+    return !!REAL_COMMUNITY_CHARTS[songId] || this.CONVERTED_REGISTRY.has(songId);
   }
 }
