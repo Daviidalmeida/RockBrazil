@@ -1955,3 +1955,20 @@ html, body {
   80% { transform: scale(1); opacity: 1; }
   100% { transform: scale(0.9); opacity: 0.2; }
 }
+
+/* V10: Exibição de RockCoins na Tela de Resultados */
+.result-coins-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 6px 0 10px 0;
+  font-family: var(--font-display, Montserrat, sans-serif);
+  font-weight: 700;
+  font-size: 16px;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+.result-coins-block .coins-icon {
+  font-size: 18px;
+}

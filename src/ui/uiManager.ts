@@ -640,15 +640,27 @@ export class UIManager {
     }
   }
 
+  hidePauseModal(): void {
+    if (this.screenPause) {
+      this.screenPause.classList.add('hidden');
+    }
+  }
+
   showCelebration(onComplete: () => void): void {
     if (this.overlayCelebration) {
-      this.overlayCelebration.classList.remove('hidden');
-      setTimeout(() => {
+      let isDone = false;
+      const done = () => {
+        if (isDone) return;
+        isDone = true;
         if (this.overlayCelebration) {
           this.overlayCelebration.classList.add('hidden');
+          this.overlayCelebration.onclick = null;
         }
         onComplete();
-      }, 2500);
+      };
+      this.overlayCelebration.classList.remove('hidden');
+      this.overlayCelebration.onclick = done;
+      setTimeout(done, 2200);
     } else {
       onComplete();
     }
@@ -710,6 +722,12 @@ export class UIManager {
     this.resultGreat.textContent = stats.greatCount.toString();
     this.resultGood.textContent = stats.goodCount.toString();
     this.resultMiss.textContent = stats.missCount.toString();
+
+    const coinsEl = document.getElementById('result-coins');
+    if (coinsEl) {
+      const earnedCoins = (stats.stars || 1) * 25 + Math.floor((stats.score || 0) / 1000);
+      coinsEl.textContent = `+${earnedCoins} RockCoins`;
+    }
 
     const starCount = stats.stars || 1;
     const starEls = this.resultStarsRow.querySelectorAll('.star-item');

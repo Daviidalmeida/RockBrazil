@@ -46,6 +46,10 @@ class RockBrazilGame {
   private activeLanes: Set<Lane> = new Set();
   private pointerLaneMap: Map<number, Lane> = new Map();
   private currentMatchSessionId = 0;
+  private isFinishing = false;
+  private isResumingCountdown = false;
+  private resumeCountdownTimer: any = null;
+  private ytInitialized = false;
   private countdownTimer: number | null = null;
 
   private keyLaneMap: Record<string, Lane> = {
@@ -70,6 +74,11 @@ class RockBrazilGame {
 
     this.profileManager = new ProfileManager();
     this.audio = new AudioManager(settings);
+    this.audio.setOnEnded(() => {
+      if (this.state === GameState.PLAYING && !this.isFinishing) {
+        this.handleSongEnded();
+      }
+    });
     this.library = new SongLibrary();
     this.musicFinder = new AutoMusicFinder(this.library.getSongs());
 
@@ -97,20 +106,25 @@ class RockBrazilGame {
         }
       },
       onEnded: () => {
-        if (this.state === GameState.PLAYING) {
-          this.finishSong();
+        if (this.state === GameState.PLAYING && !this.isFinishing) {
+          this.handleSongEnded();
         }
       }
     });
 
     if (typeof document !== 'undefined') {
       document.addEventListener('visibilitychange', () => {
-        if (document.hidden && this.state === GameState.PLAYING) {
-          this.pauseGame();
+        if (document.hidden) {
+          if (this.isResumingCountdown) {
+            this.clearResumeCountdown();
+            this.pauseGame();
+          } else if (this.state === GameState.PLAYING) {
+            this.pauseGame();
+          }
         }
       });
     }
-    this.ytPlayer.init().catch(() => {});
+    // V10: Inicialização preguiçosa (lazy) do YouTube apenas sob demanda quando uma música não possui áudio local
 
     this.beatmaps = new BeatmapManager();
     this.currentSong = this.library.getActiveSongs()[0];
@@ -713,6 +727,7 @@ class RockBrazilGame {
   }
 
   private pressLane(lane: Lane): void {
+    if (this.isResumingCountdown || this.state !== GameState.PLAYING || this.isFinishing) return;
     this.activeLanes.add(lane);
     this.ui.setLaneVisualActive(lane, true);
 
@@ -723,6 +738,7 @@ class RockBrazilGame {
   }
 
   private releaseLane(lane: Lane): void {
+    if (this.isResumingCountdown || this.state !== GameState.PLAYING || this.isFinishing) return;
     this.activeLanes.delete(lane);
     this.ui.setLaneVisualActive(lane, false);
 
@@ -742,6 +758,8 @@ class RockBrazilGame {
 
   private async startNewMatch(song: SongMetadata, difficulty: Difficulty, customNotes?: Note[]): Promise<void> {
     const sessionId = ++this.currentMatchSessionId;
+    this.isFinishing = false;
+    this.clearResumeCountdown();
     this.clearCountdown();
     this.audio.stop();
     this.ytPlayer.stop();
@@ -757,6 +775,7 @@ class RockBrazilGame {
     this.masterClock.reset();
     const hasLocalAudio = song.type === 'audio-file' || Boolean(song.audioUrl) || Boolean(song.audioBuffer);
     if (!hasLocalAudio && song.type === 'youtube' && song.youtubeVideoId) {
+      await this.ensureYouTubePlayerReady();
       this.masterClock.setSource(this.ytPlayer);
       this.ui.setYouTubePlayerVisibility(true);
     } else {
@@ -991,8 +1010,28 @@ class RockBrazilGame {
     );
   }
 
+  private clearResumeCountdown(): void {
+    this.isResumingCountdown = false;
+    if (this.resumeCountdownTimer !== null) {
+      clearTimeout(this.resumeCountdownTimer);
+      this.resumeCountdownTimer = null;
+    }
+  }
+
+  private async ensureYouTubePlayerReady(): Promise<void> {
+    if (this.ytInitialized) return;
+    this.ytInitialized = true;
+    try {
+      await this.ytPlayer.init();
+    } catch (err) {
+      console.warn('[YouTube] Falha ao inicializar API do YouTube:', err);
+    }
+  }
+
   private pauseGame(): void {
+    if (this.isFinishing) return;
     if (this.state !== GameState.PLAYING && this.state !== GameState.COUNTDOWN) return;
+    this.clearResumeCountdown();
     this.state = GameState.PAUSED;
     this.masterClock.pause();
     this.audio.pause();
@@ -1001,16 +1040,55 @@ class RockBrazilGame {
   }
 
   private resumeGame(): void {
-    if (this.state !== GameState.PAUSED) return;
-    this.masterClock.resume();
-    this.state = GameState.PLAYING;
-    this.ui.showScreen(GameState.PLAYING);
-    const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
-    if (!hasLocal && this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
-      this.ytPlayer.resume();
-    } else {
-      this.audio.resume();
-    }
+    if (this.state !== GameState.PAUSED || this.isResumingCountdown || this.isFinishing) return;
+
+    this.isResumingCountdown = true;
+    this.ui.hidePauseModal();
+    this.ui.showScreen(GameState.COUNTDOWN);
+
+    // V10: Contagem regressiva de 3 segundos (3 -> 2 -> 1 -> JÁ!)
+    const ticks = [
+      { text: '3', sfx: () => this.audio.playSfxCountdown() },
+      { text: '2', sfx: () => this.audio.playSfxCountdown() },
+      { text: '1', sfx: () => this.audio.playSfxCountdown() },
+      { text: 'JÁ!', sfx: () => this.audio.playSfxRockStart() }
+    ];
+
+    this.ui.setCountdown(ticks[0].text);
+    ticks[0].sfx();
+
+    const runResumeStep = (stepIdx: number) => {
+      this.resumeCountdownTimer = setTimeout(() => {
+        if (!this.isResumingCountdown || (this.state !== GameState.PAUSED && this.state !== GameState.COUNTDOWN)) return;
+
+        if (stepIdx < ticks.length) {
+          this.ui.setCountdown(ticks[stepIdx].text);
+          ticks[stepIdx].sfx();
+
+          if (stepIdx + 1 < ticks.length) {
+            runResumeStep(stepIdx + 1);
+          } else {
+            // Exibição breve de 'JÁ!' antes da retomada síncrona
+            this.resumeCountdownTimer = setTimeout(() => {
+              if (!this.isResumingCountdown) return;
+              this.isResumingCountdown = false;
+              this.state = GameState.PLAYING;
+              this.ui.showScreen(GameState.PLAYING);
+              this.masterClock.resume();
+
+              const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
+              if (!hasLocal && this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
+                this.ytPlayer.resume();
+              } else {
+                this.audio.resume();
+              }
+            }, 300);
+          }
+        }
+      }, 1000);
+    };
+
+    runResumeStep(1);
   }
 
   private restartGame(): void {
@@ -1044,18 +1122,33 @@ class RockBrazilGame {
     this.startNewMatch(nextSong, this.currentDifficulty);
   }
 
+  private handleSongEnded(): void {
+    if (this.isFinishing || (this.state !== GameState.PLAYING && this.state !== GameState.COUNTDOWN)) return;
+    const clockTime = this.masterClock.getTime();
+    this.engine.forceCompleteAllPendingNotes(clockTime);
+    this.finishSong();
+  }
+
   private gameLoop = (): void => {
-    if (this.state === GameState.PLAYING) {
+    if (this.state === GameState.PLAYING && !this.isFinishing) {
       const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
-      // Se o YouTube estiver em buffering, congela as notas e o progresso sem penalização
       const isBuffering = !hasLocal && this.currentSong.type === 'youtube' && this.ytPlayer.isBuffering();
       this.masterClock.setBuffering(isBuffering);
 
       const clockTime = this.masterClock.getTime();
+      const songDuration = this.currentSong.duration;
+      const lastNoteEnd = this.engine.getLastNoteEndTime();
 
-      // Finaliza apenas quando atingir a duração total do áudio E não houver notas pendentes
-      if (clockTime >= this.currentSong.duration && !this.engine.hasPendingNotes(clockTime)) {
-        this.finishSong();
+      // V10: Verificação robusta de encerramento
+      // 1. Áudio local terminou
+      const localEnded = hasLocal && !this.audio.isPlaying() && clockTime > 1.0;
+      // 2. Relógio atingiu duração e não restam notas
+      const normalEnd = clockTime >= songDuration && !this.engine.hasPendingNotes(clockTime);
+      // 3. Grace period de segurança: ultrapassou fim da última nota e duração com folga
+      const graceEnd = clockTime >= Math.max(songDuration, lastNoteEnd) + 0.5;
+
+      if (localEnded || normalEnd || graceEnd) {
+        this.handleSongEnded();
       } else {
         if (!isBuffering) {
           SyncDiagnostics.get().recordFirstEngineFrame(clockTime);
@@ -1070,7 +1163,8 @@ class RockBrazilGame {
         );
         this.ui.updateHUD(this.engine.getStats(), clockTime, this.currentSong.duration);
       }
-    } else if (this.state === GameState.PAUSED) {
+    } else if (this.state === GameState.PAUSED || this.isResumingCountdown) {
+      // Congela notas exatamente no instante pausado
       const clockTime = this.masterClock.getTime();
       this.renderer.render(
         clockTime,
@@ -1079,7 +1173,6 @@ class RockBrazilGame {
         this.currentSong.bpm
       );
     } else if (this.state === GameState.COUNTDOWN) {
-      // V6 Pré-roll visual: as notas iniciais descem suavemente pela esteira durante 3... 2... 1...
       const visualTime = this.masterClock.getTime();
       this.renderer.render(
         visualTime,
@@ -1088,7 +1181,6 @@ class RockBrazilGame {
         this.currentSong.bpm
       );
     } else {
-      // MENU: renderiza notas estáticas em t=0 sem avançar a esteira
       this.renderer.render(
         0,
         this.engine.getNotes(),
@@ -1097,34 +1189,49 @@ class RockBrazilGame {
       );
     }
 
-    // O loop continua executando continuamente sem travar em partidas consecutivas
     requestAnimationFrame(this.gameLoop);
   };
 
   private async finishSong(): Promise<void> {
+    if (this.isFinishing) return;
+    this.isFinishing = true;
+    this.state = GameState.RESULTS;
+
     this.clearCountdown();
-    this.audio.stop();
-    this.ytPlayer.stop();
-    this.audio.playSfxVictory();
+    this.clearResumeCountdown();
+
+    try {
+      this.audio.stop();
+      this.ytPlayer.stop();
+      this.audio.playSfxVictory();
+    } catch (err) {
+      console.warn('[finishSong] Erro ao parar reprodutores ou tocar SFX:', err);
+    }
 
     const stats = this.engine.getStats();
 
-    // Salva recordes isolados para esta partida no perfil
-    const recordResult = await this.profileManager.recordMatch(
-      this.currentSong.id,
-      this.currentSong.title,
-      this.currentDifficulty,
-      stats,
-      true
-    );
+    let recordResult: any = undefined;
+    try {
+      recordResult = await this.profileManager.recordMatch(
+        this.currentSong.id,
+        this.currentSong.title,
+        this.currentDifficulty,
+        stats,
+        true
+      );
+      this.library.saveSongRecord(this.currentSong.id, this.currentDifficulty, recordResult.record);
+    } catch (recErr) {
+      console.error('[finishSong] Erro ao gravar recorde da partida:', recErr);
+    }
 
-    this.library.saveSongRecord(this.currentSong.id, this.currentDifficulty, recordResult.record);
-
-    // Encerramento Especial "AQUI É ROCKBRAZIL!" com celebração antes do resultado
-    this.ui.showCelebration(() => {
-      this.state = GameState.RESULTS;
+    try {
+      this.ui.showCelebration(() => {
+        this.ui.showResults(this.currentSong, stats, recordResult);
+      });
+    } catch (uiErr) {
+      console.error('[finishSong] Erro na interface ao exibir resultados:', uiErr);
       this.ui.showResults(this.currentSong, stats, recordResult);
-    });
+    }
   }
 }
 

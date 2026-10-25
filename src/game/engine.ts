@@ -68,6 +68,36 @@ export class GameEngine {
   /**
    * Returns true if there are still notes that have not been hit or missed
    */
+  getLastNoteEndTime(): number {
+    if (this.notes.length === 0) return 0;
+    let maxTime = 0;
+    for (const note of this.notes) {
+      const end = note.time + (note.duration || 0);
+      if (end > maxTime) maxTime = end;
+    }
+    return maxTime;
+  }
+
+  /**
+   * Força a conclusão de todas as notas pendentes quando o áudio termina,
+   * garantindo que a precisão e pontuação sejam consolidadas sem travar o jogo.
+   */
+  forceCompleteAllPendingNotes(finalTime?: number): void {
+    const time = finalTime !== undefined ? finalTime : this.getLastNoteEndTime() + 0.5;
+    for (const note of this.notes) {
+      if (!note.hit && !note.missed) {
+        note.missed = true;
+        note.judgment = 'MISS';
+        this.missCount++;
+      }
+      if (note.hit && note.duration > 0 && !note.sustainCompleted) {
+        note.sustainCompleted = true;
+      }
+    }
+    this.combo = 0;
+    this.activeNoteStartIndex = this.notes.length;
+  }
+
   hasPendingNotes(rawCurrentTime: number): boolean {
     const currentTime = this.adjustTime(rawCurrentTime);
     const windows = this.getWindows();

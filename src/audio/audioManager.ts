@@ -16,6 +16,7 @@ export class AudioManager {
   private isFilePaused = false;
   private currentAudioBuffer: AudioBuffer | null = null;
   private isUsingProcedural = true;
+  private onEndedCallback: (() => void) | null = null;
 
   constructor(settings: GameSettings) {
     this.settings = settings;
@@ -101,6 +102,10 @@ export class AudioManager {
     return PlaybackState.READY;
   }
 
+  setOnEnded(callback: () => void): void {
+    this.onEndedCallback = callback;
+  }
+
   isPlaying(): boolean {
     return this.getPlaybackState() === PlaybackState.PLAYING;
   }
@@ -146,6 +151,13 @@ export class AudioManager {
     source.onended = () => {
       if (this.activeBufferSource === source) {
         this.isFilePlaying = false;
+        if (this.onEndedCallback) {
+          try {
+            this.onEndedCallback();
+          } catch (err) {
+            console.error("[AudioManager] onEnded error:", err);
+          }
+        }
       }
     };
 

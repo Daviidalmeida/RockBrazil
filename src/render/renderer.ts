@@ -277,9 +277,7 @@ export class GameRenderer {
     this.drawStrikeTargets(ctx, activeLanes, currentTime, bpm);
 
     // If song is in intro section before first note, display subtle rhythm pulse indicator
-    if (notes.length > 0 && currentTime >= 0 && notes[0].time - currentTime > 1.8) {
-      this.drawIntroRhythmIndicator(ctx, currentTime, bpm);
-    }
+    // V10: Indicador piscante no meio da pista removido para visual 100% limpo e confortável
 
     // 6. Draw Approaching 3D Notes (Gems)
     this.drawNotes(ctx, currentTime, notes);
@@ -501,18 +499,18 @@ export class GameRenderer {
         ctx.fillStyle = '#ffffff';
         ctx.fill();
       } else {
-        // Inactive Cup with subtle rhythmic pulse matching the beat
-        ctx.fillStyle = 'rgba(14, 16, 28, 0.85)';
+        // Inactive Cup: Alvo limpo e confortável sem pulsação ou flash distrativo
+        ctx.fillStyle = 'rgba(14, 16, 28, 0.9)';
         ctx.fill();
-        ctx.strokeStyle = color.glow;
+        ctx.strokeStyle = color.dark;
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
         ctx.beginPath();
-        const pulseR = radius * (0.22 + beatPulse * 0.08);
-        ctx.arc(x, y, pulseR, 0, Math.PI * 2);
+        const beadR = radius * 0.25;
+        ctx.arc(x, y, beadR, 0, Math.PI * 2);
         ctx.fillStyle = color.core;
-        ctx.globalAlpha = 0.7 + beatPulse * 0.3;
+        ctx.globalAlpha = 0.8;
         ctx.fill();
       }
 
