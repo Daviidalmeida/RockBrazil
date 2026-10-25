@@ -23,6 +23,7 @@ export class UIManager {
   private lastRenderedRockMeterPct = -1;
   private lastRenderedProgressPct = -1;
   private comboPopTimeout: any = null;
+  private isStartingMatch = false;
 
   // Screens & Modals
   private screenMenu: HTMLElement;
@@ -318,13 +319,18 @@ export class UIManager {
       }
     });
 
-    // Difficulty modal choices
+    // Difficulty modal choices (strictly de-bounced to prevent duplicate match starts)
     document.querySelectorAll('.btn-diff-choice').forEach((btn) => {
       btn.addEventListener('click', (e) => {
+        if (this.isStartingMatch) return;
         const diff = (e.currentTarget as HTMLElement).dataset.diff as Difficulty;
         if (this.currentSelectedSong && diff) {
+          this.isStartingMatch = true;
           this.modalDifficulty.classList.add('hidden');
           this.onPlayGameRequested?.(this.currentSelectedSong, diff);
+          setTimeout(() => {
+            this.isStartingMatch = false;
+          }, 1000);
         }
       });
     });
@@ -645,6 +651,7 @@ export class UIManager {
   }
 
   resetHUD(): void {
+    this.isStartingMatch = false;
     if (this.feedbackTimer) clearTimeout(this.feedbackTimer);
     if (this.comboPopTimeout !== null) {
       clearTimeout(this.comboPopTimeout);

@@ -17,6 +17,10 @@ import { CalibrationManager } from './game/sync/calibrationManager';
 import { UnifiedMasterClock } from './game/sync/masterClock';
 import { PreStartSystem } from './game/sync/prestartSystem';
 import { SyncDiagnostics } from './game/sync/syncDiagnostics';
+import { InputController } from './game/input/inputController';
+import { GameSessionController } from './game/session/gameSessionController';
+import { SessionState } from './game/session/sessionState';
+import { ChartTimeline } from './game/timeline/chartTimeline';
 
 class RockBrazilGame {
   private settingsManager: SettingsManager;
@@ -32,6 +36,8 @@ class RockBrazilGame {
   private editor: VisualEditor;
   private masterClock: UnifiedMasterClock;
   private prestartSystem: PreStartSystem;
+  private inputController: InputController;
+  private sessionController: GameSessionController;
 
   private state: GameState = GameState.MENU;
   private currentSong: SongMetadata;
@@ -116,6 +122,23 @@ class RockBrazilGame {
     this.renderer = new GameRenderer(canvas);
     this.renderer.noteSpeedMultiplier = settings.noteSpeedMultiplier;
     this.renderer.visualEffectsEnabled = settings.visualEffectsEnabled;
+
+    this.sessionController = new GameSessionController(
+      this.masterClock,
+      this.engine.getChartTimeline()
+    );
+
+    this.inputController = new InputController({
+      onLanePress: (lane) => this.pressLane(lane),
+      onLaneRelease: (lane) => this.releaseLane(lane),
+      onPauseToggle: () => {
+        if (this.state === GameState.PLAYING) {
+          this.pauseGame();
+        } else if (this.state === GameState.PAUSED) {
+          this.resumeGame();
+        }
+      }
+    });
 
     this.ui = new UIManager();
     this.ui.initSettingsValues(settings);
@@ -825,7 +848,9 @@ class RockBrazilGame {
     await this.audio.ensureResumed();
     if (sessionId !== this.currentMatchSessionId) return;
 
-    this.masterClock.startCountdown();
+    const prerollSec = this.renderer.noteSpeed;
+    this.masterClock.startCountdown(prerollSec);
+    this.masterClock.setPrerollProgress(0.0, prerollSec);
     SyncDiagnostics.get().reset();
     const firstNoteT = this.engine.getNotes()[0]?.time || 0;
     SyncDiagnostics.get().recordChartFirstTimestamp(firstNoteT, this.engine.getNotes().length);
@@ -864,7 +889,7 @@ class RockBrazilGame {
         prepareRenderer: () => {
           this.renderer.resize();
           this.renderer.render(
-            0,
+            -prerollSec,
             this.engine.getNotes(),
             this.activeLanes,
             this.currentSong?.bpm || 132
@@ -911,15 +936,18 @@ class RockBrazilGame {
           this.ui.showScreen(GameState.COUNTDOWN);
           this.ui.setCountdown(count.toString());
           this.audio.playSfxCountdown();
+          const progress = (3 - count) / 3.0;
+          this.masterClock.setPrerollProgress(progress, prerollSec);
           SyncDiagnostics.get().recordCountdownTick(count);
         },
         onCountdownRock: () => {
           this.ui.setCountdown('ROCK!');
           this.audio.playSfxRockStart();
+          this.masterClock.setPrerollProgress(1.0, prerollSec);
           SyncDiagnostics.get().recordCountdownEnd();
         },
         onSynchronizingWait: () => {
-          this.ui.setCountdown('SINCRONIZANDO...');
+          this.ui.setCountdown('AGUARDANDO ÁUDIO...');
         },
         onAutoplayBlocked: () => {
           this.state = GameState.COUNTDOWN;
@@ -1023,8 +1051,17 @@ class RockBrazilGame {
         this.activeLanes,
         this.currentSong.bpm
       );
+    } else if (this.state === GameState.COUNTDOWN) {
+      // V6 Pré-roll visual: as notas iniciais descem suavemente pela esteira durante 3... 2... 1...
+      const visualTime = this.masterClock.getTime();
+      this.renderer.render(
+        visualTime,
+        this.engine.getNotes(),
+        this.activeLanes,
+        this.currentSong.bpm
+      );
     } else {
-      // MENU, COUNTDOWN: renderiza notas estáticas em t=0 sem avançar a esteira
+      // MENU: renderiza notas estáticas em t=0 sem avançar a esteira
       this.renderer.render(
         0,
         this.engine.getNotes(),

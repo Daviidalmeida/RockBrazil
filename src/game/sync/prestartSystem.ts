@@ -27,9 +27,12 @@ export class PreStartSystem {
   private isWaitingForAudio = false;
   private currentSessionId = 0;
   private checkInterval: any = null;
+  private hasStartedCountdown = false;
+  private hasEnteredPlaying = false;
 
   /**
    * Initializes and starts the pre-start sequence for a match session.
+   * Enforces exactly one countdown sequence per session.
    */
   public async prepareAndStart(
     sessionId: number,
@@ -38,6 +41,8 @@ export class PreStartSystem {
   ): Promise<void> {
     this.cancel();
     this.currentSessionId = sessionId;
+    this.hasStartedCountdown = false;
+    this.hasEnteredPlaying = false;
 
     // 1. Prepare controllable resources (Chart + Renderer)
     const chartReady = await resources.prepareChart();
@@ -52,6 +57,9 @@ export class PreStartSystem {
     if (this.currentSessionId !== sessionId) return;
 
     // 3. Begin synchronized 3-second countdown (3... 2... 1... ROCK!)
+    if (this.hasStartedCountdown) return;
+    this.hasStartedCountdown = true;
+
     this.currentCount = 3;
     events.onCountdownTick(this.currentCount);
 
@@ -76,7 +84,10 @@ export class PreStartSystem {
         // Check if playback is immediately verified
         if (resources.isAudioPlaying()) {
           this.cancel();
-          events.onGameStart();
+          if (!this.hasEnteredPlaying) {
+            this.hasEnteredPlaying = true;
+            events.onGameStart();
+          }
         } else {
           // Video still buffering: hold in synchronized wait without penalizing player
           this.isWaitingForAudio = true;
@@ -115,7 +126,10 @@ export class PreStartSystem {
 
       if (resources.isAudioPlaying()) {
         this.cancel();
-        events.onGameStart();
+        if (!this.hasEnteredPlaying) {
+          this.hasEnteredPlaying = true;
+          events.onGameStart();
+        }
       } else if (attempts >= maxAttempts) {
         // Safe timeout: NEVER start match if audio is unconfirmed!
         // Do NOT advance notes and do NOT penalize player.
@@ -152,7 +166,8 @@ export class PreStartSystem {
    * Immediately notifies that audio playback is confirmed advancing
    */
   public notifyPlaybackConfirmed(sessionId: number, events: PreStartEvents): void {
-    if (this.currentSessionId !== sessionId) return;
+    if (this.currentSessionId !== sessionId || this.hasEnteredPlaying) return;
+    this.hasEnteredPlaying = true;
     this.cancel();
     events.onGameStart();
   }
@@ -161,6 +176,8 @@ export class PreStartSystem {
    * Cancels any active countdown or polling
    */
   public cancel(): void {
+    this.hasStartedCountdown = false;
+    this.hasEnteredPlaying = false;
     if (this.timer !== null) {
       clearInterval(this.timer);
       this.timer = null;

@@ -1,4 +1,5 @@
 import { Note, Lane, HitJudgment, HitResult, GameStats, Difficulty, GameSettings } from '../types';
+import { ChartTimeline } from './timeline/chartTimeline';
 
 export class GameEngine {
   private notes: Note[] = [];
@@ -7,6 +8,7 @@ export class GameEngine {
   private activeNoteStartIndex = 0;
   private difficulty: Difficulty = 'MEDIUM';
   private settings: GameSettings;
+  private chartTimeline: ChartTimeline = new ChartTimeline([], 'MEDIUM');
 
   // Game Statistics
   private score = 0;
@@ -56,6 +58,11 @@ export class GameEngine {
     this.isDead = false;
     this.lastSustainTickTime = 0;
     this.activeNoteStartIndex = 0;
+    this.chartTimeline.loadNotes(this.notes, difficulty);
+  }
+
+  public getChartTimeline(): ChartTimeline {
+    return this.chartTimeline;
   }
 
   /**
