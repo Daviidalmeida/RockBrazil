@@ -1,4 +1,5 @@
 import { Difficulty, GameSettings, SongRecord, GameStats } from '../types';
+import { RockCoinsManager } from './economy/rockCoinsManager';
 
 export interface MatchHistoryItem {
   id: string;
@@ -22,6 +23,7 @@ export interface PlayerProfile {
   settings: GameSettings;
   records: Record<string, Partial<Record<Difficulty, SongRecord>>>;
   history: MatchHistoryItem[];
+  rockCoins?: number;
 }
 
 export interface LeaderboardEntry {
@@ -39,6 +41,8 @@ export interface RecordMatchResult {
   previousBestScore: number;
   newScore: number;
   record: SongRecord;
+  earnedCoins?: number;
+  totalCoins?: number;
 }
 
 export class ProfileManager {
@@ -234,6 +238,7 @@ export class ProfileManager {
     cleared: boolean
   ): Promise<RecordMatchResult> {
     const timestamp = Date.now();
+    const earnedCoins = cleared ? RockCoinsManager.calculateReward(stats.stars || 1, stats.accuracy || 0, true) : 0;
 
     if (!this.activeProfile) {
       const fallbackRecord: SongRecord = {
@@ -253,7 +258,21 @@ export class ProfileManager {
         lastDate: timestamp,
         playCount: 1
       };
-      return { isNewRecord: cleared, previousBestScore: 0, newScore: stats.score, record: fallbackRecord };
+      return {
+        isNewRecord: cleared,
+        previousBestScore: 0,
+        newScore: stats.score,
+        record: fallbackRecord,
+        earnedCoins,
+        totalCoins: earnedCoins
+      };
+    }
+
+    if (this.activeProfile.rockCoins === undefined) {
+      this.activeProfile.rockCoins = 0;
+    }
+    if (cleared) {
+      this.activeProfile.rockCoins += earnedCoins;
     }
 
     if (!this.activeProfile.records[songId]) {
@@ -338,8 +357,21 @@ export class ProfileManager {
       isNewRecord,
       previousBestScore,
       newScore: stats.score,
-      record: newRecord
+      record: newRecord,
+      earnedCoins,
+      totalCoins: this.activeProfile.rockCoins
     };
+  }
+
+  public getRockCoins(): number {
+    return this.activeProfile?.rockCoins ?? 0;
+  }
+
+  public async addRockCoins(amount: number): Promise<number> {
+    if (!this.activeProfile) return 0;
+    this.activeProfile.rockCoins = Math.max(0, (this.activeProfile.rockCoins || 0) + amount);
+    await this.saveProfileToDB(this.activeProfile);
+    return this.activeProfile.rockCoins;
   }
 
   async getLeaderboard(songId: string, diff: Difficulty): Promise<LeaderboardEntry[]> {

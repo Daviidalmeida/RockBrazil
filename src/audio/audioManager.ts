@@ -17,10 +17,70 @@ export class AudioManager {
   private currentAudioBuffer: AudioBuffer | null = null;
   private isUsingProcedural = true;
   private onEndedCallback: (() => void) | null = null;
+  private isUnlocked = false;
 
   constructor(settings: GameSettings) {
     this.settings = settings;
     this.synth = new RockSynth();
+    this.setupLifecycleListeners();
+  }
+
+  private setupLifecycleListeners(): void {
+    if (typeof document === 'undefined' || typeof document.addEventListener !== 'function') return;
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && this.ctx && this.ctx.state === 'suspended' && this.isFilePlaying && !this.isFilePaused) {
+        this.ctx.resume().catch((err) => console.warn('[AudioManager] visibilitychange resume failed:', err));
+      }
+    });
+  }
+
+  public static isAppleDevice(): boolean {
+    if (typeof navigator === 'undefined') return false;
+    return /iPhone|iPad|iPod|Macintosh/i.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && (navigator.maxTouchPoints || 0) > 1);
+  }
+
+  public static isOggSupported(): boolean {
+    if (typeof Audio === 'undefined') return false;
+    const a = new Audio();
+    const canOgg = a.canPlayType('audio/ogg; codecs="vorbis"');
+    const canOpus = a.canPlayType('audio/ogg; codecs="opus"');
+    return Boolean(canOgg || canOpus);
+  }
+
+  /**
+   * Synchronously and robustly unlocks iOS Safari / WebKit AudioContext.
+   * Plays a 1-sample silent buffer to force the iOS hardware CoreAudio bus to engage.
+   */
+  async unlockAudioContext(): Promise<void> {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (AudioCtx) {
+        this.ctx = new AudioCtx();
+      }
+    }
+    if (!this.ctx) return;
+
+    if (this.ctx.state === 'suspended') {
+      try {
+        await this.ctx.resume();
+      } catch (err) {
+        console.warn('[AudioManager] unlock resume error:', err);
+      }
+    }
+
+    if (!this.isUnlocked && this.ctx.state === 'running') {
+      try {
+        const silentBuffer = this.ctx.createBuffer(1, 1, 22050);
+        const source = this.ctx.createBufferSource();
+        source.buffer = silentBuffer;
+        source.connect(this.ctx.destination);
+        source.start(0);
+        this.isUnlocked = true;
+      } catch (err) {
+        console.warn('[AudioManager] silent buffer unlock error:', err);
+      }
+    }
   }
 
   async init(): Promise<void> {
@@ -233,13 +293,22 @@ export class AudioManager {
     return new Promise<AudioBuffer>((resolve, reject) => {
       // Use slice(0) to prevent arrayBuffer detachment issues
       const copy = arrayBuffer.slice(0);
+      const onError = (err: any) => {
+        console.error('[AudioManager] Falha em decodeAudioData:', err, {
+          isApple: AudioManager.isAppleDevice(),
+          isOggSupported: AudioManager.isOggSupported(),
+          bytes: copy.byteLength
+        });
+        reject(err);
+      };
+
       const res = this.ctx!.decodeAudioData(
         copy,
         (buf) => resolve(buf),
-        (err) => reject(err)
+        onError
       );
       if (res && typeof res.then === 'function') {
-        res.then(resolve).catch(reject);
+        res.then(resolve).catch(onError);
       }
     });
   }

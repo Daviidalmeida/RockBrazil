@@ -3,11 +3,11 @@
    ======================================================== */
 
 :root {
-  --color-lane-0: #00ff88; /* Verde */
-  --color-lane-1: #ff2a5f; /* Vermelha */
-  --color-lane-2: #ffe600; /* Amarela */
-  --color-lane-3: #00d0ff; /* Azul */
-  --color-lane-4: #ff7b00; /* Laranja */
+  --color-lane-0: #22c55e; /* Verde suave equilibrado */
+  --color-lane-1: #f43f5e; /* Vermelha carmim suave */
+  --color-lane-2: #eab308; /* Amarela âmbar confortável */
+  --color-lane-3: #0ea5e9; /* Azul celeste nítido */
+  --color-lane-4: #f97316; /* Laranja coral confortável */
 
   --bg-dark: #0a0a0f;
   --bg-card: rgba(18, 19, 28, 0.94);
@@ -670,20 +670,20 @@ html, body {
   color: rgba(255, 255, 255, 0.45);
 }
 
-.lane-0 .fret-inner-core { background: radial-gradient(circle at 35% 35%, #5affab, var(--color-lane-0) 65%, #008f4c); }
-.lane-0.pressed .fret-circle { border-color: var(--color-lane-0); box-shadow: 0 0 25px var(--color-lane-0); }
+.lane-0 .fret-inner-core { background: radial-gradient(circle at 35% 35%, #86efac, var(--color-lane-0) 65%, #14532d); }
+.lane-0.pressed .fret-circle { border-color: var(--color-lane-0); box-shadow: 0 0 16px rgba(34, 197, 94, 0.45); }
 
-.lane-1 .fret-inner-core { background: radial-gradient(circle at 35% 35%, #ff7396, var(--color-lane-1) 65%, #9e0029); }
-.lane-1.pressed .fret-circle { border-color: var(--color-lane-1); box-shadow: 0 0 25px var(--color-lane-1); }
+.lane-1 .fret-inner-core { background: radial-gradient(circle at 35% 35%, #fda4af, var(--color-lane-1) 65%, #881337); }
+.lane-1.pressed .fret-circle { border-color: var(--color-lane-1); box-shadow: 0 0 16px rgba(244, 63, 94, 0.45); }
 
-.lane-2 .fret-inner-core { background: radial-gradient(circle at 35% 35%, #fff37a, var(--color-lane-2) 65%, #a69500); }
-.lane-2.pressed .fret-circle { border-color: var(--color-lane-2); box-shadow: 0 0 25px var(--color-lane-2); }
+.lane-2 .fret-inner-core { background: radial-gradient(circle at 35% 35%, #fde047, var(--color-lane-2) 65%, #713f12); }
+.lane-2.pressed .fret-circle { border-color: var(--color-lane-2); box-shadow: 0 0 16px rgba(234, 179, 8, 0.45); }
 
-.lane-3 .fret-inner-core { background: radial-gradient(circle at 35% 35%, #66e3ff, var(--color-lane-3) 65%, #006b94); }
-.lane-3.pressed .fret-circle { border-color: var(--color-lane-3); box-shadow: 0 0 25px var(--color-lane-3); }
+.lane-3 .fret-inner-core { background: radial-gradient(circle at 35% 35%, #7dd3fc, var(--color-lane-3) 65%, #075985); }
+.lane-3.pressed .fret-circle { border-color: var(--color-lane-3); box-shadow: 0 0 16px rgba(14, 165, 233, 0.45); }
 
-.lane-4 .fret-inner-core { background: radial-gradient(circle at 35% 35%, #ffa64d, var(--color-lane-4) 65%, #944600); }
-.lane-4.pressed .fret-circle { border-color: var(--color-lane-4); box-shadow: 0 0 25px var(--color-lane-4); }
+.lane-4 .fret-inner-core { background: radial-gradient(circle at 35% 35%, #fdba74, var(--color-lane-4) 65%, #7c2d12); }
+.lane-4.pressed .fret-circle { border-color: var(--color-lane-4); box-shadow: 0 0 16px rgba(249, 115, 22, 0.45); }
 
 .fret-button.pressed .fret-circle {
   transform: translateY(3px) scale(0.94);
@@ -1769,6 +1769,9 @@ html, body {
   color: #1a1a1a;
 }
 
+.stat-hits { color: #15803d; }
+.stat-accuracy { color: #0284c7; }
+.stat-combo { color: #d97706; }
 .stat-perfect { color: #b45309; }
 .stat-great { color: #15803d; }
 .stat-good { color: #0284c7; }

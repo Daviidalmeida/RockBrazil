@@ -38,6 +38,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 01. Mais Do Que Samba e Futebol • Reggae",
     "type": "audio-file",
     "audioUrl": "songs/lis-01-1-natiruts-natiruts-reggae-power-live/song.ogg",
+    "coverUrl": "songs/lis-01-1-natiruts-natiruts-reggae-power-live/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -62,6 +63,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 01. Mais Do Que Samba e Futebol • Samba",
     "type": "audio-file",
     "audioUrl": "songs/lis-01-2-sambo-maneiras/song.ogg",
+    "coverUrl": "songs/lis-01-2-sambo-maneiras/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -86,6 +88,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 01. Mais Do Que Samba e Futebol • Pop Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-01-4-pitty-noite-inteira/song.ogg",
+    "coverUrl": "songs/lis-01-4-pitty-noite-inteira/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -110,6 +113,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 01. Mais Do Que Samba e Futebol • Rap Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-01-5-charlie-brown-jr-senhor-do-tempo/song.ogg",
+    "coverUrl": "songs/lis-01-5-charlie-brown-jr-senhor-do-tempo/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -134,6 +138,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 01. Mais Do Que Samba e Futebol • Sertanejo",
     "type": "audio-file",
     "audioUrl": "songs/lis-01-6-orquestra-da-terra-rei-do-gado/song.ogg",
+    "coverUrl": "songs/lis-01-6-orquestra-da-terra-rei-do-gado/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -158,6 +163,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 01. Mais Do Que Samba e Futebol • Ednaldo Pereira",
     "type": "audio-file",
     "audioUrl": "songs/lis-01-7-ednaldo-pereira-what-is-the-brother-2/song.ogg",
+    "coverUrl": "songs/lis-01-7-ednaldo-pereira-what-is-the-brother-2/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -182,6 +188,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 01. Mais Do Que Samba e Futebol • Rap",
     "type": "audio-file",
     "audioUrl": "songs/lis-01-8-gabriel-o-pensador-palavras-repetidas/song.ogg",
+    "coverUrl": "songs/lis-01-8-gabriel-o-pensador-palavras-repetidas/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -206,6 +213,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 01. Mais Do Que Samba e Futebol • Power Pop",
     "type": "audio-file",
     "audioUrl": "songs/lis-01-e-cazuza-exagerado/song.ogg",
+    "coverUrl": "songs/lis-01-e-cazuza-exagerado/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -230,6 +238,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 02. Nao Toque Raul • Soul",
     "type": "audio-file",
     "audioUrl": "songs/lis-02-1-tim-maia-ela-partiu/song.ogg",
+    "coverUrl": "songs/lis-02-1-tim-maia-ela-partiu/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -254,6 +263,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 02. Nao Toque Raul • Forro",
     "type": "audio-file",
     "audioUrl": "songs/lis-02-2-luiz-gonzaga-asa-branca/song.ogg",
+    "coverUrl": "songs/lis-02-2-luiz-gonzaga-asa-branca/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -278,6 +288,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 02. Nao Toque Raul • Progressive Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-02-3-fresno-infinito/song.ogg",
+    "coverUrl": "songs/lis-02-3-fresno-infinito/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -302,6 +313,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 02. Nao Toque Raul • Indie Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-02-4-o-terno-o-cinza/song.ogg",
+    "coverUrl": "songs/lis-02-4-o-terno-o-cinza/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -326,6 +338,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 02. Nao Toque Raul • Indie Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-02-5-ana-frango-eletrico-torturadores/song.ogg",
+    "coverUrl": "songs/lis-02-5-ana-frango-eletrico-torturadores/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -350,6 +363,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 02. Nao Toque Raul • Power Pop",
     "type": "audio-file",
     "audioUrl": "songs/lis-02-6-jota-quest-o-sol/song.ogg",
+    "coverUrl": "songs/lis-02-6-jota-quest-o-sol/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -374,6 +388,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 02. Nao Toque Raul • Hard Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-02-7-batrakia-alvo-marcado/song.ogg",
+    "coverUrl": "songs/lis-02-7-batrakia-alvo-marcado/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -398,6 +413,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 02. Nao Toque Raul • MPB",
     "type": "audio-file",
     "audioUrl": "songs/lis-02-8-aldo-sena-lambada-complicada/song.ogg",
+    "coverUrl": "songs/lis-02-8-aldo-sena-lambada-complicada/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -422,6 +438,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 02. Nao Toque Raul • Comedy Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-02-e-mamonas-assassinas-pelados-em-santos/song.ogg",
+    "coverUrl": "songs/lis-02-e-mamonas-assassinas-pelados-em-santos/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -446,6 +463,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 03. Os Sons Da Noite Retornam • Rockabilly",
     "type": "audio-file",
     "audioUrl": "songs/lis-03-1-raul-seixas-metamorfose-ambulante/song.ogg",
+    "coverUrl": "songs/lis-03-1-raul-seixas-metamorfose-ambulante/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -470,6 +488,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 03. Os Sons Da Noite Retornam • Pop",
     "type": "audio-file",
     "audioUrl": "songs/lis-03-2-sandy-junior-a-lenda/song.ogg",
+    "coverUrl": "songs/lis-03-2-sandy-junior-a-lenda/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -494,6 +513,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 03. Os Sons Da Noite Retornam • Pop Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-03-3-skank-dois-rios/song.ogg",
+    "coverUrl": "songs/lis-03-3-skank-dois-rios/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -518,6 +538,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 03. Os Sons Da Noite Retornam • Pop Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-03-4-cine-garota-radical/song.ogg",
+    "coverUrl": "songs/lis-03-4-cine-garota-radical/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -542,6 +563,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 03. Os Sons Da Noite Retornam • Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-03-6-nenhum-de-nos-o-astronauta-de-marmore/song.ogg",
+    "coverUrl": "songs/lis-03-6-nenhum-de-nos-o-astronauta-de-marmore/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -566,6 +588,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 03. Os Sons Da Noite Retornam • Musica Infantil",
     "type": "audio-file",
     "audioUrl": "songs/lis-03-7-palavra-cantada-rato/song.ogg",
+    "coverUrl": "songs/lis-03-7-palavra-cantada-rato/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -590,6 +613,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 03. Os Sons Da Noite Retornam • Dance",
     "type": "audio-file",
     "audioUrl": "songs/lis-03-e-kasino-can-t-get-over/song.ogg",
+    "coverUrl": "songs/lis-03-e-kasino-can-t-get-over/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -614,6 +638,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 04. Momento Brasil • Soft Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-04-1-mr-gyn-minha-juventude/song.ogg",
+    "coverUrl": "songs/lis-04-1-mr-gyn-minha-juventude/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -638,6 +663,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 04. Momento Brasil • Indie Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-04-2-selvagens-a-procura-de-lei-brasileiro/song.ogg",
+    "coverUrl": "songs/lis-04-2-selvagens-a-procura-de-lei-brasileiro/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -662,6 +688,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 04. Momento Brasil • Heavy Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-04-3-eutenia-they-wanna-watch-me-fall/song.ogg",
+    "coverUrl": "songs/lis-04-3-eutenia-they-wanna-watch-me-fall/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -686,6 +713,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 04. Momento Brasil • Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-04-4-cazuza-brasil/song.ogg",
+    "coverUrl": "songs/lis-04-4-cazuza-brasil/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -710,6 +738,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 04. Momento Brasil • Ednaldo Pereira",
     "type": "audio-file",
     "audioUrl": "songs/lis-04-5-ednaldo-pereira-chance-matheus-richard/song.ogg",
+    "coverUrl": "songs/lis-04-5-ednaldo-pereira-chance-matheus-richard/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -734,6 +763,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 04. Momento Brasil • Comedy Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-04-6-bruno-sutter-galopeira/song.ogg",
+    "coverUrl": "songs/lis-04-6-bruno-sutter-galopeira/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -758,6 +788,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 04. Momento Brasil • Folk Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-04-7-arandu-arakuaa-ipredu/song.ogg",
+    "coverUrl": "songs/lis-04-7-arandu-arakuaa-ipredu/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -782,6 +813,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 04. Momento Brasil • Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-04-8-nenhum-de-nos-camila-camila/song.ogg",
+    "coverUrl": "songs/lis-04-8-nenhum-de-nos-camila-camila/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -806,6 +838,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 04. Momento Brasil • Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-04-e-legiao-urbana-que-pais-e-esse/song.ogg",
+    "coverUrl": "songs/lis-04-e-legiao-urbana-que-pais-e-esse/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -830,6 +863,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 05. Entre Bem e o Mal • Comedy Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-05-1-el-bando-a-historia-do-mamute/song.ogg",
+    "coverUrl": "songs/lis-05-1-el-bando-a-historia-do-mamute/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -854,6 +888,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 05. Entre Bem e o Mal • Alternative",
     "type": "audio-file",
     "audioUrl": "songs/lis-05-2-codinome-winchester-o-paulista/song.ogg",
+    "coverUrl": "songs/lis-05-2-codinome-winchester-o-paulista/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -878,6 +913,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 05. Entre Bem e o Mal • Alternative",
     "type": "audio-file",
     "audioUrl": "songs/lis-05-3-charlie-brown-jr-me-encontra/song.ogg",
+    "coverUrl": "songs/lis-05-3-charlie-brown-jr-me-encontra/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -902,6 +938,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 05. Entre Bem e o Mal • Hardcore",
     "type": "audio-file",
     "audioUrl": "songs/lis-05-4-dead-fish-messias/song.ogg",
+    "coverUrl": "songs/lis-05-4-dead-fish-messias/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -926,6 +963,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 05. Entre Bem e o Mal • Stoner Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-05-5-scalene-sonhador-ii/song.ogg",
+    "coverUrl": "songs/lis-05-5-scalene-sonhador-ii/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -950,6 +988,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 05. Entre Bem e o Mal • Progresssive Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-05-6-mindflow-break-me-out/song.ogg",
+    "coverUrl": "songs/lis-05-6-mindflow-break-me-out/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -974,6 +1013,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 05. Entre Bem e o Mal • Alternative",
     "type": "audio-file",
     "audioUrl": "songs/lis-05-7-pitty-roda-feat-baianasystem/song.ogg",
+    "coverUrl": "songs/lis-05-7-pitty-roda-feat-baianasystem/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -998,6 +1038,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 05. Entre Bem e o Mal • Chiptune",
     "type": "audio-file",
     "audioUrl": "songs/lis-05-8-vitor-ottoni-proerd-adventures-main-theme/song.ogg",
+    "coverUrl": "songs/lis-05-8-vitor-ottoni-proerd-adventures-main-theme/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1022,6 +1063,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 05. Entre Bem e o Mal • <color=#FF0000><b>Rock 'n Roll</b></color>",
     "type": "audio-file",
     "audioUrl": "songs/lis-05-9-color-ff0000-b-vitroles-b-color-color-ff0000-b-gatinha-comunista-b-color/song.ogg",
+    "coverUrl": "songs/lis-05-9-color-ff0000-b-vitroles-b-color-color-ff0000-b-gatinha-comunista-b-color/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1046,6 +1088,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 05. Entre Bem e o Mal • Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-05-e-rpm-vida-real-live/song.ogg",
+    "coverUrl": "songs/lis-05-e-rpm-vida-real-live/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1070,6 +1113,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 06. Um Oferecimento Rede Globo • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-06-1-shaman-fairy-tale/song.ogg",
+    "coverUrl": "songs/lis-06-1-shaman-fairy-tale/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1094,6 +1138,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 06. Um Oferecimento Rede Globo • Emocore",
     "type": "audio-file",
     "audioUrl": "songs/lis-06-2-hori-quem-eu-sou/song.ogg",
+    "coverUrl": "songs/lis-06-2-hori-quem-eu-sou/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1118,6 +1163,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 06. Um Oferecimento Rede Globo • Punk Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-06-3-raimundos-merry-christmas-i-don-t-want-to-fight-tonight/song.ogg",
+    "coverUrl": "songs/lis-06-3-raimundos-merry-christmas-i-don-t-want-to-fight-tonight/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1142,6 +1188,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 06. Um Oferecimento Rede Globo • Stoner Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-06-4-scalene-danse-macabre/song.ogg",
+    "coverUrl": "songs/lis-06-4-scalene-danse-macabre/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1166,6 +1213,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 06. Um Oferecimento Rede Globo • Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-06-5-desconhecido-06-5-charlie-brown-jr-chicano-skate-nos-cano/song.ogg",
+    "coverUrl": "songs/lis-06-5-desconhecido-06-5-charlie-brown-jr-chicano-skate-nos-cano/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1190,6 +1238,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 06. Um Oferecimento Rede Globo • Rap Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-06-6-planet-hemp-legalize-ja/song.ogg",
+    "coverUrl": "songs/lis-06-6-planet-hemp-legalize-ja/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1214,6 +1263,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 06. Um Oferecimento Rede Globo • Punk Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-06-7-titas-republica-dos-bananas/song.ogg",
+    "coverUrl": "songs/lis-06-7-titas-republica-dos-bananas/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1238,6 +1288,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 06. Um Oferecimento Rede Globo • Melodic Hardcore",
     "type": "audio-file",
     "audioUrl": "songs/lis-06-8-hateen-nao-vai-mais-ter-tristeza-aqui/song.ogg",
+    "coverUrl": "songs/lis-06-8-hateen-nao-vai-mais-ter-tristeza-aqui/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1262,6 +1313,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 06. Um Oferecimento Rede Globo • Vinheta",
     "type": "audio-file",
     "audioUrl": "songs/lis-06-e-rede-globo-vinhetas-da-globo-remastered/song.ogg",
+    "coverUrl": "songs/lis-06-e-rede-globo-vinhetas-da-globo-remastered/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1286,6 +1338,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 07. ROQUEN ROUL SEXTA FEIRAAAA • Alternative",
     "type": "audio-file",
     "audioUrl": "songs/lis-07-1-selvagens-a-procura-de-lei-tarde-livre/song.ogg",
+    "coverUrl": "songs/lis-07-1-selvagens-a-procura-de-lei-tarde-livre/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1310,6 +1363,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 07. ROQUEN ROUL SEXTA FEIRAAAA • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-07-2-angra-caveman/song.ogg",
+    "coverUrl": "songs/lis-07-2-angra-caveman/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1334,6 +1388,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 07. ROQUEN ROUL SEXTA FEIRAAAA • Pop Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-07-3-skank-vamos-fugir/song.ogg",
+    "coverUrl": "songs/lis-07-3-skank-vamos-fugir/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1358,6 +1413,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 07. ROQUEN ROUL SEXTA FEIRAAAA • Progressive Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-07-4-andragonia-secrets-in-the-mirror/song.ogg",
+    "coverUrl": "songs/lis-07-4-andragonia-secrets-in-the-mirror/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1382,6 +1438,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 07. ROQUEN ROUL SEXTA FEIRAAAA • Forró",
     "type": "audio-file",
     "audioUrl": "songs/lis-07-5-mario-zan-festa-na-roca/song.ogg",
+    "coverUrl": "songs/lis-07-5-mario-zan-festa-na-roca/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1406,6 +1463,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 07. ROQUEN ROUL SEXTA FEIRAAAA • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-07-6-terra-prima-new-dawn/song.ogg",
+    "coverUrl": "songs/lis-07-6-terra-prima-new-dawn/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1430,6 +1488,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 07. ROQUEN ROUL SEXTA FEIRAAAA • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-07-7-shaman-for-tomorrow/song.ogg",
+    "coverUrl": "songs/lis-07-7-shaman-for-tomorrow/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1454,6 +1513,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 07. ROQUEN ROUL SEXTA FEIRAAAA • Skate Punk",
     "type": "audio-file",
     "audioUrl": "songs/lis-07-8-charlie-brown-jr-lutar-pelo-que-e-meu/song.ogg",
+    "coverUrl": "songs/lis-07-8-charlie-brown-jr-lutar-pelo-que-e-meu/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1478,6 +1538,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 07. ROQUEN ROUL SEXTA FEIRAAAA • Hard Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-07-e-lion-heart-a-noite-me-chamou/song.ogg",
+    "coverUrl": "songs/lis-07-e-lion-heart-a-noite-me-chamou/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1502,6 +1563,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 08. O Fim De Uma Era • Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-08-1-detonautas-roque-clube-quando-o-sol-se-for/song.ogg",
+    "coverUrl": "songs/lis-08-1-detonautas-roque-clube-quando-o-sol-se-for/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1526,6 +1588,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 08. O Fim De Uma Era • Instrumental",
     "type": "audio-file",
     "audioUrl": "songs/lis-08-3-ozielzinho-amanhecer/song.ogg",
+    "coverUrl": "songs/lis-08-3-ozielzinho-amanhecer/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1550,6 +1613,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 08. O Fim De Uma Era • Pop Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-08-4-skank-sutilmente/song.ogg",
+    "coverUrl": "songs/lis-08-4-skank-sutilmente/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1574,6 +1638,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 08. O Fim De Uma Era • Disco Funk",
     "type": "audio-file",
     "audioUrl": "songs/lis-08-5-tim-maia-o-descobridor-dos-sete-mares/song.ogg",
+    "coverUrl": "songs/lis-08-5-tim-maia-o-descobridor-dos-sete-mares/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1598,6 +1663,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 08. O Fim De Uma Era • Forró",
     "type": "audio-file",
     "audioUrl": "songs/lis-08-6-mastruz-com-leite-fim-de-festa-polca-fogueteira-lascando-o-cano/song.ogg",
+    "coverUrl": "songs/lis-08-6-mastruz-com-leite-fim-de-festa-polca-fogueteira-lascando-o-cano/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1622,6 +1688,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 08. O Fim De Uma Era • Pop Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-08-7-restart-recomecar/song.ogg",
+    "coverUrl": "songs/lis-08-7-restart-recomecar/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1646,6 +1713,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 08. O Fim De Uma Era • Indie Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-08-e-moptop-o-rock-acabou/song.ogg",
+    "coverUrl": "songs/lis-08-e-moptop-o-rock-acabou/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1670,6 +1738,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 09. Perdido • Ednaldo Pereira",
     "type": "audio-file",
     "audioUrl": "songs/lis-09-1-ednaldo-pereira-god-is-good-matheus-richard/song.ogg",
+    "coverUrl": "songs/lis-09-1-ednaldo-pereira-god-is-good-matheus-richard/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1694,6 +1763,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 09. Perdido • Hardneja",
     "type": "audio-file",
     "audioUrl": "songs/lis-09-2-hardneja-sertacore-evidencias/song.ogg",
+    "coverUrl": "songs/lis-09-2-hardneja-sertacore-evidencias/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1718,6 +1788,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 09. Perdido • Alternative",
     "type": "audio-file",
     "audioUrl": "songs/lis-09-3-fresno-diga-parte-2/song.ogg",
+    "coverUrl": "songs/lis-09-3-fresno-diga-parte-2/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1742,6 +1813,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 09. Perdido • Indie Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-09-4-selvagens-a-procura-de-lei-despedida/song.ogg",
+    "coverUrl": "songs/lis-09-4-selvagens-a-procura-de-lei-despedida/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1766,6 +1838,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 09. Perdido • Alterative",
     "type": "audio-file",
     "audioUrl": "songs/lis-09-5-charlie-brown-jr-lugar-ao-sol/song.ogg",
+    "coverUrl": "songs/lis-09-5-charlie-brown-jr-lugar-ao-sol/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1790,6 +1863,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 09. Perdido • Hardneja",
     "type": "audio-file",
     "audioUrl": "songs/lis-09-6-hardneja-sertacore-boate-azul/song.ogg",
+    "coverUrl": "songs/lis-09-6-hardneja-sertacore-boate-azul/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1814,6 +1888,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 09. Perdido • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-09-7-angra-late-redemption-feat-milton-nascimento/song.ogg",
+    "coverUrl": "songs/lis-09-7-angra-late-redemption-feat-milton-nascimento/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1838,6 +1913,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 09. Perdido • Samba",
     "type": "audio-file",
     "audioUrl": "songs/lis-09-e-cartola-preciso-me-encontrar/song.ogg",
+    "coverUrl": "songs/lis-09-e-cartola-preciso-me-encontrar/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1862,6 +1938,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 10. Abram os oleos • Instrumental Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-10-1-kiko-loureiro-no-gravity/song.ogg",
+    "coverUrl": "songs/lis-10-1-kiko-loureiro-no-gravity/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1886,6 +1963,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 10. Abram os oleos • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-10-2-almah-king/song.ogg",
+    "coverUrl": "songs/lis-10-2-almah-king/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1910,6 +1988,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 10. Abram os oleos • Instrumental Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-10-3-wagner-nascimento-forro-de-gesso/song.ogg",
+    "coverUrl": "songs/lis-10-3-wagner-nascimento-forro-de-gesso/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1934,6 +2013,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 10. Abram os oleos • Melodic Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-10-4-ecliptyka-berco-esplendido/song.ogg",
+    "coverUrl": "songs/lis-10-4-ecliptyka-berco-esplendido/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1958,6 +2038,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 10. Abram os oleos • Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-10-5-desconhecido-10-5-angra-black-widow-s-web/song.ogg",
+    "coverUrl": "songs/lis-10-5-desconhecido-10-5-angra-black-widow-s-web/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -1982,6 +2063,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 10. Abram os oleos • Progressive Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-10-6-oficina-g3-agua-viva/song.ogg",
+    "coverUrl": "songs/lis-10-6-oficina-g3-agua-viva/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2006,6 +2088,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 10. Abram os oleos • Indie Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-10-7-ana-frango-eletrico-tem-certeza/song.ogg",
+    "coverUrl": "songs/lis-10-7-ana-frango-eletrico-tem-certeza/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2030,6 +2113,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 10. Abram os oleos • Melodic Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-10-e-ecliptyka-we-are-the-same-feat-marcelo-carvalho/song.ogg",
+    "coverUrl": "songs/lis-10-e-ecliptyka-we-are-the-same-feat-marcelo-carvalho/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2054,6 +2138,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 11. Flash Extinto Em 2020 • Metalcore",
     "type": "audio-file",
     "audioUrl": "songs/lis-11-1-project46-redeas/song.ogg",
+    "coverUrl": "songs/lis-11-1-project46-redeas/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2078,6 +2163,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 11. Flash Extinto Em 2020 • Melodic Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-11-2-ecliptyka-times-are-changed/song.ogg",
+    "coverUrl": "songs/lis-11-2-ecliptyka-times-are-changed/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2102,6 +2188,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 11. Flash Extinto Em 2020 • Hard Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-11-3-monticelli-payback/song.ogg",
+    "coverUrl": "songs/lis-11-3-monticelli-payback/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2126,6 +2213,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 11. Flash Extinto Em 2020 • Heavy Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-11-4-command6-jesus-cry/song.ogg",
+    "coverUrl": "songs/lis-11-4-command6-jesus-cry/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2150,6 +2238,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 11. Flash Extinto Em 2020 • Progressive Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-11-5-kiko-loureiro-desperado/song.ogg",
+    "coverUrl": "songs/lis-11-5-kiko-loureiro-desperado/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2174,6 +2263,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 11. Flash Extinto Em 2020 • Indie Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-11-6-o-terno-eu-tomei-coca-voce-encheu-a-cara/song.ogg",
+    "coverUrl": "songs/lis-11-6-o-terno-eu-tomei-coca-voce-encheu-a-cara/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2198,6 +2288,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 11. Flash Extinto Em 2020 • Heavy Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-11-7-argos-harvest-of-hate/song.ogg",
+    "coverUrl": "songs/lis-11-7-argos-harvest-of-hate/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2222,6 +2313,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 11. Flash Extinto Em 2020 • Heavy Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-11-e-eutenia-meu-fim-feat-caio-macbeserra/song.ogg",
+    "coverUrl": "songs/lis-11-e-eutenia-meu-fim-feat-caio-macbeserra/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2246,6 +2338,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 12. Sem iPhone,Fica de iHope • Forró / Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-12-1-ze-ramalho-sr-ozzy-part-robertinho-de-recife/song.ogg",
+    "coverUrl": "songs/lis-12-1-ze-ramalho-sr-ozzy-part-robertinho-de-recife/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2270,6 +2363,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 12. Sem iPhone,Fica de iHope • Heavydências",
     "type": "audio-file",
     "audioUrl": "songs/lis-12-2-manowel-heavydencias/song.ogg",
+    "coverUrl": "songs/lis-12-2-manowel-heavydencias/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2294,6 +2388,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 12. Sem iPhone,Fica de iHope • Progressive Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-12-3-angra-mni-silence-inside/song.ogg",
+    "coverUrl": "songs/lis-12-3-angra-mni-silence-inside/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2318,6 +2413,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 12. Sem iPhone,Fica de iHope • Comedy Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-12-4-massacration-motormetal/song.ogg",
+    "coverUrl": "songs/lis-12-4-massacration-motormetal/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2342,6 +2438,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 12. Sem iPhone,Fica de iHope • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-12-5-terra-prima-time-to-fly/song.ogg",
+    "coverUrl": "songs/lis-12-5-terra-prima-time-to-fly/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2366,6 +2463,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 12. Sem iPhone,Fica de iHope • Forro Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-12-6-wagner-nascimento-bahia-metal/song.ogg",
+    "coverUrl": "songs/lis-12-6-wagner-nascimento-bahia-metal/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2390,6 +2488,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 12. Sem iPhone,Fica de iHope • Instrumental",
     "type": "audio-file",
     "audioUrl": "songs/lis-12-7-ozielzinho-re-menor-philharmonic/song.ogg",
+    "coverUrl": "songs/lis-12-7-ozielzinho-re-menor-philharmonic/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2414,6 +2513,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 12. Sem iPhone,Fica de iHope • Progressive Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-12-e-pandora-101-i-hope/song.ogg",
+    "coverUrl": "songs/lis-12-e-pandora-101-i-hope/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2438,6 +2538,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 13. E a Vida Segue • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-13-1-shaman-brand-new-me/song.ogg",
+    "coverUrl": "songs/lis-13-1-shaman-brand-new-me/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2462,6 +2563,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 13. E a Vida Segue • Progressive Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-13-2-andragonia-the-choice/song.ogg",
+    "coverUrl": "songs/lis-13-2-andragonia-the-choice/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2486,6 +2588,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 13. E a Vida Segue • Fusion",
     "type": "audio-file",
     "audioUrl": "songs/lis-13-3-kiko-loureiro-feijao-de-corda/song.ogg",
+    "coverUrl": "songs/lis-13-3-kiko-loureiro-feijao-de-corda/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2510,6 +2613,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 13. E a Vida Segue • Instrumental Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-13-4-marcelo-barbosa-dancing-heart/song.ogg",
+    "coverUrl": "songs/lis-13-4-marcelo-barbosa-dancing-heart/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2534,6 +2638,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 13. E a Vida Segue • Christian Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-13-5-oficina-g3-depois-da-guerra-live/song.ogg",
+    "coverUrl": "songs/lis-13-5-oficina-g3-depois-da-guerra-live/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2558,6 +2663,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 13. E a Vida Segue • Instrumenal",
     "type": "audio-file",
     "audioUrl": "songs/lis-13-6-ozielzinho-vaso-quebrado/song.ogg",
+    "coverUrl": "songs/lis-13-6-ozielzinho-vaso-quebrado/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2582,6 +2688,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 13. E a Vida Segue • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-13-7-viper-at-least-a-chance/song.ogg",
+    "coverUrl": "songs/lis-13-7-viper-at-least-a-chance/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2606,6 +2713,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 13. E a Vida Segue • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-13-e-andre-matos-course-of-life/song.ogg",
+    "coverUrl": "songs/lis-13-e-andre-matos-course-of-life/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2630,6 +2738,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 14. Um momento pra ouvir Trap • Progressive Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-14-1-angra-light-of-transcendence/song.ogg",
+    "coverUrl": "songs/lis-14-1-angra-light-of-transcendence/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2654,6 +2763,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 14. Um momento pra ouvir Trap • Heavy Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-14-2-command6-armageddon/song.ogg",
+    "coverUrl": "songs/lis-14-2-command6-armageddon/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2678,6 +2788,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 14. Um momento pra ouvir Trap • Hard Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-14-3-comitiva-do-rock-dia-de-anime/song.ogg",
+    "coverUrl": "songs/lis-14-3-comitiva-do-rock-dia-de-anime/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2702,6 +2813,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 14. Um momento pra ouvir Trap • Trap",
     "type": "audio-file",
     "audioUrl": "songs/lis-14-4-maffalda-pensamento-tipico-de-esquerda-caviar/song.ogg",
+    "coverUrl": "songs/lis-14-4-maffalda-pensamento-tipico-de-esquerda-caviar/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2726,6 +2838,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 14. Um momento pra ouvir Trap • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-14-5-edu-falaschi-spread-your-fire-live/song.ogg",
+    "coverUrl": "songs/lis-14-5-edu-falaschi-spread-your-fire-live/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2750,6 +2863,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 14. Um momento pra ouvir Trap • Ednaldo Pereira",
     "type": "audio-file",
     "audioUrl": "songs/lis-14-6-ednaldo-pereira-who-is-the-sister-matheus-richard/song.ogg",
+    "coverUrl": "songs/lis-14-6-ednaldo-pereira-who-is-the-sister-matheus-richard/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2774,6 +2888,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 14. Um momento pra ouvir Trap • Progressive Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-14-7-angra-z-i-t/song.ogg",
+    "coverUrl": "songs/lis-14-7-angra-z-i-t/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2798,6 +2913,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 14. Um momento pra ouvir Trap • Funk",
     "type": "audio-file",
     "audioUrl": "songs/lis-14-e-joao-brasil-brasileirinho-funk-remix/song.ogg",
+    "coverUrl": "songs/lis-14-e-joao-brasil-brasileirinho-funk-remix/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2822,6 +2938,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 15. Eu Sou A Velocidade • Punk Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-15-1-raimundos-mulher-de-fases/song.ogg",
+    "coverUrl": "songs/lis-15-1-raimundos-mulher-de-fases/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2846,6 +2963,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 15. Eu Sou A Velocidade • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-15-3-edu-falaschi-the-glory-of-the-sacred-truth/song.ogg",
+    "coverUrl": "songs/lis-15-3-edu-falaschi-the-glory-of-the-sacred-truth/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2870,6 +2988,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 15. Eu Sou A Velocidade • Ednaldo Pereira",
     "type": "audio-file",
     "audioUrl": "songs/lis-15-4-ednaldo-pereira-mulher-oferecida-matheus-richard/song.ogg",
+    "coverUrl": "songs/lis-15-4-ednaldo-pereira-mulher-oferecida-matheus-richard/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2894,6 +3013,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 15. Eu Sou A Velocidade • Progessive Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-15-5-kiko-loureiro-gray-stone-gateway/song.ogg",
+    "coverUrl": "songs/lis-15-5-kiko-loureiro-gray-stone-gateway/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2918,6 +3038,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 15. Eu Sou A Velocidade • Christian Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-15-6-allos-spiritual-battle/song.ogg",
+    "coverUrl": "songs/lis-15-6-allos-spiritual-battle/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2942,6 +3063,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 15. Eu Sou A Velocidade • Comedy Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-15-7-detonator-metaleiro-ao-vivo/song.ogg",
+    "coverUrl": "songs/lis-15-7-detonator-metaleiro-ao-vivo/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2966,6 +3088,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 15. Eu Sou A Velocidade • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-15-e-angra-speed/song.ogg",
+    "coverUrl": "songs/lis-15-e-angra-speed/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -2990,6 +3113,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 16. As Lendas Nunca Morrem • Skate Punk",
     "type": "audio-file",
     "audioUrl": "songs/lis-16-1-charlie-brown-jr-hoje-eu-acordei-feliz-live/song.ogg",
+    "coverUrl": "songs/lis-16-1-charlie-brown-jr-hoje-eu-acordei-feliz-live/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -3014,6 +3138,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 16. As Lendas Nunca Morrem • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-16-2-almah-believer/song.ogg",
+    "coverUrl": "songs/lis-16-2-almah-believer/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -3038,6 +3163,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 16. As Lendas Nunca Morrem • Hardcore",
     "type": "audio-file",
     "audioUrl": "songs/lis-16-3-dead-fish-sem-remedio/song.ogg",
+    "coverUrl": "songs/lis-16-3-dead-fish-sem-remedio/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -3062,6 +3188,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 16. As Lendas Nunca Morrem • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-16-4-angra-salvation-suicide/song.ogg",
+    "coverUrl": "songs/lis-16-4-angra-salvation-suicide/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -3086,6 +3213,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 16. As Lendas Nunca Morrem • Folk/Hard Rock",
     "type": "audio-file",
     "audioUrl": "songs/lis-16-5-legiao-urbana-metal-contra-as-nuvens/song.ogg",
+    "coverUrl": "songs/lis-16-5-legiao-urbana-metal-contra-as-nuvens/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -3110,6 +3238,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 16. As Lendas Nunca Morrem • Power Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-16-6-angra-carolina-iv/song.ogg",
+    "coverUrl": "songs/lis-16-6-angra-carolina-iv/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -3134,6 +3263,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 16. As Lendas Nunca Morrem • Progressive Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-16-8-paulo-schroeber-the-third-wish/song.ogg",
+    "coverUrl": "songs/lis-16-8-paulo-schroeber-the-third-wish/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -3158,6 +3288,7 @@ export const LISARB2_NEW_SONGS: SongMetadata[] = [
     "style": "📻 16. As Lendas Nunca Morrem • Progressive Metal",
     "type": "audio-file",
     "audioUrl": "songs/lis-16-e-andragonia-guitar-flash/song.ogg",
+    "coverUrl": "songs/lis-16-e-andragonia-guitar-flash/cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,

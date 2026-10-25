@@ -1,5 +1,6 @@
 import { GameStats, HitJudgment, GameState, Lane, SongMetadata, Difficulty, GameSettings } from '../types';
 import { PlayerProfile, LeaderboardEntry, RecordMatchResult } from '../game/profileManager';
+import { RockCoinsManager } from '../game/economy/rockCoinsManager';
 
 export class UIManager {
   // In-Game HUD Elements
@@ -71,9 +72,10 @@ export class UIManager {
   private resultScore: HTMLElement;
   private resultAccuracy: HTMLElement;
   private resultMaxCombo: HTMLElement;
-  private resultPerfect: HTMLElement;
-  private resultGreat: HTMLElement;
-  private resultGood: HTMLElement;
+  private resultHits: HTMLElement | null = null;
+  private resultPerfect: HTMLElement | null = null;
+  private resultGreat: HTMLElement | null = null;
+  private resultGood: HTMLElement | null = null;
   private resultMiss: HTMLElement;
 
   // Game Over Elements
@@ -174,9 +176,10 @@ export class UIManager {
     this.resultScore = document.getElementById('result-score')!;
     this.resultAccuracy = document.getElementById('result-accuracy')!;
     this.resultMaxCombo = document.getElementById('result-maxcombo')!;
-    this.resultPerfect = document.getElementById('result-perfect')!;
-    this.resultGreat = document.getElementById('result-great')!;
-    this.resultGood = document.getElementById('result-good')!;
+    this.resultHits = document.getElementById('result-hits');
+    this.resultPerfect = document.getElementById('result-perfect');
+    this.resultGreat = document.getElementById('result-great');
+    this.resultGood = document.getElementById('result-good');
     this.resultMiss = document.getElementById('result-miss')!;
 
     this.gameOverScore = document.getElementById('gameover-score')!;
@@ -724,14 +727,24 @@ export class UIManager {
     this.resultScore.textContent = `${stats.score.toLocaleString('pt-BR')} PTS`;
     this.resultAccuracy.textContent = `${stats.accuracy || 0}%`;
     this.resultMaxCombo.textContent = stats.maxCombo.toString();
-    this.resultPerfect.textContent = stats.perfectCount.toString();
-    this.resultGreat.textContent = stats.greatCount.toString();
-    this.resultGood.textContent = stats.goodCount.toString();
+    const hits = stats.hitsCount ?? (stats.perfectCount + stats.greatCount + stats.goodCount);
+    if (this.resultHits) {
+      this.resultHits.textContent = hits.toString();
+    }
+    if (this.resultPerfect) {
+      this.resultPerfect.textContent = stats.perfectCount.toString();
+    }
+    if (this.resultGreat) {
+      this.resultGreat.textContent = stats.greatCount.toString();
+    }
+    if (this.resultGood) {
+      this.resultGood.textContent = stats.goodCount.toString();
+    }
     this.resultMiss.textContent = stats.missCount.toString();
 
     const coinsEl = document.getElementById('result-coins');
     if (coinsEl) {
-      const earnedCoins = (stats.stars || 1) * 25 + Math.floor((stats.score || 0) / 1000);
+      const earnedCoins = recordResult?.earnedCoins ?? RockCoinsManager.calculateReward(stats.stars || 1, stats.accuracy || 0, true);
       coinsEl.textContent = `+${earnedCoins} RockCoins`;
     }
 

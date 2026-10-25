@@ -145,23 +145,51 @@ export class GameEngine {
     return 1;
   }
 
+  getHitsCount(): number {
+    return this.perfectCount + this.greatCount + this.goodCount;
+  }
+
+  getMissCount(): number {
+    return this.missCount;
+  }
+
+  /**
+   * FASE 5 — Novo Cálculo Oficial de Precisão V12:
+   * Precisão = (Acertos / Total de notas julgáveis) × 100
+   * Onde Total de notas julgáveis = Acertos + Erros
+   *
+   * Se o jogador acertar todas as notas julgáveis, a precisão é 100%,
+   * independentemente da classificação interna (Bom, Ótimo ou Perfeito).
+   * Sem divisão por zero: músicas sem notas julgáveis retornam 0%.
+   */
   getAccuracy(): number {
+    const hits = this.getHitsCount();
+    const total = hits + this.missCount;
+    if (total === 0) return 0;
+    return Math.round((hits / total) * 100);
+  }
+
+  /**
+   * Precisão ponderada interna preservada para distribuição justa de estrelas
+   */
+  private getWeightedPrecision(): number {
     const total = this.perfectCount + this.greatCount + this.goodCount + this.missCount;
-    if (total === 0) return 100;
+    if (total === 0) return 0;
     const weighted = this.perfectCount * 1.0 + this.greatCount * 0.75 + this.goodCount * 0.5;
     return Math.round((weighted / total) * 100);
   }
 
   calculateStars(): number {
-    const acc = this.getAccuracy();
-    if (acc >= 95) return 5;
-    if (acc >= 85) return 4;
-    if (acc >= 70) return 3;
-    if (acc >= 55) return 2;
+    const weightedAcc = this.getWeightedPrecision();
+    if (weightedAcc >= 95) return 5;
+    if (weightedAcc >= 85) return 4;
+    if (weightedAcc >= 70) return 3;
+    if (weightedAcc >= 55) return 2;
     return 1;
   }
 
   getStats(): GameStats {
+    const hits = this.getHitsCount();
     return {
       score: this.score,
       combo: this.combo,
@@ -174,7 +202,9 @@ export class GameEngine {
       missCount: this.missCount,
       totalNotes: this.notes.length,
       stars: this.calculateStars(),
-      accuracy: this.getAccuracy()
+      accuracy: this.getAccuracy(),
+      hitsCount: hits,
+      playableNotesCount: hits + this.missCount
     };
   }
 

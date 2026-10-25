@@ -750,6 +750,7 @@ export const ORIGINAL_31_BRAZILIAN_CATALOG: SongMetadata[] = [
     "reviewStatus": "VERIFIED",
     "licenseStatus": "EMBED_ALLOWED",
     "chartStatus": "SMART_CHART_READY",
+    "coverUrl": "images/default-cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,
@@ -831,6 +832,7 @@ export const ORIGINAL_31_BRAZILIAN_CATALOG: SongMetadata[] = [
     "reviewStatus": "VERIFIED",
     "licenseStatus": "EMBED_ALLOWED",
     "chartStatus": "SMART_CHART_READY",
+    "coverUrl": "images/default-cover.png",
     "isAvailable": true,
     "records": {
       "EASY": null,

@@ -96,6 +96,8 @@ export interface GameStats {
   totalNotes: number;
   stars?: number;
   accuracy?: number;
+  hitsCount?: number;
+  playableNotesCount?: number;
 }
 
 export interface SongRecord {

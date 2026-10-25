@@ -645,14 +645,15 @@ class RockBrazilGame {
   }
 
   private setupInputHandlers(): void {
-    // Unlock Web Audio context on the first touch or keypress
+    // Unlock Web Audio context on user gesture (iOS Safari / WebKit audio unlocking)
     const unlockAudio = () => {
-      this.audio.init().catch(() => {});
-      window.removeEventListener('pointerdown', unlockAudio);
-      window.removeEventListener('keydown', unlockAudio);
+      this.audio.unlockAudioContext().catch(() => {});
     };
-    window.addEventListener('pointerdown', unlockAudio, { once: true });
-    window.addEventListener('keydown', unlockAudio, { once: true });
+    window.addEventListener('pointerdown', unlockAudio, { passive: true });
+    window.addEventListener('touchstart', unlockAudio, { passive: true });
+    window.addEventListener('touchend', unlockAudio, { passive: true });
+    window.addEventListener('click', unlockAudio, { passive: true });
+    window.addEventListener('keydown', unlockAudio, { passive: true });
 
     const fretBoard = document.getElementById('fret-board');
     if (!fretBoard) return;
@@ -829,6 +830,7 @@ class RockBrazilGame {
 
     // V7: Configura pistas ativas estritamente por dificuldade (3 no EASY, 4 no MEDIUM, 5 no HARD/EXPERT)
     this.renderer.setDifficulty(this.currentDifficulty);
+    this.renderer.setSongCover(song.coverUrl);
     this.ui.setDifficultyLanes(this.currentDifficulty);
 
     // Reinicializa o motor preservando 100% das notas autênticas

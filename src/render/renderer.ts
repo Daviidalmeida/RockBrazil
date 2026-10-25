@@ -21,6 +21,35 @@ interface RingEffect {
   alpha: number;
 }
 
+export interface NoteLaneColor {
+  core: string;
+  glow: string;
+  dark: string;
+  light: string;
+}
+
+export interface NoteVisualTheme {
+  laneColors: NoteLaneColor[];
+  highlightAlpha: number;
+  chromeRimAlpha: number;
+  softCenterBlend: boolean;
+  coverWatermarkAlpha: number;
+}
+
+export const NOTE_VISUAL_THEME: NoteVisualTheme = {
+  laneColors: [
+    { core: '#22c55e', glow: 'rgba(34, 197, 94, 0.45)', dark: '#14532d', light: '#86efac' }, // 0: Verde suave equilibrado
+    { core: '#f43f5e', glow: 'rgba(244, 63, 94, 0.45)', dark: '#881337', light: '#fda4af' }, // 1: Vermelho carmim suave
+    { core: '#eab308', glow: 'rgba(234, 179, 8, 0.45)',  dark: '#713f12', light: '#fde047' }, // 2: Amarelo âmbar confortável
+    { core: '#0ea5e9', glow: 'rgba(14, 165, 233, 0.45)', dark: '#075985', light: '#7dd3fc' }, // 3: Azul celeste nítido
+    { core: '#f97316', glow: 'rgba(249, 115, 22, 0.45)', dark: '#7c2d12', light: '#fdba74' }  // 4: Laranja coral confortável
+  ],
+  highlightAlpha: 0.35,
+  chromeRimAlpha: 0.65,
+  softCenterBlend: true,
+  coverWatermarkAlpha: 0.22
+};
+
 export class GameRenderer {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
@@ -34,14 +63,13 @@ export class GameRenderer {
   private difficulty: Difficulty = 'HARD';
   private activeLanesList: Lane[] = [0, 1, 2, 3, 4];
 
-  // Modern vibrant Lane Colors
-  readonly laneColors = [
-    { core: '#00ff88', glow: 'rgba(0, 255, 136, 0.75)', dark: '#006636', light: '#80ffc4' }, // 0: Verde
-    { core: '#ff2a5f', glow: 'rgba(255, 42, 95, 0.75)',  dark: '#850022', light: '#ff85a3' }, // 1: Vermelho
-    { core: '#ffe600', glow: 'rgba(255, 230, 0, 0.75)', dark: '#807300', light: '#fff480' }, // 2: Amarelo
-    { core: '#00d0ff', glow: 'rgba(0, 208, 255, 0.75)', dark: '#005473', light: '#80e8ff' }, // 3: Azul
-    { core: '#ff7b00', glow: 'rgba(255, 123, 0, 0.75)', dark: '#803e00', light: '#ffbd80' }  // 4: Laranja
-  ];
+  // Modern refined Lane Colors (centralized V12 visual comfort)
+  readonly laneColors = NOTE_VISUAL_THEME.laneColors;
+
+  // V12: Song cover watermark on highway
+  private songCoverImage: HTMLImageElement | null = null;
+  private songCoverLoaded = false;
+  private currentCoverUrl: string | null = null;
 
   // 3D Perspective parameters
   readonly horizonYRatio = 0.085;       // Vanishing point Y (converging toward upper center)
@@ -94,6 +122,47 @@ export class GameRenderer {
     } else {
       this.activeLanesList = [0, 1, 2, 3, 4];
     }
+  }
+
+  /**
+   * Preloads and attaches the active song cover watermark to the highway
+   */
+  setSongCover(url?: string): void {
+    const rawUrl = url || 'images/default-cover.png';
+    const base = import.meta.env.BASE_URL || '/';
+    let fullUrl = rawUrl;
+    if (rawUrl.startsWith('/') && !rawUrl.startsWith(base)) {
+      fullUrl = base.replace(/\/$/, '') + rawUrl;
+    } else if (!rawUrl.startsWith('http') && !rawUrl.startsWith(base)) {
+      fullUrl = base.replace(/\/$/, '') + '/' + rawUrl.replace(/^\//, '');
+    }
+
+    if (this.currentCoverUrl === fullUrl && this.songCoverLoaded) {
+      return;
+    }
+
+    this.currentCoverUrl = fullUrl;
+    this.songCoverLoaded = false;
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      if (this.currentCoverUrl === fullUrl) {
+        this.songCoverImage = img;
+        this.songCoverLoaded = true;
+      }
+    };
+    img.onerror = () => {
+      const defaultUrl = base.replace(/\/$/, '') + '/images/default-cover.png';
+      if (fullUrl !== defaultUrl) {
+        const fallbackImg = new Image();
+        fallbackImg.onload = () => {
+          this.songCoverImage = fallbackImg;
+          this.songCoverLoaded = true;
+        };
+        fallbackImg.src = defaultUrl;
+      }
+    };
+    img.src = fullUrl;
   }
 
   resize(): void {
@@ -166,7 +235,7 @@ export class GameRenderer {
           coords.y,
           Math.cos(angle) * speed,
           Math.sin(angle) * speed - 1.2,
-          i % 2 === 0 ? color.core : '#ffffff',
+          i % 2 === 0 ? color.core : color.light,
           Math.random() * 3.5 + 2.0,
           1.0,
           Math.random() * 0.035 + 0.03
@@ -202,7 +271,7 @@ export class GameRenderer {
           coords.y + (Math.random() - 0.5) * 6,
           (Math.random() - 0.5) * 2.5,
           -Math.random() * 4.5 - 2.5,
-          Math.random() > 0.4 ? color.core : '#ffffff',
+          Math.random() > 0.4 ? color.core : color.light,
           Math.random() * 3.0 + 1.5,
           0.9,
           0.06
@@ -321,6 +390,36 @@ export class GameRenderer {
     surfaceGrad.addColorStop(1, 'rgba(6, 7, 14, 0.96)');
     ctx.fillStyle = surfaceGrad;
     ctx.fill();
+
+    // 1.5. Song Cover Art Watermark (V12 subtle overlay clipped to highway geometry)
+    if (this.songCoverLoaded && this.songCoverImage) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(topLeftX, horizonY);
+      ctx.lineTo(topRightX, horizonY);
+      ctx.lineTo(bottomRightX, bottomY);
+      ctx.lineTo(bottomLeftX, bottomY);
+      ctx.closePath();
+      ctx.clip();
+
+      const highwayHeight = bottomY - horizonY;
+      const coverSize = Math.min(bottomW * 0.72, highwayHeight * 0.65);
+      const coverX = (w - coverSize) / 2;
+      const coverY = horizonY + highwayHeight * 0.16;
+
+      ctx.globalAlpha = NOTE_VISUAL_THEME.coverWatermarkAlpha;
+      ctx.drawImage(this.songCoverImage, coverX, coverY, coverSize, coverSize);
+
+      // Vignette blend over cover so it dissolves naturally into dark highway
+      const coverGrad = ctx.createLinearGradient(0, coverY, 0, coverY + coverSize);
+      coverGrad.addColorStop(0, 'rgba(8, 10, 18, 0.45)');
+      coverGrad.addColorStop(0.5, 'rgba(8, 10, 18, 0.0)');
+      coverGrad.addColorStop(1, 'rgba(8, 10, 18, 0.55)');
+      ctx.fillStyle = coverGrad;
+      ctx.fillRect(coverX, coverY, coverSize, coverSize);
+
+      ctx.restore();
+    }
 
     // 2. Center Stage Ambient Glow
     const glowGrad = ctx.createRadialGradient(
@@ -480,7 +579,7 @@ export class GameRenderer {
       if (isPressed) {
         // Active Laser Flare (Fast, high-performance radial gradient without shadowBlur)
         const pressGrad = ctx.createRadialGradient(x, y, 0, x, y, radius);
-        pressGrad.addColorStop(0, '#ffffff');
+        pressGrad.addColorStop(0, color.light);
         pressGrad.addColorStop(0.4, color.core);
         pressGrad.addColorStop(1, color.dark);
         ctx.fillStyle = pressGrad;
@@ -490,13 +589,13 @@ export class GameRenderer {
         ctx.beginPath();
         ctx.arc(x, y, radius + 2, 0, Math.PI * 2);
         ctx.strokeStyle = color.glow;
-        ctx.lineWidth = 3.5;
+        ctx.lineWidth = 3.0;
         ctx.stroke();
 
         // Core light
         ctx.beginPath();
         ctx.arc(x, y, radius * 0.35, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = color.light;
         ctx.fill();
       } else {
         // Inactive Cup: Alvo limpo e confortável sem pulsação ou flash distrativo
@@ -688,7 +787,7 @@ export class GameRenderer {
         x - rx * 0.25, y - ry * 0.35, rx * 0.08,
         x, y, rx
       );
-      gemGrad.addColorStop(0, '#ffffff');
+      gemGrad.addColorStop(0, color.light);
       gemGrad.addColorStop(0.35, color.light);
       gemGrad.addColorStop(0.7, color.core);
       gemGrad.addColorStop(1, color.dark);
@@ -697,8 +796,8 @@ export class GameRenderer {
       ctx.fill();
 
       // Chrome Rim
-      ctx.lineWidth = Math.max(1.5, 2.5 * scale);
-      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = Math.max(1.2, 2.0 * scale);
+      ctx.strokeStyle = `rgba(255, 255, 255, ${NOTE_VISUAL_THEME.chromeRimAlpha})`;
       ctx.stroke();
 
       // Top Specular Highlight Pill (Jewel Glass Reflection)
@@ -706,11 +805,11 @@ export class GameRenderer {
       ctx.ellipse(
         x - rx * 0.15,
         y - ry * 0.35,
-        rx * 0.48,
-        ry * 0.28,
+        rx * 0.45,
+        ry * 0.25,
         0, 0, Math.PI * 2
       );
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+      ctx.fillStyle = `rgba(255, 255, 255, ${NOTE_VISUAL_THEME.highlightAlpha})`;
       ctx.fill();
 
       ctx.restore();
