@@ -1,0 +1,1304 @@
+[
+  {
+    "index": 1,
+    "id": "mam-1406",
+    "title": "1406",
+    "artist": "Mamonas Assassinas",
+    "bpm": 92,
+    "duration": 253,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 324,
+        "firstTime": 0,
+        "lastTime": 236.535,
+        "chords": 0,
+        "sustains": 78
+      },
+      "MEDIUM": {
+        "count": 558,
+        "firstTime": 0,
+        "lastTime": 236.535,
+        "chords": 84,
+        "sustains": 112
+      },
+      "HARD": {
+        "count": 749,
+        "firstTime": 0,
+        "lastTime": 236.535,
+        "chords": 112,
+        "sustains": 120
+      },
+      "EXPERT": {
+        "count": 908,
+        "firstTime": 0,
+        "lastTime": 236.861,
+        "chords": 140,
+        "sustains": 112
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 2,
+    "id": "cap-sua-maneira",
+    "title": "À Sua Maneira",
+    "artist": "Capital Inicial",
+    "bpm": 110,
+    "duration": 302,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 362,
+        "firstTime": 0,
+        "lastTime": 288.766,
+        "chords": 0,
+        "sustains": 146
+      },
+      "MEDIUM": {
+        "count": 832,
+        "firstTime": 0,
+        "lastTime": 289.039,
+        "chords": 238,
+        "sustains": 383
+      },
+      "HARD": {
+        "count": 1034,
+        "firstTime": 0,
+        "lastTime": 289.039,
+        "chords": 358,
+        "sustains": 509
+      },
+      "EXPERT": {
+        "count": 1115,
+        "firstTime": 0,
+        "lastTime": 289.13,
+        "chords": 358,
+        "sustains": 523
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 3,
+    "id": "pit-chip-novo",
+    "title": "Admirável Chip Novo",
+    "artist": "Pitty",
+    "bpm": 137,
+    "duration": 197,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 316,
+        "firstTime": 0,
+        "lastTime": 183.348,
+        "chords": 4,
+        "sustains": 159
+      },
+      "MEDIUM": {
+        "count": 575,
+        "firstTime": 0,
+        "lastTime": 183.568,
+        "chords": 27,
+        "sustains": 144
+      },
+      "HARD": {
+        "count": 913,
+        "firstTime": 0,
+        "lastTime": 183.348,
+        "chords": 331,
+        "sustains": 157
+      },
+      "EXPERT": {
+        "count": 892,
+        "firstTime": 0,
+        "lastTime": 183.568,
+        "chords": 305,
+        "sustains": 153
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 4,
+    "id": "los-anna-julia",
+    "title": "Anna Júlia",
+    "artist": "Los Hermanos",
+    "bpm": 119,
+    "duration": 214,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 230,
+        "firstTime": 0,
+        "lastTime": 203.663,
+        "chords": 0,
+        "sustains": 58
+      },
+      "MEDIUM": {
+        "count": 664,
+        "firstTime": 0,
+        "lastTime": 204.068,
+        "chords": 298,
+        "sustains": 170
+      },
+      "HARD": {
+        "count": 1155,
+        "firstTime": 0,
+        "lastTime": 204.271,
+        "chords": 528,
+        "sustains": 401
+      },
+      "EXPERT": {
+        "count": 1162,
+        "firstTime": 0,
+        "lastTime": 204.271,
+        "chords": 531,
+        "sustains": 406
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 5,
+    "id": "kua-de-borest",
+    "title": "De Borest",
+    "artist": "Kuase Nada",
+    "bpm": 110,
+    "duration": 268,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 260,
+        "firstTime": 0,
+        "lastTime": 261.361,
+        "chords": 0,
+        "sustains": 45
+      },
+      "MEDIUM": {
+        "count": 578,
+        "firstTime": 0,
+        "lastTime": 261.361,
+        "chords": 162,
+        "sustains": 50
+      },
+      "HARD": {
+        "count": 755,
+        "firstTime": 0,
+        "lastTime": 261.361,
+        "chords": 200,
+        "sustains": 151
+      },
+      "EXPERT": {
+        "count": 899,
+        "firstTime": 0,
+        "lastTime": 261.361,
+        "chords": 203,
+        "sustains": 152
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 6,
+    "id": "mam-debil-metal",
+    "title": "Débil Metal",
+    "artist": "Mamonas Assassinas",
+    "bpm": 141,
+    "duration": 190,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 349,
+        "firstTime": 0,
+        "lastTime": 182.352,
+        "chords": 0,
+        "sustains": 12
+      },
+      "MEDIUM": {
+        "count": 780,
+        "firstTime": 0,
+        "lastTime": 182.352,
+        "chords": 109,
+        "sustains": 53
+      },
+      "HARD": {
+        "count": 893,
+        "firstTime": 0,
+        "lastTime": 182.352,
+        "chords": 114,
+        "sustains": 64
+      },
+      "EXPERT": {
+        "count": 936,
+        "firstTime": 0,
+        "lastTime": 182.352,
+        "chords": 114,
+        "sustains": 75
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 7,
+    "id": "mam-chopis-centis",
+    "title": "Chopis Centis",
+    "artist": "Mamonas Assassinas",
+    "bpm": 121,
+    "duration": 172,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 220,
+        "firstTime": 0,
+        "lastTime": 160.054,
+        "chords": 0,
+        "sustains": 0
+      },
+      "MEDIUM": {
+        "count": 880,
+        "firstTime": 0,
+        "lastTime": 160.301,
+        "chords": 440,
+        "sustains": 0
+      },
+      "HARD": {
+        "count": 1018,
+        "firstTime": 0,
+        "lastTime": 160.301,
+        "chords": 509,
+        "sustains": 0
+      },
+      "EXPERT": {
+        "count": 1018,
+        "firstTime": 0,
+        "lastTime": 160.301,
+        "chords": 509,
+        "sustains": 0
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 8,
+    "id": "df-destruir-tudo",
+    "title": "Destruir Tudo de Novo",
+    "artist": "Dead Fish",
+    "bpm": 196,
+    "duration": 202,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 935,
+        "firstTime": 0,
+        "lastTime": 198.632,
+        "chords": 117,
+        "sustains": 98
+      },
+      "MEDIUM": {
+        "count": 1048,
+        "firstTime": 0,
+        "lastTime": 198.632,
+        "chords": 218,
+        "sustains": 106
+      },
+      "HARD": {
+        "count": 1302,
+        "firstTime": 0,
+        "lastTime": 198.632,
+        "chords": 332,
+        "sustains": 37
+      },
+      "EXPERT": {
+        "count": 1386,
+        "firstTime": 0,
+        "lastTime": 198.632,
+        "chords": 404,
+        "sustains": 157
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 9,
+    "id": "sup-garota-berlim",
+    "title": "Garota de Berlim",
+    "artist": "Supla",
+    "bpm": 192,
+    "duration": 200,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 239,
+        "firstTime": 0,
+        "lastTime": 195.655,
+        "chords": 0,
+        "sustains": 44
+      },
+      "MEDIUM": {
+        "count": 590,
+        "firstTime": 0,
+        "lastTime": 195.655,
+        "chords": 132,
+        "sustains": 86
+      },
+      "HARD": {
+        "count": 1026,
+        "firstTime": 0,
+        "lastTime": 195.655,
+        "chords": 187,
+        "sustains": 226
+      },
+      "EXPERT": {
+        "count": 1099,
+        "firstTime": 0,
+        "lastTime": 195.655,
+        "chords": 213,
+        "sustains": 254
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 10,
+    "id": "cbjr-hoje-acordei",
+    "title": "Hoje Eu Acordei Feliz",
+    "artist": "Charlie Brown Jr.",
+    "bpm": 130,
+    "duration": 154,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 107,
+        "firstTime": 0,
+        "lastTime": 148.897,
+        "chords": 0,
+        "sustains": 4
+      },
+      "MEDIUM": {
+        "count": 385,
+        "firstTime": 0,
+        "lastTime": 148.897,
+        "chords": 127,
+        "sustains": 8
+      },
+      "HARD": {
+        "count": 774,
+        "firstTime": 0,
+        "lastTime": 148.897,
+        "chords": 227,
+        "sustains": 74
+      },
+      "EXPERT": {
+        "count": 1292,
+        "firstTime": 0,
+        "lastTime": 148.897,
+        "chords": 365,
+        "sustains": 74
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 11,
+    "id": "cpm-irreversivel",
+    "title": "Irreversível",
+    "artist": "CPM 22",
+    "bpm": 187,
+    "duration": 234,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 734,
+        "firstTime": 0,
+        "lastTime": 222.388,
+        "chords": 3,
+        "sustains": 179
+      },
+      "MEDIUM": {
+        "count": 1146,
+        "firstTime": 0,
+        "lastTime": 222.388,
+        "chords": 143,
+        "sustains": 189
+      },
+      "HARD": {
+        "count": 1863,
+        "firstTime": 0,
+        "lastTime": 222.388,
+        "chords": 764,
+        "sustains": 181
+      },
+      "EXPERT": {
+        "count": 1851,
+        "firstTime": 0,
+        "lastTime": 222.388,
+        "chords": 749,
+        "sustains": 201
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 12,
+    "id": "mam-jumento-celestino",
+    "title": "Jumento Celestino",
+    "artist": "Mamonas Assassinas",
+    "bpm": 190,
+    "duration": 158,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 254,
+        "firstTime": 0,
+        "lastTime": 141.091,
+        "chords": 0,
+        "sustains": 48
+      },
+      "MEDIUM": {
+        "count": 501,
+        "firstTime": 0,
+        "lastTime": 141.291,
+        "chords": 56,
+        "sustains": 97
+      },
+      "HARD": {
+        "count": 762,
+        "firstTime": 0,
+        "lastTime": 141.291,
+        "chords": 60,
+        "sustains": 101
+      },
+      "EXPERT": {
+        "count": 768,
+        "firstTime": 0,
+        "lastTime": 141.291,
+        "chords": 60,
+        "sustains": 101
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 13,
+    "id": "lan-lata-velha",
+    "title": "Lata Velha",
+    "artist": "Landau",
+    "bpm": 181,
+    "duration": 113,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 213,
+        "firstTime": 0,
+        "lastTime": 106.493,
+        "chords": 4,
+        "sustains": 97
+      },
+      "MEDIUM": {
+        "count": 380,
+        "firstTime": 0,
+        "lastTime": 106.493,
+        "chords": 74,
+        "sustains": 168
+      },
+      "HARD": {
+        "count": 436,
+        "firstTime": 0,
+        "lastTime": 106.493,
+        "chords": 71,
+        "sustains": 160
+      },
+      "EXPERT": {
+        "count": 454,
+        "firstTime": 0,
+        "lastTime": 106.493,
+        "chords": 80,
+        "sustains": 142
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 14,
+    "id": "cbjr-nao-e-serio",
+    "title": "Não É Sério",
+    "artist": "Charlie Brown Jr.",
+    "bpm": 120,
+    "duration": 295,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 338,
+        "firstTime": 0,
+        "lastTime": 281.025,
+        "chords": 0,
+        "sustains": 64
+      },
+      "MEDIUM": {
+        "count": 626,
+        "firstTime": 0,
+        "lastTime": 281.025,
+        "chords": 232,
+        "sustains": 67
+      },
+      "HARD": {
+        "count": 692,
+        "firstTime": 0,
+        "lastTime": 281.025,
+        "chords": 244,
+        "sustains": 72
+      },
+      "EXPERT": {
+        "count": 697,
+        "firstTime": 0,
+        "lastTime": 281.025,
+        "chords": 244,
+        "sustains": 72
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 15,
+    "id": "eng-era-um-garoto",
+    "title": "Era Um Garoto Que Como Eu Amava os Beatles e os Rolling Stones",
+    "artist": "Engenheiros do Hawaii",
+    "bpm": 75,
+    "duration": 268,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 386,
+        "firstTime": 0,
+        "lastTime": 263.05,
+        "chords": 0,
+        "sustains": 119
+      },
+      "MEDIUM": {
+        "count": 624,
+        "firstTime": 0,
+        "lastTime": 263.05,
+        "chords": 65,
+        "sustains": 176
+      },
+      "HARD": {
+        "count": 1004,
+        "firstTime": 0,
+        "lastTime": 263.05,
+        "chords": 224,
+        "sustains": 223
+      },
+      "EXPERT": {
+        "count": 1182,
+        "firstTime": 0,
+        "lastTime": 263.05,
+        "chords": 320,
+        "sustains": 249
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 16,
+    "id": "cbjr-champagne",
+    "title": "Champagne e Água Benta",
+    "artist": "Charlie Brown Jr.",
+    "bpm": 115,
+    "duration": 155,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 219,
+        "firstTime": 0,
+        "lastTime": 148.088,
+        "chords": 0,
+        "sustains": 84
+      },
+      "MEDIUM": {
+        "count": 548,
+        "firstTime": 0,
+        "lastTime": 148.088,
+        "chords": 134,
+        "sustains": 214
+      },
+      "HARD": {
+        "count": 824,
+        "firstTime": 0,
+        "lastTime": 148.088,
+        "chords": 159,
+        "sustains": 256
+      },
+      "EXPERT": {
+        "count": 824,
+        "firstTime": 0,
+        "lastTime": 148.088,
+        "chords": 159,
+        "sustains": 256
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 17,
+    "id": "pit-equalize",
+    "title": "Equalize",
+    "artist": "Pitty",
+    "bpm": 105,
+    "duration": 234,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 449,
+        "firstTime": 0,
+        "lastTime": 222.67,
+        "chords": 114,
+        "sustains": 168
+      },
+      "MEDIUM": {
+        "count": 686,
+        "firstTime": 0,
+        "lastTime": 222.67,
+        "chords": 241,
+        "sustains": 187
+      },
+      "HARD": {
+        "count": 841,
+        "firstTime": 0,
+        "lastTime": 222.67,
+        "chords": 287,
+        "sustains": 186
+      },
+      "EXPERT": {
+        "count": 1117,
+        "firstTime": 0,
+        "lastTime": 222.67,
+        "chords": 519,
+        "sustains": 250
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 18,
+    "id": "tih-tropa-elite",
+    "title": "Tropa de Elite",
+    "artist": "Tihuana",
+    "bpm": 144,
+    "duration": 198,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 404,
+        "firstTime": 0,
+        "lastTime": 185.557,
+        "chords": 0,
+        "sustains": 41
+      },
+      "MEDIUM": {
+        "count": 1064,
+        "firstTime": 0,
+        "lastTime": 185.557,
+        "chords": 367,
+        "sustains": 151
+      },
+      "HARD": {
+        "count": 1083,
+        "firstTime": 0,
+        "lastTime": 185.557,
+        "chords": 367,
+        "sustains": 152
+      },
+      "EXPERT": {
+        "count": 1083,
+        "firstTime": 0,
+        "lastTime": 185.557,
+        "chords": 367,
+        "sustains": 152
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 19,
+    "id": "mam-sabao-cra-cra",
+    "title": "Sabão Crá-Crá",
+    "artist": "Mamonas Assassinas",
+    "bpm": 95,
+    "duration": 44,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 59,
+        "firstTime": 0,
+        "lastTime": 35.825,
+        "chords": 0,
+        "sustains": 2
+      },
+      "MEDIUM": {
+        "count": 155,
+        "firstTime": 0,
+        "lastTime": 35.825,
+        "chords": 39,
+        "sustains": 3
+      },
+      "HARD": {
+        "count": 156,
+        "firstTime": 0,
+        "lastTime": 35.825,
+        "chords": 40,
+        "sustains": 4
+      },
+      "EXPERT": {
+        "count": 156,
+        "firstTime": 0,
+        "lastTime": 35.825,
+        "chords": 40,
+        "sustains": 4
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 20,
+    "id": "cbjr-so-por-uma-noite",
+    "title": "Só por uma Noite",
+    "artist": "Charlie Brown Jr.",
+    "bpm": 94,
+    "duration": 205,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 177,
+        "firstTime": 0,
+        "lastTime": 193.721,
+        "chords": 0,
+        "sustains": 27
+      },
+      "MEDIUM": {
+        "count": 492,
+        "firstTime": 0,
+        "lastTime": 194.271,
+        "chords": 186,
+        "sustains": 126
+      },
+      "HARD": {
+        "count": 849,
+        "firstTime": 0,
+        "lastTime": 194.547,
+        "chords": 312,
+        "sustains": 205
+      },
+      "EXPERT": {
+        "count": 1118,
+        "firstTime": 0,
+        "lastTime": 194.547,
+        "chords": 415,
+        "sustains": 243
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 21,
+    "id": "mat-ela-roubou-caminhao",
+    "title": "Ela Roubou Meu Caminhão",
+    "artist": "Matanza",
+    "bpm": 150,
+    "duration": 228,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 242,
+        "firstTime": 0,
+        "lastTime": 218.453,
+        "chords": 0,
+        "sustains": 16
+      },
+      "MEDIUM": {
+        "count": 797,
+        "firstTime": 0,
+        "lastTime": 218.453,
+        "chords": 312,
+        "sustains": 30
+      },
+      "HARD": {
+        "count": 1356,
+        "firstTime": 0,
+        "lastTime": 218.453,
+        "chords": 500,
+        "sustains": 228
+      },
+      "EXPERT": {
+        "count": 1535,
+        "firstTime": 0,
+        "lastTime": 218.453,
+        "chords": 559,
+        "sustains": 226
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 22,
+    "id": "mas-evil-papagali",
+    "title": "Evil Papagali",
+    "artist": "Massacration",
+    "bpm": 148,
+    "duration": 295,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 432,
+        "firstTime": 0,
+        "lastTime": 272.333,
+        "chords": 0,
+        "sustains": 11
+      },
+      "MEDIUM": {
+        "count": 838,
+        "firstTime": 0,
+        "lastTime": 272.333,
+        "chords": 99,
+        "sustains": 22
+      },
+      "HARD": {
+        "count": 1843,
+        "firstTime": 0,
+        "lastTime": 272.475,
+        "chords": 376,
+        "sustains": 433
+      },
+      "EXPERT": {
+        "count": 2010,
+        "firstTime": 0,
+        "lastTime": 272.475,
+        "chords": 376,
+        "sustains": 433
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 23,
+    "id": "det-nao-reclame-mais",
+    "title": "Não Reclame Mais",
+    "artist": "Detonautas",
+    "bpm": 125,
+    "duration": 246,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 393,
+        "firstTime": 0,
+        "lastTime": 230.779,
+        "chords": 0,
+        "sustains": 31
+      },
+      "MEDIUM": {
+        "count": 1197,
+        "firstTime": 0,
+        "lastTime": 230.779,
+        "chords": 462,
+        "sustains": 81
+      },
+      "HARD": {
+        "count": 1241,
+        "firstTime": 0,
+        "lastTime": 230.779,
+        "chords": 462,
+        "sustains": 84
+      },
+      "EXPERT": {
+        "count": 1249,
+        "firstTime": 0,
+        "lastTime": 230.779,
+        "chords": 462,
+        "sustains": 85
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 24,
+    "id": "cbjr-papo-reto",
+    "title": "Papo Reto",
+    "artist": "Charlie Brown Jr.",
+    "bpm": 101,
+    "duration": 209,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 144,
+        "firstTime": 0,
+        "lastTime": 197.32,
+        "chords": 0,
+        "sustains": 3
+      },
+      "MEDIUM": {
+        "count": 411,
+        "firstTime": 0,
+        "lastTime": 197.32,
+        "chords": 131,
+        "sustains": 4
+      },
+      "HARD": {
+        "count": 856,
+        "firstTime": 0,
+        "lastTime": 197.32,
+        "chords": 268,
+        "sustains": 118
+      },
+      "EXPERT": {
+        "count": 1574,
+        "firstTime": 0,
+        "lastTime": 197.32,
+        "chords": 466,
+        "sustains": 129
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 25,
+    "id": "mam-mundo-animal",
+    "title": "Mundo Animal",
+    "artist": "Mamonas Assassinas",
+    "bpm": 120,
+    "duration": 256,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "MEDIUM",
+    "difficulties": {
+      "EASY": {
+        "count": 212,
+        "firstTime": 0.424,
+        "lastTime": 221.346,
+        "chords": 0,
+        "sustains": 6
+      },
+      "MEDIUM": {
+        "count": 759,
+        "firstTime": 0,
+        "lastTime": 221.346,
+        "chords": 312,
+        "sustains": 61
+      },
+      "HARD": {
+        "count": 1222,
+        "firstTime": 0,
+        "lastTime": 221.346,
+        "chords": 453,
+        "sustains": 103
+      },
+      "EXPERT": {
+        "count": 2002,
+        "firstTime": 0,
+        "lastTime": 221.346,
+        "chords": 1036,
+        "sustains": 103
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 26,
+    "id": "mas-metal-is-the-law",
+    "title": "Metal Is The Law",
+    "artist": "Massacration",
+    "bpm": 155,
+    "duration": 231,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 288,
+        "firstTime": 0,
+        "lastTime": 224.269,
+        "chords": 0,
+        "sustains": 35
+      },
+      "MEDIUM": {
+        "count": 911,
+        "firstTime": 0,
+        "lastTime": 224.269,
+        "chords": 363,
+        "sustains": 68
+      },
+      "HARD": {
+        "count": 1503,
+        "firstTime": 0,
+        "lastTime": 224.269,
+        "chords": 496,
+        "sustains": 202
+      },
+      "EXPERT": {
+        "count": 2229,
+        "firstTime": 0,
+        "lastTime": 224.269,
+        "chords": 608,
+        "sustains": 202
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 27,
+    "id": "mas-metal-milkshake",
+    "title": "Metal Milkshake",
+    "artist": "Massacration",
+    "bpm": 150,
+    "duration": 170,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EXPERT",
+    "difficulties": {
+      "EASY": {
+        "count": 298,
+        "firstTime": 0.194,
+        "lastTime": 162.437,
+        "chords": 0,
+        "sustains": 46
+      },
+      "MEDIUM": {
+        "count": 783,
+        "firstTime": 0.194,
+        "lastTime": 162.619,
+        "chords": 257,
+        "sustains": 151
+      },
+      "HARD": {
+        "count": 943,
+        "firstTime": 0.194,
+        "lastTime": 162.619,
+        "chords": 288,
+        "sustains": 151
+      },
+      "EXPERT": {
+        "count": 1111,
+        "firstTime": 0,
+        "lastTime": 162.71,
+        "chords": 336,
+        "sustains": 151
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 28,
+    "id": "cue-quem-matou-bozo",
+    "title": "Quem Matou o Bozo",
+    "artist": "Cueio Limão",
+    "bpm": 175,
+    "duration": 135,
+    "hasCompactSource": false,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 230,
+        "firstTime": 0,
+        "lastTime": 132.343,
+        "chords": 0,
+        "sustains": 37
+      },
+      "MEDIUM": {
+        "count": 416,
+        "firstTime": 0,
+        "lastTime": 132.343,
+        "chords": 65,
+        "sustains": 150
+      },
+      "HARD": {
+        "count": 703,
+        "firstTime": 0,
+        "lastTime": 132.943,
+        "chords": 36,
+        "sustains": 108
+      },
+      "EXPERT": {
+        "count": 758,
+        "firstTime": 0,
+        "lastTime": 132.8,
+        "chords": 54,
+        "sustains": 127
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 29,
+    "id": "har-dormi-na-praca",
+    "title": "Dormi na Praça",
+    "artist": "Hardneja Sertacore",
+    "bpm": 205,
+    "duration": 140,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 169,
+        "firstTime": 0,
+        "lastTime": 132.768,
+        "chords": 0,
+        "sustains": 17
+      },
+      "MEDIUM": {
+        "count": 547,
+        "firstTime": 0,
+        "lastTime": 132.768,
+        "chords": 213,
+        "sustains": 23
+      },
+      "HARD": {
+        "count": 836,
+        "firstTime": 0,
+        "lastTime": 132.768,
+        "chords": 309,
+        "sustains": 268
+      },
+      "EXPERT": {
+        "count": 952,
+        "firstTime": 0,
+        "lastTime": 132.768,
+        "chords": 391,
+        "sustains": 276
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 30,
+    "id": "pit-mascara",
+    "title": "Máscara",
+    "artist": "Pitty",
+    "bpm": 100,
+    "duration": 294,
+    "hasCompactSource": true,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 131,
+        "firstTime": 0,
+        "lastTime": 285.013,
+        "chords": 0,
+        "sustains": 12
+      },
+      "MEDIUM": {
+        "count": 546,
+        "firstTime": 0,
+        "lastTime": 285.013,
+        "chords": 242,
+        "sustains": 22
+      },
+      "HARD": {
+        "count": 1054,
+        "firstTime": 0,
+        "lastTime": 285.31,
+        "chords": 462,
+        "sustains": 698
+      },
+      "EXPERT": {
+        "count": 1561,
+        "firstTime": 0,
+        "lastTime": 285.31,
+        "chords": 688,
+        "sustains": 698
+      }
+    },
+    "suggestedShiftSec": 0
+  },
+  {
+    "index": 31,
+    "id": "cue-minha-juventude",
+    "title": "Minha Juventude",
+    "artist": "Cueio Limão",
+    "bpm": 170,
+    "duration": 145,
+    "hasCompactSource": false,
+    "earliestNoteTimeSec": 0,
+    "earliestDiff": "EASY",
+    "difficulties": {
+      "EASY": {
+        "count": 241,
+        "firstTime": 0,
+        "lastTime": 142.941,
+        "chords": 0,
+        "sustains": 40
+      },
+      "MEDIUM": {
+        "count": 435,
+        "firstTime": 0,
+        "lastTime": 142.588,
+        "chords": 66,
+        "sustains": 156
+      },
+      "HARD": {
+        "count": 724,
+        "firstTime": 0,
+        "lastTime": 142.853,
+        "chords": 38,
+        "sustains": 117
+      },
+      "EXPERT": {
+        "count": 808,
+        "firstTime": 0,
+        "lastTime": 142.853,
+        "chords": 64,
+        "sustains": 136
+      }
+    },
+    "suggestedShiftSec": 0
+  }
+]

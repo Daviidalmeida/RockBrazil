@@ -156,7 +156,7 @@ describe('ROCKBRAZIL V5.4 — SUÍTE COMPLETA DE REGRESSÃO E CONFORMIDADE', () 
       charts.EASY.forEach((n) => {
         expect(n.lane).toBeGreaterThanOrEqual(0);
         expect(n.lane).toBeLessThanOrEqual(2);
-        expect(n.time).toBeGreaterThan(0);
+        expect(n.time).toBeGreaterThanOrEqual(0);
       });
 
       // MEDIUM deve utilizar apenas pistas 0, 1, 2, 3

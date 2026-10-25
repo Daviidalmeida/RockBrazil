@@ -424,18 +424,6 @@ class RockBrazilGame {
       }
     };
 
-    this.ui.onCalibrationOffsetChange = (deltaMs: number, reset?: boolean) => {
-      if (!this.currentSong) return;
-      if (reset) {
-        CalibrationManager.resetOffsetMs(this.currentSong.id);
-      } else {
-        CalibrationManager.adjustOffsetMs(this.currentSong.id, deltaMs, this.currentSong.youtubeVideoId);
-      }
-      const updated = CalibrationManager.getSongOffsetMs(this.currentSong.id);
-      this.masterClock.setSongOffsetSec(updated / 1000);
-      this.ui.setPauseCalibrationOffset(updated);
-    };
-
     this.ui.onUnblockAudioClicked = () => {
       if (this.currentSong?.type === 'youtube' && this.currentSong?.youtubeVideoId) {
         SyncDiagnostics.get().recordPlayVideoCommand(this.currentSong.youtubeVideoId || '');
@@ -772,9 +760,11 @@ class RockBrazilGame {
     } else {
       this.masterClock.setSource(this.audio);
     }
+    // V8 Single Source of Truth: GameEngine applies settings.audioOffsetMs.
+    // Master clock sets song calibration offset (0ms for normalized charts), avoiding double offset.
     this.masterClock.setOffsets(
       CalibrationManager.getSongOffsetMs(song.id),
-      this.settingsManager.getSettings().audioOffsetMs || 0
+      0
     );
 
     // Obtém notas autênticas do chart com garantia estrita de pistas por dificuldade
@@ -975,9 +965,6 @@ class RockBrazilGame {
     this.masterClock.pause();
     this.audio.pause();
     this.ytPlayer.pause();
-    if (this.currentSong) {
-      this.ui.setPauseCalibrationOffset(CalibrationManager.getSongOffsetMs(this.currentSong.id));
-    }
     this.ui.showScreen(GameState.PAUSED);
   }
 

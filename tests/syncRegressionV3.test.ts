@@ -206,9 +206,9 @@ describe('ROCKBRAZIL BETA — VERIFICAÇÃO ESTRUTURAL DAS 31 MÚSICAS (SEÇÃO 
           expect(notes[i].time).toBeGreaterThanOrEqual(notes[i - 1].time);
         }
 
-        // Primeira nota possui timestamp válido (positivo)
+        // Primeira nota possui timestamp válido (positivo ou zero no início normalizado)
         const firstNote = notes[0];
-        expect(firstNote.time).toBeGreaterThan(0);
+        expect(firstNote.time).toBeGreaterThanOrEqual(0);
         expect(firstNote.time).toBeLessThan(song.duration);
 
         // Última nota antes do fim da música

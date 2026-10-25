@@ -62,8 +62,8 @@ export class SmartChartEngine {
         ? [0, 1, 2, 3]
         : [0, 1, 2, 3, 4];
 
-    // 1 bar lead-in for player setup
-    const startTime = Math.max(1.5, barInterval);
+    // V8: Notes begin immediately at track start (t=0) with smooth visual pre-roll
+    const startTime = 0.0;
     const endTime = Math.max(startTime + 10, durationSec - 2.0);
 
     let currentTime = startTime;

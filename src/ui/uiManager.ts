@@ -356,23 +356,6 @@ export class UIManager {
       this.onOpenSongSelectClicked?.();
     });
 
-    // Assisted live song calibration in pause menu
-    document.getElementById('btn-pause-offset-minus50')?.addEventListener('click', () => {
-      this.onCalibrationOffsetChange?.(-50);
-    });
-    document.getElementById('btn-pause-offset-minus10')?.addEventListener('click', () => {
-      this.onCalibrationOffsetChange?.(-10);
-    });
-    document.getElementById('btn-pause-offset-plus10')?.addEventListener('click', () => {
-      this.onCalibrationOffsetChange?.(10);
-    });
-    document.getElementById('btn-pause-offset-plus50')?.addEventListener('click', () => {
-      this.onCalibrationOffsetChange?.(50);
-    });
-    document.getElementById('btn-pause-offset-reset')?.addEventListener('click', () => {
-      this.onCalibrationOffsetChange?.(0, true);
-    });
-
     // Autoplay unblock button
     document.getElementById('btn-unblock-audio')?.addEventListener('click', () => {
       this.showAutoplayUnblockPrompt(false);

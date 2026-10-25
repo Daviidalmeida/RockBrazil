@@ -118,7 +118,7 @@ describe('ROCKBRAZIL BETA — Kuase Nada: De Borest & Chart Audit', () => {
     expect(progress).toBe(1.0);
   });
 
-  it('10. Compensação interna verificada para o offset de gravação de De Borest (+135ms)', () => {
-    expect(CalibrationManager.getSongOffsetMs('kua-de-borest')).toBe(135);
+  it('10. Compensação interna verificada para o offset de gravação de De Borest (0ms no V8 - chart normalizado)', () => {
+    expect(CalibrationManager.getSongOffsetMs('kua-de-borest')).toBe(0);
   });
 });

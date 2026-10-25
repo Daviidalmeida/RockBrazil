@@ -54,24 +54,72 @@ export class BeatmapManager {
   }
 
   /**
-   * V7 Strict Difficulty Enforcement:
+   * V8 Strict Difficulty Enforcement & Collision-Free Chord Remapping:
    * - EASY: strictly 3 lanes [0, 1, 2] (Verde, Vermelho, Amarelo)
    * - MEDIUM: strictly 4 lanes [0, 1, 2, 3] (Verde, Vermelho, Amarelo, Azul)
    * - HARD/EXPERT: 5 lanes [0, 1, 2, 3, 4]
-   * Preserves 100% of authentic notes and rhythm.
+   *
+   * Eliminates chord collisions caused by naive lane % 3:
+   * Never maps two notes to the same lane at the same timestamp!
    */
   private sanitizeDifficultyNotes(notes: Note[], difficulty: Difficulty): Note[] {
     const maxAllowedLane = difficulty === 'EASY' ? 2 : difficulty === 'MEDIUM' ? 3 : 4;
-    return notes.map((n) => {
-      let lane = n.lane;
-      if (lane > maxAllowedLane) {
-        lane = (difficulty === 'EASY' ? (lane % 3) : 3) as Lane;
+    if (difficulty === 'HARD' || difficulty === 'EXPERT') {
+      return notes.map((n) => ({ ...n }));
+    }
+
+    // Group notes by timestamp
+    const timeGroups = new Map<number, Note[]>();
+    for (const note of notes) {
+      const list = timeGroups.get(note.time);
+      if (list) {
+        list.push(note);
+      } else {
+        timeGroups.set(note.time, [note]);
       }
-      return {
-        ...n,
-        lane
-      };
-    });
+    }
+
+    const sanitized: Note[] = [];
+    for (const [, group] of timeGroups) {
+      const occupied = new Set<Lane>();
+      const kept: Note[] = [];
+      const overflow: Note[] = [];
+
+      // 1. Keep notes that are already within allowed lanes
+      for (const n of group) {
+        if (n.lane <= maxAllowedLane && !occupied.has(n.lane)) {
+          occupied.add(n.lane);
+          kept.push(n);
+        } else {
+          overflow.push(n);
+        }
+      }
+
+      // 2. Remap overflow notes to available free lanes without collisions
+      for (const n of overflow) {
+        let freeLane: Lane | null = null;
+        for (let l = maxAllowedLane; l >= 0; l--) {
+          if (!occupied.has(l as Lane)) {
+            freeLane = l as Lane;
+            break;
+          }
+        }
+        if (freeLane !== null) {
+          occupied.add(freeLane);
+          kept.push({
+            ...n,
+            lane: freeLane
+          });
+        }
+        // If all allowed lanes are occupied at this instant, redundant duplicate is omitted
+      }
+
+      kept.sort((a, b) => a.lane - b.lane);
+      sanitized.push(...kept);
+    }
+
+    sanitized.sort((a, b) => a.time - b.time || a.lane - b.lane);
+    return sanitized;
   }
 
   /**

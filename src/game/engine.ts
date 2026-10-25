@@ -181,7 +181,8 @@ export class GameEngine {
       }
       if (note.lane === lane && !note.hit && !note.missed) {
         const diff = Math.abs(currentTime - note.time);
-        if (diff <= windows.good && diff < minDiff) {
+        const isEarlyStartup = note.time <= 0.35 && currentTime <= 0.35;
+        if ((diff <= windows.good || isEarlyStartup) && diff < minDiff) {
           minDiff = diff;
           candidate = note;
         }
@@ -285,7 +286,11 @@ export class GameEngine {
       if (note.time > currentTime + windows.good) {
         break;
       }
-      if (!note.hit && !note.missed && currentTime > note.time + windows.good) {
+      // V8 Startup Grace: early notes (time <= 0.35s) cannot be missed before 0.40s,
+      // giving the player reaction time after playback starts without an auto-miss from startup latency
+      const missThreshold = note.time <= 0.35 ? Math.max(note.time + windows.good, 0.40) : note.time + windows.good;
+
+      if (!note.hit && !note.missed && currentTime > missThreshold) {
         note.missed = true;
         note.judgment = 'MISS';
         this.combo = 0;

@@ -1,15 +1,12 @@
 import { SongCalibration } from '../../types';
 
 export class CalibrationManager {
-  private static readonly STORAGE_KEY = 'rockbrazil_calibration_v1';
+  private static readonly STORAGE_KEY = 'rockbrazil_calibration_v2';
   private static cache: Record<string, SongCalibration> | null = null;
 
-  // Offsets verificados de estúdio entre a gravação do YouTube e o chart original
-  private static readonly VERIFIED_DEFAULTS: Record<string, number> = {
-    // Kuase Nada - De Borest: o vídeo no YouTube (CveouQkdSCs) possui ~135ms a menos de silêncio inicial
-    // Adiantar o tempo do chart em +135ms alinha o primeiro acorde aos 6.43s do vídeo.
-    'kua-de-borest': 135
-  };
+  // V8: All 31 charts are physically normalized at the source.
+  // No recording-specific hardcoded offsets to prevent double application.
+  private static readonly VERIFIED_DEFAULTS: Record<string, number> = {};
 
   private static load(): Record<string, SongCalibration> {
     if (this.cache !== null) return this.cache;
@@ -17,6 +14,8 @@ export class CalibrationManager {
     this.cache = {};
     try {
       if (typeof window !== 'undefined' && window.localStorage) {
+        // Clean legacy v1 storage if present to avoid old test offsets
+        window.localStorage.removeItem('rockbrazil_calibration_v1');
         const raw = window.localStorage.getItem(this.STORAGE_KEY);
         if (raw) {
           this.cache = JSON.parse(raw);
