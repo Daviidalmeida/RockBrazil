@@ -736,8 +736,34 @@ export class UIManager {
       this.currentSelectedSong = filtered[0] || null;
     }
 
+    let lastSection = '';
     this.songsListContainer.innerHTML = filtered.map((song, index) => {
       const isSelected = this.currentSelectedSong?.id === song.id;
+
+      let sectionHeaderHtml = '';
+      let currentSection = '';
+
+      if (index < 31) {
+        if (index === 0) {
+          currentSection = '🎸 Catálogo Oficial RockBrazil';
+        } else if (song.group === 'bonus') {
+          currentSection = '🎁 Bônus • Faixas Especiais';
+        } else if (song.group && typeof song.group === 'number') {
+          currentSection = `🎸 Grupo ${song.group}`;
+        }
+      } else {
+        if (song.style) {
+          const match = song.style.match(/📻\s*([^•]+)/);
+          currentSection = match ? `📁 ${match[1].trim()}` : '📁 Coleção Lisarb2';
+        } else {
+          currentSection = '📁 Coleção Lisarb2';
+        }
+      }
+
+      if (currentSection && currentSection !== lastSection) {
+        lastSection = currentSection;
+        sectionHeaderHtml = `<div class="notebook-section-header">${currentSection}</div>`;
+      }
 
       // Extract highest personal record across difficulties for library view
       let bestStars = 0;
@@ -804,14 +830,22 @@ export class UIManager {
         `;
       }
 
+      const coverHtml = song.coverUrl
+        ? `<img src="${song.coverUrl}" class="row-album-cover" alt="${song.title}" loading="lazy" />`
+        : '';
+
       return `
+        ${sectionHeaderHtml}
         <div class="notebook-song-row ${isSelected ? 'selected' : ''}" data-song-id="${song.id}">
           <span class="row-arrow">➡</span>
-          <div class="row-song-info">
-            <span class="row-song-title">${index + 1}. ${song.title}</span>
-            <span class="row-song-artist">${song.artist}</span>
-            ${fileNoticeHtml}
-            ${detailsDrawerHtml}
+          <div class="row-song-content">
+            ${coverHtml}
+            <div class="row-song-info">
+              <span class="row-song-title">${index + 1}. ${song.title}</span>
+              <span class="row-song-artist">${song.artist}</span>
+              ${fileNoticeHtml}
+              ${detailsDrawerHtml}
+            </div>
           </div>
           <div class="row-song-stats">
             <div class="row-stars">${starsHtml}</div>

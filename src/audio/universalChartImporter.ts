@@ -2,6 +2,7 @@ import JSZip from 'jszip';
 import { Note, Lane, Difficulty, BeatmapByDifficulty, getLanesForDifficulty } from '../types';
 import { MidiChartParser } from './midiChartParser';
 import { REAL_COMMUNITY_CHARTS } from '../game/catalog/realChartsRegistry';
+import { LISARB2_COMMUNITY_CHARTS } from '../game/catalog/lisarb2ChartsRegistry';
 
 export type InstrumentTrackType =
   | 'guitar'
@@ -722,10 +723,18 @@ export class UniversalChartImporter {
   }
 
   public static getConvertedChart(songId: string): BeatmapByDifficulty | undefined {
-    return REAL_COMMUNITY_CHARTS[songId] || this.CONVERTED_REGISTRY.get(songId);
+    return (
+      REAL_COMMUNITY_CHARTS[songId] ||
+      LISARB2_COMMUNITY_CHARTS[songId] ||
+      this.CONVERTED_REGISTRY.get(songId)
+    );
   }
 
   public static hasConvertedChart(songId: string): boolean {
-    return !!REAL_COMMUNITY_CHARTS[songId] || this.CONVERTED_REGISTRY.has(songId);
+    return (
+      !!REAL_COMMUNITY_CHARTS[songId] ||
+      !!LISARB2_COMMUNITY_CHARTS[songId] ||
+      this.CONVERTED_REGISTRY.has(songId)
+    );
   }
 }

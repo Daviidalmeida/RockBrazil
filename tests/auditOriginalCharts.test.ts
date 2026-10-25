@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import { OFFICIAL_BRAZILIAN_CATALOG } from '../src/game/catalog/catalogData';
+import { ORIGINAL_31_BRAZILIAN_CATALOG } from '../src/game/catalog/catalogData';
 import { RAW_COMPACT_CHARTS } from '../charts-backup/realChartsRegistry.original';
 import { BeatmapManager } from '../src/game/beatmapManager';
 
@@ -12,7 +12,7 @@ describe('V8 Backup & Chart Audit', () => {
 
     console.log(`\n================ AUDITORIA ORIGINAL DOS CHARTS (31 MÚSICAS) ================`);
 
-    OFFICIAL_BRAZILIAN_CATALOG.forEach((song, index) => {
+    ORIGINAL_31_BRAZILIAN_CATALOG.forEach((song, index) => {
       const easy = beatmapManager.getBeatmap(song.id, 'EASY');
       const medium = beatmapManager.getBeatmap(song.id, 'MEDIUM');
       const hard = beatmapManager.getBeatmap(song.id, 'HARD');

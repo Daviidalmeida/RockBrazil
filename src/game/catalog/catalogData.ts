@@ -1,6 +1,7 @@
 import { SongMetadata } from '../../types';
+import { LISARB2_NEW_SONGS, LISARB2_DUPLICATES_UPDATES } from './lisarb2CatalogData';
 
-export const OFFICIAL_BRAZILIAN_CATALOG: SongMetadata[] = [
+export const ORIGINAL_31_BRAZILIAN_CATALOG: SongMetadata[] = [
   {
     "id": "mam-1406",
     "title": "1406",
@@ -838,4 +839,20 @@ export const OFFICIAL_BRAZILIAN_CATALOG: SongMetadata[] = [
       "EXPERT": null
     }
   }
+];
+
+export const OFFICIAL_BRAZILIAN_CATALOG: SongMetadata[] = [
+  ...ORIGINAL_31_BRAZILIAN_CATALOG.map((song) => {
+    const update = LISARB2_DUPLICATES_UPDATES[song.id];
+    if (update) {
+      return {
+        ...song,
+        type: 'audio-file' as const,
+        audioUrl: update.audioUrl,
+        coverUrl: update.coverUrl
+      };
+    }
+    return song;
+  }),
+  ...LISARB2_NEW_SONGS
 ];

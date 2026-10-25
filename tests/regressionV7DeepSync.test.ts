@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { GameRenderer } from '../src/render/renderer';
 import { BeatmapManager } from '../src/game/beatmapManager';
-import { OFFICIAL_BRAZILIAN_CATALOG } from '../src/game/catalog/catalogData';
+import { OFFICIAL_BRAZILIAN_CATALOG, ORIGINAL_31_BRAZILIAN_CATALOG } from '../src/game/catalog/catalogData';
 import { MusicTimeline, AudioTimeSource } from '../src/game/timeline/musicTimeline';
 import { ChartTimeline } from '../src/game/timeline/chartTimeline';
 import { HitJudgmentSystem } from '../src/game/judgment/hitJudgment';
@@ -264,9 +264,10 @@ describe('ROCKBRAZIL BETA V7 — SUÍTE DE TESTES E VALIDAÇÃO COMPLETA', () =>
     });
 
     it('deve preservar 100% das 31 músicas do catálogo brasileiro', () => {
-      expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBe(31);
+      expect(ORIGINAL_31_BRAZILIAN_CATALOG.length).toBe(31);
+      expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBeGreaterThanOrEqual(31);
       const bm = new BeatmapManager();
-      for (const song of OFFICIAL_BRAZILIAN_CATALOG) {
+      for (const song of ORIGINAL_31_BRAZILIAN_CATALOG) {
         const easy = bm.getBeatmap(song.id, 'EASY');
         const med = bm.getBeatmap(song.id, 'MEDIUM');
         const hard = bm.getBeatmap(song.id, 'HARD');

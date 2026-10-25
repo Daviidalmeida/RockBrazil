@@ -791,7 +791,25 @@ class RockBrazilGame {
 
     // Se for música baseada em arquivo e ainda não carregou o áudio
     if (song.type === 'audio-file' && !song.audioBuffer) {
-      if (song.id === 'tnt-acdc') {
+      if (song.audioUrl) {
+        try {
+          this.ui.showAnalysisProgress(true, `Carregando áudio de "${song.title}"...`);
+          await this.audio.init();
+          const buffer = await this.audio.decodeAudioUrl(song.audioUrl);
+          if (sessionId !== this.currentMatchSessionId) return;
+
+          this.library.attachAudioBuffer(song.id, buffer, buffer.duration);
+          song.audioBuffer = buffer;
+          if (buffer.duration) song.duration = Math.round(buffer.duration);
+        } catch (err: any) {
+          console.error(`Falha ao carregar áudio de ${song.title}:`, err);
+          this.ui.showAnalysisProgress(false);
+          alert(`Erro ao carregar o áudio de "${song.title}". Verifique a conexão com o servidor.`);
+          return;
+        } finally {
+          this.ui.showAnalysisProgress(false);
+        }
+      } else if (song.id === 'tnt-acdc') {
         try {
           this.ui.showAnalysisProgress(true, 'Carregando áudio e mapa oficial de T.N.T. (AC/DC)...');
           await this.audio.init();

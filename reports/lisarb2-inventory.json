@@ -1,0 +1,2469 @@
+[
+  {
+    "folderName": "01.1 Natiruts - Natiruts Reggae Power Live",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.1 Natiruts - Natiruts Reggae Power Live\\01.1 Natiruts - Natiruts Reggae Power (Live)",
+    "name": "Natiruts Reggae Power (Live)",
+    "artist": "Natiruts",
+    "genre": "Reggae",
+    "year": "2007",
+    "diffGuitar": 1,
+    "songLengthMs": 208000,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.1 Natiruts - Natiruts Reggae Power Live\\01.1 Natiruts - Natiruts Reggae Power (Live)\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.1 Natiruts - Natiruts Reggae Power Live\\01.1 Natiruts - Natiruts Reggae Power (Live)\\song.ogg",
+    "audioSizeMB": 6.42,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "01.2 Sambo - Maneiras",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.2 Sambo - Maneiras\\01.2 Sambo - Maneiras",
+    "name": "Maneiras",
+    "artist": "Sambô",
+    "genre": "Samba",
+    "year": "2012",
+    "diffGuitar": 1,
+    "songLengthMs": 238407,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.2 Sambo - Maneiras\\01.2 Sambo - Maneiras\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.2 Sambo - Maneiras\\01.2 Sambo - Maneiras\\song.ogg",
+    "audioSizeMB": 7.36,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "01.3 Mamonas Assassinas - Chopis Centis",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.3 Mamonas Assassinas - Chopis Centis\\01.3 Mamonas Assassinas - Chopis Centis",
+    "name": "Chopis Centis",
+    "artist": "Mamonas Assassinas",
+    "genre": "Comedy Rock",
+    "year": "1995",
+    "diffGuitar": 1,
+    "songLengthMs": 172000,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.3 Mamonas Assassinas - Chopis Centis\\01.3 Mamonas Assassinas - Chopis Centis\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.3 Mamonas Assassinas - Chopis Centis\\01.3 Mamonas Assassinas - Chopis Centis\\song.ogg",
+    "audioSizeMB": 5.29,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": true,
+    "existingSongId": "mam-chopis-centis"
+  },
+  {
+    "folderName": "01.4 Pitty - Noite Inteira",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.4 Pitty - Noite Inteira\\01.4 Pitty - Noite Inteira",
+    "name": "Noite Inteira",
+    "artist": "Pitty",
+    "genre": "Pop Rock",
+    "year": "2019",
+    "diffGuitar": 1,
+    "songLengthMs": 272476,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.4 Pitty - Noite Inteira\\01.4 Pitty - Noite Inteira\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.4 Pitty - Noite Inteira\\01.4 Pitty - Noite Inteira\\song.ogg",
+    "audioSizeMB": 8.41,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "01.5 Charlie Brown Jr - Senhor Do Tempo",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.5 Charlie Brown Jr - Senhor Do Tempo\\01.5 Charlie Brown Jr - Senhor Do Tempo",
+    "name": "Senhor do Tempo",
+    "artist": "Charlie Brown Jr",
+    "genre": "Rap Rock",
+    "year": "2005",
+    "diffGuitar": 1,
+    "songLengthMs": 207990,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.5 Charlie Brown Jr - Senhor Do Tempo\\01.5 Charlie Brown Jr - Senhor Do Tempo\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.5 Charlie Brown Jr - Senhor Do Tempo\\01.5 Charlie Brown Jr - Senhor Do Tempo\\song.ogg",
+    "audioSizeMB": 6.42,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "01.6 Orquestra da Terra - Rei Do Gado",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.6 Orquestra da Terra - Rei Do Gado\\01.6 Orquestra da Terra - Rei Do Gado",
+    "name": "Rei do Gado",
+    "artist": "Orquestra Da Terra",
+    "genre": "Sertanejo",
+    "year": "1996",
+    "diffGuitar": 1,
+    "songLengthMs": 158138,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.6 Orquestra da Terra - Rei Do Gado\\01.6 Orquestra da Terra - Rei Do Gado\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.6 Orquestra da Terra - Rei Do Gado\\01.6 Orquestra da Terra - Rei Do Gado\\song.ogg",
+    "audioSizeMB": 4.08,
+    "allOggs": [
+      "comboi.ogg",
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "01.7 Ednaldo Pereira - What Is The Brother 2",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.7 Ednaldo Pereira - What Is The Brother 2\\01.7 Ednaldo Pereira - What Is The Brother 2",
+    "name": "What Is The Brother 2",
+    "artist": "Ednaldo Pereira",
+    "genre": "Ednaldo Pereira",
+    "year": "2014",
+    "diffGuitar": 1,
+    "songLengthMs": 208368,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.7 Ednaldo Pereira - What Is The Brother 2\\01.7 Ednaldo Pereira - What Is The Brother 2\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.7 Ednaldo Pereira - What Is The Brother 2\\01.7 Ednaldo Pereira - What Is The Brother 2\\song.ogg",
+    "audioSizeMB": 6.43,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "01.8 Gabriel O Pensador - Palavras Repetidas",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.8 Gabriel O Pensador - Palavras Repetidas\\01.8 Gabriel O Pensador - Palavras Repetidas",
+    "name": "Palavras Repetidas",
+    "artist": "Gabriel o Pensador",
+    "genre": "Rap",
+    "year": "2005",
+    "diffGuitar": 1,
+    "songLengthMs": 267010,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.8 Gabriel O Pensador - Palavras Repetidas\\01.8 Gabriel O Pensador - Palavras Repetidas\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.8 Gabriel O Pensador - Palavras Repetidas\\01.8 Gabriel O Pensador - Palavras Repetidas\\song.ogg",
+    "audioSizeMB": 8.24,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "01.E Cazuza - Exagerado",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.E Cazuza - Exagerado\\01.E Cazuza - Exagerado",
+    "name": "Exagerado",
+    "artist": "Cazuza",
+    "genre": "Power Pop",
+    "year": "1985",
+    "diffGuitar": 1,
+    "songLengthMs": 228555,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.E Cazuza - Exagerado\\01.E Cazuza - Exagerado\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\01.E Cazuza - Exagerado\\01.E Cazuza - Exagerado\\song.ogg",
+    "audioSizeMB": 7.05,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "02.1 Tim Maia - Ela Partiu",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.1 Tim Maia - Ela Partiu\\02.1 Tim Maia - Ela Partiu",
+    "name": "Ela Partiu",
+    "artist": "Tim Maia",
+    "genre": "Soul",
+    "year": "2012",
+    "diffGuitar": 1,
+    "songLengthMs": 255431,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.1 Tim Maia - Ela Partiu\\02.1 Tim Maia - Ela Partiu\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.1 Tim Maia - Ela Partiu\\02.1 Tim Maia - Ela Partiu\\song.ogg",
+    "audioSizeMB": 3.95,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "02.2 Luiz Gonzaga - Asa Branca",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.2 Luiz Gonzaga - Asa Branca\\02.2 Luiz Gonzaga - Asa Branca",
+    "name": "Asa Branca",
+    "artist": "Luiz Gonzaga",
+    "genre": "Forro",
+    "year": "1962",
+    "diffGuitar": 1,
+    "songLengthMs": 173760,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.2 Luiz Gonzaga - Asa Branca\\02.2 Luiz Gonzaga - Asa Branca\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.2 Luiz Gonzaga - Asa Branca\\02.2 Luiz Gonzaga - Asa Branca\\song.ogg",
+    "audioSizeMB": 5.36,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "02.3 Fresno - Infinito",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.3 Fresno - Infinito\\02.3 Fresno - Infinito",
+    "name": "Infinito",
+    "artist": "Fresno",
+    "genre": "Progressive Rock",
+    "year": "2012",
+    "diffGuitar": 1,
+    "songLengthMs": 226231,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.3 Fresno - Infinito\\02.3 Fresno - Infinito\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.3 Fresno - Infinito\\02.3 Fresno - Infinito\\song.ogg",
+    "audioSizeMB": 6.98,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "02.4 O Terno - O Cinza",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.4 O Terno - O Cinza\\02.4 O Terno - O Cinza",
+    "name": "O Cinza",
+    "artist": "O Terno",
+    "genre": "Indie Rock",
+    "year": "2014",
+    "diffGuitar": 1,
+    "songLengthMs": 205000,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.4 O Terno - O Cinza\\02.4 O Terno - O Cinza\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.4 O Terno - O Cinza\\02.4 O Terno - O Cinza\\song.ogg",
+    "audioSizeMB": 6.32,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "02.5 Ana Frango Eletrico - Torturadores",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.5 Ana Frango Eletrico - Torturadores\\02.5 Ana Frango Elétrico - Torturadores",
+    "name": "Torturadores",
+    "artist": "Ana Frango Elétrico",
+    "genre": "Indie Rock",
+    "year": "2019",
+    "diffGuitar": 1,
+    "songLengthMs": 175715,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.5 Ana Frango Eletrico - Torturadores\\02.5 Ana Frango Elétrico - Torturadores\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.5 Ana Frango Eletrico - Torturadores\\02.5 Ana Frango Elétrico - Torturadores\\song.ogg",
+    "audioSizeMB": 5.42,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "02.6 Jota Quest - O Sol",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.6 Jota Quest - O Sol\\02.6 Jota Quest - O Sol",
+    "name": "O Sol",
+    "artist": "Jota Quest",
+    "genre": "Power Pop",
+    "year": "2005",
+    "diffGuitar": 1,
+    "songLengthMs": 255997,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.6 Jota Quest - O Sol\\02.6 Jota Quest - O Sol\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.6 Jota Quest - O Sol\\02.6 Jota Quest - O Sol\\song.ogg",
+    "audioSizeMB": 7.9,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "02.7 Batrakia - Alvo Marcado",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.7 Batrakia - Alvo Marcado\\02.7 Batrakia - Alvo Marcado",
+    "name": "Alvo Marcado",
+    "artist": "Batrakia",
+    "genre": "Hard Rock",
+    "year": "2015",
+    "diffGuitar": 1,
+    "songLengthMs": 245445,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.7 Batrakia - Alvo Marcado\\02.7 Batrakia - Alvo Marcado\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.7 Batrakia - Alvo Marcado\\02.7 Batrakia - Alvo Marcado\\song.ogg",
+    "audioSizeMB": 7.57,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "02.8 Aldo Sena - Lambada Complicada",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.8 Aldo Sena - Lambada Complicada\\02.8 Aldo Sena - Lambada Complicada",
+    "name": "Lambada Complicada",
+    "artist": "Aldo Sena",
+    "genre": "MPB",
+    "year": "1983",
+    "diffGuitar": 1,
+    "songLengthMs": 164555,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.8 Aldo Sena - Lambada Complicada\\02.8 Aldo Sena - Lambada Complicada\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.8 Aldo Sena - Lambada Complicada\\02.8 Aldo Sena - Lambada Complicada\\song.ogg",
+    "audioSizeMB": 5.16,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "02.E Mamonas Assassinas - Pelados Em Santos",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.E Mamonas Assassinas - Pelados Em Santos\\02.E Mamonas Assassinas - Pelados Em Santos",
+    "name": "Pelados Em Santos",
+    "artist": "Mamonas Assassinas",
+    "genre": "Comedy Rock",
+    "year": "1995",
+    "diffGuitar": 1,
+    "songLengthMs": 205445,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.E Mamonas Assassinas - Pelados Em Santos\\02.E Mamonas Assassinas - Pelados Em Santos\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\02.E Mamonas Assassinas - Pelados Em Santos\\02.E Mamonas Assassinas - Pelados Em Santos\\song.ogg",
+    "audioSizeMB": 6.34,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "03.1 Raul Seixas - Metamorfose Ambulante",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.1 Raul Seixas - Metamorfose Ambulante\\03.1 Raul Seixas - Metamorfose Ambulante",
+    "name": "Metamorfose Ambulante",
+    "artist": "Raul Seixas",
+    "genre": "Rockabilly",
+    "year": "1973",
+    "diffGuitar": 1,
+    "songLengthMs": 234627,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.1 Raul Seixas - Metamorfose Ambulante\\03.1 Raul Seixas - Metamorfose Ambulante\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.1 Raul Seixas - Metamorfose Ambulante\\03.1 Raul Seixas - Metamorfose Ambulante\\song.ogg",
+    "audioSizeMB": 7.24,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "03.2 Sandy & Junior - A Lenda",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.2 Sandy & Junior - A Lenda\\03.2 Sandy & Junior - A Lenda",
+    "name": "A Lenda",
+    "artist": "Sandy & Junior",
+    "genre": "Pop",
+    "year": "2000",
+    "diffGuitar": 1,
+    "songLengthMs": 274671,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.2 Sandy & Junior - A Lenda\\03.2 Sandy & Junior - A Lenda\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.2 Sandy & Junior - A Lenda\\03.2 Sandy & Junior - A Lenda\\song.ogg",
+    "audioSizeMB": 8.48,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "03.3 Skank - Dois Rios",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.3 Skank - Dois Rios\\03.3 Skank - Dois Rios",
+    "name": "Dois Rios",
+    "artist": "Skank",
+    "genre": "Pop Rock",
+    "year": "2003",
+    "diffGuitar": 1,
+    "songLengthMs": 284636,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.3 Skank - Dois Rios\\03.3 Skank - Dois Rios\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.3 Skank - Dois Rios\\03.3 Skank - Dois Rios\\song.ogg",
+    "audioSizeMB": 8.78,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "03.4 Cine - Garota Radical",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.4 Cine - Garota Radical\\03.4 Cine - Garota Radical",
+    "name": "Garota Radical",
+    "artist": "Cine",
+    "genre": "Pop Rock",
+    "year": "2009",
+    "diffGuitar": 1,
+    "songLengthMs": 179462,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.4 Cine - Garota Radical\\03.4 Cine - Garota Radical\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.4 Cine - Garota Radical\\03.4 Cine - Garota Radical\\song.ogg",
+    "audioSizeMB": 5.54,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "03.5 Pitty - Mascara",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.5 Pitty - Mascara\\03.5 Pitty - Mascara",
+    "name": "Máscara",
+    "artist": "Pitty",
+    "genre": "Hard Rock",
+    "year": "2003",
+    "diffGuitar": 1,
+    "songLengthMs": 293799,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.5 Pitty - Mascara\\03.5 Pitty - Mascara\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.5 Pitty - Mascara\\03.5 Pitty - Mascara\\song.ogg",
+    "audioSizeMB": 9.07,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": true,
+    "existingSongId": "pit-mascara"
+  },
+  {
+    "folderName": "03.6 Nenhum De Nos - O Astronauta de Marmore",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.6 Nenhum De Nos - O Astronauta de Marmore\\03.6 Nenhum De Nos - O Astronauta de Marmore",
+    "name": "O Astronauta de Marmore",
+    "artist": "Nenhum de Nós",
+    "genre": "Rock",
+    "year": "1989",
+    "diffGuitar": 1,
+    "songLengthMs": 201747,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.6 Nenhum De Nos - O Astronauta de Marmore\\03.6 Nenhum De Nos - O Astronauta de Marmore\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.6 Nenhum De Nos - O Astronauta de Marmore\\03.6 Nenhum De Nos - O Astronauta de Marmore\\song.ogg",
+    "audioSizeMB": 6.23,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "03.7 Palavra Cantada - Rato",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.7 Palavra Cantada - Rato\\03.7 Palavra Cantada - Rato",
+    "name": "Rato",
+    "artist": "Palavra Cantada",
+    "genre": "Musica Infantil",
+    "year": "1998",
+    "diffGuitar": 2,
+    "songLengthMs": 334373,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.7 Palavra Cantada - Rato\\03.7 Palavra Cantada - Rato\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.7 Palavra Cantada - Rato\\03.7 Palavra Cantada - Rato\\song.ogg",
+    "audioSizeMB": 10.26,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "03.8 Kuase Nada - De Borest",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.8 Kuase Nada - De Borest\\03.8 Kuase Nada - De Borest",
+    "name": "De Borest",
+    "artist": "Kuase Nada",
+    "genre": "Reggae",
+    "year": "2000",
+    "diffGuitar": 2,
+    "songLengthMs": 270433,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.8 Kuase Nada - De Borest\\03.8 Kuase Nada - De Borest\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.8 Kuase Nada - De Borest\\03.8 Kuase Nada - De Borest\\song.ogg",
+    "audioSizeMB": 4.19,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": true,
+    "existingSongId": "kua-de-borest"
+  },
+  {
+    "folderName": "03.E Kasino - Can_t Get Over",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.E Kasino - Can_t Get Over\\03.E Kasino - Can't Get Over",
+    "name": "Can't Get Over",
+    "artist": "Kasino",
+    "genre": "Dance",
+    "year": "2005",
+    "diffGuitar": 2,
+    "songLengthMs": 207308,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.E Kasino - Can_t Get Over\\03.E Kasino - Can't Get Over\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\03.E Kasino - Can_t Get Over\\03.E Kasino - Can't Get Over\\song.ogg",
+    "audioSizeMB": 6.4,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "04.1 Mr. Gyn - Minha Juventude",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.1 Mr. Gyn - Minha Juventude\\04.1 Mr. Gyn - Minha Juventude",
+    "name": "Minha Juventude",
+    "artist": "Mr. Gyn",
+    "genre": "Soft Rock",
+    "year": "2004",
+    "diffGuitar": 1,
+    "songLengthMs": 174400,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.1 Mr. Gyn - Minha Juventude\\04.1 Mr. Gyn - Minha Juventude\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.1 Mr. Gyn - Minha Juventude\\04.1 Mr. Gyn - Minha Juventude\\song.ogg",
+    "audioSizeMB": 5.38,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "04.2 Selvagens a Procura de Lei - Brasileiro",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.2 Selvagens a Procura de Lei - Brasileiro\\04.2 Selvagens a Procura de Lei - Brasileiro",
+    "name": "Brasileiro",
+    "artist": "Selvagens à Procura de Lei",
+    "genre": "Indie Rock",
+    "year": "2013",
+    "diffGuitar": 1,
+    "songLengthMs": 164429,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.2 Selvagens a Procura de Lei - Brasileiro\\04.2 Selvagens a Procura de Lei - Brasileiro\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.2 Selvagens a Procura de Lei - Brasileiro\\04.2 Selvagens a Procura de Lei - Brasileiro\\song.ogg",
+    "audioSizeMB": 5.08,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "04.3 Eutenia - They Wanna Watch Me Fall",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.3 Eutenia - They Wanna Watch Me Fall\\04.3 Eutenia - They Wanna Watch Me Fall",
+    "name": "They Wanna Watch Me Fall",
+    "artist": "Eutenia",
+    "genre": "Heavy Metal",
+    "year": "2016",
+    "diffGuitar": 1,
+    "songLengthMs": 302224,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.3 Eutenia - They Wanna Watch Me Fall\\04.3 Eutenia - They Wanna Watch Me Fall\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.3 Eutenia - They Wanna Watch Me Fall\\04.3 Eutenia - They Wanna Watch Me Fall\\song.ogg",
+    "audioSizeMB": 9.33,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "04.4 Cazuza - Brasil",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.4 Cazuza - Brasil\\04.4 Cazuza - Brasil",
+    "name": "Brasil",
+    "artist": "Cazuza",
+    "genre": "Rock",
+    "year": "1988",
+    "diffGuitar": 1,
+    "songLengthMs": 193854,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.4 Cazuza - Brasil\\04.4 Cazuza - Brasil\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.4 Cazuza - Brasil\\04.4 Cazuza - Brasil\\song.ogg",
+    "audioSizeMB": 5.99,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "04.5 Ednaldo Pereira - Chance (Matheus Richard)",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.5 Ednaldo Pereira - Chance (Matheus Richard)\\04.5 Ednaldo Pereira - Chance (Matheus Richard)",
+    "name": "Chance (Matheus Richard)",
+    "artist": "Ednaldo Pereira",
+    "genre": "Ednaldo Pereira",
+    "year": "2019",
+    "diffGuitar": 1,
+    "songLengthMs": 170649,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.5 Ednaldo Pereira - Chance (Matheus Richard)\\04.5 Ednaldo Pereira - Chance (Matheus Richard)\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.5 Ednaldo Pereira - Chance (Matheus Richard)\\04.5 Ednaldo Pereira - Chance (Matheus Richard)\\song.ogg",
+    "audioSizeMB": 5.27,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "04.6 Bruno Sutter - Galopeira",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.6 Bruno Sutter - Galopeira\\04.6 Bruno Sutter - Galopeira",
+    "name": "Galopeira",
+    "artist": "Bruno Sutter",
+    "genre": "Comedy Metal",
+    "year": "2016",
+    "diffGuitar": 2,
+    "songLengthMs": 173758,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.6 Bruno Sutter - Galopeira\\04.6 Bruno Sutter - Galopeira\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.6 Bruno Sutter - Galopeira\\04.6 Bruno Sutter - Galopeira\\song.ogg",
+    "audioSizeMB": 5.36,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "04.7 Arandu Arakuaa - Ipredu",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.7 Arandu Arakuaa - Ipredu\\04.7 Arandu Arakuaa - Ipredu",
+    "name": "Ipredu",
+    "artist": "Arandu Arakuaa",
+    "genre": "Folk Metal",
+    "year": "2015",
+    "diffGuitar": 2,
+    "songLengthMs": 303500,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.7 Arandu Arakuaa - Ipredu\\04.7 Arandu Arakuaa - Ipredu\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.7 Arandu Arakuaa - Ipredu\\04.7 Arandu Arakuaa - Ipredu\\song.ogg",
+    "audioSizeMB": 9.37,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "04.8 Nenhum De Nos - Camila Camila",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.8 Nenhum De Nos - Camila Camila\\04.8 Nenhum De Nos - Camila Camila",
+    "name": "Camila, Camila",
+    "artist": "Nenhum de Nós",
+    "genre": "Rock",
+    "year": "1987",
+    "diffGuitar": 2,
+    "songLengthMs": 312351,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.8 Nenhum De Nos - Camila Camila\\04.8 Nenhum De Nos - Camila Camila\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.8 Nenhum De Nos - Camila Camila\\04.8 Nenhum De Nos - Camila Camila\\song.ogg",
+    "audioSizeMB": 9.64,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "04.E Legiao Urbana - Que Pais e Esse",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.E Legiao Urbana - Que Pais e Esse\\04.E Legiao Urbana - Que Pais e Esse",
+    "name": "Que Pais é Esse",
+    "artist": "Legiao Urbana",
+    "genre": "Rock",
+    "year": "1987",
+    "diffGuitar": 2,
+    "songLengthMs": 182938,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.E Legiao Urbana - Que Pais e Esse\\04.E Legiao Urbana - Que Pais e Esse\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\04.E Legiao Urbana - Que Pais e Esse\\04.E Legiao Urbana - Que Pais e Esse\\song.ogg",
+    "audioSizeMB": 4.66,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "05.1 El Bando - A Historia Do Mamute",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.1 El Bando - A Historia Do Mamute\\05.1 El Bando - A Historia Do Mamute",
+    "name": "A História do Mamute",
+    "artist": "El Bando",
+    "genre": "Comedy Rock",
+    "year": "2004",
+    "diffGuitar": 2,
+    "songLengthMs": 227780,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.1 El Bando - A Historia Do Mamute\\05.1 El Bando - A Historia Do Mamute\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.1 El Bando - A Historia Do Mamute\\05.1 El Bando - A Historia Do Mamute\\song.ogg",
+    "audioSizeMB": 7.03,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "05.2 Codinome Winchester - O Paulista",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.2 Codinome Winchester - O Paulista\\05.2 Codinome Winchester - O Paulista",
+    "name": "O Paulista",
+    "artist": "Codinome Winchester",
+    "genre": "Alternative",
+    "year": "2018",
+    "diffGuitar": 2,
+    "songLengthMs": 236112,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.2 Codinome Winchester - O Paulista\\05.2 Codinome Winchester - O Paulista\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.2 Codinome Winchester - O Paulista\\05.2 Codinome Winchester - O Paulista\\song.ogg",
+    "audioSizeMB": 7.29,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "05.3 Charlie Brown Jr - Me Encontra",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.3 Charlie Brown Jr - Me Encontra\\05.3 Charlie Brown Jr - Me Encontra",
+    "name": "Me Encontra",
+    "artist": "Charlie Brown Jr",
+    "genre": "Alternative",
+    "year": "2009",
+    "diffGuitar": 2,
+    "songLengthMs": 217000,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.3 Charlie Brown Jr - Me Encontra\\05.3 Charlie Brown Jr - Me Encontra\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.3 Charlie Brown Jr - Me Encontra\\05.3 Charlie Brown Jr - Me Encontra\\song.ogg",
+    "audioSizeMB": 6.7,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "05.4 Dead Fish - Messias",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.4 Dead Fish - Messias\\05.4 Dead Fish - Messias",
+    "name": "Messias",
+    "artist": "Dead Fish",
+    "genre": "Hardcore",
+    "year": "2019",
+    "diffGuitar": 2,
+    "songLengthMs": 176300,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.4 Dead Fish - Messias\\05.4 Dead Fish - Messias\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.4 Dead Fish - Messias\\05.4 Dead Fish - Messias\\song.ogg",
+    "audioSizeMB": 5.44,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "05.5 Scalene - Sonhador II",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.5 Scalene - Sonhador II\\05.5 Scalene - Sonhador II",
+    "name": "Sonhador II",
+    "artist": "Scalene",
+    "genre": "Stoner Rock",
+    "year": "2013",
+    "diffGuitar": 2,
+    "songLengthMs": 170248,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.5 Scalene - Sonhador II\\05.5 Scalene - Sonhador II\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.5 Scalene - Sonhador II\\05.5 Scalene - Sonhador II\\song.ogg",
+    "audioSizeMB": 5.25,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "05.6 Mindflow - Break Me Out",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.6 Mindflow - Break Me Out\\05.6 Mindflow - Break Me Out",
+    "name": "Break me Out",
+    "artist": "Mindflow",
+    "genre": "Progresssive Metal",
+    "year": "2011",
+    "diffGuitar": 2,
+    "songLengthMs": 298741,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.6 Mindflow - Break Me Out\\05.6 Mindflow - Break Me Out\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.6 Mindflow - Break Me Out\\05.6 Mindflow - Break Me Out\\song.ogg",
+    "audioSizeMB": 9.22,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "05.7 Pitty - Roda (feat. Baiana System)",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.7 Pitty - Roda (feat. Baiana System)\\05.7 Pitty - Roda (feat. Baiana System)",
+    "name": "Roda feat. BaianaSystem",
+    "artist": "Pitty",
+    "genre": "Alternative",
+    "year": "2019",
+    "diffGuitar": 2,
+    "songLengthMs": 204831,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.7 Pitty - Roda (feat. Baiana System)\\05.7 Pitty - Roda (feat. Baiana System)\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.7 Pitty - Roda (feat. Baiana System)\\05.7 Pitty - Roda (feat. Baiana System)\\song.ogg",
+    "audioSizeMB": 6.32,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "05.8 Proerd Adventures - Main Theme",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.8 Proerd Adventures - Main Theme\\05.8 Proerd Adventures - Main Theme",
+    "name": "Proerd Adventures - Main Theme",
+    "artist": "Vitor Ottoni",
+    "genre": "Chiptune",
+    "year": "1990",
+    "diffGuitar": 1,
+    "songLengthMs": 89164,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.8 Proerd Adventures - Main Theme\\05.8 Proerd Adventures - Main Theme\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.8 Proerd Adventures - Main Theme\\05.8 Proerd Adventures - Main Theme\\song.ogg",
+    "audioSizeMB": 1.94,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "05.9 Vitroles - Gatinha Comunista",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.9 Vitroles - Gatinha Comunista\\05.9 Vitroles - Gatinha Comunista",
+    "name": "<color=#FF0000><b>Gatinha Comunista</b></color>",
+    "artist": "<color=#FF0000><b>Vitroles</b></color>",
+    "genre": "<color=#FF0000><b>Rock 'n Roll</b></color>",
+    "year": "<color=#FF0000><b>2013</b></color>",
+    "diffGuitar": 2,
+    "songLengthMs": 279069,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.9 Vitroles - Gatinha Comunista\\05.9 Vitroles - Gatinha Comunista\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.9 Vitroles - Gatinha Comunista\\05.9 Vitroles - Gatinha Comunista\\song.ogg",
+    "audioSizeMB": 8.62,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "05.E RPM - Vida Real (Live)",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.E RPM - Vida Real (Live)\\05.E RPM - Vida Real (Live)",
+    "name": "Vida Real (Live)",
+    "artist": "RPM",
+    "genre": "Rock",
+    "year": "2002",
+    "diffGuitar": 2,
+    "songLengthMs": 206090,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.E RPM - Vida Real (Live)\\05.E RPM - Vida Real (Live)\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\05.E RPM - Vida Real (Live)\\05.E RPM - Vida Real (Live)\\song.ogg",
+    "audioSizeMB": 6.36,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "06.1 Shaman - Fairy Tale",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.1 Shaman - Fairy Tale\\06.1 Shaman - Fairy Tale",
+    "name": "Fairy Tale",
+    "artist": "Shaman",
+    "genre": "Power Metal",
+    "year": "2002",
+    "diffGuitar": 1,
+    "songLengthMs": 414921,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.1 Shaman - Fairy Tale\\06.1 Shaman - Fairy Tale\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.1 Shaman - Fairy Tale\\06.1 Shaman - Fairy Tale\\song.ogg",
+    "audioSizeMB": 11.99,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "06.2 Hori - Quem Eu Sou",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.2 Hori - Quem Eu Sou\\06.2 Hori - Quem Eu Sou",
+    "name": "Quem eu Sou",
+    "artist": "Hori",
+    "genre": "Emocore",
+    "year": "2009",
+    "diffGuitar": 2,
+    "songLengthMs": 194414,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.2 Hori - Quem Eu Sou\\06.2 Hori - Quem Eu Sou\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.2 Hori - Quem Eu Sou\\06.2 Hori - Quem Eu Sou\\song.ogg",
+    "audioSizeMB": 6,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "06.3 Raimundos - Merry Christmas",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.3 Raimundos - Merry Christmas\\06.3 Raimundos - Merry Christmas",
+    "name": "Merry Christmas (I Don't Want to Fight Tonight)",
+    "artist": "Raimundos",
+    "genre": "Punk Rock",
+    "year": "1996",
+    "diffGuitar": 1,
+    "songLengthMs": 126647,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.3 Raimundos - Merry Christmas\\06.3 Raimundos - Merry Christmas\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.3 Raimundos - Merry Christmas\\06.3 Raimundos - Merry Christmas\\song.ogg",
+    "audioSizeMB": 3.91,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "06.4 Scalene - Danse Macabre",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.4 Scalene - Danse Macabre\\06.4 Scalene - Danse Macabre",
+    "name": "Danse Macabre",
+    "artist": "Scalene",
+    "genre": "Stoner Rock",
+    "year": "2013",
+    "diffGuitar": 1,
+    "songLengthMs": 187240,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.4 Scalene - Danse Macabre\\06.4 Scalene - Danse Macabre\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.4 Scalene - Danse Macabre\\06.4 Scalene - Danse Macabre\\song.ogg",
+    "audioSizeMB": 5.89,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "06.5 Charlie Brown Jr - Chicano Skate Nos Cano",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.5 Charlie Brown Jr - Chicano Skate Nos Cano\\06.5 Charlie Brown Jr - Chicano Skate Nos Cano",
+    "name": "06.5 Charlie Brown Jr - Chicano Skate Nos Cano",
+    "artist": "Desconhecido",
+    "genre": "Rock",
+    "year": "2000",
+    "diffGuitar": 1,
+    "songLengthMs": 0,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.5 Charlie Brown Jr - Chicano Skate Nos Cano\\06.5 Charlie Brown Jr - Chicano Skate Nos Cano\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.5 Charlie Brown Jr - Chicano Skate Nos Cano\\06.5 Charlie Brown Jr - Chicano Skate Nos Cano\\song.ogg",
+    "audioSizeMB": 2.01,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "06.6 Planet Hemp - Legalize Ja",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.6 Planet Hemp - Legalize Ja\\06.6 Planet Hemp - Legalize Ja",
+    "name": "Legalize Já",
+    "artist": "Planet Hemp",
+    "genre": "Rap Rock",
+    "year": "1995",
+    "diffGuitar": 2,
+    "songLengthMs": 179852,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.6 Planet Hemp - Legalize Ja\\06.6 Planet Hemp - Legalize Ja\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.6 Planet Hemp - Legalize Ja\\06.6 Planet Hemp - Legalize Ja\\song.ogg",
+    "audioSizeMB": 5.55,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "06.7 Titas - Republica Dos Bananas",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.7 Titas - Republica Dos Bananas\\06.7 Titas - Republica Dos Bananas",
+    "name": "Republica Dos Bananas",
+    "artist": "Titãs",
+    "genre": "Punk Rock",
+    "year": "2014",
+    "diffGuitar": 2,
+    "songLengthMs": 126268,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.7 Titas - Republica Dos Bananas\\06.7 Titas - Republica Dos Bananas\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.7 Titas - Republica Dos Bananas\\06.7 Titas - Republica Dos Bananas\\song.ogg",
+    "audioSizeMB": 3.9,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "06.8 Hateen - Nao Vai Mais Ter Tristeza Aqui",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.8 Hateen - Nao Vai Mais Ter Tristeza Aqui\\06.8 Hateen - Nao Vai Mais Ter Tristeza Aqui",
+    "name": "Não vai mais ter Tristeza Aqui",
+    "artist": "Hateen",
+    "genre": "Melodic Hardcore",
+    "year": "2016",
+    "diffGuitar": 3,
+    "songLengthMs": 193273,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.8 Hateen - Nao Vai Mais Ter Tristeza Aqui\\06.8 Hateen - Nao Vai Mais Ter Tristeza Aqui\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.8 Hateen - Nao Vai Mais Ter Tristeza Aqui\\06.8 Hateen - Nao Vai Mais Ter Tristeza Aqui\\song.ogg",
+    "audioSizeMB": 5.96,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "06.E Rede Globo - Vinhetas da Globo Remastered",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.E Rede Globo - Vinhetas da Globo Remastered\\06.E Rede Globo - Vinhetas da Globo Remastered",
+    "name": "Vinhetas da Globo Remastered",
+    "artist": "Rede Globo",
+    "genre": "Vinheta",
+    "year": "2020",
+    "diffGuitar": 3,
+    "songLengthMs": 339699,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.E Rede Globo - Vinhetas da Globo Remastered\\06.E Rede Globo - Vinhetas da Globo Remastered\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\06.E Rede Globo - Vinhetas da Globo Remastered\\06.E Rede Globo - Vinhetas da Globo Remastered\\song.ogg",
+    "audioSizeMB": 7.86,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "07.1 Selvagens a Procura de Lei - Tarde Livre",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.1 Selvagens a Procura de Lei - Tarde Livre\\07.1 Selvagens a Procura de Lei - Tarde Livre",
+    "name": "Tarde Livre",
+    "artist": "Selvagens à Procura de Lei",
+    "genre": "Alternative",
+    "year": "2016",
+    "diffGuitar": 2,
+    "songLengthMs": 228878,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.1 Selvagens a Procura de Lei - Tarde Livre\\07.1 Selvagens a Procura de Lei - Tarde Livre\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.1 Selvagens a Procura de Lei - Tarde Livre\\07.1 Selvagens a Procura de Lei - Tarde Livre\\song.ogg",
+    "audioSizeMB": 7.06,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "07.2 Angra - Caveman",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.2 Angra - Caveman\\07.2 Angra - Caveman",
+    "name": "Caveman",
+    "artist": "Angra",
+    "genre": "Power Metal",
+    "year": "2018",
+    "diffGuitar": 3,
+    "songLengthMs": 357814,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.2 Angra - Caveman\\07.2 Angra - Caveman\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.2 Angra - Caveman\\07.2 Angra - Caveman\\song.ogg",
+    "audioSizeMB": 11.04,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "07.3 Skank - Vamos Fugir",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.3 Skank - Vamos Fugir\\07.3 Skank - Vamos Fugir",
+    "name": "Vamos Fugir",
+    "artist": "Skank",
+    "genre": "Pop Rock",
+    "year": "2004",
+    "diffGuitar": 2,
+    "songLengthMs": 241000,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.3 Skank - Vamos Fugir\\07.3 Skank - Vamos Fugir\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.3 Skank - Vamos Fugir\\07.3 Skank - Vamos Fugir\\song.ogg",
+    "audioSizeMB": 7.44,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "07.4 Andragonia - Secrets In Mirror",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.4 Andragonia - Secrets In Mirror\\07.4 Andragonia - Secrets In Mirror",
+    "name": "Secrets In The Mirror",
+    "artist": "Andragonia",
+    "genre": "Progressive Metal",
+    "year": "2010",
+    "diffGuitar": 3,
+    "songLengthMs": 379461,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.4 Andragonia - Secrets In Mirror\\07.4 Andragonia - Secrets In Mirror\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.4 Andragonia - Secrets In Mirror\\07.4 Andragonia - Secrets In Mirror\\song.ogg",
+    "audioSizeMB": 5.88,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "07.5 Mario Zan - Festa Na Roça",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.5 Mario Zan - Festa Na Roça\\07.5 Mario Zan - Festa Na Roça",
+    "name": "Festa Na Roça",
+    "artist": "Mario Zan",
+    "genre": "Forró",
+    "year": "1996",
+    "diffGuitar": 3,
+    "songLengthMs": 161951,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.5 Mario Zan - Festa Na Roça\\07.5 Mario Zan - Festa Na Roça\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.5 Mario Zan - Festa Na Roça\\07.5 Mario Zan - Festa Na Roça\\song.ogg",
+    "audioSizeMB": 4,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "07.6 Terra Prima - New Dawn",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.6 Terra Prima - New Dawn\\07.6 Terra Prima - New Dawn",
+    "name": "New Dawn",
+    "artist": "Terra Prima",
+    "genre": "Power Metal",
+    "year": "2010",
+    "diffGuitar": 3,
+    "songLengthMs": 317000,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.6 Terra Prima - New Dawn\\07.6 Terra Prima - New Dawn\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.6 Terra Prima - New Dawn\\07.6 Terra Prima - New Dawn\\song.ogg",
+    "audioSizeMB": 9.79,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "07.7 Shaman - For Tomorrow",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.7 Shaman - For Tomorrow\\07.7 Shaman - For Tomorrow",
+    "name": "For Tomorrow",
+    "artist": "Shaman",
+    "genre": "Power Metal",
+    "year": "2002",
+    "diffGuitar": 2,
+    "songLengthMs": 407000,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.7 Shaman - For Tomorrow\\07.7 Shaman - For Tomorrow\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.7 Shaman - For Tomorrow\\07.7 Shaman - For Tomorrow\\song.ogg",
+    "audioSizeMB": 12.56,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "07.8 Charlie Brown Jr - Lutar Pelo que e meu",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.8 Charlie Brown Jr - Lutar Pelo que e meu\\07.8 Charlie Brown Jr - Lutar Pelo que e meu",
+    "name": "Lutar Pelo Que é Meu",
+    "artist": "Charlie Brown Jr",
+    "genre": "Skate Punk",
+    "year": "2005",
+    "diffGuitar": 3,
+    "songLengthMs": 202702,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.8 Charlie Brown Jr - Lutar Pelo que e meu\\07.8 Charlie Brown Jr - Lutar Pelo que e meu\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.8 Charlie Brown Jr - Lutar Pelo que e meu\\07.8 Charlie Brown Jr - Lutar Pelo que e meu\\song.ogg",
+    "audioSizeMB": 6.26,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "07.E Lion Heart - A Noite Me Chamou",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.E Lion Heart - A Noite Me Chamou\\07.E Lion Heart - A Noite Me Chamou",
+    "name": "A Noite Me Chamou",
+    "artist": "Lion Heart",
+    "genre": "Hard Rock",
+    "year": "2009",
+    "diffGuitar": 2,
+    "songLengthMs": 223858,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.E Lion Heart - A Noite Me Chamou\\07.E Lion Heart - A Noite Me Chamou\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\07.E Lion Heart - A Noite Me Chamou\\07.E Lion Heart - A Noite Me Chamou\\song.ogg",
+    "audioSizeMB": 6.91,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "08.1 Detonautas - Quando o Sol se for",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.1 Detonautas - Quando o Sol se for\\08.1 Detonautas - Quando o Sol se for",
+    "name": "Quando o Sol se For",
+    "artist": "Detonautas Roque Clube",
+    "genre": "Rock",
+    "year": "2003",
+    "diffGuitar": 3,
+    "songLengthMs": 213392,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.1 Detonautas - Quando o Sol se for\\08.1 Detonautas - Quando o Sol se for\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.1 Detonautas - Quando o Sol se for\\08.1 Detonautas - Quando o Sol se for\\song.ogg",
+    "audioSizeMB": 6.59,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "08.2 Matanza - Ela Roubou Meu Caminhao",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.2 Matanza - Ela Roubou Meu Caminhao\\08.2 Matanza - Ela Roubou Meu Caminhao",
+    "name": "Ela Roubou Meu Caminhão",
+    "artist": "Matanza",
+    "genre": "Countrycore",
+    "year": "2001",
+    "diffGuitar": 3,
+    "songLengthMs": 228199,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.2 Matanza - Ela Roubou Meu Caminhao\\08.2 Matanza - Ela Roubou Meu Caminhao\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.2 Matanza - Ela Roubou Meu Caminhao\\08.2 Matanza - Ela Roubou Meu Caminhao\\song.ogg",
+    "audioSizeMB": 7.04,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": true,
+    "existingSongId": "mat-ela-roubou-caminhao"
+  },
+  {
+    "folderName": "08.3 Ozielzinho - Amanhecer",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.3 Ozielzinho - Amanhecer\\08.3 Ozielzinho - Amanhecer",
+    "name": "Amanhecer",
+    "artist": "Ozielzinho",
+    "genre": "Instrumental",
+    "year": "2018",
+    "diffGuitar": 3,
+    "songLengthMs": 259352,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.3 Ozielzinho - Amanhecer\\08.3 Ozielzinho - Amanhecer\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.3 Ozielzinho - Amanhecer\\08.3 Ozielzinho - Amanhecer\\song.ogg",
+    "audioSizeMB": 4.02,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "08.4 Skank - Sutilmente",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.4 Skank - Sutilmente\\08.4 Skank - Sutilmente",
+    "name": "Sutilmente",
+    "artist": "Skank",
+    "genre": "Pop Rock",
+    "year": "2008",
+    "diffGuitar": 3,
+    "songLengthMs": 243030,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.4 Skank - Sutilmente\\08.4 Skank - Sutilmente\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.4 Skank - Sutilmente\\08.4 Skank - Sutilmente\\song.ogg",
+    "audioSizeMB": 7.52,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "08.5 Tim Maia - O Descobridor Dos Sete Mares",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.5 Tim Maia - O Descobridor Dos Sete Mares\\08.5 Tim Maia - O Descobridor Dos Sete Mares",
+    "name": "O Descobridor dos Sete Mares",
+    "artist": "Tim Maia",
+    "genre": "Disco Funk",
+    "year": "1983",
+    "diffGuitar": 3,
+    "songLengthMs": 266971,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.5 Tim Maia - O Descobridor Dos Sete Mares\\08.5 Tim Maia - O Descobridor Dos Sete Mares\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.5 Tim Maia - O Descobridor Dos Sete Mares\\08.5 Tim Maia - O Descobridor Dos Sete Mares\\song.ogg",
+    "audioSizeMB": 8.24,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "08.6 Mastruz Com Leite - Fim De Festa,Polca Fogueteira,Lascando O Cano",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.6 Mastruz Com Leite - Fim De Festa,Polca Fogueteira,Lascando O Cano\\08.6 Mastruz Com Leite - Fim De Festa,Polca Fogueteira,Lascando O Cano",
+    "name": "Fim de Festa - Polca Fogueteira - Lascando o Cano",
+    "artist": "Mastruz Com leite",
+    "genre": "Forró",
+    "year": "1996",
+    "diffGuitar": 3,
+    "songLengthMs": 211659,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.6 Mastruz Com Leite - Fim De Festa,Polca Fogueteira,Lascando O Cano\\08.6 Mastruz Com Leite - Fim De Festa,Polca Fogueteira,Lascando O Cano\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.6 Mastruz Com Leite - Fim De Festa,Polca Fogueteira,Lascando O Cano\\08.6 Mastruz Com Leite - Fim De Festa,Polca Fogueteira,Lascando O Cano\\song.ogg",
+    "audioSizeMB": 6.54,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "08.7 Restart - Recomeçar",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.7 Restart - Recomeçar\\08.7 Restart - Recomeçar",
+    "name": "Recomeçar",
+    "artist": "Restart",
+    "genre": "Pop Rock",
+    "year": "2009",
+    "diffGuitar": 3,
+    "songLengthMs": 200270,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.7 Restart - Recomeçar\\08.7 Restart - Recomeçar\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.7 Restart - Recomeçar\\08.7 Restart - Recomeçar\\song.ogg",
+    "audioSizeMB": 6.18,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "08.E Moptop - O Rock Acabou",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.E Moptop - O Rock Acabou\\08.E Moptop - O Rock Acabou",
+    "name": "O Rock Acabou",
+    "artist": "Moptop",
+    "genre": "Indie Rock",
+    "year": "2006",
+    "diffGuitar": 3,
+    "songLengthMs": 196273,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.E Moptop - O Rock Acabou\\08.E Moptop - O Rock Acabou\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\08.E Moptop - O Rock Acabou\\08.E Moptop - O Rock Acabou\\song.ogg",
+    "audioSizeMB": 6.06,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "09.1 Ednaldo Pereira - God Is Good Metal (Matheus Richard)",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.1 Ednaldo Pereira - God Is Good Metal (Matheus Richard)\\09.1 Ednaldo Pereira - God Is Good Metal (Matheus Richard)",
+    "name": "God Is Good (Matheus Richard)",
+    "artist": "Ednaldo Pereira",
+    "genre": "Ednaldo Pereira",
+    "year": "2019",
+    "diffGuitar": 2,
+    "songLengthMs": 172272,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.1 Ednaldo Pereira - God Is Good Metal (Matheus Richard)\\09.1 Ednaldo Pereira - God Is Good Metal (Matheus Richard)\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.1 Ednaldo Pereira - God Is Good Metal (Matheus Richard)\\09.1 Ednaldo Pereira - God Is Good Metal (Matheus Richard)\\song.ogg",
+    "audioSizeMB": 5.32,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "09.2 Hardneja Sertacore - Evidencias",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.2 Hardneja Sertacore - Evidencias\\09.2 Hardneja Sertacore - Evidencias",
+    "name": "Evidências",
+    "artist": "Hardneja Sertacore",
+    "genre": "Hardneja",
+    "year": "2009",
+    "diffGuitar": 3,
+    "songLengthMs": 231526,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.2 Hardneja Sertacore - Evidencias\\09.2 Hardneja Sertacore - Evidencias\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.2 Hardneja Sertacore - Evidencias\\09.2 Hardneja Sertacore - Evidencias\\song.ogg",
+    "audioSizeMB": 7.15,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "09.3 Fresno - Diga Parte 2",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.3 Fresno - Diga Parte 2\\09.3 Fresno - Diga Parte 2",
+    "name": "Diga, Parte 2",
+    "artist": "Fresno",
+    "genre": "Alternative",
+    "year": "2012",
+    "diffGuitar": 2,
+    "songLengthMs": 267245,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.3 Fresno - Diga Parte 2\\09.3 Fresno - Diga Parte 2\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.3 Fresno - Diga Parte 2\\09.3 Fresno - Diga Parte 2\\song.ogg",
+    "audioSizeMB": 8.25,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "09.4 Selvagens a Procura de Lei - Despedida",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.4 Selvagens a Procura de Lei - Despedida\\09.4 Selvagens a Procura de Lei - Despedida",
+    "name": "Despedida",
+    "artist": "Selvagens à Procura de Lei",
+    "genre": "Indie Rock",
+    "year": "2013",
+    "diffGuitar": 1,
+    "songLengthMs": 268693,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.4 Selvagens a Procura de Lei - Despedida\\09.4 Selvagens a Procura de Lei - Despedida\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.4 Selvagens a Procura de Lei - Despedida\\09.4 Selvagens a Procura de Lei - Despedida\\song.ogg",
+    "audioSizeMB": 8.29,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "09.5 Charlie Brown Jr - Lugar Ao Sol",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.5 Charlie Brown Jr - Lugar Ao Sol\\09.5 Charlie Brown Jr - Lugar Ao Sol",
+    "name": "Lugar Ao Sol",
+    "artist": "Charlie Brown Jr",
+    "genre": "Alterative",
+    "year": "2001",
+    "diffGuitar": 2,
+    "songLengthMs": 216951,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.5 Charlie Brown Jr - Lugar Ao Sol\\09.5 Charlie Brown Jr - Lugar Ao Sol\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.5 Charlie Brown Jr - Lugar Ao Sol\\09.5 Charlie Brown Jr - Lugar Ao Sol\\song.ogg",
+    "audioSizeMB": 6.7,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "09.6 Hardneja Sertacore - Boate Azul",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.6 Hardneja Sertacore - Boate Azul\\09.6 Hardneja Sertacore - Boate Azul",
+    "name": "Boate Azul",
+    "artist": "Hardneja Sertacore",
+    "genre": "Hardneja",
+    "year": "2019",
+    "diffGuitar": 2,
+    "songLengthMs": 165605,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.6 Hardneja Sertacore - Boate Azul\\09.6 Hardneja Sertacore - Boate Azul\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.6 Hardneja Sertacore - Boate Azul\\09.6 Hardneja Sertacore - Boate Azul\\song.ogg",
+    "audioSizeMB": 5.11,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "09.7 Angra - Late Redemption feat. Milton Nascimento",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.7 Angra - Late Redemption feat. Milton Nascimento\\09.7 Angra - Late Redemption feat. Milton Nascimento",
+    "name": "Late Redemption feat. Milton Nascimento",
+    "artist": "Angra",
+    "genre": "Power Metal",
+    "year": "2004",
+    "diffGuitar": 3,
+    "songLengthMs": 299415,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.7 Angra - Late Redemption feat. Milton Nascimento\\09.7 Angra - Late Redemption feat. Milton Nascimento\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.7 Angra - Late Redemption feat. Milton Nascimento\\09.7 Angra - Late Redemption feat. Milton Nascimento\\song.ogg",
+    "audioSizeMB": 9.24,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "09.E Cartola - Preciso Me Encontrar",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.E Cartola - Preciso Me Encontrar\\09.E Cartola - Preciso Me Encontrar",
+    "name": "Preciso Me Encontrar",
+    "artist": "Cartola",
+    "genre": "Samba",
+    "year": "1976",
+    "diffGuitar": 3,
+    "songLengthMs": 179500,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.E Cartola - Preciso Me Encontrar\\09.E Cartola - Preciso Me Encontrar\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\09.E Cartola - Preciso Me Encontrar\\09.E Cartola - Preciso Me Encontrar\\song.ogg",
+    "audioSizeMB": 5.54,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "10.1 Kiko Loureiro - No Gravity",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.1 Kiko Loureiro - No Gravity\\10.1 Kiko Loureiro - No Gravity",
+    "name": "No Gravity",
+    "artist": "Kiko Loureiro",
+    "genre": "Instrumental Metal",
+    "year": "2005",
+    "diffGuitar": 3,
+    "songLengthMs": 265314,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.1 Kiko Loureiro - No Gravity\\10.1 Kiko Loureiro - No Gravity\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.1 Kiko Loureiro - No Gravity\\10.1 Kiko Loureiro - No Gravity\\song.ogg",
+    "audioSizeMB": 8.22,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "10.2 Almah - King",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.2 Almah - King\\10.2 Almah - King",
+    "name": "King",
+    "artist": "Almah",
+    "genre": "Power Metal",
+    "year": "2006",
+    "diffGuitar": 3,
+    "songLengthMs": 253307,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.2 Almah - King\\10.2 Almah - King\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.2 Almah - King\\10.2 Almah - King\\song.ogg",
+    "audioSizeMB": 7.82,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "10.3 Wagner Nascimento - Forro de Gesso",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.3 Wagner Nascimento - Forro de Gesso\\10.3 Wagner Nascimento - Forro de Gesso",
+    "name": "Forro de Gesso",
+    "artist": "Wagner Nascimento",
+    "genre": "Instrumental Rock",
+    "year": "2015",
+    "diffGuitar": 3,
+    "songLengthMs": 236509,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.3 Wagner Nascimento - Forro de Gesso\\10.3 Wagner Nascimento - Forro de Gesso\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.3 Wagner Nascimento - Forro de Gesso\\10.3 Wagner Nascimento - Forro de Gesso\\song.ogg",
+    "audioSizeMB": 3.67,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "10.4 Ecliptyka - Berco Esplendido",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.4 Ecliptyka - Berco Esplendido\\10.4 Ecliptyka - Berco Esplendido",
+    "name": "Berço Esplêndido",
+    "artist": "Ecliptyka",
+    "genre": "Melodic Metal",
+    "year": "2011",
+    "diffGuitar": 3,
+    "songLengthMs": 303308,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.4 Ecliptyka - Berco Esplendido\\10.4 Ecliptyka - Berco Esplendido\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.4 Ecliptyka - Berco Esplendido\\10.4 Ecliptyka - Berco Esplendido\\song.ogg",
+    "audioSizeMB": 9.36,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "10.5 Angra - Black Widow_s Web",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.5 Angra - Black Widow_s Web\\10.5 Angra - Black Widow's Web",
+    "name": "10.5 Angra - Black Widow_s Web",
+    "artist": "Desconhecido",
+    "genre": "Rock",
+    "year": "2000",
+    "diffGuitar": 1,
+    "songLengthMs": 0,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.5 Angra - Black Widow_s Web\\10.5 Angra - Black Widow's Web\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.5 Angra - Black Widow_s Web\\10.5 Angra - Black Widow's Web\\song.ogg",
+    "audioSizeMB": 8.07,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "10.6 Oficina G3 - Agua Viva",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.6 Oficina G3 - Agua Viva\\10.6 Oficina G3 - Agua Viva",
+    "name": "Água Viva",
+    "artist": "Oficina G3",
+    "genre": "Progressive Metal",
+    "year": "2013",
+    "diffGuitar": 4,
+    "songLengthMs": 373564,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.6 Oficina G3 - Agua Viva\\10.6 Oficina G3 - Agua Viva\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.6 Oficina G3 - Agua Viva\\10.6 Oficina G3 - Agua Viva\\song.ogg",
+    "audioSizeMB": 11.53,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "10.7 Ana Frango Elétrico - Tem Certeza",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.7 Ana Frango Elétrico - Tem Certeza\\10.7 Ana Frango Elétrico - Tem Certeza",
+    "name": "Tem Certeza?",
+    "artist": "Ana Frango Elétrico",
+    "genre": "Indie Rock",
+    "year": "2019",
+    "diffGuitar": 3,
+    "songLengthMs": 230714,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.7 Ana Frango Elétrico - Tem Certeza\\10.7 Ana Frango Elétrico - Tem Certeza\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.7 Ana Frango Elétrico - Tem Certeza\\10.7 Ana Frango Elétrico - Tem Certeza\\song.ogg",
+    "audioSizeMB": 7.12,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "10.E Ecliptyka - We Are The Same feat. Marcelo Carvalho",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.E Ecliptyka - We Are The Same feat. Marcelo Carvalho\\10.E Ecliptyka - We Are The Same feat. Marcelo Carvalho",
+    "name": "We Are The Same feat. Marcelo Carvalho",
+    "artist": "Ecliptyka",
+    "genre": "Melodic Metal",
+    "year": "2011",
+    "diffGuitar": 4,
+    "songLengthMs": 265000,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.E Ecliptyka - We Are The Same feat. Marcelo Carvalho\\10.E Ecliptyka - We Are The Same feat. Marcelo Carvalho\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\10.E Ecliptyka - We Are The Same feat. Marcelo Carvalho\\10.E Ecliptyka - We Are The Same feat. Marcelo Carvalho\\song.ogg",
+    "audioSizeMB": 8.18,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "11.1 Project46 - Redeas",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.1 Project46 - Redeas\\11.1 Project46 - Redeas",
+    "name": "Rédeas",
+    "artist": "Project46",
+    "genre": "Metalcore",
+    "year": "2017",
+    "diffGuitar": 3,
+    "songLengthMs": 229766,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.1 Project46 - Redeas\\11.1 Project46 - Redeas\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.1 Project46 - Redeas\\11.1 Project46 - Redeas\\song.ogg",
+    "audioSizeMB": 7.09,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "11.2 Ecliptyka - Times Are Changed",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.2 Ecliptyka - Times Are Changed\\11.2 Ecliptyka - Times Are Changed",
+    "name": "Times Are Changed",
+    "artist": "Ecliptyka",
+    "genre": "Melodic Metal",
+    "year": "2014",
+    "diffGuitar": 3,
+    "songLengthMs": 300000,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.2 Ecliptyka - Times Are Changed\\11.2 Ecliptyka - Times Are Changed\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.2 Ecliptyka - Times Are Changed\\11.2 Ecliptyka - Times Are Changed\\song.ogg",
+    "audioSizeMB": 7.3,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "11.3 Monticelli - Payback",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.3 Monticelli - Payback\\11.3 Monticelli - Payback",
+    "name": "Payback",
+    "artist": "Monticelli",
+    "genre": "Hard Rock",
+    "year": "2016",
+    "diffGuitar": 3,
+    "songLengthMs": 212618,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.3 Monticelli - Payback\\11.3 Monticelli - Payback\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.3 Monticelli - Payback\\11.3 Monticelli - Payback\\song.ogg",
+    "audioSizeMB": 6.57,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "11.4 Command6 - Jesus Cry",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.4 Command6 - Jesus Cry\\11.4 Command6 - Jesus Cry",
+    "name": "Jesus Cry",
+    "artist": "Command6",
+    "genre": "Heavy Metal",
+    "year": "2009",
+    "diffGuitar": 3,
+    "songLengthMs": 243823,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.4 Command6 - Jesus Cry\\11.4 Command6 - Jesus Cry\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.4 Command6 - Jesus Cry\\11.4 Command6 - Jesus Cry\\song.ogg",
+    "audioSizeMB": 7.54,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "11.5 Kiko Loureiro - Desperado",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.5 Kiko Loureiro - Desperado\\11.5 Kiko Loureiro - Desperado",
+    "name": "Desperado",
+    "artist": "Kiko Loureiro",
+    "genre": "Progressive Metal",
+    "year": "2009",
+    "diffGuitar": 3,
+    "songLengthMs": 347286,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.5 Kiko Loureiro - Desperado\\11.5 Kiko Loureiro - Desperado\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.5 Kiko Loureiro - Desperado\\11.5 Kiko Loureiro - Desperado\\song.ogg",
+    "audioSizeMB": 10.72,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "11.6 O Terno - Eu tomei coca, Voce Encheu A Cara",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.6 O Terno - Eu tomei coca, Voce Encheu A Cara\\11.6 O Terno - Eu tomei coca, Voce Encheu A Cara",
+    "name": "Eu Tomei Coca,Você Encheu a Cara",
+    "artist": "O Terno",
+    "genre": "Indie Rock",
+    "year": "2012",
+    "diffGuitar": 4,
+    "songLengthMs": 77138,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.6 O Terno - Eu tomei coca, Voce Encheu A Cara\\11.6 O Terno - Eu tomei coca, Voce Encheu A Cara\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.6 O Terno - Eu tomei coca, Voce Encheu A Cara\\11.6 O Terno - Eu tomei coca, Voce Encheu A Cara\\song.ogg",
+    "audioSizeMB": 1.2,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "11.7 Argos - Harvest Of Hate",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.7 Argos - Harvest Of Hate\\11.7 Argos - Harvest Of Hate",
+    "name": "Harvest Of Hate",
+    "artist": "Argos",
+    "genre": "Heavy Metal",
+    "year": "2012",
+    "diffGuitar": 4,
+    "songLengthMs": 349505,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.7 Argos - Harvest Of Hate\\11.7 Argos - Harvest Of Hate\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.7 Argos - Harvest Of Hate\\11.7 Argos - Harvest Of Hate\\song.ogg",
+    "audioSizeMB": 5.41,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "11.E Eutenia - Meu Fim",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.E Eutenia - Meu Fim\\11.E Eutenia - Meu Fim",
+    "name": "Meu Fim feat. Caio MacBeserra",
+    "artist": "Eutenia",
+    "genre": "Heavy Metal",
+    "year": "2018",
+    "diffGuitar": 4,
+    "songLengthMs": 268333,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.E Eutenia - Meu Fim\\11.E Eutenia - Meu Fim\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\11.E Eutenia - Meu Fim\\11.E Eutenia - Meu Fim\\song.ogg",
+    "audioSizeMB": 8.29,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "12.1 Ze Ramalho - Sr Ozzy (Part. Robertinho de Recife)",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.1 Ze Ramalho - Sr Ozzy (Part. Robertinho de Recife)\\12.1 Ze Ramalho - Sr Ozzy (Part. Robertinho de Recife)",
+    "name": "Sr. Ozzy (Part. Robertinho de Recife)",
+    "artist": "Zé Ramalho",
+    "genre": "Forró / Metal",
+    "year": "2019",
+    "diffGuitar": 3,
+    "songLengthMs": 267076,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.1 Ze Ramalho - Sr Ozzy (Part. Robertinho de Recife)\\12.1 Ze Ramalho - Sr Ozzy (Part. Robertinho de Recife)\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.1 Ze Ramalho - Sr Ozzy (Part. Robertinho de Recife)\\12.1 Ze Ramalho - Sr Ozzy (Part. Robertinho de Recife)\\song.ogg",
+    "audioSizeMB": 8.24,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "12.2 Manowel - Heavydencias",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.2 Manowel - Heavydencias\\12.2 Manowel - Heavydencias",
+    "name": "Heavydências",
+    "artist": "Manowel",
+    "genre": "Heavydências",
+    "year": "2004",
+    "diffGuitar": 2,
+    "songLengthMs": 202883,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.2 Manowel - Heavydencias\\12.2 Manowel - Heavydencias\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.2 Manowel - Heavydencias\\12.2 Manowel - Heavydencias\\song.ogg",
+    "audioSizeMB": 3.14,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "12.3 Angra - Omni Silence Inside",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.3 Angra - Omni Silence Inside\\12.3 Angra - Omni Silence Inside",
+    "name": "Ømni - Silence Inside",
+    "artist": "Angra",
+    "genre": "Progressive Metal",
+    "year": "2018",
+    "diffGuitar": 4,
+    "songLengthMs": 497000,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.3 Angra - Omni Silence Inside\\12.3 Angra - Omni Silence Inside\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.3 Angra - Omni Silence Inside\\12.3 Angra - Omni Silence Inside\\song.ogg",
+    "audioSizeMB": 15.9,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "12.4 Massacration - Motormetal",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.4 Massacration - Motormetal\\12.4 Massacration - Motormetal",
+    "name": "Motormetal",
+    "artist": "Massacration",
+    "genre": "Comedy Metal",
+    "year": "2019",
+    "diffGuitar": 4,
+    "songLengthMs": 216096,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.4 Massacration - Motormetal\\12.4 Massacration - Motormetal\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.4 Massacration - Motormetal\\12.4 Massacration - Motormetal\\song.ogg",
+    "audioSizeMB": 6.67,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "12.5 Terra Prima - Time To Fly",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.5 Terra Prima - Time To Fly\\12.5 Terra Prima - Time To Fly",
+    "name": "Time To Fly",
+    "artist": "Terra Prima",
+    "genre": "Power Metal",
+    "year": "2010",
+    "diffGuitar": 4,
+    "songLengthMs": 298940,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.5 Terra Prima - Time To Fly\\12.5 Terra Prima - Time To Fly\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.5 Terra Prima - Time To Fly\\12.5 Terra Prima - Time To Fly\\song.ogg",
+    "audioSizeMB": 9.23,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "12.6 Wagner Nascimento - Bahia Metal",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.6 Wagner Nascimento - Bahia Metal\\12.6 Wagner Nascimento - Bahia Metal",
+    "name": "Bahia Metal",
+    "artist": "Wagner Nascimento",
+    "genre": "Forro Metal",
+    "year": "2015",
+    "diffGuitar": 3,
+    "songLengthMs": 176974,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.6 Wagner Nascimento - Bahia Metal\\12.6 Wagner Nascimento - Bahia Metal\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.6 Wagner Nascimento - Bahia Metal\\12.6 Wagner Nascimento - Bahia Metal\\song.ogg",
+    "audioSizeMB": 2.82,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "12.7 Ozielzinho - Re Menor Philharmonic",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.7 Ozielzinho - Re Menor Philharmonic\\12.7 Ozielzinho - Re Menor Philharmonic",
+    "name": "Ré Menor Philharmonic",
+    "artist": "Ozielzinho",
+    "genre": "Instrumental",
+    "year": "2013",
+    "diffGuitar": 4,
+    "songLengthMs": 314600,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.7 Ozielzinho - Re Menor Philharmonic\\12.7 Ozielzinho - Re Menor Philharmonic\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.7 Ozielzinho - Re Menor Philharmonic\\12.7 Ozielzinho - Re Menor Philharmonic\\song.ogg",
+    "audioSizeMB": 9.71,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "12.E Pandora 101 - I Hope",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.E Pandora 101 - I Hope\\12.E Pandora 101 - I Hope",
+    "name": "I Hope",
+    "artist": "Pandora 101",
+    "genre": "Progressive Metal",
+    "year": "2009",
+    "diffGuitar": 4,
+    "songLengthMs": 337000,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.E Pandora 101 - I Hope\\12.E Pandora 101 - I Hope\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\12.E Pandora 101 - I Hope\\12.E Pandora 101 - I Hope\\song.ogg",
+    "audioSizeMB": 10.4,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "13.1 Shaman - Brand New Me",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.1 Shaman - Brand New Me\\13.1 Shaman - Brand New Me",
+    "name": "Brand New Me",
+    "artist": "Shaman",
+    "genre": "Power Metal",
+    "year": "2020",
+    "diffGuitar": 1,
+    "songLengthMs": 248405,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.1 Shaman - Brand New Me\\13.1 Shaman - Brand New Me\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.1 Shaman - Brand New Me\\13.1 Shaman - Brand New Me\\song.ogg",
+    "audioSizeMB": 7.67,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "13.2 Andragonia - The Choice",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.2 Andragonia - The Choice\\13.2 Andragonia - The Choice",
+    "name": "The Choice",
+    "artist": "Andragonia",
+    "genre": "Progressive Metal",
+    "year": "2010",
+    "diffGuitar": 3,
+    "songLengthMs": 336802,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.2 Andragonia - The Choice\\13.2 Andragonia - The Choice\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.2 Andragonia - The Choice\\13.2 Andragonia - The Choice\\song.ogg",
+    "audioSizeMB": 5.22,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "13.3 Kiko Loureiro - Feijao De Corda",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.3 Kiko Loureiro - Feijao De Corda\\13.3 Kiko Loureiro - Feijao De Corda",
+    "name": "Feijão de Corda",
+    "artist": "Kiko Loureiro",
+    "genre": "Fusion",
+    "year": "2006",
+    "diffGuitar": 4,
+    "songLengthMs": 338777,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.3 Kiko Loureiro - Feijao De Corda\\13.3 Kiko Loureiro - Feijao De Corda\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.3 Kiko Loureiro - Feijao De Corda\\13.3 Kiko Loureiro - Feijao De Corda\\song.ogg",
+    "audioSizeMB": 10.46,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "13.4 Marcelo Barbosa - Dancing Heart",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.4 Marcelo Barbosa - Dancing Heart\\13.4 Marcelo Barbosa - Dancing Heart",
+    "name": "Dancing Heart",
+    "artist": "Marcelo Barbosa",
+    "genre": "Instrumental Metal",
+    "year": "2016",
+    "diffGuitar": 3,
+    "songLengthMs": 309377,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.4 Marcelo Barbosa - Dancing Heart\\13.4 Marcelo Barbosa - Dancing Heart\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.4 Marcelo Barbosa - Dancing Heart\\13.4 Marcelo Barbosa - Dancing Heart\\song.ogg",
+    "audioSizeMB": 9.55,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "13.5 Oficina G3 - Depois Da Guerra (Live) (Alexx Santos)",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.5 Oficina G3 - Depois Da Guerra (Live) (Alexx Santos)\\13.5 Oficina G3 - Depois Da Guerra (Live) (Alexx Santos)",
+    "name": "Depois Da Guerra (Live)",
+    "artist": "Oficina G3",
+    "genre": "Christian Metal",
+    "year": "2010",
+    "diffGuitar": 4,
+    "songLengthMs": 433840,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.5 Oficina G3 - Depois Da Guerra (Live) (Alexx Santos)\\13.5 Oficina G3 - Depois Da Guerra (Live) (Alexx Santos)\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.5 Oficina G3 - Depois Da Guerra (Live) (Alexx Santos)\\13.5 Oficina G3 - Depois Da Guerra (Live) (Alexx Santos)\\song.ogg",
+    "audioSizeMB": 8.78,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "13.6 Ozielzinho - Vaso Quebrado",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.6 Ozielzinho - Vaso Quebrado\\13.6 Ozielzinho - Vaso Quebrado",
+    "name": "Vaso Quebrado",
+    "artist": "Ozielzinho",
+    "genre": "Instrumenal",
+    "year": "2013",
+    "diffGuitar": 4,
+    "songLengthMs": 237769,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.6 Ozielzinho - Vaso Quebrado\\13.6 Ozielzinho - Vaso Quebrado\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.6 Ozielzinho - Vaso Quebrado\\13.6 Ozielzinho - Vaso Quebrado\\song.ogg",
+    "audioSizeMB": 7.34,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "13.7 Viper - At Least A Chance",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.7 Viper - At Least A Chance\\13.7 Viper - At Least A Chance",
+    "name": "At Least A Chance",
+    "artist": "Viper",
+    "genre": "Power Metal",
+    "year": "1989",
+    "diffGuitar": 4,
+    "songLengthMs": 241000,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.7 Viper - At Least A Chance\\13.7 Viper - At Least A Chance\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.7 Viper - At Least A Chance\\13.7 Viper - At Least A Chance\\song.ogg",
+    "audioSizeMB": 7.44,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "13.E Andre Matos - Course Of Life",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.E Andre Matos - Course Of Life\\13.E Andre Matos - Course Of Life",
+    "name": "Course Of Life",
+    "artist": "Andre Matos",
+    "genre": "Power Metal",
+    "year": "2012",
+    "diffGuitar": 4,
+    "songLengthMs": 344067,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.E Andre Matos - Course Of Life\\13.E Andre Matos - Course Of Life\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\13.E Andre Matos - Course Of Life\\13.E Andre Matos - Course Of Life\\song.ogg",
+    "audioSizeMB": 10.62,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "14.1 Angra -  Light of Transcendence",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.1 Angra -  Light of Transcendence\\14.1 Angra -  Light of Transcendence",
+    "name": "Light Of Transcendence",
+    "artist": "Angra",
+    "genre": "Progressive Metal",
+    "year": "2018",
+    "diffGuitar": 5,
+    "songLengthMs": 281279,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.1 Angra -  Light of Transcendence\\14.1 Angra -  Light of Transcendence\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.1 Angra -  Light of Transcendence\\14.1 Angra -  Light of Transcendence\\song.ogg",
+    "audioSizeMB": 8.68,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "14.2 Command6 - Armageddon",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.2 Command6 - Armageddon\\14.2 Command6 - Armageddon",
+    "name": "Armageddon",
+    "artist": "Command6",
+    "genre": "Heavy Metal",
+    "year": "2009",
+    "diffGuitar": 4,
+    "songLengthMs": 251390,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.2 Command6 - Armageddon\\14.2 Command6 - Armageddon\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.2 Command6 - Armageddon\\14.2 Command6 - Armageddon\\song.ogg",
+    "audioSizeMB": 7.77,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "14.3 Comitiva Do Rock - Dia De Anime",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.3 Comitiva Do Rock - Dia De Anime\\14.3 Comitiva Do Rock - Dia De Anime",
+    "name": "Dia de Anime",
+    "artist": "Comitiva do Rock",
+    "genre": "Hard Rock",
+    "year": "2013",
+    "diffGuitar": 4,
+    "songLengthMs": 279972,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.3 Comitiva Do Rock - Dia De Anime\\14.3 Comitiva Do Rock - Dia De Anime\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.3 Comitiva Do Rock - Dia De Anime\\14.3 Comitiva Do Rock - Dia De Anime\\song.ogg",
+    "audioSizeMB": 8.64,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "14.4 Maffalda - Pensamento Tipico de Esquerda Caviar (EU VO GOZA)",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.4 Maffalda - Pensamento Tipico de Esquerda Caviar (EU VO GOZA)\\14.4 Maffalda - Pensamento Tipico de Esquerda Caviar (EU VO GOZA)",
+    "name": "Pensamento Típico de Esquerda Caviar",
+    "artist": "Maffalda",
+    "genre": "Trap",
+    "year": "2014",
+    "diffGuitar": 5,
+    "songLengthMs": 0,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.4 Maffalda - Pensamento Tipico de Esquerda Caviar (EU VO GOZA)\\14.4 Maffalda - Pensamento Tipico de Esquerda Caviar (EU VO GOZA)\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.4 Maffalda - Pensamento Tipico de Esquerda Caviar (EU VO GOZA)\\14.4 Maffalda - Pensamento Tipico de Esquerda Caviar (EU VO GOZA)\\song.ogg",
+    "audioSizeMB": 4.57,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "14.5 Edu Falaschi - Spread Your Fire",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.5 Edu Falaschi - Spread Your Fire\\14.5 Edu Falaschi - Spread Your Fire",
+    "name": "Spread Your Fire (Live)",
+    "artist": "Edu Falaschi",
+    "genre": "Power Metal",
+    "year": "2018",
+    "diffGuitar": 5,
+    "songLengthMs": 316191,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.5 Edu Falaschi - Spread Your Fire\\14.5 Edu Falaschi - Spread Your Fire\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.5 Edu Falaschi - Spread Your Fire\\14.5 Edu Falaschi - Spread Your Fire\\song.ogg",
+    "audioSizeMB": 11.42,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "14.6 Ednaldo Pereira - Who Is The Sister (Matheus Richard)",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.6 Ednaldo Pereira - Who Is The Sister (Matheus Richard)\\14.6 Ednaldo Pereira - Who Is The Sister (Matheus Richard)",
+    "name": "Who Is The Sister (Matheus Richard)",
+    "artist": "Ednaldo Pereira",
+    "genre": "Ednaldo Pereira",
+    "year": "2019",
+    "diffGuitar": 4,
+    "songLengthMs": 230667,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.6 Ednaldo Pereira - Who Is The Sister (Matheus Richard)\\14.6 Ednaldo Pereira - Who Is The Sister (Matheus Richard)\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.6 Ednaldo Pereira - Who Is The Sister (Matheus Richard)\\14.6 Ednaldo Pereira - Who Is The Sister (Matheus Richard)\\song.ogg",
+    "audioSizeMB": 5.65,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "14.7 Angra - Z.I.T.O 2018",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.7 Angra - Z.I.T.O 2018\\14.7 Angra - Z.I.T.O 2018",
+    "name": "Z.I.T.Ø",
+    "artist": "Angra",
+    "genre": "Progressive Metal",
+    "year": "2018",
+    "diffGuitar": 5,
+    "songLengthMs": 380272,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.7 Angra - Z.I.T.O 2018\\14.7 Angra - Z.I.T.O 2018\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.7 Angra - Z.I.T.O 2018\\14.7 Angra - Z.I.T.O 2018\\song.ogg",
+    "audioSizeMB": 8.47,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "14.E Joao Brasil - Brasileirinho (Funk Remix)",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.E Joao Brasil - Brasileirinho (Funk Remix)\\14.E Joao Brasil - Brasileirinho (Funk Remix)",
+    "name": "Brasileirinho (Funk Remix)",
+    "artist": "João Brasil",
+    "genre": "Funk",
+    "year": "2019",
+    "diffGuitar": 4,
+    "songLengthMs": 110600,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.E Joao Brasil - Brasileirinho (Funk Remix)\\14.E Joao Brasil - Brasileirinho (Funk Remix)\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\14.E Joao Brasil - Brasileirinho (Funk Remix)\\14.E Joao Brasil - Brasileirinho (Funk Remix)\\song.ogg",
+    "audioSizeMB": 3.42,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "15.1 Raimundos - Mulher de Fases",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.1 Raimundos - Mulher de Fases\\15.1 Raimundos - Mulher de Fases",
+    "name": "Mulher de Fases",
+    "artist": "Raimundos",
+    "genre": "Punk Rock",
+    "year": "1999",
+    "diffGuitar": 4,
+    "songLengthMs": 219181,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.1 Raimundos - Mulher de Fases\\15.1 Raimundos - Mulher de Fases\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.1 Raimundos - Mulher de Fases\\15.1 Raimundos - Mulher de Fases\\song.ogg",
+    "audioSizeMB": 6.76,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "15.2 Massacration - Metal Is The Law",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.2 Massacration - Metal Is The Law\\15.2 Massacration - Metal Is The Law",
+    "name": "Metal Is The Law",
+    "artist": "Massacration",
+    "genre": "Comedy Metal",
+    "year": "2005",
+    "diffGuitar": 5,
+    "songLengthMs": 231085,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.2 Massacration - Metal Is The Law\\15.2 Massacration - Metal Is The Law\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.2 Massacration - Metal Is The Law\\15.2 Massacration - Metal Is The Law\\song.ogg",
+    "audioSizeMB": 7.13,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": true,
+    "existingSongId": "mas-metal-is-the-law"
+  },
+  {
+    "folderName": "15.3 Edu Falaschi - The Glory of the Sacred Truth",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.3 Edu Falaschi - The Glory of the Sacred Truth\\15.3 Edu Falaschi - The Glory of the Sacred Truth",
+    "name": "The Glory of The Sacred Truth",
+    "artist": "Edu Falaschi",
+    "genre": "Power Metal",
+    "year": "2018",
+    "diffGuitar": 6,
+    "songLengthMs": 266000,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.3 Edu Falaschi - The Glory of the Sacred Truth\\15.3 Edu Falaschi - The Glory of the Sacred Truth\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.3 Edu Falaschi - The Glory of the Sacred Truth\\15.3 Edu Falaschi - The Glory of the Sacred Truth\\song.ogg",
+    "audioSizeMB": 8.21,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "15.4 Ednaldo Pereira - Mulher Oferecida (Matheus Richard)",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.4 Ednaldo Pereira - Mulher Oferecida (Matheus Richard)\\15.4 Ednaldo Pereira - Mulher Oferecida (Matheus Richard)",
+    "name": "Mulher Oferecida (Matheus Richard)",
+    "artist": "Ednaldo Pereira",
+    "genre": "Ednaldo Pereira",
+    "year": "2019",
+    "diffGuitar": 4,
+    "songLengthMs": 230667,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.4 Ednaldo Pereira - Mulher Oferecida (Matheus Richard)\\15.4 Ednaldo Pereira - Mulher Oferecida (Matheus Richard)\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.4 Ednaldo Pereira - Mulher Oferecida (Matheus Richard)\\15.4 Ednaldo Pereira - Mulher Oferecida (Matheus Richard)\\song.ogg",
+    "audioSizeMB": 7.12,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "15.5 Kiko Loureiro - Gray Stone Gateway",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.5 Kiko Loureiro - Gray Stone Gateway\\15.5 Kiko Loureiro - Gray Stone Gateway",
+    "name": "Gray Stone Gateway",
+    "artist": "Kiko Loureiro",
+    "genre": "Progessive Metal",
+    "year": "2012",
+    "diffGuitar": 6,
+    "songLengthMs": 240142,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.5 Kiko Loureiro - Gray Stone Gateway\\15.5 Kiko Loureiro - Gray Stone Gateway\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.5 Kiko Loureiro - Gray Stone Gateway\\15.5 Kiko Loureiro - Gray Stone Gateway\\song.ogg",
+    "audioSizeMB": 7.41,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "15.6 Allos - Spiritual Battle",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.6 Allos - Spiritual Battle\\15.6 Allos - Spiritual Battle",
+    "name": "Spiritual Battle",
+    "artist": "Allos",
+    "genre": "Christian Metal",
+    "year": "2012",
+    "diffGuitar": 5,
+    "songLengthMs": 345464,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.6 Allos - Spiritual Battle\\15.6 Allos - Spiritual Battle\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.6 Allos - Spiritual Battle\\15.6 Allos - Spiritual Battle\\song.ogg",
+    "audioSizeMB": 10.66,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "15.7 Detonator - Metaleiro (Ao Vivo)",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.7 Detonator - Metaleiro (Ao Vivo)\\15.7 Detonator - Metaleiro (Ao Vivo)",
+    "name": "Metaleiro (Ao Vivo)",
+    "artist": "Detonator",
+    "genre": "Comedy Metal",
+    "year": "2015",
+    "diffGuitar": 5,
+    "songLengthMs": 223000,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.7 Detonator - Metaleiro (Ao Vivo)\\15.7 Detonator - Metaleiro (Ao Vivo)\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.7 Detonator - Metaleiro (Ao Vivo)\\15.7 Detonator - Metaleiro (Ao Vivo)\\song.ogg",
+    "audioSizeMB": 11.34,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "15.E Angra - Speed",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.E Angra - Speed\\15.E Angra - Speed",
+    "name": "Speed",
+    "artist": "Angra",
+    "genre": "Power Metal",
+    "year": "1998",
+    "diffGuitar": 5,
+    "songLengthMs": 356596,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.E Angra - Speed\\15.E Angra - Speed\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\15.E Angra - Speed\\15.E Angra - Speed\\song.ogg",
+    "audioSizeMB": 11.01,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "16.1 Charlie Brown Jr - Hoje Eu Acordei Feliz (Ao Vivo)",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.1 Charlie Brown Jr - Hoje Eu Acordei Feliz (Ao Vivo)\\16.1 Charlie Brown Jr - Hoje Eu Acordei Feliz (Ao Vivo)",
+    "name": "Hoje Eu Acordei Feliz (Live)",
+    "artist": "Charlie Brown Jr",
+    "genre": "Skate Punk",
+    "year": "2016",
+    "diffGuitar": 4,
+    "songLengthMs": 154142,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.1 Charlie Brown Jr - Hoje Eu Acordei Feliz (Ao Vivo)\\16.1 Charlie Brown Jr - Hoje Eu Acordei Feliz (Ao Vivo)\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.1 Charlie Brown Jr - Hoje Eu Acordei Feliz (Ao Vivo)\\16.1 Charlie Brown Jr - Hoje Eu Acordei Feliz (Ao Vivo)\\song.ogg",
+    "audioSizeMB": 4.76,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "16.2 Almah - Believer",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.2 Almah - Believer\\16.2 Almah - Believer",
+    "name": "Believer",
+    "artist": "Almah",
+    "genre": "Power Metal",
+    "year": "2013",
+    "diffGuitar": 6,
+    "songLengthMs": 341799,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.2 Almah - Believer\\16.2 Almah - Believer\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.2 Almah - Believer\\16.2 Almah - Believer\\song.ogg",
+    "audioSizeMB": 10.55,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "16.3 Dead Fish - Sem Remedio",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.3 Dead Fish - Sem Remedio\\16.3 Dead Fish - Sem Remedio",
+    "name": "Sem Remédio",
+    "artist": "Dead Fish",
+    "genre": "Hardcore",
+    "year": "2018",
+    "diffGuitar": 5,
+    "songLengthMs": 204400,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.3 Dead Fish - Sem Remedio\\16.3 Dead Fish - Sem Remedio\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.3 Dead Fish - Sem Remedio\\16.3 Dead Fish - Sem Remedio\\song.ogg",
+    "audioSizeMB": 6.31,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "16.4 Angra - Salvation Suicide",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.4 Angra - Salvation Suicide\\16.4 Angra - Salvation Suicide",
+    "name": "Salvation: Suicide",
+    "artist": "Angra",
+    "genre": "Power Metal",
+    "year": "2006",
+    "diffGuitar": 6,
+    "songLengthMs": 263605,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.4 Angra - Salvation Suicide\\16.4 Angra - Salvation Suicide\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.4 Angra - Salvation Suicide\\16.4 Angra - Salvation Suicide\\song.ogg",
+    "audioSizeMB": 8.14,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "16.5 Legiao Urbana - Metal Contra As Nuvens",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.5 Legiao Urbana - Metal Contra As Nuvens\\16.5 Legiao Urbana - Metal Contra As Nuvens",
+    "name": "Metal Contra As Nuvens",
+    "artist": "Legião Urbana",
+    "genre": "Folk/Hard Rock",
+    "year": "1991",
+    "diffGuitar": 4,
+    "songLengthMs": 694666,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.5 Legiao Urbana - Metal Contra As Nuvens\\16.5 Legiao Urbana - Metal Contra As Nuvens\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.5 Legiao Urbana - Metal Contra As Nuvens\\16.5 Legiao Urbana - Metal Contra As Nuvens\\song.ogg",
+    "audioSizeMB": 21.44,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "16.6 Angra - Carolina IV",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.6 Angra - Carolina IV\\16.6 Angra - Carolina IV",
+    "name": "Carolina IV",
+    "artist": "Angra",
+    "genre": "Power Metal",
+    "year": "1996",
+    "diffGuitar": 5,
+    "songLengthMs": 621000,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.6 Angra - Carolina IV\\16.6 Angra - Carolina IV\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.6 Angra - Carolina IV\\16.6 Angra - Carolina IV\\song.ogg",
+    "audioSizeMB": 19.17,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "16.7 Hardneja Sertacore - Dormi Na Praca",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.7 Hardneja Sertacore - Dormi Na Praca\\16.7 Hardneja Sertacore - Dormi Na Praça",
+    "name": "Dormi Na Praça",
+    "artist": "Hardneja Sertacore",
+    "genre": "Hardneja",
+    "year": "2008",
+    "diffGuitar": 3,
+    "songLengthMs": 139731,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.7 Hardneja Sertacore - Dormi Na Praca\\16.7 Hardneja Sertacore - Dormi Na Praça\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.7 Hardneja Sertacore - Dormi Na Praca\\16.7 Hardneja Sertacore - Dormi Na Praça\\song.ogg",
+    "audioSizeMB": 4.31,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": true,
+    "existingSongId": "har-dormi-na-praca"
+  },
+  {
+    "folderName": "16.8 Paulo Schroeber - The Third Wish",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.8 Paulo Schroeber - The Third Wish\\16.8 Paulo Schroeber - The Third Wish",
+    "name": "The Third Wish",
+    "artist": "Paulo Schroeber",
+    "genre": "Progressive Metal",
+    "year": "2011",
+    "diffGuitar": 6,
+    "songLengthMs": 441479,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.8 Paulo Schroeber - The Third Wish\\16.8 Paulo Schroeber - The Third Wish\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.8 Paulo Schroeber - The Third Wish\\16.8 Paulo Schroeber - The Third Wish\\song.ogg",
+    "audioSizeMB": 13.63,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  },
+  {
+    "folderName": "16.E Andragonia - Guitar Flash",
+    "songDir": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.E Andragonia - Guitar Flash\\16.E Andragonia - Guitar Flash",
+    "name": "Guitar Flash",
+    "artist": "Andragonia",
+    "genre": "Progressive Metal",
+    "year": "2012",
+    "diffGuitar": 6,
+    "songLengthMs": 228355,
+    "chartPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.E Andragonia - Guitar Flash\\16.E Andragonia - Guitar Flash\\notes.chart",
+    "audioPath": "C:\\Users\\David\\Downloads\\RockBrazil\\charts-import\\lisarb2-unpacked\\16.E Andragonia - Guitar Flash\\16.E Andragonia - Guitar Flash\\song.ogg",
+    "audioSizeMB": 3.55,
+    "allOggs": [
+      "song.ogg"
+    ],
+    "isExistingDuplicate": false,
+    "existingSongId": null
+  }
+]

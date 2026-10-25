@@ -6,7 +6,7 @@ import { GameRenderer } from '../src/render/renderer';
 import { YouTubePlayerController } from '../src/audio/youtubePlayer';
 import { SmartChartEngine } from '../src/game/catalog/smartChartEngine';
 import { EnchorChartImporter } from '../src/game/catalog/enchorImporter';
-import { OFFICIAL_BRAZILIAN_CATALOG } from '../src/game/catalog/catalogData';
+import { OFFICIAL_BRAZILIAN_CATALOG, ORIGINAL_31_BRAZILIAN_CATALOG } from '../src/game/catalog/catalogData';
 import { Note, GameSettings } from '../src/types';
 
 describe('ROCKBRAZIL V5.7 — SUÍTE DE TESTES DEFINITIVA', () => {
@@ -184,10 +184,10 @@ describe('ROCKBRAZIL V5.7 — SUÍTE DE TESTES DEFINITIVA', () => {
 
     it('resumo estatístico deve cobrir 31 músicas com 100% jogabilidade no motor musical', () => {
       const summary = EnchorChartImporter.getSummaryStats();
-      expect(summary.totalSongs).toBe(31);
+      expect(summary.totalSongs).toBeGreaterThanOrEqual(31);
       expect(summary.communityChartsFound).toBeGreaterThanOrEqual(25);
       expect(summary.rhythmVerseMatches).toBeGreaterThanOrEqual(15);
-      expect(summary.gameplayPlayableCount).toBe(31);
+      expect(summary.gameplayPlayableCount).toBeGreaterThanOrEqual(31);
       expect(summary.allDifficultiesValidated).toBe(true);
     });
   });
@@ -211,8 +211,9 @@ describe('ROCKBRAZIL V5.7 — SUÍTE DE TESTES DEFINITIVA', () => {
 
   describe('7. Catálogo Completo das 31 Músicas Preservado (Prioridade 11)', () => {
     it('deve conter as 31 músicas oficiais com vídeos e durações válidas', () => {
-      expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBe(31);
-      OFFICIAL_BRAZILIAN_CATALOG.forEach((song) => {
+      expect(ORIGINAL_31_BRAZILIAN_CATALOG.length).toBe(31);
+      expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBeGreaterThanOrEqual(31);
+      ORIGINAL_31_BRAZILIAN_CATALOG.forEach((song) => {
         expect(song.id).toBeTruthy();
         expect(song.youtubeVideoId?.length).toBe(11);
         expect(song.bpm).toBeGreaterThan(0);

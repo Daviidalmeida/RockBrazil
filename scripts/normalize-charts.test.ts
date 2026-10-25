@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import { OFFICIAL_BRAZILIAN_CATALOG } from '../src/game/catalog/catalogData';
+import { ORIGINAL_31_BRAZILIAN_CATALOG } from '../src/game/catalog/catalogData';
 import { RAW_COMPACT_CHARTS } from '../charts-backup/realChartsRegistry.original';
 import { ChartShiftManager } from '../src/game/catalog/chartShiftManager';
 
@@ -12,7 +12,7 @@ describe('ROCKBRAZIL V8 — Normalização Direta dos Charts', () => {
 
     console.log(`\n================ APLICANDO NORMALIZAÇÃO NOS CHARTS (V8) ================\n`);
 
-    OFFICIAL_BRAZILIAN_CATALOG.forEach((song, idx) => {
+    ORIGINAL_31_BRAZILIAN_CATALOG.forEach((song, idx) => {
       const songId = song.id;
       const shiftSec = ChartShiftManager.OFFICIAL_SHIFTS[songId] || 0;
       const originalCompact = RAW_COMPACT_CHARTS[songId];

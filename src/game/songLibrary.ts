@@ -100,7 +100,7 @@ export class SongLibrary {
    * Returns active songs for the in-game library (31 Brazilian songs + custom imported songs)
    */
   getActiveSongs(): SongMetadata[] {
-    return this.songs.filter((s) => s.type === 'youtube' || s.id.startsWith('custom-'));
+    return this.songs.filter((s) => (s.type === 'youtube' || s.type === 'audio-file' || s.id.startsWith('custom-')) && s.id !== 'tnt-acdc');
   }
 
   /**

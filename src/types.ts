@@ -129,6 +129,7 @@ export interface SongMetadata {
   type: 'procedural' | 'audio-file' | 'youtube';
   proceduralTrackId?: string;
   audioUrl?: string;
+  coverUrl?: string;
   audioBuffer?: AudioBuffer;
   requiresFile?: string; // e.g. "TNT.mp3"
   isAvailable: boolean;

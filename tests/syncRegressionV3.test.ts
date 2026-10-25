@@ -4,7 +4,7 @@ import { PreStartSystem, PreStartResourceProvider, PreStartEvents } from '../src
 import { YouTubePlayerController } from '../src/audio/youtubePlayer';
 import { GameEngine } from '../src/game/engine';
 import { PlaybackState, Note, GameSettings, Difficulty } from '../src/types';
-import { OFFICIAL_BRAZILIAN_CATALOG } from '../src/game/catalog/catalogData';
+import { OFFICIAL_BRAZILIAN_CATALOG, ORIGINAL_31_BRAZILIAN_CATALOG } from '../src/game/catalog/catalogData';
 import { RAW_COMPACT_CHARTS } from '../src/game/catalog/realChartsRegistry';
 import { BeatmapManager } from '../src/game/beatmapManager';
 
@@ -185,14 +185,15 @@ describe('ROCKBRAZIL BETA — VERIFICAÇÃO ESTRUTURAL DAS 31 MÚSICAS (SEÇÃO 
   const beatmaps = new BeatmapManager();
   const difficulties: Difficulty[] = ['EASY', 'MEDIUM', 'HARD', 'EXPERT'];
 
-  it('6. O catálogo contém exatamente 31 músicas válidas e consistentes', () => {
-    expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBe(31);
-    const ids = new Set(OFFICIAL_BRAZILIAN_CATALOG.map((s) => s.id));
+  it('6. O catálogo contém exatamente 31 músicas válidas e consistentes no catálogo original', () => {
+    expect(ORIGINAL_31_BRAZILIAN_CATALOG.length).toBe(31);
+    expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBeGreaterThanOrEqual(31);
+    const ids = new Set(ORIGINAL_31_BRAZILIAN_CATALOG.map((s) => s.id));
     expect(ids.size).toBe(31); // Sem IDs duplicados
   });
 
   it('7. Todas as 31 músicas possuem notas válidas, acordes e sustentações em todas as dificuldades', () => {
-    for (const song of OFFICIAL_BRAZILIAN_CATALOG) {
+    for (const song of ORIGINAL_31_BRAZILIAN_CATALOG) {
       expect(song.duration).toBeGreaterThan(30);
       expect(song.bpm).toBeGreaterThanOrEqual(70);
       expect(song.bpm).toBeLessThanOrEqual(250);

@@ -16,6 +16,17 @@ public/custom-songs/**
 charts-import/charts.rar
 charts-import/extracted/
 charts-import/extracted-charts/audio-debug/
+charts-import/Lisarb2.rar
+charts-import/Lisarb2-extracted/
+charts-import/lisarb2-unpacked/
+charts-import/lisarb2_files_list.txt
+
+# Autorizado: Coleção Musical Lisarb2 para o jogo público
+!public/songs/**
+!public/songs/**/*.ogg
+!public/songs/**/*.png
+!public/songs/**/*.jpg
+!public/songs/**/*.jpeg
 
 # Android build artifacts
 android/build/

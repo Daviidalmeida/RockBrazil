@@ -1,20 +1,20 @@
 import { describe, it, expect } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
-import { OFFICIAL_BRAZILIAN_CATALOG } from '../src/game/catalog/catalogData';
+import { ORIGINAL_31_BRAZILIAN_CATALOG } from '../src/game/catalog/catalogData';
 import { RAW_COMPACT_CHARTS } from '../src/game/catalog/realChartsRegistry';
 import { BeatmapManager } from '../src/game/beatmapManager';
 
 describe('ROCKBRAZIL V8 — Auditoria Controlada de Charts', () => {
   it('executa auditoria progressiva das 31 músicas do catálogo', () => {
     const beatmapManager = new BeatmapManager();
-    const totalSongs = OFFICIAL_BRAZILIAN_CATALOG.length;
+    const totalSongs = ORIGINAL_31_BRAZILIAN_CATALOG.length;
     const auditResults: any[] = [];
 
     console.log(`\nIniciando auditoria controlada de ${totalSongs} músicas...\n`);
 
     for (let i = 0; i < totalSongs; i++) {
-      const song = OFFICIAL_BRAZILIAN_CATALOG[i];
+      const song = ORIGINAL_31_BRAZILIAN_CATALOG[i];
       const indexStr = (i + 1).toString().padStart(2, '0');
 
       try {

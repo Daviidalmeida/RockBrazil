@@ -5,7 +5,7 @@ import JSZip from 'jszip';
 import { UniversalChartImporter } from '../src/audio/universalChartImporter';
 import { BeatmapManager } from '../src/game/beatmapManager';
 import { EnchorChartImporter } from '../src/game/catalog/enchorImporter';
-import { OFFICIAL_BRAZILIAN_CATALOG } from '../src/game/catalog/catalogData';
+import { OFFICIAL_BRAZILIAN_CATALOG, ORIGINAL_31_BRAZILIAN_CATALOG } from '../src/game/catalog/catalogData';
 import { createSyntheticMidiBuffer } from './fixtures/midiFixture';
 import { GameRenderer } from '../src/render/renderer';
 import { Difficulty, Note } from '../src/types';
@@ -319,7 +319,7 @@ describe('ROCKBRAZIL BETA — SUÍTE DE TESTES MASTER DEFINITIVA', () => {
       let realChartCount = 0;
       let fallbackCount = 0;
 
-      OFFICIAL_BRAZILIAN_CATALOG.forEach((song) => {
+      ORIGINAL_31_BRAZILIAN_CATALOG.forEach((song) => {
         if (UniversalChartImporter.hasConvertedChart(song.id)) {
           realChartCount++;
         } else {
@@ -337,9 +337,10 @@ describe('ROCKBRAZIL BETA — SUÍTE DE TESTES MASTER DEFINITIVA', () => {
       const bm = new BeatmapManager();
       const diffs: Difficulty[] = ['EASY', 'MEDIUM', 'HARD', 'EXPERT'];
 
-      expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBe(31);
+      expect(ORIGINAL_31_BRAZILIAN_CATALOG.length).toBe(31);
+      expect(OFFICIAL_BRAZILIAN_CATALOG.length).toBeGreaterThanOrEqual(31);
 
-      OFFICIAL_BRAZILIAN_CATALOG.forEach((song) => {
+      ORIGINAL_31_BRAZILIAN_CATALOG.forEach((song) => {
         diffs.forEach((diff) => {
           const notes = bm.getBeatmap(song.id, diff);
           expect(notes.length, `Música sem notas: ${song.title} (${diff})`).toBeGreaterThan(5);
