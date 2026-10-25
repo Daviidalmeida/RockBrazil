@@ -476,7 +476,7 @@ export class YouTubePlayerController {
       return Math.max(0, rawTime);
     }
 
-    // 4. Smooth monotonic interpolation between YouTube updates (clamped to 0.5s)
+    // 4. Smooth monotonic continuous interpolation between YouTube updates (safe 2.0s watchdog)
     if (this.lastObservedPerfTime === 0) {
       this.lastObservedPerfTime = now;
       if (rawTime >= 0) this.lastObservedVideoTime = rawTime;

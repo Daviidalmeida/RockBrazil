@@ -16,6 +16,14 @@ export class UIManager {
   private overlayCelebration: HTMLElement | null = null;
   private feedbackTimer: number | null = null;
 
+  // V5: HUD dirty-checking cache to eliminate frame drops & garbage collection
+  private lastRenderedScore = -1;
+  private lastRenderedCombo = -1;
+  private lastRenderedMultiplier = -1;
+  private lastRenderedRockMeterPct = -1;
+  private lastRenderedProgressPct = -1;
+  private comboPopTimeout: any = null;
+
   // Screens & Modals
   private screenMenu: HTMLElement;
   private screenSongSelect: HTMLElement;
@@ -552,41 +560,73 @@ export class UIManager {
   }
 
   updateHUD(stats: GameStats, currentTime: number, duration: number): void {
-    this.hudScore.textContent = stats.score.toLocaleString('pt-BR');
+    // 1. Score (only format string if score changed)
+    if (stats.score !== this.lastRenderedScore) {
+      this.lastRenderedScore = stats.score;
+      this.hudScore.textContent = stats.score.toLocaleString('pt-BR');
+    }
 
-    // Vertical Industrial Rock Performance Meter (0% to 100%)
+    // 2. Vertical Industrial Rock Performance Meter (0% to 100%)
     const pct = Math.max(0, Math.min(100, Math.round(stats.rockMeter)));
-    if (this.meterNeedle) {
-      this.meterNeedle.style.bottom = `${pct}%`;
-      this.meterNeedle.style.left = '';
-    }
-    if (this.meterPctText) {
-      this.meterPctText.textContent = `${pct}%`;
+    if (pct !== this.lastRenderedRockMeterPct) {
+      this.lastRenderedRockMeterPct = pct;
+      if (this.meterNeedle) {
+        this.meterNeedle.style.bottom = `${pct}%`;
+        this.meterNeedle.style.left = '';
+      }
+      if (this.meterPctText) {
+        this.meterPctText.textContent = `${pct}%`;
+      }
+      if (this.meterDangerLed) {
+        this.meterDangerLed.classList.toggle('hidden', pct >= 30);
+      }
     }
 
-    // Danger LED (if present) when life < 30%
-    if (this.meterDangerLed) {
-      this.meterDangerLed.classList.toggle('hidden', pct >= 30);
+    // 3. Multiplier
+    if (stats.multiplier !== this.lastRenderedMultiplier) {
+      this.lastRenderedMultiplier = stats.multiplier;
+      this.hudMultiplier.textContent = `${stats.multiplier}X`;
+      this.hudMultiplier.className = `multiplier-badge mult-${stats.multiplier}x`;
     }
 
-    // Multiplier
-    this.hudMultiplier.textContent = `${stats.multiplier}X`;
-    this.hudMultiplier.className = `multiplier-badge mult-${stats.multiplier}x`;
-
-    // Song Progress Line
+    // 4. Song Progress Line
     if (duration > 0) {
-      const progressPct = Math.min(100, (currentTime / duration) * 100);
-      this.hudProgressBar.style.width = `${progressPct}%`;
+      const progressPct = Math.min(100, Math.floor((currentTime / duration) * 100));
+      if (progressPct !== this.lastRenderedProgressPct) {
+        this.lastRenderedProgressPct = progressPct;
+        this.hudProgressBar.style.width = `${progressPct}%`;
+      }
     }
 
-    // Combo
+    // 5. Combo (dirty-checked, single timer, no continuous allocation)
     if (stats.combo >= 2) {
-      this.hudComboContainer.classList.remove('hidden');
-      this.hudComboNumber.textContent = stats.combo.toString();
-      this.hudComboContainer.classList.add('pop');
-      setTimeout(() => this.hudComboContainer.classList.remove('pop'), 120);
+      if (stats.combo !== this.lastRenderedCombo) {
+        const isIncrease = stats.combo > this.lastRenderedCombo;
+        this.lastRenderedCombo = stats.combo;
+        this.hudComboContainer.classList.remove('hidden');
+        this.hudComboNumber.textContent = stats.combo.toString();
+
+        if (isIncrease) {
+          if (this.comboPopTimeout !== null) {
+            clearTimeout(this.comboPopTimeout);
+          }
+          this.hudComboContainer.classList.add('pop');
+          this.comboPopTimeout = setTimeout(() => {
+            this.hudComboContainer.classList.remove('pop');
+            this.comboPopTimeout = null;
+          }, 120);
+        }
+      }
     } else {
-      this.hudComboContainer.classList.add('hidden');
+      if (this.lastRenderedCombo !== 0) {
+        this.lastRenderedCombo = 0;
+        if (this.comboPopTimeout !== null) {
+          clearTimeout(this.comboPopTimeout);
+          this.comboPopTimeout = null;
+        }
+        this.hudComboContainer.classList.remove('pop');
+        this.hudComboContainer.classList.add('hidden');
+      }
     }
   }
 
@@ -606,10 +646,21 @@ export class UIManager {
 
   resetHUD(): void {
     if (this.feedbackTimer) clearTimeout(this.feedbackTimer);
+    if (this.comboPopTimeout !== null) {
+      clearTimeout(this.comboPopTimeout);
+      this.comboPopTimeout = null;
+    }
+    this.lastRenderedScore = -1;
+    this.lastRenderedCombo = -1;
+    this.lastRenderedMultiplier = -1;
+    this.lastRenderedRockMeterPct = -1;
+    this.lastRenderedProgressPct = -1;
+
     this.hudScore.textContent = '0';
     this.hudMultiplier.textContent = '1X';
     this.hudMultiplier.className = 'multiplier-badge mult-1x';
     this.hudProgressBar.style.width = '0%';
+    this.hudComboContainer.classList.remove('pop');
     this.hudComboContainer.classList.add('hidden');
     this.hudComboNumber.textContent = '0';
     this.meterNeedle.style.bottom = '50%';

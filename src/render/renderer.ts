@@ -46,7 +46,7 @@ export class GameRenderer {
   readonly strikeLineYRatio = 0.82;     // Strike line Y (receptors location)
   readonly highwayTopWidthRatio = 0.28; // Narrow top for deep perspective
   readonly highwayBottomWidthRatio = 0.95; // Wide bottom for clear readability
-  readonly baseNoteSpeed = 1.35;        // Seconds from horizon to strike line
+  readonly baseNoteSpeed = 0.92;        // Seconds from horizon to strike line (Guitar Flash fluid standard)
   public noteSpeedMultiplier = 1.0;
   public visualEffectsEnabled = true;
 
@@ -420,15 +420,13 @@ export class GameRenderer {
       ctx.arc(x, y, radius, 0, Math.PI * 2);
       ctx.strokeStyle = isPressed ? color.core : 'rgba(255, 255, 255, 0.45)';
       ctx.lineWidth = isPressed ? 4.5 : 2.5;
-      ctx.shadowColor = isPressed ? color.core : 'rgba(0, 0, 0, 0.6)';
-      ctx.shadowBlur = isPressed ? 20 : 6;
       ctx.stroke();
 
       // Inner Receptor Cup
       ctx.beginPath();
       ctx.arc(x, y, radius * 0.75, 0, Math.PI * 2);
       if (isPressed) {
-        // Active Laser Flare
+        // Active Laser Flare (Fast, high-performance radial gradient without shadowBlur)
         const pressGrad = ctx.createRadialGradient(x, y, 0, x, y, radius);
         pressGrad.addColorStop(0, '#ffffff');
         pressGrad.addColorStop(0.4, color.core);
@@ -436,12 +434,17 @@ export class GameRenderer {
         ctx.fillStyle = pressGrad;
         ctx.fill();
 
+        // High-contrast luminous aura ring (Hardware fast neon feedback)
+        ctx.beginPath();
+        ctx.arc(x, y, radius + 2, 0, Math.PI * 2);
+        ctx.strokeStyle = color.glow;
+        ctx.lineWidth = 3.5;
+        ctx.stroke();
+
         // Pulsing core light
         ctx.beginPath();
         ctx.arc(x, y, radius * 0.35, 0, Math.PI * 2);
         ctx.fillStyle = '#ffffff';
-        ctx.shadowColor = color.core;
-        ctx.shadowBlur = 12;
         ctx.fill();
       } else {
         // Inactive Dark Cup with Subtle Pip
@@ -511,8 +514,6 @@ export class GameRenderer {
       sustainGrad.addColorStop(1, color.core);
 
       ctx.fillStyle = sustainGrad;
-      ctx.shadowColor = color.core;
-      ctx.shadowBlur = 10 * pHead.scale;
       ctx.fill();
 
       // Central Electric Laser Pulse Wire
@@ -550,10 +551,10 @@ export class GameRenderer {
       }
     }
 
-    // 1. Draw Chord Connector Beams
+    // 1. Draw Chord Connector Beams (tight 20ms tolerance)
     const chordGroups = new Map<number, Note[]>();
     for (const note of visibleNotes) {
-      const roundedTime = Math.round(note.time * 25) / 25; // 40ms quantization
+      const roundedTime = Math.round(note.time * 50) / 50; // 20ms quantization
       if (!chordGroups.has(roundedTime)) chordGroups.set(roundedTime, []);
       chordGroups.get(roundedTime)!.push(note);
     }
@@ -571,16 +572,14 @@ export class GameRenderer {
         ctx.beginPath();
         ctx.moveTo(pFirst.x, pFirst.y);
         ctx.lineTo(pLast.x, pLast.y);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
-        ctx.lineWidth = Math.max(2, 4 * pFirst.scale);
-        ctx.shadowColor = '#ffffff';
-        ctx.shadowBlur = 12 * pFirst.scale;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.lineWidth = Math.max(2, 3.5 * pFirst.scale);
         ctx.stroke();
       }
     });
     ctx.restore();
 
-    // 2. Draw 3D Note Gems
+    // 2. Draw 3D Note Gems (Optimized Sleek Frets: rx = 44%, ry = 17% to prevent clumping)
     for (const note of visibleNotes) {
       const timeRemaining = note.time - currentTime;
       const progress = 1.0 - (timeRemaining / this.noteSpeed);
@@ -589,13 +588,9 @@ export class GameRenderer {
       const color = this.laneColors[note.lane];
 
       const rx = laneWidth * 0.44 * scale;
-      const ry = laneWidth * 0.27 * scale;
+      const ry = laneWidth * 0.17 * scale;
 
       ctx.save();
-
-      // Outer Glow Shadow
-      ctx.shadowColor = color.core;
-      ctx.shadowBlur = 16 * scale;
 
       // 3D Bottom Bevel (Darker base for depth volume)
       ctx.beginPath();
@@ -644,7 +639,7 @@ export class GameRenderer {
    * Renders hit particles & expanding rings
    */
   private renderEffects(ctx: CanvasRenderingContext2D): void {
-    // 1. Expanding Shockwave Rings
+    // 1. Expanding Shockwave Rings (Zero-blur performant stroke)
     for (let i = this.rings.length - 1; i >= 0; i--) {
       const ring = this.rings[i];
       ring.radius += 2.5;
@@ -661,13 +656,11 @@ export class GameRenderer {
       ctx.strokeStyle = ring.color;
       ctx.globalAlpha = Math.max(0, ring.alpha);
       ctx.lineWidth = 3;
-      ctx.shadowColor = ring.color;
-      ctx.shadowBlur = 10;
       ctx.stroke();
       ctx.restore();
     }
 
-    // 2. Burst & Sustain Particles
+    // 2. Burst & Sustain Particles (Zero-blur performant fill)
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
       p.x += p.vx;
@@ -684,8 +677,6 @@ export class GameRenderer {
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
       ctx.fillStyle = p.color;
       ctx.globalAlpha = Math.max(0, p.alpha);
-      ctx.shadowColor = p.color;
-      ctx.shadowBlur = 8;
       ctx.fill();
       ctx.restore();
     }

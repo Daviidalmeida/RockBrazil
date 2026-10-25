@@ -50,6 +50,14 @@ class RockBrazilGame {
     'l': 4, 'L': 4, '5': 4, 'ç': 4, 'Ç': 4
   };
 
+  private codeLaneMap: Record<string, Lane> = {
+    'KeyA': 0, 'Digit1': 0, 'KeyD': 0,
+    'KeyS': 1, 'Digit2': 1, 'KeyF': 1,
+    'KeyJ': 2, 'Digit3': 2,
+    'KeyK': 3, 'Digit4': 3,
+    'KeyL': 4, 'Digit5': 4, 'Semicolon': 4
+  };
+
   constructor() {
     this.settingsManager = new SettingsManager();
     const settings = this.settingsManager.getSettings();
@@ -598,7 +606,13 @@ class RockBrazilGame {
       const lane = this.pointerLaneMap.get(e.pointerId);
       if (lane !== undefined) {
         this.pointerLaneMap.delete(e.pointerId);
-        const stillPressedByOther = Array.from(this.pointerLaneMap.values()).includes(lane);
+        let stillPressedByOther = false;
+        for (const l of this.pointerLaneMap.values()) {
+          if (l === lane) {
+            stillPressedByOther = true;
+            break;
+          }
+        }
         if (!stillPressedByOther) {
           this.releaseLane(lane);
         }
@@ -648,7 +662,7 @@ class RockBrazilGame {
         }
       }
 
-      const lane = this.keyLaneMap[e.key];
+      const lane = this.keyLaneMap[e.key] !== undefined ? this.keyLaneMap[e.key] : this.codeLaneMap[e.code];
       if (lane !== undefined && this.state === GameState.PLAYING) {
         e.preventDefault();
         this.pressLane(lane);
@@ -656,7 +670,7 @@ class RockBrazilGame {
     });
 
     window.addEventListener('keyup', (e: KeyboardEvent) => {
-      const lane = this.keyLaneMap[e.key];
+      const lane = this.keyLaneMap[e.key] !== undefined ? this.keyLaneMap[e.key] : this.codeLaneMap[e.code];
       if (lane !== undefined) {
         e.preventDefault();
         this.releaseLane(lane);

@@ -4,6 +4,7 @@ export class GameEngine {
   private notes: Note[] = [];
   private activePressedLanes: Set<Lane> = new Set();
   private lastSustainTickTime = 0;
+  private activeNoteStartIndex = 0;
   private difficulty: Difficulty = 'MEDIUM';
   private settings: GameSettings;
 
@@ -54,6 +55,7 @@ export class GameEngine {
     this.missCount = 0;
     this.isDead = false;
     this.lastSustainTickTime = 0;
+    this.activeNoteStartIndex = 0;
   }
 
   /**
@@ -165,7 +167,11 @@ export class GameEngine {
     let candidate: Note | null = null;
     let minDiff = Infinity;
 
-    for (const note of this.notes) {
+    for (let i = this.activeNoteStartIndex; i < this.notes.length; i++) {
+      const note = this.notes[i];
+      if (note.time > currentTime + windows.good) {
+        break;
+      }
       if (note.lane === lane && !note.hit && !note.missed) {
         const diff = Math.abs(currentTime - note.time);
         if (diff <= windows.good && diff < minDiff) {
@@ -198,6 +204,14 @@ export class GameEngine {
 
       candidate.hit = true;
       candidate.judgment = judgment;
+
+      while (
+        this.activeNoteStartIndex < this.notes.length &&
+        (this.notes[this.activeNoteStartIndex].hit || this.notes[this.activeNoteStartIndex].missed) &&
+        (!this.notes[this.activeNoteStartIndex].duration || this.notes[this.activeNoteStartIndex].sustainCompleted)
+      ) {
+        this.activeNoteStartIndex++;
+      }
 
       this.combo++;
       if (this.combo > this.maxCombo) {
@@ -247,8 +261,23 @@ export class GameEngine {
     const windows = this.getWindows();
     const rates = this.getLifeRates();
 
+    // Advance active note pointer past notes that are fully completed
+    while (
+      this.activeNoteStartIndex < this.notes.length &&
+      (this.notes[this.activeNoteStartIndex].hit || this.notes[this.activeNoteStartIndex].missed) &&
+      (!this.notes[this.activeNoteStartIndex].duration ||
+        this.notes[this.activeNoteStartIndex].sustainCompleted ||
+        currentTime > this.notes[this.activeNoteStartIndex].time + this.notes[this.activeNoteStartIndex].duration + 0.2)
+    ) {
+      this.activeNoteStartIndex++;
+    }
+
     // 1. Check for missed notes
-    for (const note of this.notes) {
+    for (let i = this.activeNoteStartIndex; i < this.notes.length; i++) {
+      const note = this.notes[i];
+      if (note.time > currentTime + windows.good) {
+        break;
+      }
       if (!note.hit && !note.missed && currentTime > note.time + windows.good) {
         note.missed = true;
         note.judgment = 'MISS';
