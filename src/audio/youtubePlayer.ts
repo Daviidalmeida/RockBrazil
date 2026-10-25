@@ -119,7 +119,7 @@ export class YouTubePlayerController {
       this.player = new window.YT.Player(elementId, {
         height: '100%',
         width: '100%',
-        videoId: this.currentVideoId || 'aXJ_Ub1xbhw',
+        videoId: this.currentVideoId || undefined,
         playerVars: {
           autoplay: 0,
           controls: 0,

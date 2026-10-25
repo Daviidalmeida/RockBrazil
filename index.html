@@ -206,11 +206,8 @@
         <div class="notebook-footer-bar">
           <button id="btn-song-select-back" class="notebook-bar-btn btn-back">← VOLTAR</button>
           <button id="btn-song-select-play" class="notebook-bar-btn btn-select">SELECIONAR</button>
-          <label for="zip-file-input" class="notebook-bar-btn btn-import" title="Importar pacote .zip, .chart, .mid ou .sng">IMPORTAR CHART</label>
           <input type="file" id="zip-file-input" accept=".zip,.chart,.mid,.midi,.sng,application/zip" style="display: none;">
           <input type="file" id="mp3-file-input" accept="audio/*" style="display: none;">
-          <button id="btn-refresh-youtube-links" class="notebook-bar-mini-btn" title="Atualizar Links YouTube">🔄</button>
-          <button id="btn-open-editor" class="notebook-bar-mini-btn" title="Editor Visual de Notas">🎼</button>
         </div>
       </div>
     </div>
@@ -383,11 +380,12 @@
     </div>
 
     <!-- 9.1 AUTOPLAY UNBLOCK OVERLAY -->
-    <div id="overlay-unblock-audio" class="overlay-screen hidden" style="background: rgba(0,0,0,0.85); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-      <div class="notebook-dialog-card" style="text-align: center; max-width: 380px; padding: 24px;">
-        <h2 style="font-size: 1.4rem; color: #c62828; margin-bottom: 8px;">🎸 ÁUDIO AGUARDANDO</h2>
-        <p style="font-size: 0.95rem; color: #444; margin-bottom: 16px;">O navegador pausou o áudio automático. Toque abaixo para iniciar e sincronizar a gravação:</p>
+    <div id="overlay-unblock-audio" class="overlay-screen hidden" style="background: rgba(0,0,0,0.85); z-index: 1000;">
+      <div class="notebook-dialog-card" style="text-align: center; max-width: 380px; padding: 24px; display: flex; flex-direction: column; gap: 12px;">
+        <h2 style="font-size: 1.4rem; color: #c62828; margin-bottom: 4px;">🎸 ÁUDIO AGUARDANDO</h2>
+        <p style="font-size: 0.95rem; color: #444; margin-bottom: 8px;">O navegador pausou o áudio automático. Toque abaixo para iniciar e sincronizar a gravação:</p>
         <button id="btn-unblock-audio" class="notebook-bar-btn btn-select" style="font-size: 1.1rem; padding: 12px 24px; width: 100%;">TOCAR AGORA 🎵</button>
+        <button id="btn-unblock-cancel" class="notebook-bar-btn btn-back" style="font-size: 0.95rem; padding: 10px 20px; width: 100%;">← VOLTAR AO CATÁLOGO</button>
       </div>
     </div>
 

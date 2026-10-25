@@ -841,9 +841,41 @@ export const ORIGINAL_31_BRAZILIAN_CATALOG: SongMetadata[] = [
   }
 ];
 
+export const CANONICAL_29_AUDIO_UPDATES: Record<string, { audioUrl: string; coverUrl: string }> = {
+  'mam-1406': { audioUrl: 'songs/mam-1406/song.ogg', coverUrl: 'songs/mam-1406/cover.png' },
+  'cap-sua-maneira': { audioUrl: 'songs/cap-sua-maneira/song.ogg', coverUrl: 'songs/cap-sua-maneira/cover.png' },
+  'pit-chip-novo': { audioUrl: 'songs/pit-chip-novo/song.ogg', coverUrl: 'songs/pit-chip-novo/cover.png' },
+  'los-anna-julia': { audioUrl: 'songs/los-anna-julia/song.ogg', coverUrl: 'songs/los-anna-julia/cover.png' },
+  'kua-de-borest': { audioUrl: 'songs/kua-de-borest/song.ogg', coverUrl: 'songs/kua-de-borest/cover.png' },
+  'mam-debil-metal': { audioUrl: 'songs/mam-debil-metal/song.ogg', coverUrl: 'songs/mam-debil-metal/cover.png' },
+  'mam-chopis-centis': { audioUrl: 'songs/mam-chopis-centis/song.ogg', coverUrl: 'songs/mam-chopis-centis/cover.png' },
+  'df-destruir-tudo': { audioUrl: 'songs/df-destruir-tudo/song.ogg', coverUrl: 'songs/df-destruir-tudo/cover.png' },
+  'sup-garota-berlim': { audioUrl: 'songs/sup-garota-berlim/song.ogg', coverUrl: 'songs/sup-garota-berlim/cover.png' },
+  'cbjr-hoje-acordei': { audioUrl: 'songs/cbjr-hoje-acordei/song.ogg', coverUrl: 'songs/cbjr-hoje-acordei/cover.png' },
+  'cpm-irreversivel': { audioUrl: 'songs/cpm-irreversivel/song.ogg', coverUrl: 'songs/cpm-irreversivel/cover.png' },
+  'mam-jumento-celestino': { audioUrl: 'songs/mam-jumento-celestino/song.ogg', coverUrl: 'songs/mam-jumento-celestino/cover.png' },
+  'lan-lata-velha': { audioUrl: 'songs/lan-lata-velha/song.ogg', coverUrl: 'songs/lan-lata-velha/cover.png' },
+  'cbjr-nao-e-serio': { audioUrl: 'songs/cbjr-nao-e-serio/song.ogg', coverUrl: 'songs/cbjr-nao-e-serio/cover.png' },
+  'eng-era-um-garoto': { audioUrl: 'songs/eng-era-um-garoto/song.ogg', coverUrl: 'songs/eng-era-um-garoto/cover.png' },
+  'cbjr-champagne': { audioUrl: 'songs/cbjr-champagne/song.ogg', coverUrl: 'songs/cbjr-champagne/cover.png' },
+  'pit-equalize': { audioUrl: 'songs/pit-equalize/song.ogg', coverUrl: 'songs/pit-equalize/cover.png' },
+  'tih-tropa-elite': { audioUrl: 'songs/tih-tropa-elite/song.ogg', coverUrl: 'songs/tih-tropa-elite/cover.png' },
+  'mam-sabao-cra-cra': { audioUrl: 'songs/mam-sabao-cra-cra/song.ogg', coverUrl: 'songs/mam-sabao-cra-cra/cover.png' },
+  'cbjr-so-por-uma-noite': { audioUrl: 'songs/cbjr-so-por-uma-noite/song.ogg', coverUrl: 'songs/cbjr-so-por-uma-noite/cover.png' },
+  'mat-ela-roubou-caminhao': { audioUrl: 'songs/mat-ela-roubou-caminhao/song.ogg', coverUrl: 'songs/mat-ela-roubou-caminhao/cover.png' },
+  'mas-evil-papagali': { audioUrl: 'songs/mas-evil-papagali/song.ogg', coverUrl: 'songs/mas-evil-papagali/cover.png' },
+  'det-nao-reclame-mais': { audioUrl: 'songs/det-nao-reclame-mais/song.ogg', coverUrl: 'songs/det-nao-reclame-mais/cover.png' },
+  'cbjr-papo-reto': { audioUrl: 'songs/cbjr-papo-reto/song.ogg', coverUrl: 'songs/cbjr-papo-reto/cover.png' },
+  'mam-mundo-animal': { audioUrl: 'songs/mam-mundo-animal/song.ogg', coverUrl: 'songs/mam-mundo-animal/cover.png' },
+  'mas-metal-is-the-law': { audioUrl: 'songs/mas-metal-is-the-law/song.ogg', coverUrl: 'songs/mas-metal-is-the-law/cover.png' },
+  'mas-metal-milkshake': { audioUrl: 'songs/mas-metal-milkshake/song.ogg', coverUrl: 'songs/mas-metal-milkshake/cover.png' },
+  'har-dormi-na-praca': { audioUrl: 'songs/har-dormi-na-praca/song.ogg', coverUrl: 'songs/har-dormi-na-praca/cover.png' },
+  'pit-mascara': { audioUrl: 'songs/pit-mascara/song.ogg', coverUrl: 'songs/pit-mascara/cover.png' }
+};
+
 export const OFFICIAL_BRAZILIAN_CATALOG: SongMetadata[] = [
   ...ORIGINAL_31_BRAZILIAN_CATALOG.map((song) => {
-    const update = LISARB2_DUPLICATES_UPDATES[song.id];
+    const update = CANONICAL_29_AUDIO_UPDATES[song.id] || LISARB2_DUPLICATES_UPDATES[song.id];
     if (update) {
       return {
         ...song,

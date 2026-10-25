@@ -70,12 +70,12 @@ describe('ROCKBRAZIL — Suíte Completa de Integração e Conformidade Lisarb2'
     }
   });
 
-  it('4. Todos os 137 pacotes possuem arquivos de áudio .ogg e capas físicas no servidor público', () => {
+  it('4. Todos os 160 pacotes locais possuem arquivos de áudio .ogg e capas físicas no servidor público', () => {
     const publicSongsDir = path.resolve(process.cwd(), 'public/songs');
     expect(fs.existsSync(publicSongsDir)).toBe(true);
 
     const songDirs = fs.readdirSync(publicSongsDir);
-    expect(songDirs.length).toBe(137);
+    expect(songDirs.length).toBe(160);
 
     for (const dirName of songDirs) {
       const songPath = path.join(publicSongsDir, dirName);

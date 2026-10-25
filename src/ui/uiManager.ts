@@ -110,6 +110,7 @@ export class UIManager {
   public onTestBeepClicked?: () => void;
   public onCalibrationOffsetChange?: (deltaMs: number, reset?: boolean) => void;
   public onUnblockAudioClicked?: () => void;
+  public onUnblockCancelClicked?: () => void;
 
   // Editor callbacks
   public onOpenEditorClicked?: () => void;
@@ -363,6 +364,11 @@ export class UIManager {
     document.getElementById('btn-unblock-audio')?.addEventListener('click', () => {
       this.showAutoplayUnblockPrompt(false);
       this.onUnblockAudioClicked?.();
+    });
+
+    document.getElementById('btn-unblock-cancel')?.addEventListener('click', () => {
+      this.showAutoplayUnblockPrompt(false);
+      this.onUnblockCancelClicked?.();
     });
 
     // Game Over buttons

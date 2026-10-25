@@ -145,13 +145,16 @@ describe('ROCKBRAZIL V10 — Suíte de Estabilidade, Encerramento e Regressão G
     expect(coins2).toBe(3 * 25 + 35); // 110 RockCoins
   });
 
-  it('8. Isolamento de áudio local: 137 músicas com áudio local não utilizam YouTube', () => {
+  it('8. Isolamento de áudio local: 160 músicas com áudio local não utilizam YouTube', () => {
     const active = library.getActiveSongs();
     const localSongs = active.filter((s) => s.type === 'audio-file' || Boolean(s.audioUrl));
-    expect(localSongs.length).toBe(137);
+    expect(localSongs.length).toBe(160);
 
     // Músicas locais chave
     const localKeys = [
+      'mam-1406',
+      'cap-sua-maneira',
+      'pit-chip-novo',
       'kua-de-borest',
       'pit-mascara',
       'mam-chopis-centis',

@@ -259,8 +259,9 @@ describe('ROCKBRAZIL V5.4 — SUÍTE COMPLETA DE REGRESSÃO E CONFORMIDADE', () 
       expect(html).toContain('id="overlay-rockbrazil-celebration"');
       expect(html).toContain('AQUI É ROCKBRAZIL!');
 
-      // Botão Atualizar Links
-      expect(html).toContain('id="btn-refresh-youtube-links"');
+      // Botões da lista de músicas (V11: barra limpa apenas com voltar e selecionar)
+      expect(html).toContain('id="btn-song-select-back"');
+      expect(html).toContain('id="btn-song-select-play"');
     });
 
     it('src/style.css deve aplicar stage-v54.jpg e as regras do novo medidor industrial', () => {

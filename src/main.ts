@@ -15,7 +15,7 @@ import { YouTubePlayerController } from './audio/youtubePlayer';
 import { AutoMusicFinder } from './game/catalog/musicFinder';
 import { CalibrationManager } from './game/sync/calibrationManager';
 import { UnifiedMasterClock } from './game/sync/masterClock';
-import { PreStartSystem } from './game/sync/prestartSystem';
+import { PreStartSystem, PreStartResourceProvider, PreStartEvents } from './game/sync/prestartSystem';
 import { SyncDiagnostics } from './game/sync/syncDiagnostics';
 import { InputController } from './game/input/inputController';
 import { GameSessionController } from './game/session/gameSessionController';
@@ -51,6 +51,8 @@ class RockBrazilGame {
   private resumeCountdownTimer: any = null;
   private ytInitialized = false;
   private countdownTimer: number | null = null;
+  private activePreStartResources: PreStartResourceProvider | null = null;
+  private activePreStartEvents: PreStartEvents | null = null;
 
   private keyLaneMap: Record<string, Lane> = {
     'a': 0, 'A': 0, '1': 0, 'd': 0, 'D': 0,
@@ -438,11 +440,43 @@ class RockBrazilGame {
       }
     };
 
-    this.ui.onUnblockAudioClicked = () => {
-      if (this.currentSong?.type === 'youtube' && this.currentSong?.youtubeVideoId) {
-        SyncDiagnostics.get().recordPlayVideoCommand(this.currentSong.youtubeVideoId || '');
-            this.ytPlayer.play();
+    this.ui.onUnblockAudioClicked = async () => {
+      try {
+        await this.audio.ensureResumed();
+      } catch (e) {
+        console.warn('[Audio] Falha ao desbloquear AudioContext com gesto do usuário:', e);
       }
+
+      const hasLocal = this.currentSong?.type === 'audio-file' || Boolean(this.currentSong?.audioUrl) || Boolean(this.currentSong?.audioBuffer);
+      if (hasLocal && this.currentSong?.audioBuffer) {
+        this.ytPlayer.stop();
+        await this.audio.playAudioBuffer(this.currentSong.audioBuffer, 0);
+        this.masterClock.startPlayback();
+        this.state = GameState.PLAYING;
+        this.ui.showAutoplayUnblockPrompt(false);
+        this.ui.showScreen(GameState.PLAYING);
+      } else if (!hasLocal && this.currentSong?.type === 'youtube' && this.currentSong?.youtubeVideoId) {
+        SyncDiagnostics.get().recordPlayVideoCommand(this.currentSong.youtubeVideoId || '');
+        this.ytPlayer.play();
+      }
+
+      if (this.activePreStartResources && this.activePreStartEvents) {
+        this.prestartSystem.retryAudio(
+          this.currentMatchSessionId,
+          this.activePreStartResources,
+          this.activePreStartEvents
+        );
+      }
+    };
+
+    this.ui.onUnblockCancelClicked = () => {
+      this.prestartSystem.cancel();
+      this.audio.stop();
+      this.ytPlayer.stop();
+      this.masterClock.pause();
+      this.ui.showAutoplayUnblockPrompt(false);
+      this.state = GameState.SONG_SELECT;
+      this.ui.showScreen(GameState.SONG_SELECT);
     };
 
     this.ui.onTestBeepClicked = () => {
@@ -899,115 +933,118 @@ class RockBrazilGame {
       globalOffsetMs: this.settingsManager.getSettings().audioOffsetMs || 0
     });
 
-    await this.prestartSystem.prepareAndStart(
-      sessionId,
-      {
-        prepareChart: () => {
-          if (!this.currentSong) return false;
-          let notes = this.engine.getNotes();
-          if (!notes || notes.length === 0) {
-            const freshNotes = this.beatmaps.getBeatmap(this.currentSong.id, this.currentDifficulty);
-            if (!freshNotes || freshNotes.length === 0) {
-              console.warn('[PreStart] Chart notes could not be prepared for', this.currentSong.id);
-              return false;
-            }
-            this.engine = new GameEngine(freshNotes, this.currentDifficulty, this.settingsManager.getSettings());
-            notes = this.engine.getNotes();
+    const resources: PreStartResourceProvider = {
+      prepareChart: () => {
+        if (!this.currentSong) return false;
+        let notes = this.engine.getNotes();
+        if (!notes || notes.length === 0) {
+          const freshNotes = this.beatmaps.getBeatmap(this.currentSong.id, this.currentDifficulty);
+          if (!freshNotes || freshNotes.length === 0) {
+            console.warn('[PreStart] Chart notes could not be prepared for', this.currentSong.id);
+            return false;
           }
-          // Validate and ensure chronological note ordering
-          for (let i = 1; i < notes.length; i++) {
-            if (notes[i].time < notes[i - 1].time) {
-              notes.sort((a, b) => a.time - b.time);
-              break;
-            }
-          }
-          return true;
-        },
-        prepareRenderer: () => {
-          this.renderer.resize();
-          this.renderer.render(
-            -prerollSec,
-            this.engine.getNotes(),
-            this.activeLanes,
-            this.currentSong?.bpm || 132
-          );
-        },
-        prepareAudio: async () => {
-          const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
-          if (!hasLocal && this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
-            this.ui.setYouTubePlayerVisibility(true);
-            await this.ytPlayer.loadVideo(this.currentSong.youtubeVideoId);
-            this.ytPlayer.setVolume(this.settingsManager.getSettings().musicVolume * 100);
-          } else {
-            this.ytPlayer.stop();
-            this.ui.setYouTubePlayerVisibility(false);
-          }
-          return true;
-        },
-        startAudioPlayback: async () => {
-          const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
-          if (!hasLocal && this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
-            this.ytPlayer.play();
-          } else if (this.currentSong.type === 'procedural' && this.currentSong.proceduralTrackId) {
-            this.ytPlayer.stop();
-            await this.audio.playProceduralTrack(this.currentSong.proceduralTrackId, 0);
-            this.masterClock.startPlayback();
-            this.state = GameState.PLAYING;
-            this.ui.showScreen(GameState.PLAYING);
-          } else if (this.currentSong.audioBuffer) {
-            this.ytPlayer.stop();
-            await this.audio.playAudioBuffer(this.currentSong.audioBuffer, 0);
-            this.masterClock.startPlayback();
-            this.state = GameState.PLAYING;
-            this.ui.showScreen(GameState.PLAYING);
-          }
-        },
-        isAudioPlaying: () => {
-          const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
-          if (!hasLocal && this.currentSong.type === 'youtube') {
-            return this.ytPlayer.getPlaybackState() === PlaybackState.PLAYING;
-          }
-          return this.audio.isPlaying();
-        },
-        isAudioBuffering: () => {
-          const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
-          if (!hasLocal && this.currentSong.type === 'youtube') {
-            return this.ytPlayer.isBuffering();
-          }
-          return false;
+          this.engine = new GameEngine(freshNotes, this.currentDifficulty, this.settingsManager.getSettings());
+          notes = this.engine.getNotes();
         }
+        // Validate and ensure chronological note ordering
+        for (let i = 1; i < notes.length; i++) {
+          if (notes[i].time < notes[i - 1].time) {
+            notes.sort((a, b) => a.time - b.time);
+            break;
+          }
+        }
+        return true;
       },
-      {
-        onCountdownTick: (count) => {
-          this.state = GameState.COUNTDOWN;
-          this.ui.showScreen(GameState.COUNTDOWN);
-          this.ui.setCountdown(count.toString());
-          this.audio.playSfxCountdown();
-          const progress = (3 - count) / 3.0;
-          this.masterClock.setPrerollProgress(progress, prerollSec);
-          SyncDiagnostics.get().recordCountdownTick(count);
-        },
-        onCountdownRock: () => {
-          this.ui.setCountdown('ROCK BRASIL!');
-          this.audio.playSfxRockStart();
-          this.masterClock.setPrerollProgress(1.0, prerollSec);
-          SyncDiagnostics.get().recordCountdownEnd();
-        },
-        onSynchronizingWait: () => {
-          this.ui.setCountdown('ROCK BRASIL');
-        },
-        onAutoplayBlocked: () => {
-          this.state = GameState.COUNTDOWN;
-          this.ui.showAutoplayUnblockPrompt(true);
-        },
-        onGameStart: () => {
+      prepareRenderer: () => {
+        this.renderer.resize();
+        this.renderer.render(
+          -prerollSec,
+          this.engine.getNotes(),
+          this.activeLanes,
+          this.currentSong?.bpm || 132
+        );
+      },
+      prepareAudio: async () => {
+        const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
+        if (!hasLocal && this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
+          this.ui.setYouTubePlayerVisibility(true);
+          await this.ytPlayer.loadVideo(this.currentSong.youtubeVideoId);
+          this.ytPlayer.setVolume(this.settingsManager.getSettings().musicVolume * 100);
+        } else {
+          this.ytPlayer.stop();
+          this.ui.setYouTubePlayerVisibility(false);
+        }
+        return true;
+      },
+      startAudioPlayback: async () => {
+        const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
+        if (!hasLocal && this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
+          this.ytPlayer.play();
+        } else if (this.currentSong.type === 'procedural' && this.currentSong.proceduralTrackId) {
+          this.ytPlayer.stop();
+          await this.audio.playProceduralTrack(this.currentSong.proceduralTrackId, 0);
           this.masterClock.startPlayback();
           this.state = GameState.PLAYING;
-          this.ui.showAutoplayUnblockPrompt(false);
+          this.ui.showScreen(GameState.PLAYING);
+        } else if (this.currentSong.audioBuffer) {
+          this.ytPlayer.stop();
+          await this.audio.playAudioBuffer(this.currentSong.audioBuffer, 0);
+          this.masterClock.startPlayback();
+          this.state = GameState.PLAYING;
           this.ui.showScreen(GameState.PLAYING);
         }
+      },
+      isAudioPlaying: () => {
+        const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
+        if (!hasLocal && this.currentSong.type === 'youtube') {
+          return this.ytPlayer.getPlaybackState() === PlaybackState.PLAYING;
+        }
+        return this.audio.isPlaying();
+      },
+      isAudioBuffering: () => {
+        const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
+        if (!hasLocal && this.currentSong.type === 'youtube') {
+          return this.ytPlayer.isBuffering();
+        }
+        return false;
       }
-    );
+    };
+
+    const events: PreStartEvents = {
+      onCountdownTick: (count) => {
+        this.state = GameState.COUNTDOWN;
+        this.ui.showScreen(GameState.COUNTDOWN);
+        this.ui.setCountdown(count.toString());
+        this.audio.playSfxCountdown();
+        const progress = (3 - count) / 3.0;
+        this.masterClock.setPrerollProgress(progress, prerollSec);
+        SyncDiagnostics.get().recordCountdownTick(count);
+      },
+      onCountdownRock: () => {
+        this.ui.setCountdown('ROCK BRASIL!');
+        this.audio.playSfxRockStart();
+        this.masterClock.setPrerollProgress(1.0, prerollSec);
+        SyncDiagnostics.get().recordCountdownEnd();
+      },
+      onSynchronizingWait: () => {
+        this.ui.setCountdown('ROCK BRASIL');
+      },
+      onAutoplayBlocked: () => {
+        this.state = GameState.COUNTDOWN;
+        this.ui.showAutoplayUnblockPrompt(true);
+      },
+      onGameStart: () => {
+        this.masterClock.startPlayback();
+        this.state = GameState.PLAYING;
+        this.ui.showAutoplayUnblockPrompt(false);
+        this.ui.showScreen(GameState.PLAYING);
+      }
+    };
+
+    this.activePreStartResources = resources;
+    this.activePreStartEvents = events;
+
+    await this.prestartSystem.prepareAndStart(sessionId, resources, events);
   }
 
   private clearResumeCountdown(): void {
