@@ -15,38 +15,63 @@ export class BeatmapManager {
    * Returns notes for a specific song and difficulty
    */
   getBeatmap(songId: string, difficulty: Difficulty): Note[] {
+    let result: Note[];
+
     // Check localStorage for custom user overrides first
     const localSaved = this.loadFromStorage(songId, difficulty);
     if (localSaved && localSaved.length > 0) {
-      return localSaved.map((n) => ({ ...n }));
+      result = localSaved.map((n) => ({ ...n }));
+    } else {
+      const songMaps = this.cache.get(songId);
+      if (songMaps && songMaps[difficulty]) {
+        result = songMaps[difficulty].map((n) => ({ ...n }));
+      } else {
+        // Check UniversalChartImporter for real converted community chart
+        const convertedChart = UniversalChartImporter.getConvertedChart(songId);
+        if (convertedChart && convertedChart[difficulty]) {
+          this.cache.set(songId, convertedChart);
+          result = convertedChart[difficulty].map((n) => ({ ...n }));
+        } else {
+          // Check official Brazilian catalog for Smart Chart generation
+          const officialSong = OFFICIAL_BRAZILIAN_CATALOG.find((s) => s.id === songId);
+          if (officialSong) {
+            const generated = SmartChartEngine.generateChartsForSong(
+              officialSong.id,
+              officialSong.bpm,
+              officialSong.duration
+            );
+            this.cache.set(officialSong.id, generated);
+            result = generated[difficulty].map((n) => ({ ...n }));
+          } else {
+            // Fallback: generate default procedural map
+            result = this.generateDefaultTrackMap(songId, 132, 50, difficulty);
+          }
+        }
+      }
     }
 
-    const songMaps = this.cache.get(songId);
-    if (songMaps && songMaps[difficulty]) {
-      return songMaps[difficulty].map((n) => ({ ...n }));
-    }
+    return this.sanitizeDifficultyNotes(result, difficulty);
+  }
 
-    // Check UniversalChartImporter for real converted community chart
-    const convertedChart = UniversalChartImporter.getConvertedChart(songId);
-    if (convertedChart && convertedChart[difficulty]) {
-      this.cache.set(songId, convertedChart);
-      return convertedChart[difficulty].map((n) => ({ ...n }));
-    }
-
-    // Check official Brazilian catalog for Smart Chart generation
-    const officialSong = OFFICIAL_BRAZILIAN_CATALOG.find((s) => s.id === songId);
-    if (officialSong) {
-      const generated = SmartChartEngine.generateChartsForSong(
-        officialSong.id,
-        officialSong.bpm,
-        officialSong.duration
-      );
-      this.cache.set(officialSong.id, generated);
-      return generated[difficulty].map((n) => ({ ...n }));
-    }
-
-    // Fallback: generate default procedural map
-    return this.generateDefaultTrackMap(songId, 132, 50, difficulty);
+  /**
+   * V7 Strict Difficulty Enforcement:
+   * - EASY: strictly 3 lanes [0, 1, 2] (Verde, Vermelho, Amarelo)
+   * - MEDIUM: strictly 4 lanes [0, 1, 2, 3] (Verde, Vermelho, Amarelo, Azul)
+   * - HARD/EXPERT: 5 lanes [0, 1, 2, 3, 4]
+   * Preserves 100% of authentic notes and rhythm.
+   */
+  private sanitizeDifficultyNotes(notes: Note[], difficulty: Difficulty): Note[] {
+    const maxAllowedLane = difficulty === 'EASY' ? 2 : difficulty === 'MEDIUM' ? 3 : 4;
+    return notes.map((n) => {
+      let lane = n.lane;
+      if (lane > maxAllowedLane) {
+        lane = (difficulty === 'EASY' ? (lane % 3) : 3) as Lane;
+      }
+      return {
+        ...n,
+        lane
+      };
+    });
   }
 
   /**

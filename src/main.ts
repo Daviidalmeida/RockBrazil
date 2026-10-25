@@ -404,6 +404,13 @@ class RockBrazilGame {
       this.ytPlayer.setVolume(updated.musicVolume * 100);
       this.engine.updateSettings(updated);
       this.renderer.noteSpeedMultiplier = updated.noteSpeedMultiplier;
+      if (updated.noteSpeedMultiplier <= 0.85) {
+        this.renderer.speedPreset = 'LENTA';
+      } else if (updated.noteSpeedMultiplier >= 1.25) {
+        this.renderer.speedPreset = 'RÁPIDA';
+      } else {
+        this.renderer.speedPreset = 'NORMAL';
+      }
       this.renderer.visualEffectsEnabled = updated.visualEffectsEnabled;
       if (this.currentSong) {
         this.masterClock.setOffsets(
@@ -770,13 +777,12 @@ class RockBrazilGame {
       this.settingsManager.getSettings().audioOffsetMs || 0
     );
 
-    // Obtém notas autênticas do chart sem descartar notas legítimas
+    // Obtém notas autênticas do chart com garantia estrita de pistas por dificuldade
     const rawNotes = customNotes || this.beatmaps.getBeatmap(this.currentSong.id, this.currentDifficulty);
-    const maxLaneInNotes = rawNotes.reduce((max, n) => Math.max(max, n.lane), 0);
 
-    // Configura pistas ativas por dificuldade e acomoda pistas reais do chart
-    this.renderer.setDifficulty(this.currentDifficulty, maxLaneInNotes);
-    this.ui.setDifficultyLanes(this.currentDifficulty, maxLaneInNotes);
+    // V7: Configura pistas ativas estritamente por dificuldade (3 no EASY, 4 no MEDIUM, 5 no HARD/EXPERT)
+    this.renderer.setDifficulty(this.currentDifficulty);
+    this.ui.setDifficultyLanes(this.currentDifficulty);
 
     // Reinicializa o motor preservando 100% das notas autênticas
     const notes = rawNotes.map((n) => ({
@@ -941,13 +947,13 @@ class RockBrazilGame {
           SyncDiagnostics.get().recordCountdownTick(count);
         },
         onCountdownRock: () => {
-          this.ui.setCountdown('ROCK!');
+          this.ui.setCountdown('ROCK BRASIL!');
           this.audio.playSfxRockStart();
           this.masterClock.setPrerollProgress(1.0, prerollSec);
           SyncDiagnostics.get().recordCountdownEnd();
         },
         onSynchronizingWait: () => {
-          this.ui.setCountdown('AGUARDANDO ÁUDIO...');
+          this.ui.setCountdown('ROCK BRASIL');
         },
         onAutoplayBlocked: () => {
           this.state = GameState.COUNTDOWN;

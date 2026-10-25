@@ -943,11 +943,16 @@ export class UIManager {
    * MEDIUM: 4 lanes (0, 1, 2, 3)
    * HARD/EXPERT: 5 lanes (0, 1, 2, 3, 4)
    */
-  setDifficultyLanes(diff: Difficulty, maxLaneOverride?: number): void {
+  /**
+   * Sets the active difficulty and adapts visible fret buttons:
+   * - EASY: 3 frets (0: Verde, 1: Vermelho, 2: Amarelo)
+   * - MEDIUM: 4 frets (0: Verde, 1: Vermelho, 2: Amarelo, 3: Azul)
+   * - HARD / EXPERT: 5 frets (0: Verde, 1: Vermelho, 2: Amarelo, 3: Azul, 4: Laranja)
+   */
+  setDifficultyLanes(diff: Difficulty, _maxLaneOverride?: number): void {
     const fretBoard = document.getElementById('fret-board');
     if (!fretBoard) return;
-    const defaultMax = diff === 'EASY' ? 2 : diff === 'MEDIUM' ? 3 : 4;
-    const maxLane = maxLaneOverride !== undefined ? Math.max(defaultMax, maxLaneOverride) : defaultMax;
+    const maxLane = diff === 'EASY' ? 2 : diff === 'MEDIUM' ? 3 : 4;
     fretBoard.querySelectorAll<HTMLElement>('.fret-button').forEach((btn) => {
       const lane = Number(btn.dataset.lane);
       if (lane > maxLane) {

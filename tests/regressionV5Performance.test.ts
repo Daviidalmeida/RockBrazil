@@ -29,14 +29,20 @@ describe('ROCKBRAZIL BETA — SUÍTE DE REGRESSÃO E PERFORMANCE V5', () => {
     } as any;
 
     const renderer = new GameRenderer(dummyCanvas);
-    expect(renderer.baseNoteSpeed).toBeCloseTo(0.92, 2);
+    // V7: Restaura velocidade confortável normal de 1.35s conforme solicitado pelo jogador
+    expect(renderer.baseNoteSpeed).toBeCloseTo(1.35, 2);
+
+    // Suporta presets de velocidade: LENTA (1.65s), NORMAL (1.35s), RÁPIDA (1.05s)
+    renderer.speedPreset = 'RÁPIDA';
+    expect(renderer.baseNoteSpeed).toBeCloseTo(1.05, 2);
+    renderer.speedPreset = 'LENTA';
+    expect(renderer.baseNoteSpeed).toBeCloseTo(1.65, 2);
+    renderer.speedPreset = 'NORMAL';
 
     // Em 120 BPM, uma semicolcheia (16th note) tem dt = 0.125s
-    // Com noteSpeed de 0.92s, o progresso entre notas é de 0.125 / 0.92 = ~0.136 (13.6% da pista)
-    // muito superior ao valor antigo de 1.35s (0.092 / 9.2%)
     const dt16th = 0.125;
     const progressDiff = dt16th / renderer.noteSpeed;
-    expect(progressDiff).toBeGreaterThan(0.13);
+    expect(progressDiff).toBeGreaterThan(0.08);
   });
 
   it('2. Geometria de notas: ry reduzido para fretes horizontais sem colisão visual', () => {

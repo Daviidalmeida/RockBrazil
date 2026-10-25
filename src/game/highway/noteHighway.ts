@@ -1,4 +1,4 @@
-import { Note, Lane, Difficulty, getLanesForDifficulty } from '../../types';
+import { Note, Lane, Difficulty, getLanesForDifficulty, NoteSpeedPreset } from '../../types';
 
 interface Particle {
   x: number;
@@ -53,9 +53,20 @@ export class NoteHighway {
   readonly strikeLineYRatio = 0.82;     // Strike line Y (receptors location)
   readonly highwayTopWidthRatio = 0.28; // Narrow top for deep perspective
   readonly highwayBottomWidthRatio = 0.95; // Wide bottom for clear readability
-  readonly baseTravelTime = 0.92;       // Seconds from horizon to strike line
+
+  // V7: Restored comfortable base travel time (1.35s NORMAL) with selectable presets
+  public speedPreset: NoteSpeedPreset = 'NORMAL';
   public speedMultiplier = 1.0;
   public visualEffectsEnabled = true;
+
+  get baseTravelTime(): number {
+    switch (this.speedPreset) {
+      case 'LENTA': return 1.65;
+      case 'RÁPIDA': return 1.05;
+      case 'NORMAL':
+      default: return 1.35;
+    }
+  }
 
   get travelTime(): number {
     return this.baseTravelTime / Math.max(0.6, Math.min(2.5, this.speedMultiplier));
@@ -136,13 +147,14 @@ export class NoteHighway {
     return { x, y: currentY, laneWidth, scale, currentWidth, highwayLeft };
   }
 
-  public setDifficulty(diff: Difficulty, maxLaneOverride?: number): void {
+  public setDifficulty(diff: Difficulty, _maxLaneOverride?: number): void {
     this.difficulty = diff;
-    const standard = getLanesForDifficulty(diff);
-    if (maxLaneOverride !== undefined && maxLaneOverride >= standard.length) {
-      this.activeLanesList = [0, 1, 2, 3, 4].slice(0, maxLaneOverride + 1) as Lane[];
+    if (diff === 'EASY') {
+      this.activeLanesList = [0, 1, 2];
+    } else if (diff === 'MEDIUM') {
+      this.activeLanesList = [0, 1, 2, 3];
     } else {
-      this.activeLanesList = standard;
+      this.activeLanesList = [0, 1, 2, 3, 4];
     }
   }
 

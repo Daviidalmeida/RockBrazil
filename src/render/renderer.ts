@@ -1,5 +1,5 @@
 import { SyncDiagnostics } from '../game/sync/syncDiagnostics';
-import { Note, Lane, Difficulty, getLanesForDifficulty } from '../types';
+import { Note, Lane, Difficulty, getLanesForDifficulty, NoteSpeedPreset } from '../types';
 
 interface Particle {
   x: number;
@@ -26,9 +26,11 @@ export class GameRenderer {
   private ctx: CanvasRenderingContext2D;
   private particles: Particle[] = [];
   private rings: RingEffect[] = [];
+  private particlePool: Particle[] = [];
+  private ringPool: RingEffect[] = [];
   private screenShake = 0;
 
-  // Active difficulty & dynamic lanes configuration
+  // Active difficulty & dynamic lanes configuration (Strictly 3 for EASY, 4 for MEDIUM, 5 for HARD/EXPERT)
   private difficulty: Difficulty = 'HARD';
   private activeLanesList: Lane[] = [0, 1, 2, 3, 4];
 
@@ -46,9 +48,20 @@ export class GameRenderer {
   readonly strikeLineYRatio = 0.82;     // Strike line Y (receptors location)
   readonly highwayTopWidthRatio = 0.28; // Narrow top for deep perspective
   readonly highwayBottomWidthRatio = 0.95; // Wide bottom for clear readability
-  readonly baseNoteSpeed = 0.92;        // Seconds from horizon to strike line (Guitar Flash fluid standard)
+  
+  // V7: Restored comfortable base travel time (1.35s NORMAL) with selectable presets
+  public speedPreset: NoteSpeedPreset = 'NORMAL';
   public noteSpeedMultiplier = 1.0;
   public visualEffectsEnabled = true;
+
+  get baseNoteSpeed(): number {
+    switch (this.speedPreset) {
+      case 'LENTA': return 1.65;
+      case 'RÁPIDA': return 1.05;
+      case 'NORMAL':
+      default: return 1.35;
+    }
+  }
 
   get noteSpeed(): number {
     return this.baseNoteSpeed / Math.max(0.6, Math.min(2.5, this.noteSpeedMultiplier));
@@ -67,15 +80,19 @@ export class GameRenderer {
   }
 
   /**
-   * Sets the active difficulty and adapts visible lanes (3 for EASY, 4 for MEDIUM, 5 for HARD/EXPERT)
+   * Sets the active difficulty and strictly adapts visible lanes:
+   * - EASY: strictly 3 lanes (0: Verde, 1: Vermelho, 2: Amarelo)
+   * - MEDIUM: strictly 4 lanes (0: Verde, 1: Vermelho, 2: Amarelo, 3: Azul)
+   * - HARD/EXPERT: 5 lanes (0, 1, 2, 3, 4)
    */
-  setDifficulty(diff: Difficulty, maxLaneOverride?: number): void {
+  setDifficulty(diff: Difficulty, _maxLaneOverride?: number): void {
     this.difficulty = diff;
-    const standard = getLanesForDifficulty(diff);
-    if (maxLaneOverride !== undefined && maxLaneOverride >= standard.length) {
-      this.activeLanesList = [0, 1, 2, 3, 4].slice(0, maxLaneOverride + 1) as Lane[];
+    if (diff === 'EASY') {
+      this.activeLanesList = [0, 1, 2];
+    } else if (diff === 'MEDIUM') {
+      this.activeLanesList = [0, 1, 2, 3];
     } else {
-      this.activeLanesList = standard;
+      this.activeLanesList = [0, 1, 2, 3, 4];
     }
   }
 
@@ -111,37 +128,63 @@ export class GameRenderer {
     this.screenShake = 0;
   }
 
+  private obtainParticle(
+    x: number, y: number, vx: number, vy: number,
+    color: string, size: number, alpha: number, decay: number
+  ): Particle {
+    const p = this.particlePool.pop();
+    if (p) {
+      p.x = x; p.y = y; p.vx = vx; p.vy = vy;
+      p.color = color; p.size = size; p.alpha = alpha; p.decay = decay;
+      return p;
+    }
+    return { x, y, vx, vy, color, size, alpha, decay };
+  }
+
+  private obtainRing(x: number, y: number, radius: number, maxRadius: number, color: string, alpha: number): RingEffect {
+    const r = this.ringPool.pop();
+    if (r) {
+      r.x = x; r.y = y; r.radius = radius; r.maxRadius = maxRadius; r.color = color; r.alpha = alpha;
+      return r;
+    }
+    return { x, y, radius, maxRadius, color, alpha };
+  }
+
   spawnHitParticles(lane: Lane): void {
     if (!this.visualEffectsEnabled) return;
     const coords = this.getLanePositionAtProgress(lane, 1.0);
     const color = this.laneColors[lane];
 
-    // Burst particles
+    // Burst particles from object pool
     const particleCount = 14;
     for (let i = 0; i < particleCount; i++) {
       const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.4;
       const speed = Math.random() * 4.5 + 2.0;
-      this.particles.push({
-        x: coords.x,
-        y: coords.y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - 1.2,
-        color: i % 2 === 0 ? color.core : '#ffffff',
-        size: Math.random() * 3.5 + 2.0,
-        alpha: 1.0,
-        decay: Math.random() * 0.035 + 0.03
-      });
+      this.particles.push(
+        this.obtainParticle(
+          coords.x,
+          coords.y,
+          Math.cos(angle) * speed,
+          Math.sin(angle) * speed - 1.2,
+          i % 2 === 0 ? color.core : '#ffffff',
+          Math.random() * 3.5 + 2.0,
+          1.0,
+          Math.random() * 0.035 + 0.03
+        )
+      );
     }
 
-    // Expanding shockwave ring
-    this.rings.push({
-      x: coords.x,
-      y: coords.y,
-      radius: coords.laneWidth * 0.3,
-      maxRadius: coords.laneWidth * 0.95,
-      color: color.core,
-      alpha: 1.0
-    });
+    // Expanding shockwave ring from object pool
+    this.rings.push(
+      this.obtainRing(
+        coords.x,
+        coords.y,
+        coords.laneWidth * 0.3,
+        coords.laneWidth * 0.95,
+        color.core,
+        1.0
+      )
+    );
   }
 
   /**
@@ -153,16 +196,18 @@ export class GameRenderer {
     const color = this.laneColors[lane];
 
     for (let i = 0; i < 2; i++) {
-      this.particles.push({
-        x: coords.x + (Math.random() - 0.5) * coords.laneWidth * 0.45,
-        y: coords.y + (Math.random() - 0.5) * 6,
-        vx: (Math.random() - 0.5) * 2.5,
-        vy: -Math.random() * 4.5 - 2.5,
-        color: Math.random() > 0.4 ? color.core : '#ffffff',
-        size: Math.random() * 3.0 + 1.5,
-        alpha: 0.9,
-        decay: 0.06
-      });
+      this.particles.push(
+        this.obtainParticle(
+          coords.x + (Math.random() - 0.5) * coords.laneWidth * 0.45,
+          coords.y + (Math.random() - 0.5) * 6,
+          (Math.random() - 0.5) * 2.5,
+          -Math.random() * 4.5 - 2.5,
+          Math.random() > 0.4 ? color.core : '#ffffff',
+          Math.random() * 3.0 + 1.5,
+          0.9,
+          0.06
+        )
+      );
     }
   }
 
@@ -229,7 +274,12 @@ export class GameRenderer {
     this.drawSustains(ctx, currentTime, notes);
 
     // 5. Draw Strike Line & Target Receptors
-    this.drawStrikeTargets(ctx, activeLanes);
+    this.drawStrikeTargets(ctx, activeLanes, currentTime, bpm);
+
+    // If song is in intro section before first note, display subtle rhythm pulse indicator
+    if (notes.length > 0 && currentTime >= 0 && notes[0].time - currentTime > 1.8) {
+      this.drawIntroRhythmIndicator(ctx, currentTime, bpm);
+    }
 
     // 6. Draw Approaching 3D Notes (Gems)
     this.drawNotes(ctx, currentTime, notes);
@@ -367,11 +417,11 @@ export class GameRenderer {
       ctx.lineTo(lineRight, p.y);
 
       if (isMeasure) {
-        ctx.strokeStyle = `rgba(255, 255, 255, ${0.4 * p.scale})`;
-        ctx.lineWidth = Math.max(1.5, 2.5 * p.scale);
+        ctx.strokeStyle = `rgba(255, 255, 255, ${0.55 * p.scale})`;
+        ctx.lineWidth = Math.max(1.8, 3.0 * p.scale);
       } else {
-        ctx.strokeStyle = `rgba(255, 255, 255, ${0.16 * p.scale})`;
-        ctx.lineWidth = Math.max(1, 1.5 * p.scale);
+        ctx.strokeStyle = `rgba(255, 255, 255, ${0.28 * p.scale})`;
+        ctx.lineWidth = Math.max(1, 1.8 * p.scale);
       }
       ctx.stroke();
     }
@@ -381,7 +431,7 @@ export class GameRenderer {
   /**
    * Draws the strike line and circular target receptors for active lanes
    */
-  private drawStrikeTargets(ctx: CanvasRenderingContext2D, activeLanes: Set<Lane>): void {
+  private drawStrikeTargets(ctx: CanvasRenderingContext2D, activeLanes: Set<Lane>, currentTime = 0, bpm = 120): void {
     const h = this.height;
     const strikeY = h * this.strikeLineYRatio;
     const pSample = this.getLanePositionAtProgress(0, 1.0);
@@ -389,13 +439,17 @@ export class GameRenderer {
     const lineLeft = pSample.highwayLeft;
     const lineRight = pSample.highwayLeft + pSample.currentWidth;
 
+    const secondsPerBeat = 60 / Math.max(60, bpm);
+    const beatFraction = (currentTime / secondsPerBeat) % 1;
+    const beatPulse = Math.max(0, 1.0 - Math.abs(beatFraction < 0 ? beatFraction + 1 : beatFraction) * 3.5);
+
     ctx.save();
 
     // 1. Glowing Metallic Strike Bar across the highway
     const barGrad = ctx.createLinearGradient(lineLeft, strikeY, lineRight, strikeY);
-    barGrad.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
-    barGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.7)');
-    barGrad.addColorStop(1, 'rgba(255, 255, 255, 0.15)');
+    barGrad.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+    barGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.85)');
+    barGrad.addColorStop(1, 'rgba(255, 255, 255, 0.2)');
 
     ctx.strokeStyle = barGrad;
     ctx.lineWidth = 3.5;
@@ -418,7 +472,7 @@ export class GameRenderer {
       // Outer Bezel Ring
       ctx.beginPath();
       ctx.arc(x, y, radius, 0, Math.PI * 2);
-      ctx.strokeStyle = isPressed ? color.core : 'rgba(255, 255, 255, 0.45)';
+      ctx.strokeStyle = isPressed ? color.core : 'rgba(255, 255, 255, 0.5)';
       ctx.lineWidth = isPressed ? 4.5 : 2.5;
       ctx.stroke();
 
@@ -441,28 +495,58 @@ export class GameRenderer {
         ctx.lineWidth = 3.5;
         ctx.stroke();
 
-        // Pulsing core light
+        // Core light
         ctx.beginPath();
         ctx.arc(x, y, radius * 0.35, 0, Math.PI * 2);
         ctx.fillStyle = '#ffffff';
         ctx.fill();
       } else {
-        // Inactive Dark Cup with Subtle Pip
-        ctx.fillStyle = 'rgba(14, 16, 28, 0.75)';
+        // Inactive Cup with subtle rhythmic pulse matching the beat
+        ctx.fillStyle = 'rgba(14, 16, 28, 0.85)';
         ctx.fill();
         ctx.strokeStyle = color.glow;
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(x, y, radius * 0.22, 0, Math.PI * 2);
+        const pulseR = radius * (0.22 + beatPulse * 0.08);
+        ctx.arc(x, y, pulseR, 0, Math.PI * 2);
         ctx.fillStyle = color.core;
+        ctx.globalAlpha = 0.7 + beatPulse * 0.3;
         ctx.fill();
       }
 
       ctx.restore();
     }
 
+    ctx.restore();
+  }
+
+  /**
+   * Renders active rhythm pulse indicator during intro sections before first playable note
+   */
+  private drawIntroRhythmIndicator(ctx: CanvasRenderingContext2D, currentTime: number, bpm: number): void {
+    const w = this.width;
+    const pos = this.getLanePositionAtProgress(0, 0.42);
+    const secondsPerBeat = 60 / Math.max(60, bpm);
+    const beatFraction = (currentTime / secondsPerBeat) % 1;
+    const pulse = 0.7 + 0.3 * Math.max(0, 1.0 - Math.abs(beatFraction < 0 ? beatFraction + 1 : beatFraction) * 3.0);
+
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.font = '700 13px var(--font-display, Montserrat, sans-serif)';
+    ctx.fillStyle = `rgba(255, 230, 0, ${pulse * 0.85})`;
+    ctx.fillText('RITMO & INTRODUÇÃO', w / 2, pos.y);
+
+    const dotsCount = 4;
+    const currentDot = Math.floor(currentTime / secondsPerBeat) % 4;
+    let dotsStr = '';
+    for (let d = 0; d < dotsCount; d++) {
+      dotsStr += d === currentDot ? ' ● ' : ' ○ ';
+    }
+    ctx.font = '600 11px monospace';
+    ctx.fillStyle = `rgba(255, 255, 255, ${pulse * 0.75})`;
+    ctx.fillText(dotsStr, w / 2, pos.y + 16);
     ctx.restore();
   }
 
@@ -646,6 +730,7 @@ export class GameRenderer {
       ring.alpha -= 0.055;
 
       if (ring.alpha <= 0 || ring.radius >= ring.maxRadius) {
+        if (this.ringPool.length < 50) this.ringPool.push(ring);
         this.rings.splice(i, 1);
         continue;
       }
@@ -668,6 +753,7 @@ export class GameRenderer {
       p.alpha -= p.decay;
 
       if (p.alpha <= 0) {
+        if (this.particlePool.length < 150) this.particlePool.push(p);
         this.particles.splice(i, 1);
         continue;
       }

@@ -148,11 +148,14 @@ export interface SongMetadata {
   chartStatus?: 'SMART_CHART_READY' | 'CUSTOM' | 'MIDI';
 }
 
+export type NoteSpeedPreset = 'LENTA' | 'NORMAL' | 'RÁPIDA';
+
 export interface GameSettings {
   musicVolume: number; // 0.0 to 1.0
   sfxVolume: number;   // 0.0 to 1.0
   audioOffsetMs: number; // -200 to +200 ms
   noteSpeedMultiplier: number; // 0.8 to 2.0
+  noteSpeedPreset?: NoteSpeedPreset; // 'LENTA' | 'NORMAL' | 'RÁPIDA'
   visualEffectsEnabled: boolean;
 }
 
