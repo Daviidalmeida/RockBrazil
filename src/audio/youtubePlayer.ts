@@ -1,3 +1,4 @@
+import { SyncDiagnostics } from '../game/sync/syncDiagnostics';
 import { PlaybackState } from '../types';
 
 declare global {
@@ -304,6 +305,7 @@ export class YouTubePlayerController {
 
               if (this.events.onBuffering) this.events.onBuffering(false);
               if (this.events.onPlaybackConfirmed) {
+                SyncDiagnostics.get().recordFirstTimeProgression(raw);
                 this.events.onPlaybackConfirmed(raw);
               }
               return;
@@ -410,64 +412,78 @@ export class YouTubePlayerController {
    * If paused, buffering, or waiting for audio, time does NOT advance!
    */
   public getCurrentTime(): number {
-    // If not actively playing, time is completely frozen
-    if (this.playbackState !== PlaybackState.PLAYING) {
-      return Math.max(0, this.lastObservedVideoTime);
-    }
-
     const now = performance.now();
 
     if (this.isFallbackMode) {
+      if (this.playbackState !== PlaybackState.PLAYING) {
+        return Math.max(0, this.lastObservedVideoTime);
+      }
       const elapsed = (now - this.fallbackStartTime) / 1000;
       return Math.max(0, elapsed);
     }
 
-    // 1. Read actual time from the player
+    // 1. Read actual time and state directly from YouTube player
     let rawTime = -1;
-    if (this.player && this.player.getCurrentTime) {
-      try {
-        const val = this.player.getCurrentTime();
-        if (typeof val === 'number' && !isNaN(val)) {
-          rawTime = val;
+    let playerState = -1;
+    if (this.player) {
+      if (this.player.getCurrentTime) {
+        try {
+          const val = this.player.getCurrentTime();
+          if (typeof val === 'number' && !isNaN(val)) {
+            rawTime = val;
+          }
+        } catch {
+          rawTime = -1;
         }
-      } catch {
-        rawTime = -1;
+      }
+      if (this.player.getPlayerState) {
+        try {
+          playerState = this.player.getPlayerState();
+        } catch {
+          playerState = -1;
+        }
       }
     }
 
-    // 2. Check if player has stalled without firing a buffering event
-    if (rawTime >= 0 && rawTime === this.lastRawPlayerTime) {
-      const timeSinceUpdate = (now - this.lastObservedPerfTime) / 1000;
-      if (timeSinceUpdate > 0.45) {
-        // Player is stalled/freezing: do not interpolate past 0.45s!
+    // 2. React to player state transitions
+    if (playerState === 1) { // PLAYING
+      if (this.playbackState !== PlaybackState.PLAYING) {
+        this.setPlaybackState(PlaybackState.PLAYING);
+        if (this.events.onBuffering) this.events.onBuffering(false);
+      }
+    } else if (playerState === 3) { // BUFFERING
+      if (this.playbackState !== PlaybackState.BUFFERING) {
         this.setPlaybackState(PlaybackState.BUFFERING);
         if (this.events.onBuffering) this.events.onBuffering(true);
-        return Math.max(0, this.lastObservedVideoTime);
+      }
+    } else if (playerState === 2) { // PAUSED
+      if (this.playbackState !== PlaybackState.PAUSED) {
+        this.setPlaybackState(PlaybackState.PAUSED);
+        if (this.events.onBuffering) this.events.onBuffering(false);
       }
     }
 
-    // 3. Interpolation between discrete player observations
+    // If not actively playing, return frozen observed time
+    if (this.playbackState !== PlaybackState.PLAYING) {
+      return Math.max(0, this.lastObservedVideoTime);
+    }
+
+    // 3. When player provides a fresh timestamp, lock precisely
+    if (rawTime >= 0 && rawTime !== this.lastRawPlayerTime) {
+      this.lastRawPlayerTime = rawTime;
+      this.lastObservedVideoTime = rawTime;
+      this.lastObservedPerfTime = now;
+      return Math.max(0, rawTime);
+    }
+
+    // 4. Smooth monotonic interpolation between YouTube updates (clamped to 0.5s)
     if (this.lastObservedPerfTime === 0) {
       this.lastObservedPerfTime = now;
       if (rawTime >= 0) this.lastObservedVideoTime = rawTime;
     }
 
     const dt = Math.max(0, (now - this.lastObservedPerfTime) / 1000);
-    // Clamp maximum forward extrapolation to 0.35s to prevent runaway clock during hitches
     const interpolated = this.lastObservedVideoTime + Math.min(0.35, dt);
-
-    // 4. Zero-lag audio clock tracking when YouTube provides a new timestamp
-    if (rawTime >= 0 && rawTime !== this.lastRawPlayerTime) {
-      this.lastRawPlayerTime = rawTime;
-      const drift = rawTime - interpolated;
-
-      // Pin directly to verified player time if drift exceeds 15ms to eliminate cumulative clock lag
-      if (Math.abs(drift) > 0.015) {
-        this.lastObservedVideoTime = rawTime;
-        this.lastObservedPerfTime = now;
-        return rawTime;
-      }
-    }
 
     return Math.max(0, interpolated);
   }

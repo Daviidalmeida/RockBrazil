@@ -1,3 +1,4 @@
+import { SyncDiagnostics } from '../game/sync/syncDiagnostics';
 import { Note, Lane, Difficulty, getLanesForDifficulty } from '../types';
 
 interface Particle {
@@ -541,6 +542,12 @@ export class GameRenderer {
 
       if (progress < -0.06 || progress > 1.12) continue;
       visibleNotes.push(note);
+      if (progress >= 0 && progress <= 0.05) {
+        SyncDiagnostics.get().recordFirstNoteVisible(note.time, currentTime, progress);
+      }
+      if (Math.abs(progress - 1.0) < 0.04) {
+        SyncDiagnostics.get().recordFirstNoteReachingReceptor(note.time, currentTime, (currentTime - note.time) * 1000);
+      }
     }
 
     // 1. Draw Chord Connector Beams

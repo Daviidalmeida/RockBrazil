@@ -16,6 +16,7 @@ import { AutoMusicFinder } from './game/catalog/musicFinder';
 import { CalibrationManager } from './game/sync/calibrationManager';
 import { UnifiedMasterClock } from './game/sync/masterClock';
 import { PreStartSystem } from './game/sync/prestartSystem';
+import { SyncDiagnostics } from './game/sync/syncDiagnostics';
 
 class RockBrazilGame {
   private settingsManager: SettingsManager;
@@ -67,6 +68,7 @@ class RockBrazilGame {
       },
       onPlaybackConfirmed: (_videoTime) => {
         // Áudio confirmado em avanço real: transição imediata para PLAYING no Unified Master Clock
+        SyncDiagnostics.get().recordPlayingEvent(_videoTime);
         this.masterClock.startPlayback();
         this.clearCountdown();
         if (this.state === GameState.COUNTDOWN || (this.state as any) === 'WAITING_FOR_AUDIO') {
@@ -123,6 +125,7 @@ class RockBrazilGame {
     this.setupEditorControls();
     this.setupInputHandlers();
     this.setupWindowResize();
+    (window as any).__ROCKBRAZIL_GAME__ = this;
 
     // Expose instance for testing and automation
     (window as any).rockBrazilGame = this;
@@ -396,7 +399,8 @@ class RockBrazilGame {
 
     this.ui.onUnblockAudioClicked = () => {
       if (this.currentSong?.type === 'youtube' && this.currentSong?.youtubeVideoId) {
-        this.ytPlayer.play();
+        SyncDiagnostics.get().recordPlayVideoCommand(this.currentSong.youtubeVideoId || '');
+            this.ytPlayer.play();
       }
     };
 
@@ -807,6 +811,16 @@ class RockBrazilGame {
     if (sessionId !== this.currentMatchSessionId) return;
 
     this.masterClock.startCountdown();
+    SyncDiagnostics.get().reset();
+    const firstNoteT = this.engine.getNotes()[0]?.time || 0;
+    SyncDiagnostics.get().recordChartFirstTimestamp(firstNoteT, this.engine.getNotes().length);
+    SyncDiagnostics.get().record('START_COUNTDOWN_INVOKED', {
+      songId: this.currentSong.id,
+      videoId: this.currentSong.youtubeVideoId,
+      bpm: this.currentSong.bpm,
+      songOffsetMs: CalibrationManager.getSongOffsetMs(this.currentSong.id),
+      globalOffsetMs: this.settingsManager.getSettings().audioOffsetMs || 0
+    });
 
     await this.prestartSystem.prepareAndStart(
       sessionId,
@@ -854,10 +868,12 @@ class RockBrazilGame {
           this.ui.showScreen(GameState.COUNTDOWN);
           this.ui.setCountdown(count.toString());
           this.audio.playSfxCountdown();
+          SyncDiagnostics.get().recordCountdownTick(count);
         },
         onCountdownRock: () => {
           this.ui.setCountdown('ROCK!');
           this.audio.playSfxRockStart();
+          SyncDiagnostics.get().recordCountdownEnd();
         },
         onSynchronizingWait: () => {
           this.ui.setCountdown('SINCRONIZANDO...');
@@ -940,8 +956,10 @@ class RockBrazilGame {
         this.finishSong();
       } else {
         if (!isBuffering) {
+          SyncDiagnostics.get().recordFirstEngineFrame(clockTime);
           this.engine.update(clockTime);
         }
+        SyncDiagnostics.get().recordFirstRendererFrame(clockTime);
         this.renderer.render(
           clockTime,
           this.engine.getNotes(),
