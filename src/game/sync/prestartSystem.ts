@@ -1,11 +1,10 @@
-import { PlaybackState } from '../../types';
-
 export interface PreStartEvents {
   onCountdownTick: (count: number) => void;
   onCountdownRock: () => void;
   onSynchronizingWait: () => void;
   onGameStart: () => void;
   onAutoplayBlocked?: () => void;
+  onPlaybackFailed?: (reason: string) => void;
 }
 
 export interface PreStartResourceProvider {
@@ -23,11 +22,11 @@ export interface PreStartResourceProvider {
  * Ensures audio stream and visual notes enter the highway in exact synchrony.
  */
 export class PreStartSystem {
-  private timer: number | null = null;
+  private timer: any = null;
   private currentCount = 3;
   private isWaitingForAudio = false;
   private currentSessionId = 0;
-  private checkInterval: number | null = null;
+  private checkInterval: any = null;
 
   /**
    * Initializes and starts the pre-start sequence for a match session.
@@ -42,7 +41,9 @@ export class PreStartSystem {
 
     // 1. Prepare controllable resources (Chart + Renderer)
     const chartReady = await resources.prepareChart();
-    if (this.currentSessionId !== sessionId) return;
+    if (!chartReady || this.currentSessionId !== sessionId) {
+      return;
+    }
 
     resources.prepareRenderer();
 
@@ -54,7 +55,8 @@ export class PreStartSystem {
     this.currentCount = 3;
     events.onCountdownTick(this.currentCount);
 
-    this.timer = window.setInterval(async () => {
+    const intervalFn = typeof window !== 'undefined' ? window.setInterval : setInterval;
+    this.timer = intervalFn(async () => {
       if (this.currentSessionId !== sessionId) {
         this.cancel();
         return;
@@ -100,9 +102,10 @@ export class PreStartSystem {
     events.onSynchronizingWait();
 
     let attempts = 0;
-    const maxAttempts = 150; // 15 seconds max wait
+    const maxAttempts = 120; // 12 seconds max wait (at 100ms intervals)
 
-    this.checkInterval = window.setInterval(() => {
+    const intervalFn = typeof window !== 'undefined' ? window.setInterval : setInterval;
+    this.checkInterval = intervalFn(() => {
       if (this.currentSessionId !== sessionId) {
         this.cancel();
         return;
@@ -114,11 +117,35 @@ export class PreStartSystem {
         this.cancel();
         events.onGameStart();
       } else if (attempts >= maxAttempts) {
-        // Fallback: start anyway to prevent freeze
+        // Safe timeout: NEVER start match if audio is unconfirmed!
+        // Do NOT advance notes and do NOT penalize player.
         this.cancel();
-        events.onGameStart();
+        this.isWaitingForAudio = false;
+
+        if (events.onAutoplayBlocked) {
+          events.onAutoplayBlocked();
+        } else if (events.onPlaybackFailed) {
+          events.onPlaybackFailed('AUDIO_START_TIMEOUT');
+        } else {
+          events.onSynchronizingWait();
+        }
       }
     }, 100);
+  }
+
+  /**
+   * Allows retrying audio start if unblocking is requested by the player.
+   */
+  public retryAudio(
+    sessionId: number,
+    resources: PreStartResourceProvider,
+    events: PreStartEvents
+  ): void {
+    if (this.currentSessionId !== sessionId) return;
+    this.cancel();
+    this.isWaitingForAudio = true;
+    resources.startAudioPlayback();
+    this.waitForAudioAdvance(sessionId, resources, events);
   }
 
   /**
@@ -143,9 +170,5 @@ export class PreStartSystem {
       this.checkInterval = null;
     }
     this.isWaitingForAudio = false;
-  }
-
-  public getSessionId(): number {
-    return this.currentSessionId;
   }
 }

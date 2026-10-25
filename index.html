@@ -371,6 +371,18 @@
         <h2 class="notebook-dialog-title" style="color: #c62828;">PAUSADO</h2>
         <div class="marker-underline small"></div>
 
+        <div class="pause-calibration-box" style="margin: 12px 0 16px 0; padding: 10px; background: rgba(0,0,0,0.06); border-radius: 8px; border: 1px dashed rgba(0,0,0,0.25); text-align: center;">
+          <div style="font-size: 0.85rem; font-weight: 700; color: #333; margin-bottom: 6px;">CALIBRAÇÃO DESTA GRAVAÇÃO</div>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px;">
+            <button id="btn-pause-offset-minus50" class="notebook-bar-mini-btn" style="padding: 4px 8px; font-size: 0.8rem;">-50ms</button>
+            <button id="btn-pause-offset-minus10" class="notebook-bar-mini-btn" style="padding: 4px 8px; font-size: 0.8rem;">-10ms</button>
+            <span id="pause-offset-value" style="font-weight: 900; font-family: monospace; font-size: 1.1rem; min-width: 70px; display: inline-block;">+0 ms</span>
+            <button id="btn-pause-offset-plus10" class="notebook-bar-mini-btn" style="padding: 4px 8px; font-size: 0.8rem;">+10ms</button>
+            <button id="btn-pause-offset-plus50" class="notebook-bar-mini-btn" style="padding: 4px 8px; font-size: 0.8rem;">+50ms</button>
+          </div>
+          <button id="btn-pause-offset-reset" class="notebook-bar-mini-btn" style="font-size: 0.75rem; padding: 3px 8px; color: #555;">Redefinir Padrão</button>
+        </div>
+
         <div class="dialog-buttons">
           <button id="btn-resume" class="notebook-bar-btn btn-select">CONTINUAR</button>
           <button id="btn-restart-pause" class="notebook-bar-btn">REINICIAR</button>

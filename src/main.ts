@@ -394,6 +394,7 @@ class RockBrazilGame {
         CalibrationManager.adjustOffsetMs(this.currentSong.id, deltaMs, this.currentSong.youtubeVideoId);
       }
       const updated = CalibrationManager.getSongOffsetMs(this.currentSong.id);
+      this.masterClock.setSongOffsetSec(updated / 1000);
       this.ui.setPauseCalibrationOffset(updated);
     };
 
@@ -825,8 +826,36 @@ class RockBrazilGame {
     await this.prestartSystem.prepareAndStart(
       sessionId,
       {
-        prepareChart: () => true,
-        prepareRenderer: () => {},
+        prepareChart: () => {
+          if (!this.currentSong) return false;
+          let notes = this.engine.getNotes();
+          if (!notes || notes.length === 0) {
+            const freshNotes = this.beatmaps.getBeatmap(this.currentSong.id, this.currentDifficulty);
+            if (!freshNotes || freshNotes.length === 0) {
+              console.warn('[PreStart] Chart notes could not be prepared for', this.currentSong.id);
+              return false;
+            }
+            this.engine = new GameEngine(freshNotes, this.currentDifficulty, this.settingsManager.getSettings());
+            notes = this.engine.getNotes();
+          }
+          // Validate and ensure chronological note ordering
+          for (let i = 1; i < notes.length; i++) {
+            if (notes[i].time < notes[i - 1].time) {
+              notes.sort((a, b) => a.time - b.time);
+              break;
+            }
+          }
+          return true;
+        },
+        prepareRenderer: () => {
+          this.renderer.resize();
+          this.renderer.render(
+            0,
+            this.engine.getNotes(),
+            this.activeLanes,
+            this.currentSong?.bpm || 132
+          );
+        },
         prepareAudio: async () => {
           if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
             await this.ytPlayer.loadVideo(this.currentSong.youtubeVideoId);
@@ -877,6 +906,10 @@ class RockBrazilGame {
         },
         onSynchronizingWait: () => {
           this.ui.setCountdown('SINCRONIZANDO...');
+        },
+        onAutoplayBlocked: () => {
+          this.state = GameState.COUNTDOWN;
+          this.ui.showAutoplayUnblockPrompt(true);
         },
         onGameStart: () => {
           this.masterClock.startPlayback();

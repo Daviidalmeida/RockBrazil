@@ -95,7 +95,7 @@ export class UnifiedMasterClock {
 
   public pause(): void {
     if (!this.isPaused) {
-      this.frozenTime = this.getTime();
+      this.frozenTime = this.lastReportedTime;
       this.isPaused = true;
     }
   }
@@ -108,7 +108,7 @@ export class UnifiedMasterClock {
 
   public setBuffering(buffering: boolean): void {
     if (buffering && !this.isBufferingState) {
-      this.frozenTime = this.getTime();
+      this.frozenTime = this.lastReportedTime;
       this.isBufferingState = true;
     } else if (!buffering && this.isBufferingState) {
       this.isBufferingState = false;
@@ -142,31 +142,51 @@ export class UnifiedMasterClock {
       return 0;
     }
 
-    // 2. If paused or buffering, clock is completely frozen
-    if (this.isPaused || this.isBufferingState) {
+    // 2. If paused, clock is strictly frozen at the pause moment
+    if (this.isPaused) {
       return Math.max(0, this.frozenTime);
     }
 
-    // 3. Check active source state
+    // 3. Self-healing buffering check:
+    // If flagged buffering, check if the underlying audio source has already resumed PLAYING
+    if (this.isBufferingState) {
+      if (
+        this.source &&
+        this.source.getPlaybackState() === PlaybackState.PLAYING &&
+        !this.source.isBuffering()
+      ) {
+        // Source resumed: self-heal buffering flag
+        this.isBufferingState = false;
+      } else {
+        return Math.max(0, this.frozenTime);
+      }
+    }
+
+    // 4. Check active source availability and state
     if (!this.source) {
       return Math.max(0, this.frozenTime);
     }
 
     const state = this.source.getPlaybackState();
     if (state === PlaybackState.BUFFERING || this.source.isBuffering()) {
+      // Freeze at current reported time while buffering
+      if (!this.isBufferingState) {
+        this.frozenTime = this.lastReportedTime;
+        this.isBufferingState = true;
+      }
       return Math.max(0, this.frozenTime);
     }
 
     if (state !== PlaybackState.PLAYING && state !== PlaybackState.PAUSED) {
-      return 0;
+      return Math.max(0, this.lastReportedTime);
     }
 
-    // 4. Source time + verified song recording offset + user global offset
+    // 5. Source time + verified song recording offset + user global offset
     const sourceRaw = this.source.getCurrentTime();
     const calculated = sourceRaw + this.getTotalOffsetSec();
 
     // Prevent clock from rolling backwards due to minor network jitter
-    const finalTime = Math.max(0, calculated);
+    const finalTime = Math.max(this.lastReportedTime, calculated);
     this.lastReportedTime = finalTime;
     this.frozenTime = finalTime;
 
