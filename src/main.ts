@@ -755,10 +755,14 @@ class RockBrazilGame {
 
     // Configura o Master Clock com a fonte correspondente e offsets verificados
     this.masterClock.reset();
-    if (song.type === 'youtube') {
+    const hasLocalAudio = song.type === 'audio-file' || Boolean(song.audioUrl) || Boolean(song.audioBuffer);
+    if (!hasLocalAudio && song.type === 'youtube' && song.youtubeVideoId) {
       this.masterClock.setSource(this.ytPlayer);
+      this.ui.setYouTubePlayerVisibility(true);
     } else {
       this.masterClock.setSource(this.audio);
+      this.ytPlayer.stop();
+      this.ui.setYouTubePlayerVisibility(false);
     }
     // V8 Single Source of Truth: GameEngine applies settings.audioOffsetMs.
     // Master clock sets song calibration offset (0ms for normalized charts), avoiding double offset.
@@ -910,21 +914,29 @@ class RockBrazilGame {
           );
         },
         prepareAudio: async () => {
-          if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
+          const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
+          if (!hasLocal && this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
+            this.ui.setYouTubePlayerVisibility(true);
             await this.ytPlayer.loadVideo(this.currentSong.youtubeVideoId);
             this.ytPlayer.setVolume(this.settingsManager.getSettings().musicVolume * 100);
+          } else {
+            this.ytPlayer.stop();
+            this.ui.setYouTubePlayerVisibility(false);
           }
           return true;
         },
         startAudioPlayback: async () => {
-          if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
+          const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
+          if (!hasLocal && this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
             this.ytPlayer.play();
           } else if (this.currentSong.type === 'procedural' && this.currentSong.proceduralTrackId) {
+            this.ytPlayer.stop();
             await this.audio.playProceduralTrack(this.currentSong.proceduralTrackId, 0);
             this.masterClock.startPlayback();
             this.state = GameState.PLAYING;
             this.ui.showScreen(GameState.PLAYING);
           } else if (this.currentSong.audioBuffer) {
+            this.ytPlayer.stop();
             await this.audio.playAudioBuffer(this.currentSong.audioBuffer, 0);
             this.masterClock.startPlayback();
             this.state = GameState.PLAYING;
@@ -932,13 +944,15 @@ class RockBrazilGame {
           }
         },
         isAudioPlaying: () => {
-          if (this.currentSong.type === 'youtube') {
+          const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
+          if (!hasLocal && this.currentSong.type === 'youtube') {
             return this.ytPlayer.getPlaybackState() === PlaybackState.PLAYING;
           }
-          return true;
+          return this.audio.isPlaying();
         },
         isAudioBuffering: () => {
-          if (this.currentSong.type === 'youtube') {
+          const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
+          if (!hasLocal && this.currentSong.type === 'youtube') {
             return this.ytPlayer.isBuffering();
           }
           return false;
@@ -991,7 +1005,8 @@ class RockBrazilGame {
     this.masterClock.resume();
     this.state = GameState.PLAYING;
     this.ui.showScreen(GameState.PLAYING);
-    if (this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
+    const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
+    if (!hasLocal && this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
       this.ytPlayer.resume();
     } else {
       this.audio.resume();
@@ -1031,8 +1046,9 @@ class RockBrazilGame {
 
   private gameLoop = (): void => {
     if (this.state === GameState.PLAYING) {
+      const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
       // Se o YouTube estiver em buffering, congela as notas e o progresso sem penalização
-      const isBuffering = this.currentSong.type === 'youtube' && this.ytPlayer.isBuffering();
+      const isBuffering = !hasLocal && this.currentSong.type === 'youtube' && this.ytPlayer.isBuffering();
       this.masterClock.setBuffering(isBuffering);
 
       const clockTime = this.masterClock.getTime();

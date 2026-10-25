@@ -101,6 +101,10 @@ export class AudioManager {
     return PlaybackState.READY;
   }
 
+  isPlaying(): boolean {
+    return this.getPlaybackState() === PlaybackState.PLAYING;
+  }
+
   isBuffering(): boolean {
     return false;
   }

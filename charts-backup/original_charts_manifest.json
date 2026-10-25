@@ -7,34 +7,34 @@
     "bpm": 92,
     "duration": 253,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 12.391,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 324,
-        "firstNoteTime": 0,
-        "lastNoteTime": 236.535,
+        "firstNoteTime": 12.391,
+        "lastNoteTime": 248.926,
         "chords": 0,
         "sustains": 78
       },
       "MEDIUM": {
         "noteCount": 558,
-        "firstNoteTime": 0,
-        "lastNoteTime": 236.535,
+        "firstNoteTime": 12.391,
+        "lastNoteTime": 248.926,
         "chords": 84,
         "sustains": 112
       },
       "HARD": {
         "noteCount": 749,
-        "firstNoteTime": 0,
-        "lastNoteTime": 236.535,
+        "firstNoteTime": 12.391,
+        "lastNoteTime": 248.926,
         "chords": 112,
         "sustains": 120
       },
       "EXPERT": {
         "noteCount": 908,
-        "firstNoteTime": 0,
-        "lastNoteTime": 236.861,
+        "firstNoteTime": 12.391,
+        "lastNoteTime": 249.252,
         "chords": 140,
         "sustains": 112
       }
@@ -48,34 +48,34 @@
     "bpm": 110,
     "duration": 302,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 4.364,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 362,
-        "firstNoteTime": 0,
-        "lastNoteTime": 288.766,
+        "firstNoteTime": 4.364,
+        "lastNoteTime": 293.13,
         "chords": 0,
         "sustains": 146
       },
       "MEDIUM": {
         "noteCount": 832,
-        "firstNoteTime": 0,
-        "lastNoteTime": 289.039,
+        "firstNoteTime": 4.364,
+        "lastNoteTime": 293.403,
         "chords": 238,
         "sustains": 383
       },
       "HARD": {
         "noteCount": 1034,
-        "firstNoteTime": 0,
-        "lastNoteTime": 289.039,
+        "firstNoteTime": 4.364,
+        "lastNoteTime": 293.403,
         "chords": 358,
         "sustains": 509
       },
       "EXPERT": {
         "noteCount": 1115,
-        "firstNoteTime": 0,
-        "lastNoteTime": 289.13,
+        "firstNoteTime": 4.364,
+        "lastNoteTime": 293.494,
         "chords": 358,
         "sustains": 523
       }
@@ -89,34 +89,34 @@
     "bpm": 137,
     "duration": 197,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 6.981,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 316,
-        "firstNoteTime": 0,
-        "lastNoteTime": 183.348,
+        "firstNoteTime": 6.981,
+        "lastNoteTime": 190.329,
         "chords": 4,
         "sustains": 159
       },
       "MEDIUM": {
         "noteCount": 575,
-        "firstNoteTime": 0,
-        "lastNoteTime": 183.568,
+        "firstNoteTime": 6.981,
+        "lastNoteTime": 190.549,
         "chords": 27,
         "sustains": 144
       },
       "HARD": {
         "noteCount": 913,
-        "firstNoteTime": 0,
-        "lastNoteTime": 183.348,
+        "firstNoteTime": 6.981,
+        "lastNoteTime": 190.329,
         "chords": 331,
         "sustains": 157
       },
       "EXPERT": {
         "noteCount": 892,
-        "firstNoteTime": 0,
-        "lastNoteTime": 183.568,
+        "firstNoteTime": 6.981,
+        "lastNoteTime": 190.549,
         "chords": 305,
         "sustains": 153
       }
@@ -130,34 +130,34 @@
     "bpm": 119,
     "duration": 214,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 2.019,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 230,
-        "firstNoteTime": 0,
-        "lastNoteTime": 203.663,
+        "firstNoteTime": 2.019,
+        "lastNoteTime": 205.682,
         "chords": 0,
         "sustains": 58
       },
       "MEDIUM": {
         "noteCount": 664,
-        "firstNoteTime": 0,
-        "lastNoteTime": 204.068,
+        "firstNoteTime": 2.019,
+        "lastNoteTime": 206.087,
         "chords": 298,
         "sustains": 170
       },
       "HARD": {
         "noteCount": 1155,
-        "firstNoteTime": 0,
-        "lastNoteTime": 204.271,
+        "firstNoteTime": 2.019,
+        "lastNoteTime": 206.29,
         "chords": 528,
         "sustains": 401
       },
       "EXPERT": {
         "noteCount": 1162,
-        "firstNoteTime": 0,
-        "lastNoteTime": 204.271,
+        "firstNoteTime": 2.019,
+        "lastNoteTime": 206.29,
         "chords": 531,
         "sustains": 406
       }
@@ -171,34 +171,34 @@
     "bpm": 110,
     "duration": 268,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 6.565,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 260,
-        "firstNoteTime": 0,
-        "lastNoteTime": 261.361,
+        "firstNoteTime": 6.565,
+        "lastNoteTime": 267.926,
         "chords": 0,
         "sustains": 45
       },
       "MEDIUM": {
         "noteCount": 578,
-        "firstNoteTime": 0,
-        "lastNoteTime": 261.361,
+        "firstNoteTime": 6.565,
+        "lastNoteTime": 267.926,
         "chords": 162,
         "sustains": 50
       },
       "HARD": {
         "noteCount": 755,
-        "firstNoteTime": 0,
-        "lastNoteTime": 261.361,
+        "firstNoteTime": 6.565,
+        "lastNoteTime": 267.926,
         "chords": 200,
         "sustains": 151
       },
       "EXPERT": {
         "noteCount": 899,
-        "firstNoteTime": 0,
-        "lastNoteTime": 261.361,
+        "firstNoteTime": 6.565,
+        "lastNoteTime": 267.926,
         "chords": 203,
         "sustains": 152
       }
@@ -212,34 +212,34 @@
     "bpm": 141,
     "duration": 190,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 3.404,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 349,
-        "firstNoteTime": 0,
-        "lastNoteTime": 182.352,
+        "firstNoteTime": 3.404,
+        "lastNoteTime": 185.756,
         "chords": 0,
         "sustains": 12
       },
       "MEDIUM": {
         "noteCount": 780,
-        "firstNoteTime": 0,
-        "lastNoteTime": 182.352,
+        "firstNoteTime": 3.404,
+        "lastNoteTime": 185.756,
         "chords": 109,
         "sustains": 53
       },
       "HARD": {
         "noteCount": 893,
-        "firstNoteTime": 0,
-        "lastNoteTime": 182.352,
+        "firstNoteTime": 3.404,
+        "lastNoteTime": 185.756,
         "chords": 114,
         "sustains": 64
       },
       "EXPERT": {
         "noteCount": 936,
-        "firstNoteTime": 0,
-        "lastNoteTime": 182.352,
+        "firstNoteTime": 3.404,
+        "lastNoteTime": 185.756,
         "chords": 114,
         "sustains": 75
       }
@@ -253,34 +253,34 @@
     "bpm": 121,
     "duration": 172,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 4.217,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 220,
-        "firstNoteTime": 0,
-        "lastNoteTime": 160.054,
+        "firstNoteTime": 4.217,
+        "lastNoteTime": 164.271,
         "chords": 0,
         "sustains": 0
       },
       "MEDIUM": {
         "noteCount": 880,
-        "firstNoteTime": 0,
-        "lastNoteTime": 160.301,
+        "firstNoteTime": 4.217,
+        "lastNoteTime": 164.518,
         "chords": 440,
         "sustains": 0
       },
       "HARD": {
         "noteCount": 1018,
-        "firstNoteTime": 0,
-        "lastNoteTime": 160.301,
+        "firstNoteTime": 4.217,
+        "lastNoteTime": 164.518,
         "chords": 509,
         "sustains": 0
       },
       "EXPERT": {
         "noteCount": 1018,
-        "firstNoteTime": 0,
-        "lastNoteTime": 160.301,
+        "firstNoteTime": 4.217,
+        "lastNoteTime": 164.518,
         "chords": 509,
         "sustains": 0
       }
@@ -294,34 +294,34 @@
     "bpm": 196,
     "duration": 202,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 2.455,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 935,
-        "firstNoteTime": 0,
-        "lastNoteTime": 198.632,
+        "firstNoteTime": 2.455,
+        "lastNoteTime": 201.087,
         "chords": 117,
         "sustains": 98
       },
       "MEDIUM": {
         "noteCount": 1048,
-        "firstNoteTime": 0,
-        "lastNoteTime": 198.632,
+        "firstNoteTime": 2.455,
+        "lastNoteTime": 201.087,
         "chords": 218,
         "sustains": 106
       },
       "HARD": {
         "noteCount": 1302,
-        "firstNoteTime": 0,
-        "lastNoteTime": 198.632,
+        "firstNoteTime": 2.455,
+        "lastNoteTime": 201.087,
         "chords": 332,
         "sustains": 37
       },
       "EXPERT": {
         "noteCount": 1386,
-        "firstNoteTime": 0,
-        "lastNoteTime": 198.632,
+        "firstNoteTime": 2.455,
+        "lastNoteTime": 201.087,
         "chords": 404,
         "sustains": 157
       }
@@ -335,34 +335,34 @@
     "bpm": 192,
     "duration": 200,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 2.5,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 239,
-        "firstNoteTime": 0,
-        "lastNoteTime": 195.655,
+        "firstNoteTime": 2.5,
+        "lastNoteTime": 198.155,
         "chords": 0,
         "sustains": 44
       },
       "MEDIUM": {
         "noteCount": 590,
-        "firstNoteTime": 0,
-        "lastNoteTime": 195.655,
+        "firstNoteTime": 2.5,
+        "lastNoteTime": 198.155,
         "chords": 132,
         "sustains": 86
       },
       "HARD": {
         "noteCount": 1026,
-        "firstNoteTime": 0,
-        "lastNoteTime": 195.655,
+        "firstNoteTime": 2.5,
+        "lastNoteTime": 198.155,
         "chords": 187,
         "sustains": 226
       },
       "EXPERT": {
         "noteCount": 1099,
-        "firstNoteTime": 0,
-        "lastNoteTime": 195.655,
+        "firstNoteTime": 2.5,
+        "lastNoteTime": 198.155,
         "chords": 213,
         "sustains": 254
       }
@@ -376,34 +376,34 @@
     "bpm": 130,
     "duration": 154,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 3.692,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 107,
-        "firstNoteTime": 0,
-        "lastNoteTime": 148.897,
+        "firstNoteTime": 3.692,
+        "lastNoteTime": 152.589,
         "chords": 0,
         "sustains": 4
       },
       "MEDIUM": {
         "noteCount": 385,
-        "firstNoteTime": 0,
-        "lastNoteTime": 148.897,
+        "firstNoteTime": 3.692,
+        "lastNoteTime": 152.589,
         "chords": 127,
         "sustains": 8
       },
       "HARD": {
         "noteCount": 774,
-        "firstNoteTime": 0,
-        "lastNoteTime": 148.897,
+        "firstNoteTime": 3.692,
+        "lastNoteTime": 152.589,
         "chords": 227,
         "sustains": 74
       },
       "EXPERT": {
         "noteCount": 1292,
-        "firstNoteTime": 0,
-        "lastNoteTime": 148.897,
+        "firstNoteTime": 3.692,
+        "lastNoteTime": 152.589,
         "chords": 365,
         "sustains": 74
       }
@@ -417,34 +417,34 @@
     "bpm": 187,
     "duration": 234,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 3.865,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 734,
-        "firstNoteTime": 0,
-        "lastNoteTime": 222.388,
+        "firstNoteTime": 3.865,
+        "lastNoteTime": 226.253,
         "chords": 3,
         "sustains": 179
       },
       "MEDIUM": {
         "noteCount": 1146,
-        "firstNoteTime": 0,
-        "lastNoteTime": 222.388,
+        "firstNoteTime": 3.865,
+        "lastNoteTime": 226.253,
         "chords": 143,
         "sustains": 189
       },
       "HARD": {
         "noteCount": 1863,
-        "firstNoteTime": 0,
-        "lastNoteTime": 222.388,
+        "firstNoteTime": 3.865,
+        "lastNoteTime": 226.253,
         "chords": 764,
         "sustains": 181
       },
       "EXPERT": {
         "noteCount": 1851,
-        "firstNoteTime": 0,
-        "lastNoteTime": 222.388,
+        "firstNoteTime": 3.865,
+        "lastNoteTime": 226.253,
         "chords": 749,
         "sustains": 201
       }
@@ -458,34 +458,34 @@
     "bpm": 190,
     "duration": 158,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 10.364,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 254,
-        "firstNoteTime": 0,
-        "lastNoteTime": 141.091,
+        "firstNoteTime": 10.364,
+        "lastNoteTime": 151.455,
         "chords": 0,
         "sustains": 48
       },
       "MEDIUM": {
         "noteCount": 501,
-        "firstNoteTime": 0,
-        "lastNoteTime": 141.291,
+        "firstNoteTime": 10.364,
+        "lastNoteTime": 151.655,
         "chords": 56,
         "sustains": 97
       },
       "HARD": {
         "noteCount": 762,
-        "firstNoteTime": 0,
-        "lastNoteTime": 141.291,
+        "firstNoteTime": 10.364,
+        "lastNoteTime": 151.655,
         "chords": 60,
         "sustains": 101
       },
       "EXPERT": {
         "noteCount": 768,
-        "firstNoteTime": 0,
-        "lastNoteTime": 141.291,
+        "firstNoteTime": 10.364,
+        "lastNoteTime": 151.655,
         "chords": 60,
         "sustains": 101
       }
@@ -499,34 +499,34 @@
     "bpm": 181,
     "duration": 113,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 3.98,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 213,
-        "firstNoteTime": 0,
-        "lastNoteTime": 106.493,
+        "firstNoteTime": 3.98,
+        "lastNoteTime": 110.473,
         "chords": 4,
         "sustains": 97
       },
       "MEDIUM": {
         "noteCount": 380,
-        "firstNoteTime": 0,
-        "lastNoteTime": 106.493,
+        "firstNoteTime": 3.98,
+        "lastNoteTime": 110.473,
         "chords": 74,
         "sustains": 168
       },
       "HARD": {
         "noteCount": 436,
-        "firstNoteTime": 0,
-        "lastNoteTime": 106.493,
+        "firstNoteTime": 3.98,
+        "lastNoteTime": 110.473,
         "chords": 71,
         "sustains": 160
       },
       "EXPERT": {
         "noteCount": 454,
-        "firstNoteTime": 0,
-        "lastNoteTime": 106.493,
+        "firstNoteTime": 3.98,
+        "lastNoteTime": 110.473,
         "chords": 80,
         "sustains": 142
       }
@@ -540,34 +540,34 @@
     "bpm": 120,
     "duration": 295,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 7.25,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 338,
-        "firstNoteTime": 0,
-        "lastNoteTime": 281.025,
+        "firstNoteTime": 7.25,
+        "lastNoteTime": 288.275,
         "chords": 0,
         "sustains": 64
       },
       "MEDIUM": {
         "noteCount": 626,
-        "firstNoteTime": 0,
-        "lastNoteTime": 281.025,
+        "firstNoteTime": 7.25,
+        "lastNoteTime": 288.275,
         "chords": 232,
         "sustains": 67
       },
       "HARD": {
         "noteCount": 692,
-        "firstNoteTime": 0,
-        "lastNoteTime": 281.025,
+        "firstNoteTime": 7.25,
+        "lastNoteTime": 288.275,
         "chords": 244,
         "sustains": 72
       },
       "EXPERT": {
         "noteCount": 697,
-        "firstNoteTime": 0,
-        "lastNoteTime": 281.025,
+        "firstNoteTime": 7.25,
+        "lastNoteTime": 288.275,
         "chords": 244,
         "sustains": 72
       }
@@ -581,34 +581,34 @@
     "bpm": 75,
     "duration": 268,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 3.2,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 386,
-        "firstNoteTime": 0,
-        "lastNoteTime": 263.05,
+        "firstNoteTime": 3.2,
+        "lastNoteTime": 266.25,
         "chords": 0,
         "sustains": 119
       },
       "MEDIUM": {
         "noteCount": 624,
-        "firstNoteTime": 0,
-        "lastNoteTime": 263.05,
+        "firstNoteTime": 3.2,
+        "lastNoteTime": 266.25,
         "chords": 65,
         "sustains": 176
       },
       "HARD": {
         "noteCount": 1004,
-        "firstNoteTime": 0,
-        "lastNoteTime": 263.05,
+        "firstNoteTime": 3.2,
+        "lastNoteTime": 266.25,
         "chords": 224,
         "sustains": 223
       },
       "EXPERT": {
         "noteCount": 1182,
-        "firstNoteTime": 0,
-        "lastNoteTime": 263.05,
+        "firstNoteTime": 3.2,
+        "lastNoteTime": 266.25,
         "chords": 320,
         "sustains": 249
       }
@@ -622,34 +622,34 @@
     "bpm": 115,
     "duration": 155,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 4.174,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 219,
-        "firstNoteTime": 0,
-        "lastNoteTime": 148.088,
+        "firstNoteTime": 4.174,
+        "lastNoteTime": 152.262,
         "chords": 0,
         "sustains": 84
       },
       "MEDIUM": {
         "noteCount": 548,
-        "firstNoteTime": 0,
-        "lastNoteTime": 148.088,
+        "firstNoteTime": 4.174,
+        "lastNoteTime": 152.262,
         "chords": 134,
         "sustains": 214
       },
       "HARD": {
         "noteCount": 824,
-        "firstNoteTime": 0,
-        "lastNoteTime": 148.088,
+        "firstNoteTime": 4.174,
+        "lastNoteTime": 152.262,
         "chords": 159,
         "sustains": 256
       },
       "EXPERT": {
         "noteCount": 824,
-        "firstNoteTime": 0,
-        "lastNoteTime": 148.088,
+        "firstNoteTime": 4.174,
+        "lastNoteTime": 152.262,
         "chords": 159,
         "sustains": 256
       }
@@ -663,34 +663,34 @@
     "bpm": 105,
     "duration": 234,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 2.283,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 449,
-        "firstNoteTime": 0,
-        "lastNoteTime": 222.67,
+        "firstNoteTime": 2.283,
+        "lastNoteTime": 224.953,
         "chords": 114,
         "sustains": 168
       },
       "MEDIUM": {
         "noteCount": 686,
-        "firstNoteTime": 0,
-        "lastNoteTime": 222.67,
+        "firstNoteTime": 2.283,
+        "lastNoteTime": 224.953,
         "chords": 241,
         "sustains": 187
       },
       "HARD": {
         "noteCount": 841,
-        "firstNoteTime": 0,
-        "lastNoteTime": 222.67,
+        "firstNoteTime": 2.283,
+        "lastNoteTime": 224.953,
         "chords": 287,
         "sustains": 186
       },
       "EXPERT": {
         "noteCount": 1117,
-        "firstNoteTime": 0,
-        "lastNoteTime": 222.67,
+        "firstNoteTime": 2.283,
+        "lastNoteTime": 224.953,
         "chords": 519,
         "sustains": 250
       }
@@ -704,34 +704,34 @@
     "bpm": 144,
     "duration": 198,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 10.004,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 404,
-        "firstNoteTime": 0,
-        "lastNoteTime": 185.557,
+        "firstNoteTime": 10.004,
+        "lastNoteTime": 195.561,
         "chords": 0,
         "sustains": 41
       },
       "MEDIUM": {
         "noteCount": 1064,
-        "firstNoteTime": 0,
-        "lastNoteTime": 185.557,
+        "firstNoteTime": 10.004,
+        "lastNoteTime": 195.561,
         "chords": 367,
         "sustains": 151
       },
       "HARD": {
         "noteCount": 1083,
-        "firstNoteTime": 0,
-        "lastNoteTime": 185.557,
+        "firstNoteTime": 10.004,
+        "lastNoteTime": 195.561,
         "chords": 367,
         "sustains": 152
       },
       "EXPERT": {
         "noteCount": 1083,
-        "firstNoteTime": 0,
-        "lastNoteTime": 185.557,
+        "firstNoteTime": 10.004,
+        "lastNoteTime": 195.561,
         "chords": 367,
         "sustains": 152
       }
@@ -745,34 +745,34 @@
     "bpm": 95,
     "duration": 44,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 2.526,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 59,
-        "firstNoteTime": 0,
-        "lastNoteTime": 35.825,
+        "firstNoteTime": 2.526,
+        "lastNoteTime": 38.351,
         "chords": 0,
         "sustains": 2
       },
       "MEDIUM": {
         "noteCount": 155,
-        "firstNoteTime": 0,
-        "lastNoteTime": 35.825,
+        "firstNoteTime": 2.526,
+        "lastNoteTime": 38.351,
         "chords": 39,
         "sustains": 3
       },
       "HARD": {
         "noteCount": 156,
-        "firstNoteTime": 0,
-        "lastNoteTime": 35.825,
+        "firstNoteTime": 2.526,
+        "lastNoteTime": 38.351,
         "chords": 40,
         "sustains": 4
       },
       "EXPERT": {
         "noteCount": 156,
-        "firstNoteTime": 0,
-        "lastNoteTime": 35.825,
+        "firstNoteTime": 2.526,
+        "lastNoteTime": 38.351,
         "chords": 40,
         "sustains": 4
       }
@@ -786,34 +786,34 @@
     "bpm": 94,
     "duration": 205,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 2.55,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 177,
-        "firstNoteTime": 0,
-        "lastNoteTime": 193.721,
+        "firstNoteTime": 2.55,
+        "lastNoteTime": 196.271,
         "chords": 0,
         "sustains": 27
       },
       "MEDIUM": {
         "noteCount": 492,
-        "firstNoteTime": 0,
-        "lastNoteTime": 194.271,
+        "firstNoteTime": 2.55,
+        "lastNoteTime": 196.821,
         "chords": 186,
         "sustains": 126
       },
       "HARD": {
         "noteCount": 849,
-        "firstNoteTime": 0,
-        "lastNoteTime": 194.547,
+        "firstNoteTime": 2.55,
+        "lastNoteTime": 197.097,
         "chords": 312,
         "sustains": 205
       },
       "EXPERT": {
         "noteCount": 1118,
-        "firstNoteTime": 0,
-        "lastNoteTime": 194.547,
+        "firstNoteTime": 2.55,
+        "lastNoteTime": 197.097,
         "chords": 415,
         "sustains": 243
       }
@@ -827,34 +827,34 @@
     "bpm": 150,
     "duration": 228,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 3.2,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 242,
-        "firstNoteTime": 0,
-        "lastNoteTime": 218.453,
+        "firstNoteTime": 3.2,
+        "lastNoteTime": 221.653,
         "chords": 0,
         "sustains": 16
       },
       "MEDIUM": {
         "noteCount": 797,
-        "firstNoteTime": 0,
-        "lastNoteTime": 218.453,
+        "firstNoteTime": 3.2,
+        "lastNoteTime": 221.653,
         "chords": 312,
         "sustains": 30
       },
       "HARD": {
         "noteCount": 1356,
-        "firstNoteTime": 0,
-        "lastNoteTime": 218.453,
+        "firstNoteTime": 3.2,
+        "lastNoteTime": 221.653,
         "chords": 500,
         "sustains": 228
       },
       "EXPERT": {
         "noteCount": 1535,
-        "firstNoteTime": 0,
-        "lastNoteTime": 218.453,
+        "firstNoteTime": 3.2,
+        "lastNoteTime": 221.653,
         "chords": 559,
         "sustains": 226
       }
@@ -868,34 +868,34 @@
     "bpm": 148,
     "duration": 295,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 3.286,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 432,
-        "firstNoteTime": 0,
-        "lastNoteTime": 272.333,
+        "firstNoteTime": 3.286,
+        "lastNoteTime": 275.619,
         "chords": 0,
         "sustains": 11
       },
       "MEDIUM": {
         "noteCount": 838,
-        "firstNoteTime": 0,
-        "lastNoteTime": 272.333,
+        "firstNoteTime": 3.286,
+        "lastNoteTime": 275.619,
         "chords": 99,
         "sustains": 22
       },
       "HARD": {
         "noteCount": 1843,
-        "firstNoteTime": 0,
-        "lastNoteTime": 272.475,
+        "firstNoteTime": 3.286,
+        "lastNoteTime": 275.761,
         "chords": 376,
         "sustains": 433
       },
       "EXPERT": {
         "noteCount": 2010,
-        "firstNoteTime": 0,
-        "lastNoteTime": 272.475,
+        "firstNoteTime": 3.286,
+        "lastNoteTime": 275.761,
         "chords": 376,
         "sustains": 433
       }
@@ -909,34 +909,34 @@
     "bpm": 125,
     "duration": 246,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 5.75,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 393,
-        "firstNoteTime": 0,
-        "lastNoteTime": 230.779,
+        "firstNoteTime": 5.75,
+        "lastNoteTime": 236.529,
         "chords": 0,
         "sustains": 31
       },
       "MEDIUM": {
         "noteCount": 1197,
-        "firstNoteTime": 0,
-        "lastNoteTime": 230.779,
+        "firstNoteTime": 5.75,
+        "lastNoteTime": 236.529,
         "chords": 462,
         "sustains": 81
       },
       "HARD": {
         "noteCount": 1241,
-        "firstNoteTime": 0,
-        "lastNoteTime": 230.779,
+        "firstNoteTime": 5.75,
+        "lastNoteTime": 236.529,
         "chords": 462,
         "sustains": 84
       },
       "EXPERT": {
         "noteCount": 1249,
-        "firstNoteTime": 0,
-        "lastNoteTime": 230.779,
+        "firstNoteTime": 5.75,
+        "lastNoteTime": 236.529,
         "chords": 462,
         "sustains": 85
       }
@@ -950,34 +950,34 @@
     "bpm": 101,
     "duration": 209,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 4.773,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 144,
-        "firstNoteTime": 0,
-        "lastNoteTime": 197.32,
+        "firstNoteTime": 4.773,
+        "lastNoteTime": 202.093,
         "chords": 0,
         "sustains": 3
       },
       "MEDIUM": {
         "noteCount": 411,
-        "firstNoteTime": 0,
-        "lastNoteTime": 197.32,
+        "firstNoteTime": 4.773,
+        "lastNoteTime": 202.093,
         "chords": 131,
         "sustains": 4
       },
       "HARD": {
         "noteCount": 856,
-        "firstNoteTime": 0,
-        "lastNoteTime": 197.32,
+        "firstNoteTime": 4.773,
+        "lastNoteTime": 202.093,
         "chords": 268,
         "sustains": 118
       },
       "EXPERT": {
         "noteCount": 1574,
-        "firstNoteTime": 0,
-        "lastNoteTime": 197.32,
+        "firstNoteTime": 4.773,
+        "lastNoteTime": 202.093,
         "chords": 466,
         "sustains": 129
       }
@@ -991,34 +991,34 @@
     "bpm": 120,
     "duration": 256,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 9.824,
     "earliestDiff": "MEDIUM",
     "difficulties": {
       "EASY": {
         "noteCount": 212,
-        "firstNoteTime": 0.424,
-        "lastNoteTime": 221.346,
+        "firstNoteTime": 10.248,
+        "lastNoteTime": 231.17,
         "chords": 0,
         "sustains": 6
       },
       "MEDIUM": {
         "noteCount": 759,
-        "firstNoteTime": 0,
-        "lastNoteTime": 221.346,
+        "firstNoteTime": 9.824,
+        "lastNoteTime": 231.17,
         "chords": 312,
         "sustains": 61
       },
       "HARD": {
         "noteCount": 1222,
-        "firstNoteTime": 0,
-        "lastNoteTime": 221.346,
+        "firstNoteTime": 9.824,
+        "lastNoteTime": 231.17,
         "chords": 453,
         "sustains": 103
       },
       "EXPERT": {
         "noteCount": 2002,
-        "firstNoteTime": 0,
-        "lastNoteTime": 221.346,
+        "firstNoteTime": 9.824,
+        "lastNoteTime": 231.17,
         "chords": 1036,
         "sustains": 103
       }
@@ -1032,34 +1032,34 @@
     "bpm": 155,
     "duration": 231,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 4.645,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 288,
-        "firstNoteTime": 0,
-        "lastNoteTime": 224.269,
+        "firstNoteTime": 4.645,
+        "lastNoteTime": 228.914,
         "chords": 0,
         "sustains": 35
       },
       "MEDIUM": {
         "noteCount": 911,
-        "firstNoteTime": 0,
-        "lastNoteTime": 224.269,
+        "firstNoteTime": 4.645,
+        "lastNoteTime": 228.914,
         "chords": 363,
         "sustains": 68
       },
       "HARD": {
         "noteCount": 1503,
-        "firstNoteTime": 0,
-        "lastNoteTime": 224.269,
+        "firstNoteTime": 4.645,
+        "lastNoteTime": 228.914,
         "chords": 496,
         "sustains": 202
       },
       "EXPERT": {
         "noteCount": 2229,
-        "firstNoteTime": 0,
-        "lastNoteTime": 224.269,
+        "firstNoteTime": 4.645,
+        "lastNoteTime": 228.914,
         "chords": 608,
         "sustains": 202
       }
@@ -1073,34 +1073,34 @@
     "bpm": 150,
     "duration": 170,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 4.8,
     "earliestDiff": "EXPERT",
     "difficulties": {
       "EASY": {
         "noteCount": 298,
-        "firstNoteTime": 0.194,
-        "lastNoteTime": 162.437,
+        "firstNoteTime": 4.994,
+        "lastNoteTime": 167.237,
         "chords": 0,
         "sustains": 46
       },
       "MEDIUM": {
         "noteCount": 783,
-        "firstNoteTime": 0.194,
-        "lastNoteTime": 162.619,
+        "firstNoteTime": 4.994,
+        "lastNoteTime": 167.419,
         "chords": 257,
         "sustains": 151
       },
       "HARD": {
         "noteCount": 943,
-        "firstNoteTime": 0.194,
-        "lastNoteTime": 162.619,
+        "firstNoteTime": 4.994,
+        "lastNoteTime": 167.419,
         "chords": 288,
         "sustains": 151
       },
       "EXPERT": {
         "noteCount": 1111,
-        "firstNoteTime": 0,
-        "lastNoteTime": 162.71,
+        "firstNoteTime": 4.8,
+        "lastNoteTime": 167.51,
         "chords": 336,
         "sustains": 151
       }
@@ -1114,34 +1114,34 @@
     "bpm": 175,
     "duration": 135,
     "hasCompactChart": false,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 1.5,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
-        "noteCount": 230,
-        "firstNoteTime": 0,
-        "lastNoteTime": 132.343,
+        "noteCount": 228,
+        "firstNoteTime": 1.5,
+        "lastNoteTime": 132.471,
         "chords": 0,
-        "sustains": 37
+        "sustains": 36
       },
       "MEDIUM": {
-        "noteCount": 416,
-        "firstNoteTime": 0,
-        "lastNoteTime": 132.343,
-        "chords": 65,
-        "sustains": 150
+        "noteCount": 412,
+        "firstNoteTime": 1.5,
+        "lastNoteTime": 132.814,
+        "chords": 64,
+        "sustains": 148
       },
       "HARD": {
-        "noteCount": 703,
-        "firstNoteTime": 0,
-        "lastNoteTime": 132.943,
+        "noteCount": 696,
+        "firstNoteTime": 1.5,
+        "lastNoteTime": 132.643,
         "chords": 36,
-        "sustains": 108
+        "sustains": 107
       },
       "EXPERT": {
-        "noteCount": 758,
-        "firstNoteTime": 0,
-        "lastNoteTime": 132.8,
+        "noteCount": 752,
+        "firstNoteTime": 1.5,
+        "lastNoteTime": 132.643,
         "chords": 54,
         "sustains": 127
       }
@@ -1155,34 +1155,34 @@
     "bpm": 205,
     "duration": 140,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 3.512,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 169,
-        "firstNoteTime": 0,
-        "lastNoteTime": 132.768,
+        "firstNoteTime": 3.512,
+        "lastNoteTime": 136.28,
         "chords": 0,
         "sustains": 17
       },
       "MEDIUM": {
         "noteCount": 547,
-        "firstNoteTime": 0,
-        "lastNoteTime": 132.768,
+        "firstNoteTime": 3.512,
+        "lastNoteTime": 136.28,
         "chords": 213,
         "sustains": 23
       },
       "HARD": {
         "noteCount": 836,
-        "firstNoteTime": 0,
-        "lastNoteTime": 132.768,
+        "firstNoteTime": 3.512,
+        "lastNoteTime": 136.28,
         "chords": 309,
         "sustains": 268
       },
       "EXPERT": {
         "noteCount": 952,
-        "firstNoteTime": 0,
-        "lastNoteTime": 132.768,
+        "firstNoteTime": 3.512,
+        "lastNoteTime": 136.28,
         "chords": 391,
         "sustains": 276
       }
@@ -1196,34 +1196,34 @@
     "bpm": 100,
     "duration": 294,
     "hasCompactChart": true,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 4.8,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
         "noteCount": 131,
-        "firstNoteTime": 0,
-        "lastNoteTime": 285.013,
+        "firstNoteTime": 4.8,
+        "lastNoteTime": 289.813,
         "chords": 0,
         "sustains": 12
       },
       "MEDIUM": {
         "noteCount": 546,
-        "firstNoteTime": 0,
-        "lastNoteTime": 285.013,
+        "firstNoteTime": 4.8,
+        "lastNoteTime": 289.813,
         "chords": 242,
         "sustains": 22
       },
       "HARD": {
         "noteCount": 1054,
-        "firstNoteTime": 0,
-        "lastNoteTime": 285.31,
+        "firstNoteTime": 4.8,
+        "lastNoteTime": 290.11,
         "chords": 462,
         "sustains": 698
       },
       "EXPERT": {
         "noteCount": 1561,
-        "firstNoteTime": 0,
-        "lastNoteTime": 285.31,
+        "firstNoteTime": 4.8,
+        "lastNoteTime": 290.11,
         "chords": 688,
         "sustains": 698
       }
@@ -1237,36 +1237,36 @@
     "bpm": 170,
     "duration": 145,
     "hasCompactChart": false,
-    "earliestPlayableNoteSec": 0,
+    "earliestPlayableNoteSec": 1.5,
     "earliestDiff": "EASY",
     "difficulties": {
       "EASY": {
-        "noteCount": 241,
-        "firstNoteTime": 0,
-        "lastNoteTime": 142.941,
+        "noteCount": 237,
+        "firstNoteTime": 1.5,
+        "lastNoteTime": 142.676,
         "chords": 0,
-        "sustains": 40
+        "sustains": 39
       },
       "MEDIUM": {
-        "noteCount": 435,
-        "firstNoteTime": 0,
-        "lastNoteTime": 142.588,
-        "chords": 66,
-        "sustains": 156
+        "noteCount": 430,
+        "firstNoteTime": 1.5,
+        "lastNoteTime": 142.676,
+        "chords": 65,
+        "sustains": 154
       },
       "HARD": {
-        "noteCount": 724,
-        "firstNoteTime": 0,
-        "lastNoteTime": 142.853,
-        "chords": 38,
-        "sustains": 117
+        "noteCount": 715,
+        "firstNoteTime": 1.5,
+        "lastNoteTime": 142.941,
+        "chords": 37,
+        "sustains": 115
       },
       "EXPERT": {
-        "noteCount": 808,
-        "firstNoteTime": 0,
-        "lastNoteTime": 142.853,
-        "chords": 64,
-        "sustains": 136
+        "noteCount": 798,
+        "firstNoteTime": 1.5,
+        "lastNoteTime": 142.941,
+        "chords": 62,
+        "sustains": 133
       }
     }
   }

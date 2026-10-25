@@ -4,6 +4,7 @@ import { PlayerProfile, LeaderboardEntry, RecordMatchResult } from '../game/prof
 export class UIManager {
   // In-Game HUD Elements
   private hudElement: HTMLElement;
+  private ytPlayerContainer: HTMLElement | null;
   private hudScore: HTMLElement;
   private hudMultiplier: HTMLElement;
   private hudProgressBar: HTMLElement;
@@ -124,6 +125,8 @@ export class UIManager {
 
   constructor() {
     this.hudElement = document.getElementById('hud')!;
+    this.ytPlayerContainer = document.getElementById('yt-player-container');
+    this.setYouTubePlayerVisibility(false);
     this.hudScore = document.getElementById('hud-score')!;
     this.hudMultiplier = document.getElementById('hud-multiplier')!;
     this.hudProgressBar = document.getElementById('song-progress-bar')!;
@@ -523,6 +526,24 @@ export class UIManager {
       this.hudElement.classList.remove('hidden');
     } else {
       this.hudElement.classList.add('hidden');
+      if (state !== GameState.COUNTDOWN) {
+        this.setYouTubePlayerVisibility(false);
+      }
+    }
+  }
+
+  public setYouTubePlayerVisibility(visible: boolean): void {
+    if (!this.ytPlayerContainer) {
+      this.ytPlayerContainer = document.getElementById('yt-player-container');
+    }
+    if (this.ytPlayerContainer) {
+      if (visible) {
+        this.ytPlayerContainer.classList.remove('hidden');
+        this.ytPlayerContainer.style.setProperty('display', 'block', 'important');
+      } else {
+        this.ytPlayerContainer.classList.add('hidden');
+        this.ytPlayerContainer.style.setProperty('display', 'none', 'important');
+      }
     }
   }
 
@@ -736,34 +757,8 @@ export class UIManager {
       this.currentSelectedSong = filtered[0] || null;
     }
 
-    let lastSection = '';
     this.songsListContainer.innerHTML = filtered.map((song, index) => {
       const isSelected = this.currentSelectedSong?.id === song.id;
-
-      let sectionHeaderHtml = '';
-      let currentSection = '';
-
-      if (index < 31) {
-        if (index === 0) {
-          currentSection = '🎸 Catálogo Oficial RockBrazil';
-        } else if (song.group === 'bonus') {
-          currentSection = '🎁 Bônus • Faixas Especiais';
-        } else if (song.group && typeof song.group === 'number') {
-          currentSection = `🎸 Grupo ${song.group}`;
-        }
-      } else {
-        if (song.style) {
-          const match = song.style.match(/📻\s*([^•]+)/);
-          currentSection = match ? `📁 ${match[1].trim()}` : '📁 Coleção Lisarb2';
-        } else {
-          currentSection = '📁 Coleção Lisarb2';
-        }
-      }
-
-      if (currentSection && currentSection !== lastSection) {
-        lastSection = currentSection;
-        sectionHeaderHtml = `<div class="notebook-section-header">${currentSection}</div>`;
-      }
 
       // Extract highest personal record across difficulties for library view
       let bestStars = 0;
@@ -835,7 +830,6 @@ export class UIManager {
         : '';
 
       return `
-        ${sectionHeaderHtml}
         <div class="notebook-song-row ${isSelected ? 'selected' : ''}" data-song-id="${song.id}">
           <span class="row-arrow">➡</span>
           <div class="row-song-content">
