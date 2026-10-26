@@ -187,8 +187,32 @@ class RockBrazilGame {
 
   private async initGame(): Promise<void> {
     // 1. Initialize Profile System (Boot direct to menu as guest or active profile)
-    const { activeProfile } = await this.profileManager.init();
+    const catalogIds = this.library.getActiveSongs().map((s) => s.id);
+    const { activeProfile } = await this.profileManager.init(catalogIds);
     this.ui.setProfileHeader(activeProfile);
+
+    // V13.3: Wire Unlock & Profile Provider Callbacks
+    this.ui.isSongUnlockedChecker = (songId) => this.profileManager.isSongUnlocked(songId);
+    this.ui.onUnlockSongRequested = async (song) => {
+      const res = await this.profileManager.unlockSong(song.id, song.title);
+      if (res.success) {
+        this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
+      }
+      return res;
+    };
+    this.ui.getProfileStatsProvider = () => {
+      return this.profileManager.getProfileStats(undefined, (id) => this.library.getSongById(id));
+    };
+    this.ui.getAllProfilesProvider = async () => {
+      return await this.profileManager.getAllProfiles();
+    };
+    this.ui.onReturnToLibraryClicked = () => {
+      this.audio.stop();
+      this.ytPlayer.stop();
+      this.state = GameState.SONG_SELECT;
+      this.ui.showScreen(GameState.SONG_SELECT);
+      this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
+    };
 
     // 2. Check for local TNT files (AutoChart package or TNT.mp3)
     await this.autoDetectTNTFile();
@@ -375,11 +399,15 @@ class RockBrazilGame {
       }
     };
 
-    // Profiles
+    // Profiles (V13.3)
     this.ui.onCreateProfileConfirmed = async (name, avatar) => {
       const created = await this.profileManager.createProfile(name, avatar);
       this.ui.setProfileHeader(created);
       this.ui.renderSongLibrary(this.library.getActiveSongs(), created);
+      const profilesModal = document.getElementById('modal-player-profiles');
+      if (profilesModal && !profilesModal.classList.contains('hidden')) {
+        await this.ui.openPlayerProfilesModal();
+      }
     };
 
     this.ui.onSwitchProfileRequested = async (id) => {
@@ -387,6 +415,10 @@ class RockBrazilGame {
       if (switched) {
         this.ui.setProfileHeader(switched);
         this.ui.renderSongLibrary(this.library.getActiveSongs(), switched);
+        const profilesModal = document.getElementById('modal-player-profiles');
+        if (profilesModal && !profilesModal.classList.contains('hidden')) {
+          await this.ui.openPlayerProfilesModal();
+        }
       }
     };
 
@@ -1238,12 +1270,34 @@ class RockBrazilGame {
   }
 
   private playNextSong(): void {
-    const all = this.library.getSongs().filter((s) => s.isAvailable);
+    const all = this.library.getActiveSongs().filter((s) => s.isAvailable);
     if (all.length === 0) return;
     const idx = all.findIndex((s) => s.id === this.currentSong.id);
-    const nextIdx = (idx + 1) % all.length;
-    const nextSong = all[nextIdx];
-    this.startNewMatch(nextSong, this.currentDifficulty);
+
+    // Look for next unlocked available song in catalog order
+    let nextSong: SongMetadata | null = null;
+    for (let i = 1; i <= all.length; i++) {
+      const candidate = all[(idx + i) % all.length];
+      if (this.profileManager.isSongUnlocked(candidate.id)) {
+        nextSong = candidate;
+        break;
+      }
+    }
+
+    if (nextSong) {
+      this.startNewMatch(nextSong, this.currentDifficulty);
+    } else {
+      // If next is locked and none unlocked, open catalog with that candidate selected
+      const candidate = all[(idx + 1) % all.length];
+      this.audio.stop();
+      this.ytPlayer.stop();
+      this.state = GameState.SONG_SELECT;
+      this.ui.showScreen(GameState.SONG_SELECT);
+      this.ui.renderSongLibrary(all, this.profileManager.getActiveProfile());
+      if (candidate) {
+        this.ui.openUnlockModal(candidate, this.profileManager.getActiveProfile());
+      }
+    }
   }
 
   private handleSongEnded(): void {
@@ -1341,7 +1395,8 @@ class RockBrazilGame {
         this.currentSong.title,
         this.currentDifficulty,
         stats,
-        true
+        true,
+        this.currentSong.artist
       );
       this.library.saveSongRecord(this.currentSong.id, this.currentDifficulty, recordResult.record);
     } catch (recErr) {

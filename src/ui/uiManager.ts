@@ -118,6 +118,15 @@ export class UIManager {
   public onCalibrationOffsetChange?: (deltaMs: number, reset?: boolean) => void;
   public onUnblockAudioClicked?: () => void;
   public onUnblockCancelClicked?: () => void;
+  public onReturnToLibraryClicked?: () => void;
+  public onUnlockSongRequested?: (song: SongMetadata) => Promise<{ success: boolean; error?: string; remainingCoins?: number }>;
+  public isSongUnlockedChecker?: (songId: string) => boolean;
+  public getProfileStatsProvider?: () => any;
+  public getAllProfilesProvider?: () => Promise<PlayerProfile[]>;
+  private modalUnlockSong: HTMLElement | null = null;
+  private modalUnlockCelebration: HTMLElement | null = null;
+  private songToUnlock: SongMetadata | null = null;
+  private isUnlocking = false;
 
   // Editor callbacks
   public onOpenEditorClicked?: () => void;
@@ -151,7 +160,9 @@ export class UIManager {
     this.modalDifficulty = document.getElementById('modal-difficulty')!;
     this.modalAnalysisProgress = document.getElementById('modal-analysis-progress')!;
     this.modalProfileCreate = document.getElementById('modal-profile-create')!;
-    this.modalProfileManager = document.getElementById('modal-profile-manager')!;
+    this.modalProfileManager = document.getElementById('modal-player-profiles') || document.getElementById('modal-profile-manager')!;
+    this.modalUnlockSong = document.getElementById('modal-unlock-song');
+    this.modalUnlockCelebration = document.getElementById('modal-unlock-celebration');
     this.screenRanking = document.getElementById('screen-ranking')!;
     this.screenCountdown = document.getElementById('screen-countdown')!;
     this.countdownNumber = document.getElementById('countdown-number')!;
@@ -262,22 +273,73 @@ export class UIManager {
       this.onCreateProfileConfirmed?.(name, this.selectedAvatar);
     });
 
+    // Top Profile Header Pill (Opens PERFIS DE JOGADORES)
+    document.getElementById('btn-menu-profile')?.addEventListener('click', () => {
+      this.openPlayerProfilesModal();
+    });
+
     document.getElementById('btn-open-create-new-profile')?.addEventListener('click', () => {
       this.modalProfileManager.classList.add('hidden');
+      document.getElementById('modal-player-profiles')?.classList.add('hidden');
       this.modalProfileCreate.classList.remove('hidden');
     });
 
     document.getElementById('btn-close-profile-manager')?.addEventListener('click', () => {
       this.modalProfileManager.classList.add('hidden');
+      document.getElementById('modal-player-profiles')?.classList.add('hidden');
+    });
+
+    document.getElementById('btn-close-player-profiles')?.addEventListener('click', () => {
+      this.modalProfileManager.classList.add('hidden');
+      document.getElementById('modal-player-profiles')?.classList.add('hidden');
     });
 
     document.getElementById('btn-play-as-guest')?.addEventListener('click', () => {
       this.modalProfileManager.classList.add('hidden');
+      document.getElementById('modal-player-profiles')?.classList.add('hidden');
       this.onPlayAsGuestClicked?.();
     });
 
     document.getElementById('btn-cancel-create-profile')?.addEventListener('click', () => {
       this.modalProfileCreate.classList.add('hidden');
+    });
+
+    // Song Unlock Confirm / Cancel Handlers (V13.3)
+    document.getElementById('btn-confirm-unlock')?.addEventListener('click', async () => {
+      if (!this.songToUnlock || this.isUnlocking) return;
+      this.isUnlocking = true;
+      try {
+        const res = await this.onUnlockSongRequested?.(this.songToUnlock);
+        if (res && res.success) {
+          document.getElementById('modal-unlock-song')?.classList.add('hidden');
+          const unlockedSong = this.songToUnlock;
+          this.showUnlockCelebration(unlockedSong);
+        } else {
+          alert('Não foi possível desbloquear a música. Saldo de RockCoins insuficiente.');
+        }
+      } finally {
+        this.isUnlocking = false;
+      }
+    });
+
+    document.getElementById('btn-cancel-unlock')?.addEventListener('click', () => {
+      document.getElementById('modal-unlock-song')?.classList.add('hidden');
+    });
+
+    document.getElementById('btn-back-to-catalog')?.addEventListener('click', () => {
+      document.getElementById('modal-unlock-song')?.classList.add('hidden');
+    });
+
+    // Celebration modal choices (V13.3)
+    document.getElementById('btn-celebration-choose-diff')?.addEventListener('click', () => {
+      document.getElementById('modal-unlock-celebration')?.classList.add('hidden');
+      if (this.songToUnlock) {
+        this.openDifficultyModal(this.songToUnlock, this.currentActiveProfile);
+      }
+    });
+
+    document.getElementById('btn-celebration-close')?.addEventListener('click', () => {
+      document.getElementById('modal-unlock-celebration')?.classList.add('hidden');
     });
 
     document.getElementById('btn-open-editor')?.addEventListener('click', () => {
@@ -302,9 +364,19 @@ export class UIManager {
     });
 
     document.getElementById('btn-song-select-play')?.addEventListener('click', () => {
-      if (this.currentSelectedSong && this.currentSelectedSong.isAvailable) {
+      if (!this.currentSelectedSong) return;
+      const isUnlocked = this.isSongUnlockedChecker
+        ? this.isSongUnlockedChecker(this.currentSelectedSong.id)
+        : (this.currentActiveProfile?.unlockedSongIds ? this.currentActiveProfile.unlockedSongIds.includes(this.currentSelectedSong.id) : true);
+
+      if (!isUnlocked) {
+        this.openUnlockModal(this.currentSelectedSong, this.currentActiveProfile);
+        return;
+      }
+
+      if (this.currentSelectedSong.isAvailable) {
         this.openDifficultyModal(this.currentSelectedSong, this.currentActiveProfile);
-      } else if (this.currentSelectedSong && !this.currentSelectedSong.isAvailable) {
+      } else {
         alert(`O áudio para "${this.currentSelectedSong.title}" ainda não foi carregado. Utilize o botão "VINCULAR" ou "IMPORTAR MÚSICA" para selecionar seu arquivo.`);
       }
     });
@@ -397,7 +469,11 @@ export class UIManager {
       this.onNextSongClicked?.();
     });
     document.getElementById('btn-menu-result')?.addEventListener('click', () => {
-      this.onReturnToMenuClicked?.();
+      if (this.onReturnToLibraryClicked) {
+        this.onReturnToLibraryClicked();
+      } else {
+        this.onReturnToMenuClicked?.();
+      }
     });
 
     // How to Play close
@@ -478,9 +554,10 @@ export class UIManager {
   }
 
   setProfileHeader(profile: PlayerProfile): void {
+    this.currentActiveProfile = profile;
     if (profile.id === 'guest') {
-      this.menuProfileAvatar.textContent = '👤';
-      this.menuProfileName.textContent = 'ENTRAR';
+      this.menuProfileAvatar.textContent = profile.avatar || '🎸';
+      this.menuProfileName.textContent = profile.name || 'CONVIDADO';
       const hint = document.querySelector('.profile-switch-hint');
       if (hint) hint.textContent = 'Perfil';
     } else {
@@ -489,6 +566,149 @@ export class UIManager {
       const hint = document.querySelector('.profile-switch-hint');
       if (hint) hint.textContent = 'Trocar';
     }
+  }
+
+  async openPlayerProfilesModal(): Promise<void> {
+    const modal = document.getElementById('modal-player-profiles') || this.modalProfileManager;
+    if (!modal) return;
+
+    const profile = this.currentActiveProfile;
+    if (profile) {
+      const avatarEl = document.getElementById('active-profile-avatar');
+      const nameEl = document.getElementById('active-profile-name');
+      const typeEl = document.getElementById('active-profile-type');
+      const coinsEl = document.getElementById('active-profile-coins');
+
+      if (avatarEl) avatarEl.textContent = profile.avatar || '🎸';
+      if (nameEl) nameEl.textContent = profile.name || 'Convidado';
+      if (typeEl) {
+        typeEl.textContent = profile.accountType === 'google' ? 'Conta Google' : 'Modo Convidado';
+      }
+      if (coinsEl) {
+        coinsEl.textContent = `${profile.rockCoins || 0} RockCoins`;
+      }
+
+      const stats = this.getProfileStatsProvider ? this.getProfileStatsProvider() : null;
+      if (stats) {
+        const songsPlayedEl = document.getElementById('stat-songs-played');
+        const matchesEl = document.getElementById('stat-completed-matches');
+        const hitsEl = document.getElementById('stat-total-hits');
+        const missesEl = document.getElementById('stat-total-misses');
+        const accEl = document.getElementById('stat-avg-accuracy');
+        const comboEl = document.getElementById('stat-max-combo');
+
+        if (songsPlayedEl) songsPlayedEl.textContent = stats.songsPlayed.toString();
+        if (matchesEl) matchesEl.textContent = stats.completedMatches.toString();
+        if (hitsEl) hitsEl.textContent = stats.totalHits.toString();
+        if (missesEl) missesEl.textContent = stats.totalMisses.toString();
+        if (accEl) accEl.textContent = `${stats.avgAccuracy}%`;
+        if (comboEl) comboEl.textContent = stats.maxCombo.toString();
+
+        const bestCover = document.getElementById('best-song-cover') as HTMLImageElement;
+        const bestTitle = document.getElementById('best-song-title');
+        const bestArtist = document.getElementById('best-song-artist');
+        const bestDiff = document.getElementById('best-song-diff');
+        const bestScore = document.getElementById('best-song-score');
+
+        if (stats.bestSong) {
+          if (bestCover) bestCover.src = stats.bestSong.coverUrl || 'images/default-cover.png';
+          if (bestTitle) bestTitle.textContent = stats.bestSong.title;
+          if (bestArtist) bestArtist.textContent = stats.bestSong.artist;
+          if (bestDiff) bestDiff.textContent = stats.bestSong.difficulty;
+          if (bestScore) bestScore.textContent = `${stats.bestSong.score.toLocaleString('pt-BR')} PTS`;
+        } else {
+          if (bestCover) bestCover.src = 'images/default-cover.png';
+          if (bestTitle) bestTitle.textContent = '—';
+          if (bestArtist) bestArtist.textContent = 'Nenhuma partida concluída ainda';
+          if (bestDiff) bestDiff.textContent = '—';
+          if (bestScore) bestScore.textContent = '0 PTS';
+        }
+      }
+
+      if (this.getAllProfilesProvider) {
+        const allProfiles = await this.getAllProfilesProvider();
+        const listEl = document.getElementById('profiles-scroll-list');
+        if (listEl) {
+          listEl.innerHTML = allProfiles.map((p) => `
+            <div class="profile-select-item ${p.id === profile.id ? 'active' : ''}" data-profile-id="${p.id}">
+              <div class="profile-item-left">
+                <span class="profile-item-avatar">${p.avatar}</span>
+                <span class="profile-item-name">${p.name}</span>
+              </div>
+              <div class="profile-item-right" style="display:flex; align-items:center; gap:8px;">
+                <span class="profile-item-coins">🎸 ${p.rockCoins || 0}</span>
+                ${p.id === profile.id ? '<span class="active-badge">ATIVO</span>' : '<button class="notebook-bar-mini-btn btn-choose-profile" data-profile-id="' + p.id + '" style="font-size:10px; padding:2px 8px;">ESCOLHER</button>'}
+              </div>
+            </div>
+          `).join('');
+
+          listEl.querySelectorAll('.profile-select-item').forEach((item) => {
+            item.addEventListener('click', (e) => {
+              const id = (e.currentTarget as HTMLElement).dataset.profileId;
+              if (id && id !== profile.id) {
+                this.onSwitchProfileRequested?.(id);
+              }
+            });
+          });
+        }
+      }
+    }
+
+    modal.classList.remove('hidden');
+  }
+
+  openUnlockModal(song: SongMetadata, activeProfile?: PlayerProfile | null): void {
+    this.songToUnlock = song;
+    const profile = activeProfile || this.currentActiveProfile;
+    const modal = document.getElementById('modal-unlock-song');
+    if (!modal) return;
+
+    const cover = document.getElementById('unlock-song-cover') as HTMLImageElement;
+    const title = document.getElementById('unlock-song-title');
+    const artist = document.getElementById('unlock-song-artist');
+    const costAmount = document.getElementById('unlock-cost-amount');
+    const currentBalance = document.getElementById('unlock-current-balance');
+    const insufficientMsg = document.getElementById('unlock-insufficient-msg');
+    const btnConfirm = document.getElementById('btn-confirm-unlock');
+    const btnCancel = document.getElementById('btn-cancel-unlock');
+    const btnBack = document.getElementById('btn-back-to-catalog');
+
+    if (cover) cover.src = song.coverUrl || 'images/default-cover.png';
+    if (title) title.textContent = song.title;
+    if (artist) artist.textContent = song.artist;
+    if (costAmount) costAmount.textContent = '5 RockCoins';
+
+    const balance = profile?.rockCoins || 0;
+    if (currentBalance) currentBalance.textContent = `${balance} RockCoins`;
+
+    if (balance < 5) {
+      insufficientMsg?.classList.remove('hidden');
+      btnConfirm?.classList.add('hidden');
+      btnCancel?.classList.add('hidden');
+      btnBack?.classList.remove('hidden');
+    } else {
+      insufficientMsg?.classList.add('hidden');
+      btnConfirm?.classList.remove('hidden');
+      btnCancel?.classList.remove('hidden');
+      btnBack?.classList.add('hidden');
+    }
+
+    modal.classList.remove('hidden');
+  }
+
+  showUnlockCelebration(song: SongMetadata): void {
+    const modal = document.getElementById('modal-unlock-celebration');
+    if (!modal) return;
+
+    const cover = document.getElementById('celebration-song-cover') as HTMLImageElement;
+    const title = document.getElementById('celebration-song-title');
+    const artist = document.getElementById('celebration-song-artist');
+
+    if (cover) cover.src = song.coverUrl || 'images/default-cover.png';
+    if (title) title.textContent = song.title;
+    if (artist) artist.textContent = song.artist;
+
+    modal.classList.remove('hidden');
   }
 
   showProfileCreateModal(): void {
@@ -761,11 +981,71 @@ export class UIManager {
   }
 
   showResults(song: SongMetadata, stats: GameStats, recordResult?: RecordMatchResult, difficulty: Difficulty = 'HARD'): void {
-    this.resultSongTitle.textContent = `${song.title} - ${song.artist}`;
-    this.resultScore.textContent = `${stats.score.toLocaleString('pt-BR')} PTS`;
-    this.resultAccuracy.textContent = `${stats.accuracy || 0}%`;
-    this.resultMaxCombo.textContent = stats.maxCombo.toString();
     const hits = stats.hitsCount ?? (stats.perfectCount + stats.greatCount + stats.goodCount);
+    const misses = stats.missCount ?? 0;
+    const playable = stats.playableNotesCount ?? (hits + misses);
+
+    // 1. Header: Capa, Título, Artista, Dificuldade
+    this.resultSongTitle.textContent = song.title;
+    const artistEl = document.getElementById('result-song-artist');
+    if (artistEl) artistEl.textContent = song.artist;
+    const diffEl = document.getElementById('result-song-diff');
+    if (diffEl) diffEl.textContent = difficulty;
+    const coverEl = document.getElementById('result-album-cover') as HTMLImageElement;
+    if (coverEl) coverEl.src = song.coverUrl || 'images/default-cover.png';
+
+    // 2. Stars
+    const starCount = stats.stars || 1;
+    const starEls = this.resultStarsRow.querySelectorAll('.star-item');
+    starEls.forEach((el, idx) => {
+      el.classList.toggle('active', idx < starCount);
+    });
+
+    // 3. Central Metallic Panel: Novo Recorde, Pontuação Final, RockCoins
+    const bannerEl = document.getElementById('result-record-banner');
+    if (bannerEl) {
+      if (recordResult?.isNewRecord) {
+        bannerEl.classList.remove('hidden');
+      } else {
+        bannerEl.classList.add('hidden');
+      }
+    }
+
+    // Counter animation for score
+    const targetScore = stats.score;
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion || targetScore === 0) {
+      this.resultScore.textContent = `${targetScore.toLocaleString('pt-BR')} PTS`;
+    } else {
+      let currentVal = 0;
+      const duration = 600;
+      const startTime = performance.now();
+      const updateScore = (now: number) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        currentVal = Math.floor(progress * targetScore);
+        this.resultScore.textContent = `${currentVal.toLocaleString('pt-BR')} PTS`;
+        if (progress < 1) {
+          requestAnimationFrame(updateScore);
+        } else {
+          this.resultScore.textContent = `${targetScore.toLocaleString('pt-BR')} PTS`;
+        }
+      };
+      requestAnimationFrame(updateScore);
+    }
+
+    const coinsEl = document.getElementById('result-coins');
+    if (coinsEl) {
+      const earnedCoins = recordResult?.earnedCoins ?? RockCoinsManager.calculateReward(
+        difficulty,
+        misses,
+        playable,
+        true
+      );
+      coinsEl.textContent = `+${earnedCoins}`;
+    }
+
+    // 4. Quatro Painéis: Acertos, Erros, Precisão, Maior Combo
     if (this.resultHits) {
       this.resultHits.textContent = hits.toString();
     }
@@ -778,41 +1058,26 @@ export class UIManager {
     if (this.resultGood) {
       this.resultGood.textContent = stats.goodCount.toString();
     }
-    this.resultMiss.textContent = stats.missCount.toString();
+    this.resultMiss.textContent = misses.toString();
 
-    const coinsEl = document.getElementById('result-coins');
-    if (coinsEl) {
-      const playable = stats.playableNotesCount ?? (hits + (stats.missCount || 0));
-      const earnedCoins = recordResult?.earnedCoins ?? RockCoinsManager.calculateReward(
-        difficulty,
-        stats.missCount || 0,
-        playable,
-        true
-      );
-      coinsEl.textContent = `ROCKCOINS GANHAS: +${earnedCoins}`;
+    // 100% de precisão caso 0 erros
+    let accuracyPct = 100;
+    if (misses > 0) {
+      const totalEvalNotes = hits + misses;
+      accuracyPct = totalEvalNotes > 0 ? Math.round((hits / totalEvalNotes) * 100) : 0;
     }
+    this.resultAccuracy.textContent = `${accuracyPct}%`;
+    this.resultMaxCombo.textContent = stats.maxCombo.toString();
 
-    const starCount = stats.stars || 1;
-    const starEls = this.resultStarsRow.querySelectorAll('.star-item');
-    starEls.forEach((el, idx) => {
-      el.classList.toggle('active', idx < starCount);
-    });
-
-    const bannerEl = document.getElementById('result-record-banner');
-    const detailEl = document.getElementById('result-record-detail');
-
-    if (bannerEl) {
-      if (recordResult?.isNewRecord) {
-        bannerEl.classList.remove('hidden');
-        if (detailEl) {
-          if (recordResult.previousBestScore > 0) {
-            detailEl.textContent = `Recorde anterior: ${recordResult.previousBestScore.toLocaleString('pt-BR')} PTS ➜ Novo: ${stats.score.toLocaleString('pt-BR')} PTS!`;
-          } else {
-            detailEl.textContent = `Primeiro recorde estabelecido com sucesso!`;
-          }
-        }
+    // 5. Faixa de Conquista: FULL COMBO!
+    const achieveBanner = document.getElementById('result-achievement-banner');
+    const achieveText = document.getElementById('result-achievement-text');
+    if (achieveBanner && achieveText) {
+      if (misses === 0 && playable > 0) {
+        achieveBanner.classList.remove('hidden');
+        achieveText.textContent = 'FULL COMBO!';
       } else {
-        bannerEl.classList.add('hidden');
+        achieveBanner.classList.add('hidden');
       }
     }
 
@@ -840,6 +1105,10 @@ export class UIManager {
 
     this.songsListContainer.innerHTML = filtered.map((song, index) => {
       const isSelected = this.currentSelectedSong?.id === song.id;
+      const isUnlocked = this.isSongUnlockedChecker
+        ? this.isSongUnlockedChecker(song.id)
+        : (profile?.unlockedSongIds ? profile.unlockedSongIds.includes(song.id) : true);
+      const isLocked = !isUnlocked;
 
       // Extract highest personal record across difficulties for library view
       let bestStars = 0;
@@ -884,16 +1153,18 @@ export class UIManager {
         `;
       }
 
+      const lockBadgeHtml = isLocked ? `<div class="row-lock-badge">🔒 5 ROCKCOINS</div>` : '';
       const coverSrc = song.coverUrl || 'images/default-cover.png';
 
       return `
-        <div class="notebook-song-row ${isSelected ? 'selected' : ''}" data-song-id="${song.id}">
+        <div class="notebook-song-row ${isSelected ? 'selected' : ''} ${isLocked ? 'song-locked' : ''}" data-song-id="${song.id}">
           <span class="row-arrow">➡</span>
           <div class="row-song-content">
             <img src="${coverSrc}" class="row-album-cover" alt="${song.title}" loading="lazy" onerror="this.onerror=null;this.src='images/default-cover.png';" />
             <div class="row-song-info">
               <span class="row-song-title">${index + 1}. ${song.title}</span>
               <span class="row-song-artist">${song.artist}</span>
+              ${lockBadgeHtml}
               ${fileNoticeHtml}
             </div>
           </div>
@@ -916,6 +1187,16 @@ export class UIManager {
         const songId = (e.currentTarget as HTMLElement).dataset.songId;
         const song = songs.find((s) => s.id === songId);
         if (!song) return;
+
+        const isUnlocked = this.isSongUnlockedChecker
+          ? this.isSongUnlockedChecker(song.id)
+          : (profile?.unlockedSongIds ? profile.unlockedSongIds.includes(song.id) : true);
+
+        if (!isUnlocked) {
+          this.currentSelectedSong = song;
+          this.openUnlockModal(song, profile);
+          return;
+        }
 
         if (this.currentSelectedSong?.id === song.id) {
           if (song.isAvailable) {

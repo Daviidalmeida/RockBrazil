@@ -362,7 +362,8 @@ describe('ROCKBRAZIL V5.3 — Sistema de Recordes e Validação do Caderno', () 
 
     expect(html).toContain('id="screen-song-select" class="overlay-screen hidden notebook-page"');
     expect(html).toContain('id="screen-ranking" class="overlay-screen hidden notebook-page"');
-    expect(html).toContain('id="screen-result" class="overlay-screen hidden notebook-page"');
+    // V13.3: Tela oficial de resultados substitui o fundo de caderno pela arte de palco
+    expect(html).toContain('id="screen-result"');
     expect(html).toContain('class="notebook-dialog-card difficulty-dialog"');
     expect(html).toContain('class="notebook-dialog-card profile-card"');
     expect(html).toContain('id="result-record-banner"');

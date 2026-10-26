@@ -299,6 +299,61 @@
       </div>
     </div>
 
+    <!-- 4.1. MODAL CONFIRMAÇÃO DE DESBLOQUEIO DE MÚSICA (V13.3) -->
+    <div id="modal-unlock-song" class="modal-backdrop hidden">
+      <div class="notebook-dialog-card unlock-card">
+        <div class="unlock-header">
+          <div class="unlock-badge">DESBLOQUEAR MÚSICA?</div>
+          <div class="marker-underline small"></div>
+        </div>
+
+        <div class="unlock-song-details">
+          <img id="unlock-song-cover" class="unlock-cover-img" src="images/default-cover.png" alt="Capa" onerror="this.onerror=null;this.src='images/default-cover.png';" />
+          <div class="unlock-song-info">
+            <h3 id="unlock-song-title" class="unlock-title">Nome da Música</h3>
+            <span id="unlock-song-artist" class="unlock-artist">Artista</span>
+            <div class="unlock-cost-pill">
+              <span>Custo:</span> <strong id="unlock-cost-amount">5 RockCoins</strong>
+            </div>
+            <div class="unlock-balance-pill">
+              <span>Seu saldo:</span> <strong id="unlock-current-balance">0 RockCoins</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensagem de Saldo Insuficiente -->
+        <div id="unlock-insufficient-msg" class="unlock-insufficient-box hidden">
+          <div class="warning-title">⚠️ ROCKCOINS INSUFICIENTES</div>
+          <p class="warning-desc">Você precisa de 5 RockCoins para desbloquear esta música.</p>
+        </div>
+
+        <div class="dialog-buttons unlock-actions">
+          <button id="btn-confirm-unlock" class="notebook-bar-btn btn-select">DESBLOQUEAR POR 5 ROCKCOINS</button>
+          <button id="btn-cancel-unlock" class="notebook-bar-btn btn-back">CANCELAR</button>
+          <button id="btn-back-to-catalog" class="notebook-bar-btn btn-back hidden">VOLTAR AO CATÁLOGO</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4.2. MODAL CELEBRAÇÃO DE DESBLOQUEIO (V13.3) -->
+    <div id="modal-unlock-celebration" class="modal-backdrop hidden">
+      <div class="notebook-dialog-card celebration-card">
+        <div class="celebration-anim-icon">🔓</div>
+        <div class="celebration-badge">NOVA MÚSICA DESBLOQUEADA!</div>
+        <div class="marker-underline small"></div>
+        <div class="celebration-song-info">
+          <img id="celebration-song-cover" class="celebration-cover-img" src="images/default-cover.png" alt="Capa" onerror="this.onerror=null;this.src='images/default-cover.png';" />
+          <h3 id="celebration-song-title" class="celebration-title">Título</h3>
+          <span id="celebration-song-artist" class="celebration-artist">Artista</span>
+        </div>
+        <p class="celebration-desc">A música agora está disponível para jogar em todas as dificuldades!</p>
+        <div class="dialog-buttons">
+          <button id="btn-celebration-choose-diff" class="notebook-bar-btn btn-select">ESCOLHER DIFICULDADE</button>
+          <button id="btn-celebration-close" class="notebook-bar-btn btn-back">VOLTAR AO CATÁLOGO</button>
+        </div>
+      </div>
+    </div>
+
     <!-- 5. SISTEMA DE PERFIS (PRIMEIRA EXECUÇÃO / CRIAR PERFIL) -->
     <div id="modal-profile-create" class="modal-backdrop hidden">
       <div class="notebook-dialog-card profile-card">
@@ -330,20 +385,90 @@
       </div>
     </div>
 
-    <!-- 6. GERENCIADOR DE PERFIS (ENTRAR / TROCAR / CONVIDADO) -->
-    <div id="modal-profile-manager" class="modal-backdrop hidden">
-      <div class="notebook-dialog-card profile-mgr-card">
-        <h2 class="notebook-dialog-title">ENTRAR / PERFIS DE JOGADOR</h2>
-        <p class="profile-subtitle" style="font-size:12px; color:#444; margin-bottom:12px;">
-          Selecione seu perfil ou jogue como convidado.
-        </p>
-        <div id="profiles-scroll-list" class="profiles-list-scroll"></div>
+    <!-- 6. GERENCIADOR DE PERFIS (PERFIS DE JOGADORES - V13.3) -->
+    <div id="modal-player-profiles" class="modal-backdrop hidden" data-alias="modal-profile-manager">
+      <div class="profiles-modal-wrapper">
+        <div class="profiles-glass-card">
+          <!-- TOPO -->
+          <div class="profiles-header">
+            <h2 class="profiles-title">PERFIS DE JOGADORES</h2>
+            <p class="profiles-subtitle">Escolha seu perfil e acompanhe sua evolução no RockBrazil.</p>
+          </div>
 
-        <div class="dialog-buttons" style="flex-direction: column; gap: 8px;">
-          <button id="btn-play-as-guest" class="notebook-bar-btn btn-guest">👤 JOGAR COMO CONVIDADO</button>
-          <div style="display:flex; gap:8px; width:100%;">
-            <button id="btn-open-create-new-profile" class="notebook-bar-btn" style="flex:1;">+ NOVO PERFIL</button>
-            <button id="btn-close-profile-manager" class="notebook-bar-btn btn-back" style="flex:1;">FECHAR</button>
+          <!-- ÁREA PRINCIPAL: Cartão do Jogador Ativo -->
+          <div class="active-player-card">
+            <div class="player-identity">
+              <span id="active-profile-avatar" class="player-avatar-icon">🎸</span>
+              <div class="player-info">
+                <div class="player-name-row">
+                  <span id="active-profile-name" class="player-name">Convidado</span>
+                  <span class="active-badge">Ativo</span>
+                </div>
+                <span id="active-profile-type" class="player-account-type">Modo Convidado</span>
+              </div>
+            </div>
+            <div class="player-coins-pill">
+              <span class="coins-icon">🎸</span>
+              <span id="active-profile-coins" class="coins-amount">0 RockCoins</span>
+            </div>
+          </div>
+
+          <!-- 6 PAINÉIS DE ESTATÍSTICAS -->
+          <div class="profiles-metrics-grid">
+            <div class="metric-panel">
+              <span class="metric-label">Músicas jogadas</span>
+              <span id="stat-songs-played" class="metric-value">0</span>
+            </div>
+            <div class="metric-panel">
+              <span class="metric-label">Partidas concluídas</span>
+              <span id="stat-completed-matches" class="metric-value">0</span>
+            </div>
+            <div class="metric-panel">
+              <span class="metric-label">Total de acertos</span>
+              <span id="stat-total-hits" class="metric-value">0</span>
+            </div>
+            <div class="metric-panel">
+              <span class="metric-label">Total de erros</span>
+              <span id="stat-total-misses" class="metric-value">0</span>
+            </div>
+            <div class="metric-panel">
+              <span class="metric-label">Precisão média</span>
+              <span id="stat-avg-accuracy" class="metric-value">0%</span>
+            </div>
+            <div class="metric-panel">
+              <span class="metric-label">Maior combo</span>
+              <span id="stat-max-combo" class="metric-value">0</span>
+            </div>
+          </div>
+
+          <!-- MELHOR MÚSICA TOCADA -->
+          <div class="best-song-section">
+            <span class="section-title">MELHOR MÚSICA TOCADA</span>
+            <div id="best-song-card" class="best-song-box">
+              <img id="best-song-cover" src="images/default-cover.png" alt="Capa" class="best-song-cover-img" onerror="this.onerror=null;this.src='images/default-cover.png';" />
+              <div class="best-song-details">
+                <div class="best-song-names">
+                  <span id="best-song-title" class="best-title">—</span>
+                  <span id="best-song-artist" class="best-artist">Nenhuma partida concluída ainda</span>
+                </div>
+                <div class="best-song-meta">
+                  <span id="best-song-diff" class="best-diff-badge">—</span>
+                  <span id="best-song-score" class="best-score-display">0 PTS</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LISTA DE PERFIS PARA TROCAR -->
+          <div class="profiles-switcher-section">
+            <span class="section-title">TROCAR DE PERFIL</span>
+            <div id="profiles-scroll-list" class="profiles-list-scroll"></div>
+          </div>
+
+          <!-- BOTÕES INFERIORES -->
+          <div class="profiles-footer-actions">
+            <button id="btn-open-create-new-profile" class="profiles-action-btn btn-new-profile">+ Novo perfil</button>
+            <button id="btn-close-player-profiles" class="profiles-action-btn btn-close-profiles">Fechar</button>
           </div>
         </div>
       </div>
@@ -435,59 +560,85 @@
       </div>
     </div>
 
-    <!-- 11. FINAL DA MÚSICA (SHOW CONCLUÍDO) -->
-    <div id="screen-result" class="overlay-screen hidden notebook-page">
-      <div class="notebook-dialog-card result-dialog">
-        <div class="result-badge">MÚSICA CONCLUÍDA!</div>
-        <h2 id="result-song-title" class="result-song-name">Fúria Tropical</h2>
-
-        <!-- New Personal Record Celebratory Stamp Banner -->
-        <div id="result-record-banner" class="notebook-record-banner hidden">
-          <div class="record-banner-title">★ NOVO RECORDE PESSOAL! ★</div>
-          <div id="result-record-detail" class="record-banner-detail">Recorde anterior superado!</div>
-        </div>
-
-        <!-- 1 to 5 Stars Glow Rating -->
-        <div id="result-stars-row" class="stars-row">
-          <span class="star-item">★</span>
-          <span class="star-item">★</span>
-          <span class="star-item">★</span>
-          <span class="star-item">★</span>
-          <span class="star-item">★</span>
-        </div>
-
-        <div class="result-score-block">
-          <span class="result-label">PONTUAÇÃO FINAL</span>
-          <span id="result-score" class="result-val">0 PTS</span>
-        </div>
-        <div class="result-coins-block" id="result-coins-container">
-          <span class="coins-icon">🪙</span>
-          <span id="result-coins" class="coins-amount">+0 RockCoins</span>
-        </div>
-
-        <div class="result-stats-grid">
-          <div class="stat-item">
-            <span class="stat-num stat-hits" id="result-hits">0</span>
-            <span class="stat-name">Acertos</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-num stat-miss" id="result-miss">0</span>
-            <span class="stat-name">Erros</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-num stat-accuracy" id="result-accuracy">100%</span>
-            <span class="stat-name">Precisão</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-num" id="result-maxcombo">0</span>
-            <span class="stat-name">Maior Combo</span>
+    <!-- 11. FINAL DA MÚSICA (SHOW CONCLUÍDO - V13.3 ARTE OFICIAL) -->
+    <div id="screen-result" class="overlay-screen hidden results-screen-container">
+      <div class="results-art-wrapper">
+        <!-- ÁREA SUPERIOR: Capa real da música, Título, Artista, Dificuldade -->
+        <div class="results-header-overlay">
+          <img id="result-album-cover" class="result-cover-img" src="images/default-cover.png" alt="Capa do Álbum" onerror="this.onerror=null;this.src='images/default-cover.png';" />
+          <div class="result-header-text">
+            <h2 id="result-song-title" class="result-song-name">Fúria Tropical</h2>
+            <span id="result-song-artist" class="result-song-artist">RockBrazil Band</span>
+            <span id="result-song-diff" class="result-diff-badge">MÉDIO</span>
           </div>
         </div>
 
-        <div class="dialog-buttons">
-          <button id="btn-play-again" class="notebook-bar-btn btn-select">JOGAR NOVAMENTE</button>
-          <button id="btn-next-song" class="notebook-bar-btn">PRÓXIMA MÚSICA</button>
-          <button id="btn-menu-result" class="notebook-bar-btn btn-back">VOLTAR AO MENU</button>
+        <!-- ÁREA DAS CINCO ESTRELAS -->
+        <div id="result-stars-row" class="results-stars-overlay">
+          <span class="star-item star-1 active">★</span>
+          <span class="star-item star-2 active">★</span>
+          <span class="star-item star-3 active">★</span>
+          <span class="star-item star-4">★</span>
+          <span class="star-item star-5">★</span>
+        </div>
+
+        <!-- PAINEL CENTRAL METÁLICO -->
+        <div class="results-central-panel">
+          <!-- Novo Recorde Pessoal (somente quando realmente houver novo recorde) -->
+          <div id="result-record-banner" class="results-record-stamp hidden">
+            <span class="record-stamp-text">★ NOVO RECORDE PESSOAL! ★</span>
+          </div>
+          <div id="result-record-detail" class="hidden"></div>
+
+          <!-- Pontuação Final -->
+          <div class="results-score-block">
+            <span class="results-score-label">PONTUAÇÃO FINAL</span>
+            <span id="result-score" class="results-score-val">0 PTS</span>
+          </div>
+
+          <!-- RockCoins Ganhas -->
+          <div class="results-coins-block" id="result-coins-container">
+            <span class="results-coins-label">ROCKCOINS GANHAS:</span>
+            <span id="result-coins" class="results-coins-amount">+0</span>
+          </div>
+        </div>
+
+        <!-- QUATRO PAINÉIS: ACERTOS, ERROS, PRECISÃO, MAIOR COMBO -->
+        <div class="results-stats-quad">
+          <div class="stat-quad-item stat-hits-item">
+            <span class="stat-quad-label">ACERTOS</span>
+            <span id="result-hits" class="stat-quad-val stat-hits">0</span>
+          </div>
+          <div class="stat-quad-item stat-miss-item">
+            <span class="stat-quad-label">ERROS</span>
+            <span id="result-miss" class="stat-quad-val stat-miss">0</span>
+          </div>
+          <div class="stat-quad-item stat-acc-item">
+            <span class="stat-quad-label">PRECISÃO</span>
+            <span id="result-accuracy" class="stat-quad-val stat-acc">100%</span>
+          </div>
+          <div class="stat-quad-item stat-combo-item">
+            <span class="stat-quad-label">MAIOR COMBO</span>
+            <span id="result-maxcombo" class="stat-quad-val stat-combo">0</span>
+          </div>
+        </div>
+
+        <!-- FAIXA DE CONQUISTA: FULL COMBO! -->
+        <div id="result-achievement-banner" class="results-achievement-banner hidden">
+          <span id="result-achievement-text" class="results-achievement-text">FULL COMBO!</span>
+        </div>
+
+        <!-- TRÊS BOTÕES INFERIORES: JOGAR NOVAMENTE, PRÓXIMA MÚSICA, SELEÇÃO DE MÚSICAS -->
+        <div class="results-buttons-overlay">
+          <button id="btn-play-again" class="result-action-btn btn-replay" aria-label="Jogar Novamente">
+            <span>JOGAR NOVAMENTE</span>
+          </button>
+          <button id="btn-next-song" class="result-action-btn btn-next" aria-label="Próxima Música">
+            <span>PRÓXIMA MÚSICA</span>
+          </button>
+          <button id="btn-menu-result" class="result-action-btn btn-library" aria-label="Seleção de Músicas">
+            <span>SELEÇÃO DE MÚSICAS</span>
+          </button>
         </div>
       </div>
     </div>
