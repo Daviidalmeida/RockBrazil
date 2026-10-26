@@ -165,38 +165,23 @@
          OVERLAY SCREENS
          ======================================================== -->
 
-    <!-- 0. TELA DE ENTRADA / BOAS-VINDAS (V13) -->
-    <div id="modal-welcome-entry" class="overlay-screen hidden notebook-page">
-      <div class="notebook-dialog-card welcome-card">
-        <div class="welcome-header">
-          <span class="welcome-badge">ROCKBRAZIL V13</span>
-          <h1 class="welcome-title">BEM-VINDO!</h1>
-          <div class="marker-underline small"></div>
-          <p class="welcome-subtitle">O jogo de ritmo do rock nacional com 162 faixas originais.</p>
-        </div>
+    <!-- 0. TELA DE LOGIN OFICIAL E DEFINITIVA (V13.2) -->
+    <div id="screen-login" class="login-screen-container hidden">
+      <div class="login-art-wrapper">
+        <img src="images/login-bg.jpg" class="login-art-image" alt="RockBrazil V13.2 - Escolha como deseja jogar" />
+        
+        <!-- Hotspots transparentes perfeitamente alinhados aos botões desenhados na arte 1:1 -->
+        <button id="btn-login-google" class="login-hotspot btn-hotspot-google" aria-label="Entrar com Google" title="Entrar com Google">
+          <span class="sr-only">Entrar com Google</span>
+        </button>
+        
+        <button id="btn-play-guest" class="login-hotspot btn-hotspot-guest" aria-label="Jogar como Convidado" title="Jogar como Convidado">
+          <span class="sr-only">Jogar como Convidado</span>
+        </button>
 
-        <div class="welcome-options">
-          <button id="btn-login-google" class="welcome-btn btn-google">
-            <span class="welcome-icon">🌐</span>
-            <div class="welcome-btn-text">
-              <span class="welcome-btn-main">ENTRAR COM GOOGLE</span>
-              <span class="welcome-btn-sub">Salve seu progresso e recordes na nuvem</span>
-            </div>
-          </button>
-
-          <div class="welcome-divider"><span>OU</span></div>
-
-          <button id="btn-play-guest" class="welcome-btn btn-guest">
-            <span class="welcome-icon">👤</span>
-            <div class="welcome-btn-text">
-              <span class="welcome-btn-main">JOGAR COMO CONVIDADO</span>
-              <span class="welcome-btn-sub">Jogue direto sem login neste dispositivo</span>
-            </div>
-          </button>
-        </div>
-
-        <div class="welcome-footer-note">
-          Você poderá vincular sua conta Google a qualquer momento nas Configurações.
+        <div id="login-loading-indicator" class="login-loading-overlay hidden" aria-live="polite">
+          <div class="login-spinner"></div>
+          <span class="login-loading-text">Conectando ao RockBrazil...</span>
         </div>
       </div>
     </div>

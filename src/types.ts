@@ -46,6 +46,7 @@ export interface HitResult {
 }
 
 export enum GameState {
+  LOGIN = 'LOGIN',
   MENU = 'MENU',
   SONG_SELECT = 'SONG_SELECT',
   HOW_TO_PLAY = 'HOW_TO_PLAY',

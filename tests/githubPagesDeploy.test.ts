@@ -34,6 +34,7 @@ describe('GitHub Pages & Production Build Verification', () => {
       expect(fs.existsSync(path.join(distPath, '404.html'))).toBe(true);
       expect(fs.existsSync(path.join(distPath, 'images/stage-bg.png'))).toBe(true);
       expect(fs.existsSync(path.join(distPath, 'images/menu-bg.jpg'))).toBe(true);
+      expect(fs.existsSync(path.join(distPath, 'images/login-bg.jpg'))).toBe(true);
     }
   });
 

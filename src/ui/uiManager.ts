@@ -89,7 +89,7 @@ export class UIManager {
   private sliderSpeed: HTMLInputElement;
   private checkFx: HTMLInputElement;
   private checkMuteOnMiss: HTMLInputElement | null = null;
-  private modalWelcomeEntry: HTMLElement | null = null;
+  private screenLogin: HTMLElement | null = null;
   private valMusic: HTMLElement;
   private valSfx: HTMLElement;
   private valOffset: HTMLElement;
@@ -196,7 +196,7 @@ export class UIManager {
     this.sliderSpeed = document.getElementById('cfg-speed') as HTMLInputElement;
     this.checkFx = document.getElementById('cfg-fx') as HTMLInputElement;
     this.checkMuteOnMiss = document.getElementById('cfg-mute-on-miss') as HTMLInputElement;
-    this.modalWelcomeEntry = document.getElementById('modal-welcome-entry');
+    this.screenLogin = document.getElementById('screen-login') || document.getElementById('modal-welcome-entry');
 
     this.valMusic = document.getElementById('val-cfg-music')!;
     this.valSfx = document.getElementById('val-cfg-sfx')!;
@@ -543,13 +543,21 @@ export class UIManager {
     if (this.checkMuteOnMiss) this.checkMuteOnMiss.checked = Boolean(settings.muteOnMiss);
   }
 
-  showWelcomeModal(show: boolean): void {
-    if (this.modalWelcomeEntry) {
-      this.modalWelcomeEntry.classList.toggle('hidden', !show);
+  showLoginLoading(loading: boolean): void {
+    const indicator = document.getElementById('login-loading-indicator');
+    if (indicator) {
+      indicator.classList.toggle('hidden', !loading);
     }
   }
 
+  showWelcomeModal(show: boolean): void {
+    this.showScreen(show ? GameState.LOGIN : GameState.MENU);
+  }
+
   showScreen(state: GameState): void {
+    if (this.screenLogin) {
+      this.screenLogin.classList.toggle('hidden', state !== GameState.LOGIN);
+    }
     this.screenMenu.classList.toggle('hidden', state !== GameState.MENU);
     this.screenSongSelect.classList.toggle('hidden', state !== GameState.SONG_SELECT);
     this.screenCountdown.classList.toggle('hidden', state !== GameState.COUNTDOWN);

@@ -197,27 +197,28 @@ class RockBrazilGame {
     this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
     this.ui.initRankingDropdowns(this.library.getActiveSongs());
 
-    // 4. Open directly on the Main Menu or Welcome Modal based on saved preference
+    // 4. Open directly on the Main Menu or Login Screen based on saved preference
     this.renderer.setDifficulty(this.currentDifficulty);
     this.ui.setDifficultyLanes(this.currentDifficulty);
-    this.ui.showScreen(GameState.MENU);
 
     const savedPref = AuthService.getSavedAuthPreference();
     if (savedPref === 'guest') {
-      this.ui.showWelcomeModal(false);
+      this.state = GameState.MENU;
+      this.ui.showScreen(GameState.MENU);
     } else if (savedPref === 'google') {
+      this.state = GameState.MENU;
+      this.ui.showScreen(GameState.MENU);
+      // Ouve alterações de autenticação em segundo plano estritamente para sincronizar perfil.
+      // NUNCA interrompe navegação, seleção de músicas ou gameplay ativa!
       AuthService.onAuthChange(async (user) => {
         if (user) {
           await this.handleUserAuthenticated(user);
-          this.ui.showWelcomeModal(false);
-        } else {
-          // Sessão expirou ou usuário deslogado
-          this.ui.showWelcomeModal(true);
         }
       });
     } else {
-      // Primeira visita: apresenta tela de boas-vindas / escolha!
-      this.ui.showWelcomeModal(true);
+      // Primeira visita: apresenta tela de login oficial V13.2
+      this.state = GameState.LOGIN;
+      this.ui.showScreen(GameState.LOGIN);
     }
 
     if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('testGameplay') === 'true') {
@@ -296,12 +297,14 @@ class RockBrazilGame {
   }
 
   private setupUICallbacks(): void {
-    // V13: Login Google & Modo Convidado
+    // V13.2: Login Google & Modo Convidado
     this.ui.onLoginWithGoogleClicked = async () => {
+      this.ui.showLoginLoading(true);
       const { user, error } = await AuthService.signInWithGoogle();
+      this.ui.showLoginLoading(false);
       if (user) {
         await this.handleUserAuthenticated(user);
-        this.ui.showWelcomeModal(false);
+        this.state = GameState.MENU;
         this.ui.showScreen(GameState.MENU);
       } else if (error) {
         alert(`Falha no login com Google: ${error}`);
@@ -309,14 +312,22 @@ class RockBrazilGame {
     };
 
     this.ui.onPlayAsGuestWelcomeClicked = async () => {
+      this.ui.showLoginLoading(true);
       await AuthService.signInAsGuest();
-      this.ui.showWelcomeModal(false);
+      const guest = this.profileManager.setGuestMode();
+      this.ui.setProfileHeader(guest);
+      this.ui.showLoginLoading(false);
+      this.state = GameState.MENU;
       this.ui.showScreen(GameState.MENU);
     };
 
     this.ui.onSwitchAccountModeClicked = () => {
-      this.ui.showScreen(GameState.MENU);
-      this.ui.showWelcomeModal(true);
+      if (this.state === GameState.PLAYING || this.state === GameState.COUNTDOWN) {
+        alert('Não é possível trocar de conta durante uma partida ativa. Conclua ou saia da música primeiro.');
+        return;
+      }
+      this.state = GameState.LOGIN;
+      this.ui.showScreen(GameState.LOGIN);
     };
 
     // Navigation
@@ -399,6 +410,7 @@ class RockBrazilGame {
     };
 
     this.ui.onPlayAsGuestClicked = () => {
+      AuthService.setSavedAuthPreference('guest');
       const guest = this.profileManager.setGuestMode();
       this.ui.setProfileHeader(guest);
       this.ui.renderSongLibrary(this.library.getActiveSongs(), guest);

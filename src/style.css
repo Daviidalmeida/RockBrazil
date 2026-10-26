@@ -1984,145 +1984,151 @@ html, body {
 }
 
 /* ========================================================
-   V13: WELCOME & ENTRY MODAL
+   V13.2: TELA OFICIAL DE LOGIN (ARTE DEFINITIVA 1:1)
    ======================================================== */
-.welcome-card {
-  max-width: 440px;
-  width: 90%;
-  text-align: center;
-  padding: 24px 20px;
-}
-
-.welcome-header {
-  margin-bottom: 20px;
-}
-
-.welcome-badge {
-  display: inline-block;
-  background: #ffe600;
-  color: #1a1a1a;
-  font-family: var(--font-rock);
-  font-size: 11px;
-  padding: 3px 8px;
-  border-radius: 4px;
-  border: 1.5px solid #1a1a1a;
-  box-shadow: 1.5px 1.5px 0 #1a1a1a;
-  margin-bottom: 6px;
-  letter-spacing: 1px;
-}
-
-.welcome-title {
-  font-family: var(--font-rock);
-  font-size: 26px;
-  color: #1a1a1a;
-  margin: 0;
-  line-height: 1.1;
-}
-
-.welcome-subtitle {
-  font-family: var(--font-hand);
-  font-size: 12px;
-  color: #4b5563;
-  margin: 6px 0 0;
-}
-
-.welcome-options {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 16px 0;
-}
-
-.welcome-btn {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  border: 2px solid #1a1a1a;
-  border-radius: 8px;
-  box-shadow: 3px 3px 0 #1a1a1a;
-  background: #ffffff;
-  cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.1s;
-  text-align: left;
-}
-
-.welcome-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0 #1a1a1a;
-}
-
-.welcome-btn.btn-google {
-  background: #ffffff;
-  border-color: #1a1a1a;
-}
-
-.welcome-btn.btn-google:hover {
-  background: #f8fafc;
-}
-
-.welcome-btn.btn-guest {
-  background: #fef08a;
-  border-color: #1a1a1a;
-}
-
-.welcome-btn.btn-guest:hover {
-  background: #fef9c3;
-}
-
-.welcome-icon {
-  font-size: 28px;
-  line-height: 1;
-}
-
-.welcome-btn-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.welcome-btn-main {
-  font-family: var(--font-rock);
-  font-size: 15px;
-  color: #1a1a1a;
-  letter-spacing: 0.5px;
-}
-
-.welcome-btn-sub {
-  font-family: var(--font-hand);
-  font-size: 11px;
-  color: #4b5563;
-}
-
-.welcome-divider {
+.login-screen-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  margin: 4px 0;
+  background-color: #06060c;
+  background: radial-gradient(circle at center, #1e0d33 0%, #0c0417 65%, #030206 100%);
+  overflow: hidden;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
 }
 
-.welcome-divider::before {
-  content: '';
+.login-screen-container.hidden {
+  display: none !important;
+}
+
+.login-art-wrapper {
+  position: relative;
+  /* Proporção rigorosamente 1:1, encaixando na menor dimensão da tela */
+  width: min(94vw, 94vh);
+  height: min(94vw, 94vh);
+  max-width: 820px;
+  max-height: 820px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(138, 43, 226, 0.25);
+  border-radius: 8px;
+}
+
+.login-art-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+  border-radius: 8px;
+}
+
+/* Áreas de toque/clique proporcionais à imagem 1:1 */
+.login-hotspot {
   position: absolute;
+  background: transparent;
+  border: 2px solid transparent;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  touch-action: manipulation;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.login-hotspot:hover {
+  transform: scale(1.015);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+}
+
+.login-hotspot:active {
+  transform: scale(0.985);
+}
+
+.login-hotspot:focus-visible {
+  border-color: #ffd700;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+}
+
+/* Botão 1: ENTRAR COM GOOGLE (X: 19.5% a 80.5%, Y: 49.5% a 59.0%) */
+.btn-hotspot-google {
+  left: 19.5%;
+  top: 49.5%;
+  width: 61.0%;
+  height: 9.5%;
+  border-radius: 12px;
+}
+
+/* Botão 2: JOGAR COMO CONVIDADO (X: 19.5% a 80.5%, Y: 63.3% a 73.0%) */
+.btn-hotspot-guest {
+  left: 19.5%;
+  top: 63.3%;
+  width: 61.0%;
+  height: 9.7%;
+  border-radius: 12px;
+}
+
+/* Feedback de carregamento durante autenticação */
+.login-loading-overlay {
+  position: absolute;
+  top: 0;
   left: 0;
-  right: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(6, 4, 12, 0.75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 10;
+  backdrop-filter: blur(5px);
+  border-radius: 8px;
+}
+
+.login-loading-overlay.hidden {
+  display: none !important;
+}
+
+.login-spinner {
+  width: 46px;
+  height: 46px;
+  border: 4px solid rgba(255, 255, 255, 0.15);
+  border-top-color: #ffd700;
+  border-radius: 50%;
+  animation: login-spin 0.8s linear infinite;
+}
+
+.login-loading-text {
+  font-family: var(--font-rock, sans-serif);
+  font-size: 16px;
+  color: #ffd700;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+}
+
+@keyframes login-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Acessibilidade para leitores de tela */
+.sr-only {
+  position: absolute;
+  width: 1px;
   height: 1px;
-  background: #d1d5db;
-}
-
-.welcome-divider span {
-  position: relative;
-  background: var(--paper-bg, #fbf7ee);
-  padding: 0 10px;
-  font-family: var(--font-rock);
-  font-size: 11px;
-  color: #9ca3af;
-}
-
-.welcome-footer-note {
-  font-family: var(--font-hand);
-  font-size: 11px;
-  color: #6b7280;
-  font-style: italic;
-  margin-top: 10px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

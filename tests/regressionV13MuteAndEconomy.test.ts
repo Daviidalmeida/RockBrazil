@@ -340,9 +340,9 @@ describe('ROCKBRAZIL V13 — Mute on Miss, Economia RockCoins, Catálogo e Fireb
       expect(merged.records['song-1']?.EASY?.bestMaxCombo).toBe(100);
     });
 
-    it('8.1. index.html possui modal de boas-vindas com opções Google e Convidado', () => {
+    it('8.1. index.html possui tela de login oficial com opções Google e Convidado', () => {
       const html = fs.readFileSync(path.resolve(process.cwd(), 'index.html'), 'utf-8');
-      expect(html).toContain('id="modal-welcome-entry"');
+      expect(html).toContain('id="screen-login"');
       expect(html).toContain('id="btn-login-google"');
       expect(html).toContain('id="btn-play-guest"');
       expect(html).toContain('id="cfg-mute-on-miss"');
