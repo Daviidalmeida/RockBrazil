@@ -165,6 +165,42 @@
          OVERLAY SCREENS
          ======================================================== -->
 
+    <!-- 0. TELA DE ENTRADA / BOAS-VINDAS (V13) -->
+    <div id="modal-welcome-entry" class="overlay-screen hidden notebook-page">
+      <div class="notebook-dialog-card welcome-card">
+        <div class="welcome-header">
+          <span class="welcome-badge">ROCKBRAZIL V13</span>
+          <h1 class="welcome-title">BEM-VINDO!</h1>
+          <div class="marker-underline small"></div>
+          <p class="welcome-subtitle">O jogo de ritmo do rock nacional com 162 faixas originais.</p>
+        </div>
+
+        <div class="welcome-options">
+          <button id="btn-login-google" class="welcome-btn btn-google">
+            <span class="welcome-icon">🌐</span>
+            <div class="welcome-btn-text">
+              <span class="welcome-btn-main">ENTRAR COM GOOGLE</span>
+              <span class="welcome-btn-sub">Salve seu progresso e recordes na nuvem</span>
+            </div>
+          </button>
+
+          <div class="welcome-divider"><span>OU</span></div>
+
+          <button id="btn-play-guest" class="welcome-btn btn-guest">
+            <span class="welcome-icon">👤</span>
+            <div class="welcome-btn-text">
+              <span class="welcome-btn-main">JOGAR COMO CONVIDADO</span>
+              <span class="welcome-btn-sub">Jogue direto sem login neste dispositivo</span>
+            </div>
+          </button>
+        </div>
+
+        <div class="welcome-footer-note">
+          Você poderá vincular sua conta Google a qualquer momento nas Configurações.
+        </div>
+      </div>
+    </div>
+
     <!-- 1. MAIN MENU (Definitive RockBrazil Stage Home with Interactive Hotspots) -->
     <div id="screen-menu" class="overlay-screen active menu-screen-container">
       <div class="menu-image-wrapper">
@@ -504,6 +540,18 @@
         <div class="settings-group toggle-group">
           <label for="cfg-fx">Efeitos Visuais e Chamas</label>
           <input type="checkbox" id="cfg-fx" checked class="rock-toggle">
+        </div>
+
+        <div class="settings-group toggle-group">
+          <div>
+            <label for="cfg-mute-on-miss">Silenciar música ao errar</label>
+            <span class="settings-hint">A música fica muda quando você erra uma nota e volta quando você acerta.</span>
+          </div>
+          <input type="checkbox" id="cfg-mute-on-miss" class="rock-toggle">
+        </div>
+
+        <div class="settings-group" style="margin-top: 10px;">
+          <button id="btn-switch-account-mode" class="notebook-bar-mini-btn" style="width: 100%; padding: 8px;">TROCAR DE CONTA / MODO DE ENTRADA</button>
         </div>
 
         <div class="dialog-buttons">

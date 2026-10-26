@@ -113,29 +113,31 @@ describe('ROCKBRAZIL V12 — Revisão Geral, Conforto Visual, Áudio iOS, Result
   });
 
   // =========================================================================
-  // FASE 4: ECONOMIA E RECOMPENSAS ROCKCOINS
+  // FASE 4: ECONOMIA E RECOMPENSAS ROCKCOINS (V13 REGRA OFICIAL)
   // =========================================================================
-  describe('Fase 4: Balanceamento de RockCoins (1 a 7 moedas)', () => {
-    it('4.1. Concessão proporcional a estrelas (1 a 5 moedas)', () => {
-      expect(RockCoinsManager.calculateReward(1, 70, true)).toBe(1);
-      expect(RockCoinsManager.calculateReward(2, 75, true)).toBe(2);
-      expect(RockCoinsManager.calculateReward(3, 85, true)).toBe(3);
-      expect(RockCoinsManager.calculateReward(4, 92, true)).toBe(4);
-      expect(RockCoinsManager.calculateReward(5, 96, true)).toBe(5);
+  describe('Fase 4: Balanceamento Oficial de RockCoins (1 a 5 moedas)', () => {
+    it('4.1. Concessão por dificuldade oficial (EASY=1, MEDIUM=2, HARD=3)', () => {
+      expect(RockCoinsManager.calculateReward('EASY', 0, 100, true)).toBe(1);
+      expect(RockCoinsManager.calculateReward('EASY', 2, 100, true)).toBe(1);
+      expect(RockCoinsManager.calculateReward('MEDIUM', 0, 100, true)).toBe(2);
+      expect(RockCoinsManager.calculateReward('MEDIUM', 5, 100, true)).toBe(2);
+      expect(RockCoinsManager.calculateReward('HARD', 0, 100, true)).toBe(3);
+      expect(RockCoinsManager.calculateReward('HARD', 3, 100, true)).toBe(3);
     });
 
-    it('4.2. Bônus de +2 moedas para 100% de precisão (teto estrito de 7 moedas)', () => {
-      // 5 estrelas + 100% precisão = 5 + 2 = 7 moedas
-      expect(RockCoinsManager.calculateReward(5, 100, true)).toBe(7);
-      // 4 estrelas + 100% precisão = 4 + 2 = 6 moedas
-      expect(RockCoinsManager.calculateReward(4, 100, true)).toBe(6);
-      // Nunca excede 7 moedas
-      expect(RockCoinsManager.calculateReward(5, 100, true)).toBeLessThanOrEqual(7);
+    it('4.2. Expert com erros recebe 3 e Expert sem erros recebe 5 moedas', () => {
+      // Expert com erros: 3 moedas
+      expect(RockCoinsManager.calculateReward('EXPERT', 1, 100, true)).toBe(3);
+      // Expert perfeito (0 erros): 5 moedas (total, não 3+5)
+      expect(RockCoinsManager.calculateReward('EXPERT', 0, 100, true)).toBe(5);
+      // Teto máximo absoluto é 5 moedas
+      expect(RockCoinsManager.calculateReward('EXPERT', 0, 100, true)).toBeLessThanOrEqual(5);
     });
 
     it('4.3. Partida não completada ou falhada concede 0 moedas', () => {
-      expect(RockCoinsManager.calculateReward(5, 100, false)).toBe(0);
-      expect(RockCoinsManager.calculateReward(3, 80, false)).toBe(0);
+      expect(RockCoinsManager.calculateReward('EXPERT', 0, 100, false)).toBe(0);
+      expect(RockCoinsManager.calculateReward('HARD', 0, 100, false)).toBe(0);
+      expect(RockCoinsManager.calculateReward('EXPERT', 0, 0, true)).toBe(0); // 0 notas
     });
 
     it('4.4. ProfileManager atualiza saldo de RockCoins de forma atômica', async () => {
@@ -151,6 +153,7 @@ describe('ROCKBRAZIL V12 — Revisão Geral, Conforto Visual, Áudio iOS, Result
         greatCount: 0,
         goodCount: 0,
         missCount: 0,
+        playableNotesCount: 100,
         combo: 100
       };
 
@@ -162,9 +165,10 @@ describe('ROCKBRAZIL V12 — Revisão Geral, Conforto Visual, Áudio iOS, Result
         true
       );
 
-      expect(result.earnedCoins).toBe(7);
-      expect(result.totalCoins).toBe(initialCoins + 7);
-      expect(profileManager.getRockCoins()).toBe(initialCoins + 7);
+      // Em EASY, a recompensa oficial é 1 RockCoin
+      expect(result.earnedCoins).toBe(1);
+      expect(result.totalCoins).toBe(initialCoins + 1);
+      expect(profileManager.getRockCoins()).toBe(initialCoins + 1);
     });
   });
 

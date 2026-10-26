@@ -26,6 +26,7 @@ export class GameEngine {
   public onMiss?: (lane: Lane, note: Note) => void;
   public onSustainTick?: (lane: Lane, scoreGained: number) => void;
   public onGameOver?: (stats: GameStats) => void;
+  public onMuteRequested?: (muted: boolean) => void;
 
   constructor(notes: Note[], difficulty: Difficulty = 'MEDIUM', settings: GameSettings) {
     this.difficulty = difficulty;
@@ -58,6 +59,9 @@ export class GameEngine {
     this.isDead = false;
     this.lastSustainTickTime = 0;
     this.activeNoteStartIndex = 0;
+    if (this.settings.muteOnMiss) {
+      this.onMuteRequested?.(false);
+    }
     this.chartTimeline.loadNotes(this.notes, difficulty);
   }
 
@@ -302,6 +306,10 @@ export class GameEngine {
         this.onHit(result);
       }
 
+      if (this.settings.muteOnMiss) {
+        this.onMuteRequested?.(false);
+      }
+
       return result;
     }
 
@@ -359,6 +367,10 @@ export class GameEngine {
 
         if (this.onMiss) {
           this.onMiss(note.lane, note);
+        }
+
+        if (this.settings.muteOnMiss) {
+          this.onMuteRequested?.(true);
         }
 
         // Check for Game Over (Life reaches 0)

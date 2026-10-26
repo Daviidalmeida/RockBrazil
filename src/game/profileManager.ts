@@ -1,5 +1,6 @@
 import { Difficulty, GameSettings, SongRecord, GameStats } from '../types';
 import { RockCoinsManager } from './economy/rockCoinsManager';
+import { FirestoreService } from '../firebase/firestoreService';
 
 export interface MatchHistoryItem {
   id: string;
@@ -61,7 +62,8 @@ export class ProfileManager {
       sfxVolume: 0.9,
       audioOffsetMs: 0,
       noteSpeedMultiplier: 1.0,
-      visualEffectsEnabled: true
+      visualEffectsEnabled: true,
+      muteOnMiss: false
     },
     records: {},
     history: []
@@ -168,7 +170,8 @@ export class ProfileManager {
         sfxVolume: 0.9,
         audioOffsetMs: 0,
         noteSpeedMultiplier: 1.0,
-        visualEffectsEnabled: true
+        visualEffectsEnabled: true,
+        muteOnMiss: false
       },
       records: {},
       history: []
@@ -238,7 +241,13 @@ export class ProfileManager {
     cleared: boolean
   ): Promise<RecordMatchResult> {
     const timestamp = Date.now();
-    const earnedCoins = cleared ? RockCoinsManager.calculateReward(stats.stars || 1, stats.accuracy || 0, true) : 0;
+    const playableCount = stats.playableNotesCount ?? ((stats.hitsCount ?? 0) + (stats.missCount ?? 0));
+    const earnedCoins = RockCoinsManager.calculateReward(
+      diff,
+      stats.missCount ?? 0,
+      playableCount,
+      cleared
+    );
 
     if (!this.activeProfile) {
       const fallbackRecord: SongRecord = {
@@ -352,6 +361,11 @@ export class ProfileManager {
 
     this.activeProfile.lastPlayedAt = timestamp;
     await this.saveProfileToDB(this.activeProfile);
+
+    // V13: Sincronização em nuvem segura para usuários autenticados
+    if (this.activeProfile.id && this.activeProfile.id !== 'guest') {
+      FirestoreService.syncProfileToCloud(this.activeProfile.id, this.activeProfile).catch(() => {});
+    }
 
     return {
       isNewRecord,

@@ -9,11 +9,13 @@ export class AudioManager {
   // Audio File playback
   private activeBufferSource: AudioBufferSourceNode | null = null;
   private fileGainNode: GainNode | null = null;
+  private muteGainNode: GainNode | null = null;
   private sfxGainNode: GainNode | null = null;
   private fileStartTime = 0;
   private filePauseOffset = 0;
   private isFilePlaying = false;
   private isFilePaused = false;
+  private isMissMuted = false;
   private currentAudioBuffer: AudioBuffer | null = null;
   private isUsingProcedural = true;
   private onEndedCallback: (() => void) | null = null;
@@ -204,9 +206,15 @@ export class AudioManager {
     this.fileGainNode.gain.setValueAtTime(this.settings.musicVolume, this.ctx.currentTime);
     this.fileGainNode.connect(this.ctx.destination);
 
+    // V13: Estágio de ganho isolado para silenciar ao errar sem afetar o volume do usuário
+    this.muteGainNode = this.ctx.createGain();
+    const initialMute = this.isMissMuted ? 0.0001 : 1.0;
+    this.muteGainNode.gain.setValueAtTime(initialMute, this.ctx.currentTime);
+    this.muteGainNode.connect(this.fileGainNode);
+
     const source = this.ctx.createBufferSource();
     source.buffer = buffer;
-    source.connect(this.fileGainNode);
+    source.connect(this.muteGainNode);
 
     source.onended = () => {
       if (this.activeBufferSource === source) {
@@ -281,6 +289,58 @@ export class AudioManager {
       }
       this.fileGainNode = null;
     }
+
+    if (this.muteGainNode) {
+      try {
+        this.muteGainNode.disconnect();
+      } catch {
+        // Ignore
+      }
+      this.muteGainNode = null;
+    }
+  }
+
+  /**
+   * V13: Silenciar música ao errar (Mute on Miss).
+   * Aplica transição suave (25ms) para evitar estalos de áudio sem causar atraso perceptível.
+   */
+  setMuteOnMiss(muted: boolean): void {
+    if (this.isMissMuted === muted && this.muteGainNode) {
+      return;
+    }
+    this.isMissMuted = muted;
+
+    if (this.muteGainNode && this.ctx) {
+      const t = this.ctx.currentTime;
+      const target = muted ? 0.0001 : 1.0;
+      this.muteGainNode.gain.cancelScheduledValues(t);
+      this.muteGainNode.gain.setValueAtTime(this.muteGainNode.gain.value, t);
+      this.muteGainNode.gain.linearRampToValueAtTime(target, t + 0.025);
+    }
+
+    if (this.isUsingProcedural) {
+      this.synth.setMuted(muted);
+    }
+  }
+
+  /**
+   * Restaura o volume musical ao iniciar, reiniciar ou despausar.
+   */
+  resetMuteOnMiss(): void {
+    this.isMissMuted = false;
+    if (this.muteGainNode && this.ctx) {
+      const t = this.ctx.currentTime;
+      this.muteGainNode.gain.cancelScheduledValues(t);
+      this.muteGainNode.gain.setValueAtTime(1.0, t);
+    }
+
+    if (this.isUsingProcedural) {
+      this.synth.setMuted(false);
+    }
+  }
+
+  get isMuted(): boolean {
+    return this.isMissMuted;
   }
 
   /**

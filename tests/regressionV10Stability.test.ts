@@ -6,6 +6,7 @@ import { ChartShiftManager } from '../src/game/catalog/chartShiftManager';
 import { UnifiedMasterClock } from '../src/game/sync/masterClock';
 import { Difficulty, GameSettings, Note } from '../src/types';
 import { AudioManager } from '../src/audio/audioManager';
+import { RockCoinsManager } from '../src/game/economy/rockCoinsManager';
 
 const defaultSettings: GameSettings = {
   musicVolume: 0.85,
@@ -134,15 +135,12 @@ describe('ROCKBRAZIL V10 — Suíte de Estabilidade, Encerramento e Regressão G
   });
 
   it('7. Cálculo consistente de RockCoins na tela de resultados', () => {
-    // 5 estrelas e 100.000 pontos
-    const stats1 = { stars: 5, score: 100000 };
-    const coins1 = stats1.stars * 25 + Math.floor(stats1.score / 1000);
-    expect(coins1).toBe(5 * 25 + 100); // 225 RockCoins
-
-    // 3 estrelas e 35.400 pontos
-    const stats2 = { stars: 3, score: 35400 };
-    const coins2 = stats2.stars * 25 + Math.floor(stats2.score / 1000);
-    expect(coins2).toBe(3 * 25 + 35); // 110 RockCoins
+    // V13 Tabela Oficial por Dificuldade
+    expect(RockCoinsManager.calculateReward('EASY', 0, 100, true)).toBe(1);
+    expect(RockCoinsManager.calculateReward('MEDIUM', 0, 100, true)).toBe(2);
+    expect(RockCoinsManager.calculateReward('HARD', 0, 100, true)).toBe(3);
+    expect(RockCoinsManager.calculateReward('EXPERT', 2, 100, true)).toBe(3);
+    expect(RockCoinsManager.calculateReward('EXPERT', 0, 100, true)).toBe(5);
   });
 
   it('8. Isolamento de áudio local: 160 músicas com áudio local não utilizam YouTube', () => {

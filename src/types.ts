@@ -160,6 +160,9 @@ export interface GameSettings {
   noteSpeedMultiplier: number; // 0.8 to 2.0
   noteSpeedPreset?: NoteSpeedPreset; // 'LENTA' | 'NORMAL' | 'RÁPIDA'
   visualEffectsEnabled: boolean;
+  muteOnMiss?: boolean; // V13: Silenciar música ao errar
 }
+
+export type { PlayerProfile } from './game/profileManager';
 
 export type BeatmapByDifficulty = Record<Difficulty, Note[]>;

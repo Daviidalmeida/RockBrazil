@@ -1,48 +1,58 @@
+import { Difficulty } from '../../types';
+
 /**
  * RockBrazil Economy - RockCoins Manager
  *
- * FASE 4 — Regras Oficiais de Balanceamento V12:
+ * FASE 2 — Regras Oficiais de Balanceamento por Dificuldade (V13):
  *
- * Recompensa por conclusão válida:
- * - 1 estrela: 1 RockCoin
- * - 2 estrelas: 2 RockCoins
- * - 3 estrelas: 3 RockCoins
- * - 4 estrelas: 4 RockCoins
- * - 5 estrelas: 5 RockCoins
+ * TABELA OFICIAL:
+ * - FÁCIL (EASY): 1 RockCoin (mesmo com 100% de precisão)
+ * - MÉDIO (MEDIUM): 2 RockCoins (mesmo com 100% de precisão)
+ * - DIFÍCIL (HARD): 3 RockCoins (mesmo com 100% de precisão)
+ * - EXPERT:
+ *     - Concluir com um ou mais erros: 3 RockCoins
+ *     - Concluir sem nenhum erro: 5 RockCoins
  *
- * BÔNUS DE PRECISÃO:
- * - 100% de acertos: +2 RockCoins
- *
- * LIMITE MÁXIMO:
- * - 7 RockCoins por conclusão de música.
- *
- * Se a partida não for concluída (falha ou saída):
- * - 0 RockCoins concedidas.
+ * REGRAS OBRIGATÓRIAS:
+ * 1. As 5 RockCoins do Expert perfeito são o TOTAL da recompensa (não 3 + 5).
+ * 2. O bônus de 5 RockCoins só existe no EXPERT.
+ * 3. A quantidade de estrelas NÃO influencia a recompensa.
+ * 4. Julgamento Bom, Ótimo ou Perfeito NÃO altera a recompensa.
+ * 5. Partida abandonada, incompleta ou Game Over: 0 RockCoins.
+ * 6. Chart sem notas jogáveis: 0 RockCoins.
+ * 7. Teto máximo estrito: 5 RockCoins por conclusão.
  */
-
 export class RockCoinsManager {
   /**
    * Calcula a recompensa em RockCoins para uma partida concluída.
    *
-   * @param stars Quantidade de estrelas obtidas (1 a 5).
-   * @param accuracy Precisão percentual (0 a 100).
-   * @param completed Se a partida foi finalizada com sucesso.
-   * @returns Total de RockCoins concedidas (0 a 7).
+   * @param difficulty Dificuldade efetivamente jogada ('EASY' | 'MEDIUM' | 'HARD' | 'EXPERT').
+   * @param missCount Total de notas perdidas/erros cometidos.
+   * @param playableNotesCount Total de notas jogáveis do chart.
+   * @param completed Se a música foi concluída normalmente.
+   * @returns Total de RockCoins concedidas (0 a 5).
    */
-  public static calculateReward(stars: number, accuracy: number, completed = true): number {
-    if (!completed) {
+  public static calculateReward(
+    difficulty: Difficulty,
+    missCount = 0,
+    playableNotesCount = 1,
+    completed = true
+  ): number {
+    if (!completed || playableNotesCount <= 0) {
       return 0;
     }
 
-    const safeStars = Math.max(1, Math.min(5, Math.floor(stars || 1)));
-    let reward = safeStars;
-
-    // Bônus de precisão absoluta (100% de acertos)
-    if (accuracy >= 100) {
-      reward += 2;
+    switch (difficulty) {
+      case 'EASY':
+        return 1;
+      case 'MEDIUM':
+        return 2;
+      case 'HARD':
+        return 3;
+      case 'EXPERT':
+        return missCount === 0 ? 5 : 3;
+      default:
+        return 1;
     }
-
-    // Teto máximo estrito: 7 RockCoins
-    return Math.min(7, Math.max(0, reward));
   }
 }

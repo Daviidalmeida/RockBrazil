@@ -23,6 +23,7 @@
   "dependencies": {
     "@capacitor/core": "^8.5.3",
     "@types/jszip": "^3.4.0",
+    "firebase": "^13.1.0",
     "jszip": "^3.10.2"
   },
   "optionalDependencies": {

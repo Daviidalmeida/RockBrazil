@@ -508,17 +508,43 @@ export class YouTubePlayerController {
     return this.playbackState === PlaybackState.PLAYING;
   }
 
+  private isMissMuted = false;
+
   public isReadyState(): boolean {
     return this.isReady;
   }
 
   public setVolume(volPercent: number): void {
     this.volume = Math.max(0, Math.min(100, volPercent));
-    if (this.player && this.player.setVolume) {
+    if (this.player && this.player.setVolume && !this.isMissMuted) {
       try {
         this.player.setVolume(this.volume);
       } catch {
         // Ignore
+      }
+    }
+  }
+
+  public setMuted(muted: boolean): void {
+    this.isMissMuted = muted;
+    if (this.player) {
+      try {
+        if (muted) {
+          if (this.player.mute) {
+            this.player.mute();
+          } else if (this.player.setVolume) {
+            this.player.setVolume(0);
+          }
+        } else {
+          if (this.player.unMute) {
+            this.player.unMute();
+          }
+          if (this.player.setVolume) {
+            this.player.setVolume(this.volume);
+          }
+        }
+      } catch {
+        // Fallback or ignore
       }
     }
   }

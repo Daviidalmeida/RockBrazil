@@ -27,7 +27,8 @@ export class SettingsManager {
       sfxVolume: 0.9,
       audioOffsetMs: 0,
       noteSpeedMultiplier: 1.0,
-      visualEffectsEnabled: true
+      visualEffectsEnabled: true,
+      muteOnMiss: false
     };
 
     try {

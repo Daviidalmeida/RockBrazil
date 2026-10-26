@@ -88,6 +88,8 @@ export class UIManager {
   private sliderOffset: HTMLInputElement;
   private sliderSpeed: HTMLInputElement;
   private checkFx: HTMLInputElement;
+  private checkMuteOnMiss: HTMLInputElement | null = null;
+  private modalWelcomeEntry: HTMLElement | null = null;
   private valMusic: HTMLElement;
   private valSfx: HTMLElement;
   private valOffset: HTMLElement;
@@ -96,6 +98,9 @@ export class UIManager {
   private overlayUnblockAudio: HTMLElement | null = null;
 
   // Callbacks
+  public onLoginWithGoogleClicked?: () => void;
+  public onPlayAsGuestWelcomeClicked?: () => void;
+  public onSwitchAccountModeClicked?: () => void;
   public onPlayGameRequested?: (song: SongMetadata, difficulty: Difficulty) => void;
   public onOpenSettingsClicked?: () => void;
   public onOpenHowToPlayClicked?: () => void;
@@ -190,6 +195,8 @@ export class UIManager {
     this.sliderOffset = document.getElementById('cfg-offset') as HTMLInputElement;
     this.sliderSpeed = document.getElementById('cfg-speed') as HTMLInputElement;
     this.checkFx = document.getElementById('cfg-fx') as HTMLInputElement;
+    this.checkMuteOnMiss = document.getElementById('cfg-mute-on-miss') as HTMLInputElement;
+    this.modalWelcomeEntry = document.getElementById('modal-welcome-entry');
 
     this.valMusic = document.getElementById('val-cfg-music')!;
     this.valSfx = document.getElementById('val-cfg-sfx')!;
@@ -439,6 +446,22 @@ export class UIManager {
       this.onSettingsChanged?.({ visualEffectsEnabled: this.checkFx.checked });
     });
 
+    this.checkMuteOnMiss?.addEventListener('change', () => {
+      this.onSettingsChanged?.({ muteOnMiss: this.checkMuteOnMiss?.checked });
+    });
+
+    document.getElementById('btn-login-google')?.addEventListener('click', () => {
+      this.onLoginWithGoogleClicked?.();
+    });
+
+    document.getElementById('btn-play-guest')?.addEventListener('click', () => {
+      this.onPlayAsGuestWelcomeClicked?.();
+    });
+
+    document.getElementById('btn-switch-account-mode')?.addEventListener('click', () => {
+      this.onSwitchAccountModeClicked?.();
+    });
+
     document.getElementById('btn-test-beep')?.addEventListener('click', () => {
       this.onTestBeepClicked?.();
     });
@@ -517,6 +540,13 @@ export class UIManager {
     if (this.valSpeed) this.valSpeed.textContent = `${settings.noteSpeedMultiplier.toFixed(1)}x`;
 
     if (this.checkFx) this.checkFx.checked = settings.visualEffectsEnabled;
+    if (this.checkMuteOnMiss) this.checkMuteOnMiss.checked = Boolean(settings.muteOnMiss);
+  }
+
+  showWelcomeModal(show: boolean): void {
+    if (this.modalWelcomeEntry) {
+      this.modalWelcomeEntry.classList.toggle('hidden', !show);
+    }
   }
 
   showScreen(state: GameState): void {
@@ -722,7 +752,7 @@ export class UIManager {
     this.showScreen(GameState.GAME_OVER);
   }
 
-  showResults(song: SongMetadata, stats: GameStats, recordResult?: RecordMatchResult): void {
+  showResults(song: SongMetadata, stats: GameStats, recordResult?: RecordMatchResult, difficulty: Difficulty = 'HARD'): void {
     this.resultSongTitle.textContent = `${song.title} - ${song.artist}`;
     this.resultScore.textContent = `${stats.score.toLocaleString('pt-BR')} PTS`;
     this.resultAccuracy.textContent = `${stats.accuracy || 0}%`;
@@ -744,8 +774,14 @@ export class UIManager {
 
     const coinsEl = document.getElementById('result-coins');
     if (coinsEl) {
-      const earnedCoins = recordResult?.earnedCoins ?? RockCoinsManager.calculateReward(stats.stars || 1, stats.accuracy || 0, true);
-      coinsEl.textContent = `+${earnedCoins} RockCoins`;
+      const playable = stats.playableNotesCount ?? (hits + (stats.missCount || 0));
+      const earnedCoins = recordResult?.earnedCoins ?? RockCoinsManager.calculateReward(
+        difficulty,
+        stats.missCount || 0,
+        playable,
+        true
+      );
+      coinsEl.textContent = `ROCKCOINS GANHAS: +${earnedCoins}`;
     }
 
     const starCount = stats.stars || 1;
@@ -832,8 +868,8 @@ export class UIManager {
         }
       }
 
-      // Format score with dots
-      const scoreText = bestScore > 0 ? `${bestScore.toLocaleString('pt-BR')} PTS` : 'SEM RECORDE';
+      // Format score with dots without repeating "SEM RECORDE"
+      const scoreText = bestScore > 0 ? `${bestScore.toLocaleString('pt-BR')} PTS` : '---';
       const scoreClass = bestScore > 0 ? 'row-score' : 'row-score unplayed';
 
       let fileNoticeHtml = '';
@@ -849,17 +885,25 @@ export class UIManager {
         `;
       }
 
-      // Details drawer when selected
+      // V13: Redesign das Estatísticas do Catálogo integrado ao card
       let detailsDrawerHtml = '';
       if (isSelected) {
-        detailsDrawerHtml = `
-          <div class="row-expanded-details">
-            <span><strong>RECORDE:</strong> ${bestScore > 0 ? `${bestScore.toLocaleString('pt-BR')} PTS (${bestDiff})` : 'SEM RECORDE'}</span>
-            <span><strong>ÚLTIMA:</strong> ${lastScore > 0 ? `${lastScore.toLocaleString('pt-BR')} PTS` : '---'}</span>
-            <span><strong>COMBO:</strong> ${bestCombo > 0 ? `${bestCombo}` : '---'}</span>
-            <span><strong>PARTIDAS:</strong> ${playCount}</span>
-          </div>
-        `;
+        if (bestScore > 0 || playCount > 0) {
+          detailsDrawerHtml = `
+            <div class="row-meta-stats">
+              <span class="meta-stat-pill record-pill">🏆 Melhor: <strong>${bestScore.toLocaleString('pt-BR')} PTS</strong>${bestDiff ? ` (${bestDiff})` : ''}</span>
+              <span class="meta-stat-pill">Última: <strong>${lastScore > 0 ? `${lastScore.toLocaleString('pt-BR')} PTS` : '---'}</strong></span>
+              <span class="meta-stat-pill">Combo: <strong>${bestCombo > 0 ? `${bestCombo}x` : '---'}</strong></span>
+              <span class="meta-stat-pill">Partidas: <strong>${playCount}</strong></span>
+            </div>
+          `;
+        } else {
+          detailsDrawerHtml = `
+            <div class="row-meta-stats unplayed">
+              <span class="meta-stat-pill unplayed-pill">🎸 Nenhuma partida jogada ainda · Toque duas vezes para jogar!</span>
+            </div>
+          `;
+        }
       }
 
       const coverHtml = song.coverUrl

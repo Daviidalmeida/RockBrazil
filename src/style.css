@@ -1260,22 +1260,43 @@ html, body {
   font-weight: 700;
 }
 
-/* Expandable Details Container when Selected */
-.row-expanded-details {
+/* V13: Modern Integrated Meta Stats */
+.row-meta-stats {
   width: 100%;
-  padding: 6px 10px;
-  margin: 4px 0 6px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1.5px solid rgba(0, 0, 0, 0.25);
-  border-radius: 6px;
+  padding: 4px 0 2px;
+  margin: 3px 0 1px;
+  background: transparent;
   font-family: var(--font-hand);
   font-size: 11px;
-  color: #222;
+  color: #262626;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 14px;
-  justify-content: space-between;
-  box-shadow: 1px 1.5px 0 rgba(0, 0, 0, 0.2);
+  gap: 4px 8px;
+  align-items: center;
+}
+
+.meta-stat-pill {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  padding: 2px 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.meta-stat-pill.record-pill {
+  background: rgba(234, 179, 8, 0.16);
+  border-color: rgba(202, 138, 4, 0.35);
+  color: #854d0e;
+}
+
+.meta-stat-pill.unplayed-pill {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.22);
+  color: #1e40af;
+  font-style: italic;
 }
 
 .song-link-box {
@@ -1980,4 +2001,148 @@ html, body {
 }
 .result-coins-block .coins-icon {
   font-size: 18px;
+}
+
+/* ========================================================
+   V13: WELCOME & ENTRY MODAL
+   ======================================================== */
+.welcome-card {
+  max-width: 440px;
+  width: 90%;
+  text-align: center;
+  padding: 24px 20px;
+}
+
+.welcome-header {
+  margin-bottom: 20px;
+}
+
+.welcome-badge {
+  display: inline-block;
+  background: #ffe600;
+  color: #1a1a1a;
+  font-family: var(--font-rock);
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1.5px solid #1a1a1a;
+  box-shadow: 1.5px 1.5px 0 #1a1a1a;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+
+.welcome-title {
+  font-family: var(--font-rock);
+  font-size: 26px;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.welcome-subtitle {
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: #4b5563;
+  margin: 6px 0 0;
+}
+
+.welcome-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.welcome-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 2px solid #1a1a1a;
+  border-radius: 8px;
+  box-shadow: 3px 3px 0 #1a1a1a;
+  background: #ffffff;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  text-align: left;
+}
+
+.welcome-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 #1a1a1a;
+}
+
+.welcome-btn.btn-google {
+  background: #ffffff;
+  border-color: #1a1a1a;
+}
+
+.welcome-btn.btn-google:hover {
+  background: #f8fafc;
+}
+
+.welcome-btn.btn-guest {
+  background: #fef08a;
+  border-color: #1a1a1a;
+}
+
+.welcome-btn.btn-guest:hover {
+  background: #fef9c3;
+}
+
+.welcome-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.welcome-btn-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.welcome-btn-main {
+  font-family: var(--font-rock);
+  font-size: 15px;
+  color: #1a1a1a;
+  letter-spacing: 0.5px;
+}
+
+.welcome-btn-sub {
+  font-family: var(--font-hand);
+  font-size: 11px;
+  color: #4b5563;
+}
+
+.welcome-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 4px 0;
+}
+
+.welcome-divider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #d1d5db;
+}
+
+.welcome-divider span {
+  position: relative;
+  background: var(--paper-bg, #fbf7ee);
+  padding: 0 10px;
+  font-family: var(--font-rock);
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.welcome-footer-note {
+  font-family: var(--font-hand);
+  font-size: 11px;
+  color: #6b7280;
+  font-style: italic;
+  margin-top: 10px;
 }

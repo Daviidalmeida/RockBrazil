@@ -109,10 +109,23 @@ export class RockSynth {
     return Math.max(0, this.ctx.currentTime - this.songStartTime);
   }
 
+  private isMuted = false;
+
   setVolume(volume: number): void {
     this.currentVolume = Math.max(0, Math.min(1, volume));
-    if (this.masterGain && this.ctx) {
+    if (this.masterGain && this.ctx && !this.isMuted) {
       this.masterGain.gain.setValueAtTime(this.currentVolume, this.ctx.currentTime);
+    }
+  }
+
+  setMuted(muted: boolean): void {
+    this.isMuted = muted;
+    if (this.masterGain && this.ctx) {
+      const t = this.ctx.currentTime;
+      const target = muted ? 0.0001 : this.currentVolume;
+      this.masterGain.gain.cancelScheduledValues(t);
+      this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, t);
+      this.masterGain.gain.linearRampToValueAtTime(target, t + 0.025);
     }
   }
 

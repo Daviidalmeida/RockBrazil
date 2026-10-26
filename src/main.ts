@@ -21,6 +21,8 @@ import { InputController } from './game/input/inputController';
 import { GameSessionController } from './game/session/gameSessionController';
 import { SessionState } from './game/session/sessionState';
 import { ChartTimeline } from './game/timeline/chartTimeline';
+import { AuthService } from './firebase/authService';
+import { FirestoreService } from './firebase/firestoreService';
 
 class RockBrazilGame {
   private settingsManager: SettingsManager;
@@ -195,16 +197,56 @@ class RockBrazilGame {
     this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
     this.ui.initRankingDropdowns(this.library.getActiveSongs());
 
-    // 4. Open directly on the Main Menu!
+    // 4. Open directly on the Main Menu or Welcome Modal based on saved preference
     this.renderer.setDifficulty(this.currentDifficulty);
     this.ui.setDifficultyLanes(this.currentDifficulty);
     this.ui.showScreen(GameState.MENU);
+
+    const savedPref = AuthService.getSavedAuthPreference();
+    if (savedPref === 'guest') {
+      this.ui.showWelcomeModal(false);
+    } else if (savedPref === 'google') {
+      AuthService.onAuthChange(async (user) => {
+        if (user) {
+          await this.handleUserAuthenticated(user);
+          this.ui.showWelcomeModal(false);
+        } else {
+          // Sessão expirou ou usuário deslogado
+          this.ui.showWelcomeModal(true);
+        }
+      });
+    } else {
+      // Primeira visita: apresenta tela de boas-vindas / escolha!
+      this.ui.showWelcomeModal(true);
+    }
 
     if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('testGameplay') === 'true') {
       const song = this.library.getActiveSongs()[2]; // Pitty - Admirável Chip Novo
       setTimeout(() => {
         this.startNewMatch(song, 'MEDIUM');
       }, 150);
+    }
+  }
+
+  private async handleUserAuthenticated(user: any): Promise<void> {
+    try {
+      const cloudData = await FirestoreService.fetchProfileFromCloud(user.uid);
+      let current = this.profileManager.getActiveProfile();
+
+      if (cloudData) {
+        current = FirestoreService.mergeProfiles(current, cloudData);
+      } else {
+        current.id = user.uid;
+        if (user.displayName) current.name = user.displayName;
+        if (user.photoURL) current.avatar = '🎸';
+        await FirestoreService.syncProfileToCloud(user.uid, current);
+      }
+
+      this.profileManager.updateActiveProfile(current);
+      this.ui.setProfileHeader(current);
+      this.ui.renderSongLibrary(this.library.getActiveSongs(), current);
+    } catch (err) {
+      console.warn('[handleUserAuthenticated] Falha ao sincronizar com nuvem:', err);
     }
   }
 
@@ -238,6 +280,12 @@ class RockBrazilGame {
       // Falhas geram feedback auditivo/visual sem tremer o Canvas
     };
 
+    // V13: Silenciar música ao errar
+    this.engine.onMuteRequested = (muted: boolean) => {
+      this.audio.setMuteOnMiss(muted);
+      this.ytPlayer.setMuted(muted);
+    };
+
     this.engine.onSustainTick = (lane: Lane) => {
       this.renderer.spawnSustainSparks(lane);
     };
@@ -248,6 +296,29 @@ class RockBrazilGame {
   }
 
   private setupUICallbacks(): void {
+    // V13: Login Google & Modo Convidado
+    this.ui.onLoginWithGoogleClicked = async () => {
+      const { user, error } = await AuthService.signInWithGoogle();
+      if (user) {
+        await this.handleUserAuthenticated(user);
+        this.ui.showWelcomeModal(false);
+        this.ui.showScreen(GameState.MENU);
+      } else if (error) {
+        alert(`Falha no login com Google: ${error}`);
+      }
+    };
+
+    this.ui.onPlayAsGuestWelcomeClicked = async () => {
+      await AuthService.signInAsGuest();
+      this.ui.showWelcomeModal(false);
+      this.ui.showScreen(GameState.MENU);
+    };
+
+    this.ui.onSwitchAccountModeClicked = () => {
+      this.ui.showScreen(GameState.MENU);
+      this.ui.showWelcomeModal(true);
+    };
+
     // Navigation
     this.ui.onOpenSongSelectClicked = (filter) => {
       this.state = GameState.SONG_SELECT;
@@ -916,6 +987,8 @@ class RockBrazilGame {
   private async startCountdown(sessionId: number): Promise<void> {
     this.clearCountdown();
     this.audio.stop();
+    this.audio.resetMuteOnMiss();
+    this.ytPlayer.setMuted(false);
 
     await this.audio.init();
     await this.audio.ensureResumed();
@@ -1265,11 +1338,11 @@ class RockBrazilGame {
 
     try {
       this.ui.showCelebration(() => {
-        this.ui.showResults(this.currentSong, stats, recordResult);
+        this.ui.showResults(this.currentSong, stats, recordResult, this.currentDifficulty);
       });
     } catch (uiErr) {
       console.error('[finishSong] Erro na interface ao exibir resultados:', uiErr);
-      this.ui.showResults(this.currentSong, stats, recordResult);
+      this.ui.showResults(this.currentSong, stats, recordResult, this.currentDifficulty);
     }
   }
 }
