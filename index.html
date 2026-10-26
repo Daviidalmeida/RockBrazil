@@ -216,14 +216,21 @@
     <div id="screen-song-select" class="overlay-screen hidden notebook-page">
       <div class="notebook-content library-notebook-wrapper">
         <div class="notebook-header">
-          <h2 id="library-screen-title" class="notebook-page-title">SELEÇÃO DE MÚSICAS</h2>
+          <div class="library-header-bar">
+            <h2 id="library-screen-title" class="notebook-page-title">SELEÇÃO DE MÚSICAS</h2>
+            <div id="library-coins-badge" class="library-coins-badge" aria-label="Saldo de RockCoins" title="Saldo atual de RockCoins">
+              <span class="coin-icon">🪙</span>
+              <span id="library-rockcoins-val">0</span>
+            </div>
+          </div>
           <div class="marker-underline"></div>
         </div>
 
-        <!-- Filter Tabs: Todas / Minhas Músicas -->
+        <!-- Filter Tabs: Todas / Em Breve & Collection Progress Counter -->
         <div class="notebook-filter-row">
           <button id="tab-songs-all" class="notebook-filter-tab active">TODAS AS FAIXAS</button>
-          <button id="tab-songs-custom" class="notebook-filter-tab">MINHAS MÚSICAS</button>
+          <button id="tab-songs-custom" class="notebook-filter-tab disabled-tab" disabled aria-disabled="true" title="Em breve novas músicas internacionais">EM BREVE...</button>
+          <div id="collection-progress-pill" class="collection-progress-pill" aria-label="Progresso da Coleção">3 / 162 MÚSICAS</div>
         </div>
 
         <!-- Song Rows Scroll List (Aligned with notebook lines) -->
@@ -341,21 +348,42 @@
       </div>
     </div>
 
-    <!-- 4.2. MODAL CELEBRAÇÃO DE DESBLOQUEIO (V13.3) -->
-    <div id="modal-unlock-celebration" class="modal-backdrop hidden">
-      <div class="notebook-dialog-card celebration-card">
-        <div class="celebration-anim-icon">🔓</div>
-        <div class="celebration-badge">NOVA MÚSICA DESBLOQUEADA!</div>
-        <div class="marker-underline small"></div>
-        <div class="celebration-song-info">
-          <img id="celebration-song-cover" class="celebration-cover-img" src="images/default-cover.png" alt="Capa" onerror="this.onerror=null;this.src='images/default-cover.png';" />
-          <h3 id="celebration-song-title" class="celebration-title">Título</h3>
-          <span id="celebration-song-artist" class="celebration-artist">Artista</span>
-        </div>
-        <p class="celebration-desc">A música agora está disponível para jogar em todas as dificuldades!</p>
-        <div class="dialog-buttons">
-          <button id="btn-celebration-choose-diff" class="notebook-bar-btn btn-select">ESCOLHER DIFICULDADE</button>
-          <button id="btn-celebration-close" class="notebook-bar-btn btn-back">VOLTAR AO CATÁLOGO</button>
+    <!-- 4.2. MODAL CELEBRAÇÃO E REVELAÇÃO DE DESBLOQUEIO (V13.5) -->
+    <div id="modal-unlock-celebration" class="modal-backdrop hidden" aria-modal="true" role="dialog">
+      <div class="mystery-reveal-container">
+        <!-- Efeito Luz Dourada Pulsante -->
+        <div class="golden-glow-rays" aria-hidden="true"></div>
+
+        <div class="notebook-dialog-card celebration-card mystery-card-inner">
+          <div class="celebration-badge mystery-glow-badge">★ NOVA MÚSICA DESBLOQUEADA! ★</div>
+          <div class="marker-underline small"></div>
+
+          <!-- Palco de Revelação com Flip Card -->
+          <div class="mystery-flip-stage" id="mystery-flip-stage">
+            <div class="mystery-flip-card" id="mystery-flip-card">
+              <!-- Frente: [?] com Suspense Dourado -->
+              <div class="mystery-card-face mystery-card-front" id="mystery-flip-front">
+                <span class="mystery-big-mark">?</span>
+                <span class="mystery-revealing-label">REVELANDO...</span>
+              </div>
+              <!-- Verso: Capa Oficial Revelada -->
+              <div class="mystery-card-face mystery-card-back" id="mystery-flip-back">
+                <img id="celebration-song-cover" class="celebration-cover-img" src="images/default-cover.png" alt="Capa da Música" onerror="this.onerror=null;this.src='images/default-cover.png';" />
+              </div>
+            </div>
+          </div>
+
+          <div class="celebration-song-info">
+            <h3 id="celebration-song-title" class="celebration-title">Título</h3>
+            <span id="celebration-song-artist" class="celebration-artist">Artista</span>
+          </div>
+
+          <p class="celebration-desc">A nova música foi adicionada à sua coleção permanente!</p>
+
+          <div class="dialog-buttons celebration-actions-row">
+            <button id="btn-celebration-choose-diff" class="notebook-bar-btn btn-select">TOCAR AGORA</button>
+            <button id="btn-celebration-close" class="notebook-bar-btn btn-back">CONTINUAR</button>
+          </div>
         </div>
       </div>
     </div>
@@ -409,6 +437,15 @@
                 <div class="player-name-row">
                   <span id="active-profile-name" class="player-name">Convidado</span>
                   <span class="active-badge">Ativo</span>
+                  <!-- Botão Discreto de Login Google no Perfil (V13.5) -->
+                  <button type="button" id="btn-google-profile-action" class="btn-google-discreet" aria-label="Entrar com o Google" title="Entrar com o Google">
+                    <svg class="google-discreet-icon" viewBox="0 0 24 24" width="16" height="16">
+                      <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                      <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+                      <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                      <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                    </svg>
+                  </button>
                 </div>
                 <span id="active-profile-type" class="player-account-type">Modo Convidado</span>
                 <button type="button" id="btn-open-change-avatar" class="btn-change-avatar">ALTERAR AVATAR</button>
@@ -463,6 +500,17 @@
                   <span id="best-song-score" class="best-score-display">0 PTS</span>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- SEÇÃO MINHAS CONQUISTAS (V13.5) -->
+          <div class="achievements-section">
+            <div class="achievements-section-header">
+              <span class="section-title">MINHAS CONQUISTAS</span>
+              <span id="achievements-progress-count" class="achievements-progress-badge">0 / 8</span>
+            </div>
+            <div id="achievements-grid" class="achievements-grid">
+              <!-- Renderizado dinamicamente via uiManager -->
             </div>
           </div>
 
@@ -700,17 +748,18 @@
           <span id="result-achievement-text" class="results-achievement-text">FULL COMBO!</span>
         </div>
 
-        <!-- TRÊS BOTÕES INFERIORES: JOGAR NOVAMENTE, PRÓXIMA MÚSICA, SELEÇÃO DE MÚSICAS -->
+        <!-- TRÊS BOTÕES INFERIORES: JOGAR NOVAMENTE, SELEÇÃO DE MÚSICAS, RANKING GLOBAL -->
         <div class="results-buttons-overlay">
           <button id="btn-play-again" class="result-action-btn btn-replay" aria-label="Jogar Novamente">
             <span>JOGAR NOVAMENTE</span>
           </button>
-          <button id="btn-next-song" class="result-action-btn btn-next" aria-label="Próxima Música">
-            <span>PRÓXIMA MÚSICA</span>
-          </button>
           <button id="btn-menu-result" class="result-action-btn btn-library" aria-label="Seleção de Músicas">
             <span>SELEÇÃO DE MÚSICAS</span>
           </button>
+          <button id="btn-result-ranking" class="result-action-btn btn-ranking" aria-label="Ranking Global">
+            <span>RANKING GLOBAL</span>
+          </button>
+          <button id="btn-next-song" class="hidden" style="display:none;" aria-hidden="true"></button>
         </div>
       </div>
     </div>
@@ -827,14 +876,14 @@
           <div class="tutorial-step">
             <div class="step-badge">8</div>
             <div>
-              <strong>Como Desbloquear Músicas?</strong> Novos perfis começam com 3 faixas gratuitas (<em>1406</em>, <em>À Sua Maneira</em> e <em>Admirável Chip Novo</em>). As demais custam <strong>5 RockCoins</strong> cada. Basta tocar na música com cadeado e confirmar o desbloqueio para disponibilizá-la permanentemente naquele perfil!<br>
+              <strong>Músicas Misteriosas & Desbloqueio Sequencial:</strong> Novos jogadores começam com 3 faixas clássicas liberadas (<em>1406</em>, <em>À Sua Maneira</em> e <em>Admirável Chip Novo</em>). As outras 159 músicas do catálogo são misteriosas e desbloqueadas em uma sequência canônica fixa por <strong>5 RockCoins</strong> cada. Basta tocar no card misterioso <strong>[?] DESBLOQUEAR PRÓXIMA MÚSICA</strong> na Seleção de Músicas para revelar a nova faixa! Acompanhe o progresso da sua coleção no contador oficial (ex: 3 / 162 MÚSICAS).<br>
               <em>Exemplo prático:</em> Você completou uma música no Expert com Full Combo e ganhou 5 RockCoins. Agora já pode desbloquear uma nova música!
             </div>
           </div>
           <div class="tutorial-step">
             <div class="step-badge">9</div>
             <div>
-              <strong>O que é Full Combo?</strong> É completar uma faixa acertando todas as notas sem cometer nenhum erro (0 misses). No Expert, concede o prêmio máximo de 5 RockCoins!
+              <strong>O que é Full Combo?</strong> É completar uma faixa acertando todas as notas sem cometer nenhum erro (0 misses). Se houver até mesmo 1 erro, a faixa não é considerada Full Combo. No Expert, o Full Combo concede o prêmio máximo de <strong>5 RockCoins no total</strong>!
             </div>
           </div>
           <div class="tutorial-step">
@@ -869,7 +918,13 @@
           <div class="tutorial-step">
             <div class="step-badge">14</div>
             <div>
-              <strong>Ranking Global (Exclusivo Google):</strong> O Ranking Global online sincronizado na nuvem é exclusivo para jogadores conectados com conta Google. Jogadores convidados aproveitam o jogo livremente, mantendo seus recordes gravados no dispositivo.
+              <strong>Ranking Global (Exclusivo Google):</strong> O Ranking Global online da Temporada 1 é sincronizado em nuvem e exclusivo para jogadores com conta Google autenticada. Conecte sua conta Google diretamente pela tela de Perfil!
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-badge">15</div>
+            <div>
+              <strong>Conquistas & Medalhas:</strong> Conclua desafios na Temporada 1 para desbloquear 8 medalhas exclusivas na seção <strong>MINHAS CONQUISTAS</strong> do seu perfil, desde seu Primeiro Show até alcançar o título de Lenda do Rock!
             </div>
           </div>
         </div>

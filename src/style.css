@@ -49,6 +49,10 @@ html, body {
   align-items: center;
 }
 
+.hidden {
+  display: none !important;
+}
+
 #game-app {
   position: relative;
   width: 100%;
@@ -2407,6 +2411,13 @@ html, body {
   justify-content: center;
 }
 
+.results-achievement-banner.hidden {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 .results-achievement-text {
   font-family: var(--font-display, var(--font-rock, sans-serif));
   font-size: clamp(20px, 4.5vw, 28px);
@@ -2728,6 +2739,8 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
   background: rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 230, 0, 0.35);
@@ -2787,7 +2800,8 @@ html, body {
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid #ffd700;
   border-radius: 20px;
-  padding: 6px 14px;
+  padding: 4px 12px;
+  white-space: nowrap;
 }
 
 .player-coins-pill .coins-amount {
@@ -3594,5 +3608,508 @@ html, body {
 @media (prefers-reduced-motion: reduce) {
   .avatar-card-item, .rank-tab-btn, .ranking-header-pill, .btn-change-avatar {
     transition: none !important;
+  }
+}
+
+/* ========================================================
+   ROCKBRAZIL V13.5 — MÚSICAS MISTERIOSAS, RECOMPENSAS,
+   CONQUISTAS E SALDO NA SELEÇÃO DE MÚSICAS
+   ======================================================== */
+
+/* 1. Saldo de RockCoins e Progresso na Seleção de Músicas */
+.library-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.library-coins-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fdf6e2;
+  border: 2px solid #b45309;
+  border-radius: 20px;
+  padding: 3px 12px;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.25);
+  font-family: var(--font-display, var(--font-rock, sans-serif));
+  font-size: 16px;
+  font-weight: 900;
+  color: #78350f;
+  letter-spacing: 1px;
+}
+
+.library-coins-badge .coin-icon {
+  font-size: 16px;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.3));
+}
+
+.collection-progress-pill {
+  margin-left: auto;
+  font-family: var(--font-display, sans-serif);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  background: #1e1b4b;
+  color: #fbbf24;
+  border: 1.5px solid #fbbf24;
+  border-radius: 14px;
+  padding: 3px 10px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.notebook-filter-tab.disabled-tab {
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+  opacity: 0.45 !important;
+  filter: grayscale(0.8) !important;
+  background: #e2e8f0 !important;
+  color: #94a3b8 !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* 2. Card Misterioso de Desbloqueio Canônico */
+.mystery-song-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(254, 240, 138, 0.3), rgba(253, 224, 71, 0.2)), #fffbeb !important;
+  border: 2px dashed #b45309 !important;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  padding: 10px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.mystery-song-card:hover {
+  transform: translateY(-2px);
+  border-color: #d97706 !important;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25);
+}
+
+.mystery-card-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.mystery-icon-box {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  border: 2px solid #fef08a;
+  animation: pulseMysteryGlow 2s infinite ease-in-out;
+}
+
+@keyframes pulseMysteryGlow {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.05); filter: brightness(1.2); }
+}
+
+.mystery-question-mark {
+  font-family: var(--font-display, var(--font-rock, sans-serif));
+  font-size: 26px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+
+.mystery-card-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.mystery-card-title {
+  font-family: var(--font-display, var(--font-rock, sans-serif));
+  font-size: clamp(14px, 3.5vw, 17px);
+  font-weight: 900;
+  color: #92400e;
+  letter-spacing: 0.5px;
+}
+
+.mystery-card-cost {
+  font-family: var(--font-display, sans-serif);
+  font-size: 12px;
+  font-weight: 800;
+  color: #b45309;
+  letter-spacing: 0.5px;
+  margin-top: 1px;
+}
+
+.btn-unlock-mystery {
+  background: linear-gradient(135deg, #f59e0b, #b45309);
+  color: #ffffff;
+  border: 1.5px solid #fef08a;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-family: var(--font-display, var(--font-rock, sans-serif));
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  transition: transform 0.15s ease, filter 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-unlock-mystery:hover {
+  transform: scale(1.04);
+  filter: brightness(1.15);
+}
+
+/* Coleção Completa */
+.collection-completed-box {
+  background: linear-gradient(135deg, rgba(254, 240, 138, 0.4), rgba(245, 158, 11, 0.2)), #fffbeb;
+  border: 2px solid #f59e0b;
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+}
+
+.completed-star-icon {
+  font-size: 32px;
+}
+
+.completed-text-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.completed-title {
+  font-family: var(--font-display, var(--font-rock, sans-serif));
+  font-size: 16px;
+  font-weight: 900;
+  color: #78350f;
+  letter-spacing: 1px;
+}
+
+.completed-desc {
+  font-size: 12px;
+  color: #92400e;
+  margin-top: 2px;
+}
+
+/* 3. Golden Glow Reveal Animation */
+.mystery-reveal-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 420px;
+}
+
+.golden-glow-rays {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 480px;
+  height: 480px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 230, 0, 0.45) 0%, rgba(245, 158, 11, 0.25) 40%, rgba(0, 0, 0, 0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: rotateGoldenRays 6s linear infinite;
+  z-index: 0;
+}
+
+@keyframes rotateGoldenRays {
+  0% { transform: translate(-50%, -50%) rotate(0deg) scale(0.95); opacity: 0.7; }
+  50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.05); opacity: 1; }
+  100% { transform: translate(-50%, -50%) rotate(360deg) scale(0.95); opacity: 0.7; }
+}
+
+.mystery-card-inner {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.8) !important;
+}
+
+#modal-unlock-celebration .celebration-title,
+.mystery-card-inner .celebration-title {
+  font-family: var(--font-display, var(--font-rock, sans-serif)) !important;
+  font-size: clamp(22px, 5vw, 28px) !important;
+  color: #1a1a1a !important;
+  font-weight: 900 !important;
+  margin: 6px 0 2px !important;
+  text-shadow: none !important;
+}
+
+#modal-unlock-celebration .celebration-artist,
+.mystery-card-inner .celebration-artist {
+  font-family: var(--font-body, sans-serif) !important;
+  font-size: 14px !important;
+  color: #92400e !important;
+  font-weight: 700 !important;
+}
+
+.mystery-glow-badge {
+  color: #ffe600 !important;
+  background: #1e1b4b !important;
+  border: 1.5px solid #ffe600 !important;
+  text-shadow: 0 0 8px rgba(255, 230, 0, 0.8);
+}
+
+.mystery-flip-stage {
+  perspective: 900px;
+  width: 110px;
+  height: 110px;
+  margin: 12px auto;
+}
+
+.mystery-flip-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mystery-flip-card.revealed {
+  transform: rotateY(180deg);
+}
+
+.mystery-card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.mystery-card-front {
+  background: linear-gradient(135deg, #f59e0b, #b45309);
+  border: 3px solid #fef08a;
+  color: #fff;
+}
+
+.mystery-big-mark {
+  font-family: var(--font-display, var(--font-rock, sans-serif));
+  font-size: 52px;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  animation: pulseBigMark 1.2s infinite ease-in-out;
+}
+
+@keyframes pulseBigMark {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.mystery-revealing-label {
+  font-family: var(--font-display, sans-serif);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: #fef08a;
+  margin-top: 2px;
+  font-weight: 800;
+}
+
+.mystery-card-back {
+  background: #111;
+  transform: rotateY(180deg);
+  overflow: hidden;
+  border: 3px solid #ffe600;
+}
+
+.mystery-card-back .celebration-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 4. Conquistas e Medalhas no Perfil */
+.achievements-section {
+  margin-top: 14px;
+  padding: 10px;
+  background: rgba(14, 10, 24, 0.6);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 215, 0, 0.25);
+}
+
+.achievements-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.achievements-progress-badge {
+  font-family: var(--font-display, sans-serif);
+  font-size: 12px;
+  font-weight: 800;
+  color: #ffe600;
+  background: rgba(255, 215, 0, 0.15);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  padding: 2px 8px;
+  border-radius: 12px;
+  letter-spacing: 1px;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.achievement-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 8px 6px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  background: rgba(20, 16, 32, 0.7);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.achievement-card.unlocked {
+  border-color: rgba(255, 215, 0, 0.6);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.12), rgba(30, 24, 48, 0.85));
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.15);
+}
+
+.achievement-card.locked {
+  opacity: 0.45;
+  filter: grayscale(0.85);
+}
+
+.achievement-icon {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.achievement-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: 12px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+}
+
+.achievement-card.unlocked .achievement-title {
+  color: #ffe600;
+}
+
+.achievement-desc {
+  font-size: 9.5px;
+  color: #cbd5e1;
+  margin-top: 3px;
+  line-height: 1.2;
+}
+
+.achievement-status-badge {
+  font-size: 8.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 5px;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.achievement-card.unlocked .achievement-status-badge {
+  background: rgba(34, 197, 94, 0.25);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.achievement-card.locked .achievement-status-badge {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+/* 5. Botão Discreto do Google no Perfil */
+.btn-google-discreet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  padding: 0;
+  margin-left: 8px;
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-google-discreet:hover {
+  transform: scale(1.12);
+  filter: brightness(1.05);
+  box-shadow: 0 0 10px rgba(66, 133, 244, 0.6);
+}
+
+.btn-google-discreet.connected {
+  border-color: #34A853;
+  box-shadow: 0 0 8px rgba(52, 168, 83, 0.5);
+}
+
+/* 6. Enquadramento e Responsividade da Tela Show Finalizado */
+@media (max-height: 640px) {
+  .results-header-overlay {
+    top: 15%;
+    height: 12%;
+  }
+  .results-stars-overlay {
+    top: 28%;
+  }
+  .results-central-panel {
+    top: 34%;
+    height: 20%;
+  }
+  .results-stats-quad {
+    top: 57%;
+  }
+  .results-achievement-banner {
+    top: 79%;
+  }
+  .results-buttons-overlay {
+    top: 91%;
+    height: 7%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .golden-glow-rays {
+    animation: none !important;
+  }
+  .mystery-flip-card {
+    transition: none !important;
+  }
+  .mystery-big-mark {
+    animation: none !important;
+  }
+  .mystery-icon-box {
+    animation: none !important;
   }
 }

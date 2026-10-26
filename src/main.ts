@@ -191,7 +191,7 @@ class RockBrazilGame {
     const { activeProfile } = await this.profileManager.init();
     this.ui.setProfileHeader(activeProfile);
 
-    // V13.3: Wire Unlock & Profile Provider Callbacks
+    // V13.3 & V13.5: Wire Unlock, Mystery Songs & Profile Provider Callbacks
     this.ui.isSongUnlockedChecker = (songId) => this.profileManager.isSongUnlocked(songId);
     this.ui.onUnlockSongRequested = async (song) => {
       const res = await this.profileManager.unlockSong(song.id, song.title);
@@ -199,6 +199,59 @@ class RockBrazilGame {
         this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
       }
       return res;
+    };
+    this.ui.onUnlockMysteryRequested = async () => {
+      const res = await this.profileManager.unlockNextMysterySong(5);
+      if (res.success && res.song) {
+        this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
+        this.ui.showUnlockCelebration(res.song);
+      } else if (res.error === 'ROCKCOINS_INSUFFICIENT') {
+        alert('Você precisa de 5 RockCoins para desbloquear a próxima música! Complete shows para ganhar mais.');
+      } else if (res.error === 'ALL_SONGS_UNLOCKED') {
+        alert('Parabéns! Todas as 162 músicas do RockBrazil já estão desbloqueadas!');
+      }
+      return res;
+    };
+    this.ui.getAchievementsProvider = () => {
+      return this.profileManager.getAchievements();
+    };
+    this.ui.onGoogleProfileLoginClicked = async () => {
+      const activeProf = this.profileManager.getActiveProfile();
+      const isGoogle = activeProf?.accountType === 'google' && activeProf.id !== 'guest';
+      if (isGoogle) {
+        const confirmLogout = confirm(`Você está conectado como ${activeProf.name}.\nDeseja sair da conta Google?`);
+        if (confirmLogout) {
+          await AuthService.signOutUser();
+          await this.profileManager.switchProfile('guest');
+          const guestProf = this.profileManager.getActiveProfile();
+          this.ui.setProfileHeader(guestProf);
+          this.ui.openPlayerProfilesModal();
+          this.ui.renderSongLibrary(this.library.getActiveSongs(), guestProf);
+        }
+      } else {
+        this.ui.showLoginLoading(true);
+        const { user, error } = await AuthService.signInWithGoogle();
+        this.ui.showLoginLoading(false);
+        if (user) {
+          await this.handleUserAuthenticated(user);
+          const updatedProf = this.profileManager.getActiveProfile();
+          this.ui.openPlayerProfilesModal();
+          this.ui.renderSongLibrary(this.library.getActiveSongs(), updatedProf);
+        } else if (error) {
+          alert('Falha ao conectar conta Google: ' + error);
+        }
+      }
+    };
+    this.ui.onResultRankingClicked = () => {
+      const activeProf = this.profileManager.getActiveProfile();
+      if (RankingService.isEligibleForRanking(activeProf)) {
+        this.ui.openGlobalRankingModal();
+      } else {
+        const wantLogin = confirm('O Ranking Global é exclusivo para contas Google na Temporada 1.\nDeseja conectar sua conta Google agora?');
+        if (wantLogin) {
+          this.ui.onLoginWithGoogleClicked?.();
+        }
+      }
     };
     this.ui.getProfileStatsProvider = () => {
       return this.profileManager.getProfileStats(undefined, (id) => this.library.getSongById(id));
@@ -1444,13 +1497,19 @@ class RockBrazilGame {
       console.error('[finishSong] Erro ao gravar recorde da partida:', recErr);
     }
 
+    // V13.5: Atualiza cabeçalho e saldo com os dados atualizados
+    const currentProf = this.profileManager.getActiveProfile();
+    if (currentProf) {
+      this.ui.setProfileHeader(currentProf);
+    }
+
     try {
       this.ui.showCelebration(() => {
-        this.ui.showResults(this.currentSong, stats, recordResult, this.currentDifficulty);
+        this.ui.showResults(this.currentSong, stats, recordResult, this.currentDifficulty, true);
       });
     } catch (uiErr) {
       console.error('[finishSong] Erro na interface ao exibir resultados:', uiErr);
-      this.ui.showResults(this.currentSong, stats, recordResult, this.currentDifficulty);
+      this.ui.showResults(this.currentSong, stats, recordResult, this.currentDifficulty, true);
     }
   }
 }

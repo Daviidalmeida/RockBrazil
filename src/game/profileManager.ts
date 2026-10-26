@@ -1,6 +1,7 @@
-import { Difficulty, GameSettings, SongRecord, GameStats } from '../types';
+import { Difficulty, GameSettings, SongRecord, GameStats, SongMetadata } from '../types';
 import { RockCoinsManager } from './economy/rockCoinsManager';
 import { FirestoreService } from '../firebase/firestoreService';
+import { OFFICIAL_BRAZILIAN_CATALOG } from './catalog/catalogData';
 
 export const INITIAL_UNLOCKED_SONG_IDS: string[] = ['mam-1406', 'cap-sua-maneira', 'pit-chip-novo'];
 export const UNLOCK_COST_ROCKCOINS = 5;
@@ -39,6 +40,73 @@ export function getAvatarUrl(avatarIdOrUrl?: string): string {
   }
   return avatarIdOrUrl;
 }
+
+export interface AchievementDefinition {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  tier: 'bronze' | 'silver' | 'gold' | 'platinum';
+}
+
+export const OFFICIAL_ACHIEVEMENTS: AchievementDefinition[] = [
+  {
+    id: 'first_show',
+    title: 'Primeiro Show',
+    description: 'Complete sua primeira música em qualquer dificuldade.',
+    icon: '🎸',
+    tier: 'bronze'
+  },
+  {
+    id: 'rookie_5_songs',
+    title: 'Estreante',
+    description: 'Complete 5 músicas diferentes.',
+    icon: '⚡',
+    tier: 'bronze'
+  },
+  {
+    id: 'rocker_20_songs',
+    title: 'Roqueiro',
+    description: 'Complete 20 músicas diferentes.',
+    icon: '🔥',
+    tier: 'silver'
+  },
+  {
+    id: 'veteran_50_songs',
+    title: 'Veterano',
+    description: 'Complete 50 músicas diferentes.',
+    icon: '👑',
+    tier: 'gold'
+  },
+  {
+    id: 'first_full_combo',
+    title: 'Primeiro Full Combo',
+    description: 'Complete qualquer música com 100% de notas e 0 erros.',
+    icon: '🎯',
+    tier: 'silver'
+  },
+  {
+    id: 'collector_10',
+    title: 'Colecionador',
+    description: 'Desbloqueie 10 músicas misteriosas.',
+    icon: '💿',
+    tier: 'bronze'
+  },
+  {
+    id: 'super_collector_50',
+    title: 'Supercolecionador',
+    description: 'Desbloqueie 50 músicas misteriosas.',
+    icon: '🏆',
+    tier: 'gold'
+  },
+  {
+    id: 'rock_legend_162',
+    title: 'Lenda do Rock',
+    description: 'Desbloqueie todas as 162 músicas do RockBrazil.',
+    icon: '🌟',
+    tier: 'platinum'
+  }
+];
 
 export interface MatchHistoryItem {
   id: string;
@@ -83,6 +151,7 @@ export interface PlayerProfile {
   transactions?: CoinTransaction[];
   migrationVersion?: number;
   accountType?: 'google' | 'guest';
+  achievements?: Record<string, { unlockedAt: number }>;
 }
 
 export interface ProfileStats {
@@ -104,6 +173,8 @@ export interface ProfileStats {
   totalCoinsEarned: number;
   totalCoinsSpent: number;
   unlockedSongsCount: number;
+  achievementsCount?: number;
+  totalAchievementsCount?: number;
 }
 
 export interface LeaderboardEntry {
@@ -152,7 +223,8 @@ export class ProfileManager {
     totalCoinsSpent: 0,
     transactions: [],
     migrationVersion: 14.0,
-    accountType: 'guest'
+    accountType: 'guest',
+    achievements: {}
   };
 
   /**
@@ -385,7 +457,8 @@ export class ProfileManager {
         totalCoinsSpent: 0,
         transactions: [],
         migrationVersion: 14.0,
-        accountType: 'google'
+        accountType: 'google',
+        achievements: {}
       };
     } else {
       profile.accountType = 'google';
@@ -521,7 +594,8 @@ export class ProfileManager {
       totalCoinsSpent: 0,
       transactions: [],
       migrationVersion: 14.0,
-      accountType
+      accountType,
+      achievements: {}
     };
 
     ProfileManager.setStorageItem(SEASON_1_RESET_KEY, 'true');
@@ -602,31 +676,7 @@ export class ProfileManager {
     );
 
     if (!this.activeProfile) {
-      const fallbackRecord: SongRecord = {
-        score: stats.score,
-        stars: stats.stars || 1,
-        accuracy: stats.accuracy || 0,
-        maxCombo: stats.maxCombo,
-        bestScore: stats.score,
-        lastScore: stats.score,
-        bestStars: stats.stars || 1,
-        lastStars: stats.stars || 1,
-        bestMaxCombo: stats.maxCombo,
-        lastMaxCombo: stats.maxCombo,
-        bestAccuracy: stats.accuracy || 0,
-        lastAccuracy: stats.accuracy || 0,
-        bestDate: timestamp,
-        lastDate: timestamp,
-        playCount: 1
-      };
-      return {
-        isNewRecord: cleared,
-        previousBestScore: 0,
-        newScore: stats.score,
-        record: fallbackRecord,
-        earnedCoins,
-        totalCoins: earnedCoins
-      };
+      this.activeProfile = this.getActiveProfile();
     }
 
     if (this.activeProfile.rockCoins === undefined) {
@@ -732,6 +782,11 @@ export class ProfileManager {
     }
 
     this.activeProfile.lastPlayedAt = timestamp;
+
+    // V13.5: Avaliação automática de Conquistas da Temporada 1
+    const isFC = (misses === 0 && cleared && playableCount > 0);
+    this.checkAndUnlockAchievements(stats, cleared, isFC);
+
     await this.saveProfileToDB(this.activeProfile);
 
     // V13: Sincronização em nuvem segura para usuários autenticados
@@ -795,6 +850,9 @@ export class ProfileManager {
       timestamp: Date.now()
     });
 
+    // Avalia conquistas de coleção após desbloqueio
+    this.checkAndUnlockAchievements();
+
     await this.saveProfileToDB(profile);
 
     if (profile.id && profile.id !== 'guest') {
@@ -802,6 +860,207 @@ export class ProfileManager {
     }
 
     return { success: true, remainingCoins: profile.rockCoins };
+  }
+
+  /**
+   * Retorna a lista canônica de IDs de todas as 162 músicas do catálogo oficial.
+   */
+  public static getCanonicalSongOrder(): string[] {
+    return OFFICIAL_BRAZILIAN_CATALOG.map((s) => s.id);
+  }
+
+  /**
+   * Retorna os metadados da próxima música misteriosa a ser desbloqueada,
+   * seguindo rigorosamente a ordem fixa do catálogo oficial (159 músicas misteriosas).
+   * Retorna null quando todas as 162 músicas já estiverem desbloqueadas.
+   */
+  public getNextMysterySong(): SongMetadata | null {
+    const profile = this.getActiveProfile();
+    const unlocked = profile.unlockedSongIds && profile.unlockedSongIds.length > 0
+      ? profile.unlockedSongIds
+      : INITIAL_UNLOCKED_SONG_IDS;
+
+    for (const song of OFFICIAL_BRAZILIAN_CATALOG) {
+      if (!unlocked.includes(song.id)) {
+        return song;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Retorna a quantidade de músicas desbloqueadas pelo perfil ativo dentro do catálogo oficial.
+   */
+  public getUnlockedSongsCount(): number {
+    const profile = this.getActiveProfile();
+    const unlocked = profile.unlockedSongIds && profile.unlockedSongIds.length > 0
+      ? profile.unlockedSongIds
+      : INITIAL_UNLOCKED_SONG_IDS;
+    const officialIds = new Set(OFFICIAL_BRAZILIAN_CATALOG.map((s) => s.id));
+    const count = unlocked.filter((id) => officialIds.has(id)).length;
+    return Math.max(INITIAL_UNLOCKED_SONG_IDS.length, Math.min(count, OFFICIAL_BRAZILIAN_CATALOG.length));
+  }
+
+  /**
+   * Retorna o total oficial de faixas do catálogo (162).
+   */
+  public getTotalCatalogCount(): number {
+    return OFFICIAL_BRAZILIAN_CATALOG.length;
+  }
+
+  /**
+   * Desbloqueia a próxima música misteriosa da sequência canônica oficial.
+   * Deduz 5 RockCoins de forma atômica e segura, registra a transação e atualiza as conquistas.
+   */
+  public async unlockNextMysterySong(
+    cost: number = UNLOCK_COST_ROCKCOINS
+  ): Promise<{ success: boolean; error?: string; song?: SongMetadata; remainingCoins?: number }> {
+    const profile = this.getActiveProfile();
+    const nextSong = this.getNextMysterySong();
+
+    if (!nextSong) {
+      return {
+        success: false,
+        error: 'ALL_SONGS_UNLOCKED',
+        remainingCoins: profile.rockCoins || 0
+      };
+    }
+
+    const currentCoins = profile.rockCoins || 0;
+    if (currentCoins < cost) {
+      return {
+        success: false,
+        error: 'ROCKCOINS_INSUFFICIENT',
+        remainingCoins: currentCoins
+      };
+    }
+
+    profile.rockCoins = currentCoins - cost;
+    profile.totalCoinsSpent = (profile.totalCoinsSpent || 0) + cost;
+
+    if (!profile.unlockedSongIds) {
+      profile.unlockedSongIds = [...INITIAL_UNLOCKED_SONG_IDS];
+    }
+    if (!profile.unlockedSongIds.includes(nextSong.id)) {
+      profile.unlockedSongIds.push(nextSong.id);
+    }
+
+    if (!profile.transactions) {
+      profile.transactions = [];
+    }
+    profile.transactions.push({
+      id: `tx_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      type: 'SPEND',
+      amount: cost,
+      description: `Desbloqueio de música misteriosa: ${nextSong.title} (${nextSong.artist})`,
+      songId: nextSong.id,
+      timestamp: Date.now()
+    });
+
+    // Avalia conquistas de coleção
+    this.checkAndUnlockAchievements();
+
+    await this.saveProfileToDB(profile);
+
+    if (profile.id && profile.id !== 'guest') {
+      FirestoreService.syncProfileToCloud(profile.id, profile).catch(() => {});
+    }
+
+    return {
+      success: true,
+      song: nextSong,
+      remainingCoins: profile.rockCoins
+    };
+  }
+
+  /**
+   * Avalia as 8 conquistas oficiais do RockBrazil e persiste as que foram completadas.
+   */
+  public checkAndUnlockAchievements(
+    _stats?: GameStats,
+    _cleared?: boolean,
+    isFullCombo?: boolean
+  ): { newlyUnlocked: AchievementDefinition[]; allUnlocked: string[] } {
+    const profile = this.getActiveProfile();
+    if (!profile.achievements) {
+      profile.achievements = {};
+    }
+
+    const newlyUnlocked: AchievementDefinition[] = [];
+    const now = Date.now();
+
+    // 1. Músicas distintas concluídas
+    const completedSongIds = new Set<string>();
+    if (profile.history && Array.isArray(profile.history)) {
+      profile.history.forEach((h) => {
+        if (h.cleared) completedSongIds.add(h.songId);
+      });
+    }
+    if (profile.records) {
+      Object.entries(profile.records).forEach(([songId, diffs]) => {
+        if (!diffs) return;
+        Object.values(diffs).forEach((rec) => {
+          if (rec && (rec.bestScore || rec.score || 0) > 0) {
+            completedSongIds.add(songId);
+          }
+        });
+      });
+    }
+    const completedCount = completedSongIds.size;
+
+    // 2. Full Combo já obtido
+    const hasFullCombo = Boolean(
+      isFullCombo ||
+      (profile.history && profile.history.some((h) => h.isFullCombo))
+    );
+
+    // 3. Contagem de desbloqueios
+    const unlockedList = profile.unlockedSongIds && profile.unlockedSongIds.length > 0
+      ? profile.unlockedSongIds
+      : INITIAL_UNLOCKED_SONG_IDS;
+    const officialCount = OFFICIAL_BRAZILIAN_CATALOG.length; // 162
+    const totalUnlockedOfficial = unlockedList.filter((id) =>
+      OFFICIAL_BRAZILIAN_CATALOG.some((s) => s.id === id)
+    ).length;
+    const mysteryUnlockedCount = Math.max(0, totalUnlockedOfficial - INITIAL_UNLOCKED_SONG_IDS.length);
+
+    // Critérios das 8 conquistas
+    const criteria: Record<string, boolean> = {
+      first_show: completedCount >= 1,
+      rookie_5_songs: completedCount >= 5,
+      rocker_20_songs: completedCount >= 20,
+      veteran_50_songs: completedCount >= 50,
+      first_full_combo: hasFullCombo,
+      collector_10: mysteryUnlockedCount >= 10 || totalUnlockedOfficial >= 13,
+      super_collector_50: mysteryUnlockedCount >= 50 || totalUnlockedOfficial >= 53,
+      rock_legend_162: totalUnlockedOfficial >= officialCount
+    };
+
+    OFFICIAL_ACHIEVEMENTS.forEach((ach) => {
+      if (criteria[ach.id] && !profile.achievements![ach.id]) {
+        profile.achievements![ach.id] = { unlockedAt: now };
+        newlyUnlocked.push(ach);
+      }
+    });
+
+    return {
+      newlyUnlocked,
+      allUnlocked: Object.keys(profile.achievements)
+    };
+  }
+
+  /**
+   * Retorna a lista detalhada de conquistas e status para exibição no perfil.
+   */
+  public getAchievements(): { definition: AchievementDefinition; unlocked: boolean; unlockedAt?: number }[] {
+    const profile = this.getActiveProfile();
+    this.checkAndUnlockAchievements();
+    const userAch = profile.achievements || {};
+    return OFFICIAL_ACHIEVEMENTS.map((def) => ({
+      definition: def,
+      unlocked: Boolean(userAch[def.id]),
+      unlockedAt: userAch[def.id]?.unlockedAt
+    }));
   }
 
   public getProfileStats(
@@ -887,6 +1146,9 @@ export class ProfileManager {
       avgAccuracy = Math.round((sumAcc / target.history.length) * 10) / 10;
     }
 
+    const userAchievements = target.achievements || {};
+    const achievementsCount = Object.keys(userAchievements).length;
+
     return {
       songsPlayed: songsPlayedSet.size,
       completedMatches,
@@ -898,7 +1160,9 @@ export class ProfileManager {
       rockCoins: target.rockCoins || 0,
       totalCoinsEarned: target.totalCoinsEarned ?? (target.rockCoins || 0),
       totalCoinsSpent: target.totalCoinsSpent || 0,
-      unlockedSongsCount: target.unlockedSongIds?.length ?? INITIAL_UNLOCKED_SONG_IDS.length
+      unlockedSongsCount: target.unlockedSongIds?.length ?? INITIAL_UNLOCKED_SONG_IDS.length,
+      achievementsCount,
+      totalAchievementsCount: OFFICIAL_ACHIEVEMENTS.length
     };
   }
 
