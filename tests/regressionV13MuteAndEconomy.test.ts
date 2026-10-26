@@ -219,10 +219,26 @@ describe('ROCKBRAZIL V13 — Mute on Miss, Economia RockCoins, Catálogo e Fireb
       expect(html).toContain('id="result-coins"');
     });
 
-    it('4.1. Catálogo utiliza meta-estatísticas integradas em vez de caixa branca repetitiva', () => {
+    it('4.1. Catálogo V13.1 utiliza layout simplificado sem estatísticas extras invasivas', () => {
       const css = fs.readFileSync(path.resolve(process.cwd(), 'src/style.css'), 'utf-8');
-      expect(css).toContain('.row-meta-stats');
-      expect(css).toContain('.meta-stat-pill');
+      expect(css).toContain('.notebook-song-row');
+      expect(css).toContain('.row-album-cover');
+      expect(css).toContain('.row-song-title');
+      expect(css).toContain('.row-song-artist');
+      expect(css).toContain('.row-stars');
+      expect(css).toContain('.row-score');
+      // Garante remoção das pílulas e caixas de meta-estatísticas extras
+      expect(css).not.toContain('.row-meta-stats');
+      expect(css).not.toContain('.meta-stat-pill');
+
+      const uiCode = fs.readFileSync(path.resolve(process.cwd(), 'src/ui/uiManager.ts'), 'utf-8');
+      // Não exibe textos desnecessários
+      expect(uiCode).not.toContain('🏆 Melhor:');
+      expect(uiCode).not.toContain('Última:');
+      expect(uiCode).not.toContain('Partidas:');
+      expect(uiCode).not.toContain('Nenhuma partida jogada ainda');
+      // Exibe pontuação abaixo das estrelas (0 PTS por padrão)
+      expect(uiCode).toContain("bestScore > 0 ? `${bestScore.toLocaleString('pt-BR')} PTS` : '0 PTS'");
     });
   });
 

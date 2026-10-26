@@ -836,23 +836,15 @@ export class UIManager {
       // Extract highest personal record across difficulties for library view
       let bestStars = 0;
       let bestScore = 0;
-      let lastScore = 0;
-      let bestCombo = 0;
-      let playCount = 0;
-      let bestDiff: Difficulty | null = null;
 
       if (profile?.records[song.id]) {
         (['EASY', 'MEDIUM', 'HARD', 'EXPERT'] as Difficulty[]).forEach((d) => {
           const rec = profile.records[song.id]?.[d];
           if (rec) {
-            playCount += rec.playCount || 0;
             const score = rec.bestScore ?? rec.score ?? 0;
             if (score > bestScore) {
               bestScore = score;
               bestStars = rec.bestStars ?? rec.stars ?? 1;
-              bestCombo = rec.bestMaxCombo ?? rec.maxCombo ?? 0;
-              lastScore = rec.lastScore ?? 0;
-              bestDiff = d;
             }
           }
         });
@@ -868,9 +860,8 @@ export class UIManager {
         }
       }
 
-      // Format score with dots without repeating "SEM RECORDE"
-      const scoreText = bestScore > 0 ? `${bestScore.toLocaleString('pt-BR')} PTS` : '---';
-      const scoreClass = bestScore > 0 ? 'row-score' : 'row-score unplayed';
+      // V13.1: Exibir SOMENTE a melhor pontuação logo abaixo das estrelas (sem duplicações)
+      const scoreText = bestScore > 0 ? `${bestScore.toLocaleString('pt-BR')} PTS` : '0 PTS';
 
       let fileNoticeHtml = '';
       if (!song.isAvailable && song.requiresFile) {
@@ -885,46 +876,22 @@ export class UIManager {
         `;
       }
 
-      // V13: Redesign das Estatísticas do Catálogo integrado ao card
-      let detailsDrawerHtml = '';
-      if (isSelected) {
-        if (bestScore > 0 || playCount > 0) {
-          detailsDrawerHtml = `
-            <div class="row-meta-stats">
-              <span class="meta-stat-pill record-pill">🏆 Melhor: <strong>${bestScore.toLocaleString('pt-BR')} PTS</strong>${bestDiff ? ` (${bestDiff})` : ''}</span>
-              <span class="meta-stat-pill">Última: <strong>${lastScore > 0 ? `${lastScore.toLocaleString('pt-BR')} PTS` : '---'}</strong></span>
-              <span class="meta-stat-pill">Combo: <strong>${bestCombo > 0 ? `${bestCombo}x` : '---'}</strong></span>
-              <span class="meta-stat-pill">Partidas: <strong>${playCount}</strong></span>
-            </div>
-          `;
-        } else {
-          detailsDrawerHtml = `
-            <div class="row-meta-stats unplayed">
-              <span class="meta-stat-pill unplayed-pill">🎸 Nenhuma partida jogada ainda · Toque duas vezes para jogar!</span>
-            </div>
-          `;
-        }
-      }
-
-      const coverHtml = song.coverUrl
-        ? `<img src="${song.coverUrl}" class="row-album-cover" alt="${song.title}" loading="lazy" />`
-        : '';
+      const coverSrc = song.coverUrl || 'images/default-cover.png';
 
       return `
         <div class="notebook-song-row ${isSelected ? 'selected' : ''}" data-song-id="${song.id}">
           <span class="row-arrow">➡</span>
           <div class="row-song-content">
-            ${coverHtml}
+            <img src="${coverSrc}" class="row-album-cover" alt="${song.title}" loading="lazy" onerror="this.onerror=null;this.src='images/default-cover.png';" />
             <div class="row-song-info">
               <span class="row-song-title">${index + 1}. ${song.title}</span>
               <span class="row-song-artist">${song.artist}</span>
               ${fileNoticeHtml}
-              ${detailsDrawerHtml}
             </div>
           </div>
           <div class="row-song-stats">
             <div class="row-stars">${starsHtml}</div>
-            <div class="${scoreClass}">${scoreText}</div>
+            <div class="row-score">${scoreText}</div>
           </div>
         </div>
       `;

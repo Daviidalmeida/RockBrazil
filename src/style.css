@@ -1144,13 +1144,15 @@ html, body {
 
 
 .row-album-cover {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
   object-fit: cover;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
-  margin-right: 10px;
+  box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.35);
+  margin-right: 12px;
   flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: #2a2a30;
 }
 
 .row-song-content {
@@ -1158,6 +1160,7 @@ html, body {
   align-items: center;
   flex: 1;
   min-width: 0;
+  margin-right: 12px;
 }
 
 /* Each Song Row (Aligned to notebook lines) */
@@ -1166,11 +1169,13 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 10px 8px 30px; /* Leaves space on the left for the sketched arrow */
+  padding: 6px 12px 6px 30px; /* Leaves space on the left for the sketched arrow */
   border-bottom: 1.5px dashed rgba(35, 35, 35, 0.35);
   cursor: pointer;
   transition: background 0.12s ease, transform 0.1s ease;
   border-radius: 4px;
+  min-height: 56px;
+  box-sizing: border-box;
 }
 
 /* Sketched Black Arrow pointing to Selected Song (Image 2) */
@@ -1203,6 +1208,7 @@ html, body {
 .row-song-info {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   text-align: left;
   flex: 1;
   min-width: 0;
@@ -1210,35 +1216,48 @@ html, body {
 
 .row-song-title {
   font-family: var(--font-rock);
-  font-size: 18px;
+  font-size: 16px;
   color: #1a1a1a;
-  line-height: 1.2;
+  line-height: 1.25;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  letter-spacing: 0.3px;
 }
 
 .row-song-artist {
   font-family: var(--font-hand);
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 700;
   color: #374151;
-  line-height: 1.1;
+  line-height: 1.2;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .row-song-stats {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  justify-content: center;
   text-align: right;
   flex-shrink: 0;
-  margin-left: 8px;
+  min-width: 76px;
 }
 
 .row-stars {
   color: #d97706;
   font-size: 14px;
   letter-spacing: 1px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.row-stars .filled {
+  color: #eab308;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
 .row-stars .empty-star {
@@ -1247,56 +1266,17 @@ html, body {
 
 .row-score {
   font-family: var(--font-rock);
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   color: #1a1a1a;
   letter-spacing: 0.5px;
-}
-
-.row-score.unplayed {
-  color: #b71c1c;
-  font-family: var(--font-hand);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-/* V13: Modern Integrated Meta Stats */
-.row-meta-stats {
-  width: 100%;
-  padding: 4px 0 2px;
-  margin: 3px 0 1px;
-  background: transparent;
-  font-family: var(--font-hand);
-  font-size: 11px;
-  color: #262626;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 8px;
-  align-items: center;
-}
-
-.meta-stat-pill {
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 4px;
-  padding: 2px 6px;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
+  line-height: 1.2;
+  margin-top: 2px;
   white-space: nowrap;
 }
 
-.meta-stat-pill.record-pill {
-  background: rgba(234, 179, 8, 0.16);
-  border-color: rgba(202, 138, 4, 0.35);
-  color: #854d0e;
-}
-
-.meta-stat-pill.unplayed-pill {
-  background: rgba(59, 130, 246, 0.08);
-  border-color: rgba(59, 130, 246, 0.22);
-  color: #1e40af;
-  font-style: italic;
+.row-score.unplayed {
+  color: #374151;
 }
 
 .song-link-box {
