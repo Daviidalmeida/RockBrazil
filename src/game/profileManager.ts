@@ -5,6 +5,38 @@ import { FirestoreService } from '../firebase/firestoreService';
 export const INITIAL_UNLOCKED_SONG_IDS: string[] = ['mam-1406', 'cap-sua-maneira', 'pit-chip-novo'];
 export const UNLOCK_COST_ROCKCOINS = 5;
 
+export interface OfficialAvatar {
+  id: string;
+  file: string;
+  name: string;
+  url: string;
+}
+
+export const OFFICIAL_AVATARS: OfficialAvatar[] = Array.from({ length: 15 }, (_, i) => {
+  const num = String(i + 1).padStart(2, '0');
+  return {
+    id: `rockbrazil-avatar-${num}`,
+    file: `avatar-${num}.webp`,
+    name: `Avatar ${i + 1}`,
+    url: `images/avatars/avatar-${num}.webp`
+  };
+});
+
+export function getAvatarUrl(avatarIdOrUrl?: string): string {
+  if (!avatarIdOrUrl) return 'images/avatars/avatar-01.webp';
+  if (avatarIdOrUrl.startsWith('rockbrazil-avatar-')) {
+    const num = avatarIdOrUrl.replace('rockbrazil-avatar-', '');
+    return `images/avatars/avatar-${num}.webp`;
+  }
+  if (avatarIdOrUrl.startsWith('avatar-') && avatarIdOrUrl.endsWith('.webp')) {
+    return `images/avatars/${avatarIdOrUrl}`;
+  }
+  if (avatarIdOrUrl.startsWith('http://') || avatarIdOrUrl.startsWith('https://')) {
+    return avatarIdOrUrl;
+  }
+  return avatarIdOrUrl;
+}
+
 export interface MatchHistoryItem {
   id: string;
   songId: string;
@@ -98,7 +130,7 @@ export class ProfileManager {
   public static GUEST_PROFILE: PlayerProfile = {
     id: 'guest',
     name: 'Convidado',
-    avatar: '🎸',
+    avatar: 'rockbrazil-avatar-01',
     createdAt: 0,
     lastPlayedAt: 0,
     settings: {
@@ -107,7 +139,7 @@ export class ProfileManager {
       audioOffsetMs: 0,
       noteSpeedMultiplier: 1.0,
       visualEffectsEnabled: true,
-      muteOnMiss: false
+      muteOnMiss: true
     },
     records: {},
     history: [],
@@ -213,10 +245,45 @@ export class ProfileManager {
       if (!profile.accountType) {
         profile.accountType = profile.id === 'guest' ? 'guest' : 'google';
       }
+      if (!profile.settings) {
+        profile.settings = {
+          musicVolume: 0.85,
+          sfxVolume: 0.9,
+          audioOffsetMs: 0,
+          noteSpeedMultiplier: 1.0,
+          visualEffectsEnabled: true,
+          muteOnMiss: true
+        };
+      } else if (profile.settings.muteOnMiss === undefined || profile.settings.muteOnMiss === null) {
+        profile.settings.muteOnMiss = true;
+      }
       profile.migrationVersion = 13.3;
       this.saveProfileToDB(profile).catch(() => {});
+    } else {
+      // Mesmo se já migrado para 13.3, garante que muteOnMiss indefinido se torne true sem sobrescrever false existente
+      if (!profile.settings) {
+        profile.settings = {
+          musicVolume: 0.85,
+          sfxVolume: 0.9,
+          audioOffsetMs: 0,
+          noteSpeedMultiplier: 1.0,
+          visualEffectsEnabled: true,
+          muteOnMiss: true
+        };
+      } else if (profile.settings.muteOnMiss === undefined || profile.settings.muteOnMiss === null) {
+        profile.settings.muteOnMiss = true;
+      }
     }
     return profile;
+  }
+
+  async updateActiveAvatar(avatarId: string): Promise<PlayerProfile | null> {
+    if (!this.activeProfile) return null;
+    this.activeProfile.avatar = avatarId;
+    if (this.activeProfile.id !== 'guest') {
+      await this.saveProfileToDB(this.activeProfile);
+    }
+    return this.activeProfile;
   }
 
   setGuestMode(): PlayerProfile {
@@ -251,7 +318,7 @@ export class ProfileManager {
     const newProfile: PlayerProfile = {
       id,
       name: trimmed,
-      avatar: avatar || '🎸',
+      avatar: avatar || 'rockbrazil-avatar-01',
       createdAt: Date.now(),
       lastPlayedAt: Date.now(),
       settings: {
@@ -260,7 +327,7 @@ export class ProfileManager {
         audioOffsetMs: 0,
         noteSpeedMultiplier: 1.0,
         visualEffectsEnabled: true,
-        muteOnMiss: false
+        muteOnMiss: true
       },
       records: {},
       history: [],

@@ -1,6 +1,24 @@
 import { GameStats, HitJudgment, GameState, Lane, SongMetadata, Difficulty, GameSettings } from '../types';
 import { PlayerProfile, LeaderboardEntry, RecordMatchResult } from '../game/profileManager';
 import { RockCoinsManager } from '../game/economy/rockCoinsManager';
+import { RankingService } from '../firebase/rankingService';
+
+export function renderAvatarHtml(avatar?: string, className: string = 'avatar-thumb-img'): string {
+  if (!avatar) {
+    return `<img src="images/avatars/avatar-01.webp" alt="Avatar" class="${className}" onerror="this.onerror=null;this.src='images/default-cover.png';" />`;
+  }
+  if (avatar.startsWith('rockbrazil-avatar-')) {
+    const num = avatar.replace('rockbrazil-avatar-', '');
+    return `<img src="images/avatars/avatar-${num}.webp" alt="Avatar ${num}" class="${className}" onerror="this.onerror=null;this.src='images/default-cover.png';" />`;
+  }
+  if (avatar.startsWith('avatar-') && avatar.endsWith('.webp')) {
+    return `<img src="images/avatars/${avatar}" alt="Avatar" class="${className}" onerror="this.onerror=null;this.src='images/default-cover.png';" />`;
+  }
+  if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
+    return `<img src="${avatar}" alt="Avatar" class="${className}" onerror="this.onerror=null;this.src='images/avatars/avatar-01.webp';" />`;
+  }
+  return `<span class="${className}-emoji">${avatar}</span>`;
+}
 
 export class UIManager {
   // In-Game HUD Elements
@@ -136,6 +154,8 @@ export class UIManager {
   // Profile callbacks
   public onCreateProfileConfirmed?: (name: string, avatar: string) => void;
   public onSwitchProfileRequested?: (id: string) => void;
+  public onAvatarConfirmed?: (avatarId: string) => void;
+  public googlePhotoUrlProvider?: () => string | undefined;
   public onExportDataRequested?: () => void;
   public onRankingFilterChanged?: (songId: string, diff: Difficulty) => void;
   public onRefreshLinksClicked?: () => void;
@@ -340,6 +360,57 @@ export class UIManager {
 
     document.getElementById('btn-celebration-close')?.addEventListener('click', () => {
       document.getElementById('modal-unlock-celebration')?.classList.add('hidden');
+    });
+
+    // V13.3.1: Avatar Selection Handlers
+    document.getElementById('btn-open-change-avatar')?.addEventListener('click', () => {
+      const googlePhoto = this.googlePhotoUrlProvider?.();
+      this.openSelectAvatarModal(googlePhoto);
+    });
+
+    document.getElementById('btn-confirm-avatar')?.addEventListener('click', () => {
+      document.getElementById('modal-select-avatar')?.classList.add('hidden');
+      if (this.pendingAvatarSelection) {
+        this.onAvatarConfirmed?.(this.pendingAvatarSelection);
+      }
+    });
+
+    document.getElementById('btn-cancel-avatar')?.addEventListener('click', () => {
+      document.getElementById('modal-select-avatar')?.classList.add('hidden');
+    });
+
+    // V13.3.1: Global Ranking Handlers
+    document.getElementById('btn-menu-ranking')?.addEventListener('click', () => {
+      this.openGlobalRankingModal();
+    });
+
+    document.getElementById('btn-close-ranking')?.addEventListener('click', () => {
+      document.getElementById('modal-global-ranking')?.classList.add('hidden');
+    });
+
+    document.getElementById('rank-tab-general')?.addEventListener('click', () => {
+      this.loadRankingView('general');
+    });
+    document.getElementById('rank-tab-song')?.addEventListener('click', () => {
+      this.loadRankingView('song');
+    });
+    document.getElementById('rank-tab-diff')?.addEventListener('click', () => {
+      this.loadRankingView('difficulty');
+    });
+
+    document.getElementById('rank-song-select')?.addEventListener('change', (e) => {
+      this.currentRankSongId = (e.target as HTMLSelectElement).value;
+      this.loadRankingView('song');
+    });
+
+    document.querySelectorAll('.rank-diff-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.rank-diff-btn').forEach(b => b.classList.remove('active'));
+        const target = e.currentTarget as HTMLElement;
+        target.classList.add('active');
+        this.currentRankDiff = (target.dataset.diff as Difficulty) || 'MEDIUM';
+        this.loadRankingView('difficulty');
+      });
     });
 
     document.getElementById('btn-open-editor')?.addEventListener('click', () => {
@@ -555,16 +626,28 @@ export class UIManager {
 
   setProfileHeader(profile: PlayerProfile): void {
     this.currentActiveProfile = profile;
+    this.menuProfileAvatar.innerHTML = renderAvatarHtml(profile.avatar, 'profile-avatar-img');
     if (profile.id === 'guest') {
-      this.menuProfileAvatar.textContent = profile.avatar || '🎸';
       this.menuProfileName.textContent = profile.name || 'CONVIDADO';
       const hint = document.querySelector('.profile-switch-hint');
       if (hint) hint.textContent = 'Perfil';
     } else {
-      this.menuProfileAvatar.textContent = profile.avatar;
       this.menuProfileName.textContent = profile.name;
       const hint = document.querySelector('.profile-switch-hint');
       if (hint) hint.textContent = 'Trocar';
+    }
+    this.updateRankingButtonVisibility(profile);
+  }
+
+  updateRankingButtonVisibility(profile: PlayerProfile | null): void {
+    const btnMenuRank = document.getElementById('btn-menu-ranking');
+    const isGoogle = profile?.accountType === 'google' && profile.id !== 'guest';
+    if (btnMenuRank) {
+      if (isGoogle) {
+        btnMenuRank.classList.remove('hidden');
+      } else {
+        btnMenuRank.classList.add('hidden');
+      }
     }
   }
 
@@ -579,7 +662,7 @@ export class UIManager {
       const typeEl = document.getElementById('active-profile-type');
       const coinsEl = document.getElementById('active-profile-coins');
 
-      if (avatarEl) avatarEl.textContent = profile.avatar || '🎸';
+      if (avatarEl) avatarEl.innerHTML = renderAvatarHtml(profile.avatar, 'player-avatar-img');
       if (nameEl) nameEl.textContent = profile.name || 'Convidado';
       if (typeEl) {
         typeEl.textContent = profile.accountType === 'google' ? 'Conta Google' : 'Modo Convidado';
@@ -632,7 +715,7 @@ export class UIManager {
           listEl.innerHTML = allProfiles.map((p) => `
             <div class="profile-select-item ${p.id === profile.id ? 'active' : ''}" data-profile-id="${p.id}">
               <div class="profile-item-left">
-                <span class="profile-item-avatar">${p.avatar}</span>
+                <span class="profile-item-avatar">${renderAvatarHtml(p.avatar, 'profile-item-avatar-img')}</span>
                 <span class="profile-item-name">${p.name}</span>
               </div>
               <div class="profile-item-right" style="display:flex; align-items:center; gap:8px;">
@@ -709,6 +792,196 @@ export class UIManager {
     if (artist) artist.textContent = song.artist;
 
     modal.classList.remove('hidden');
+  }
+
+  private cachedSongs: SongMetadata[] = [];
+  private pendingAvatarSelection = 'rockbrazil-avatar-01';
+  private currentRankFilter: 'general' | 'song' | 'difficulty' = 'general';
+  private currentRankDiff: Difficulty = 'MEDIUM';
+  private currentRankSongId = '';
+
+  openSelectAvatarModal(googlePhotoUrl?: string): void {
+    const modal = document.getElementById('modal-select-avatar');
+    const grid = document.getElementById('avatar-options-grid');
+    const previewImg = document.getElementById('avatar-preview-img') as HTMLImageElement;
+    const previewLabel = document.getElementById('avatar-preview-label');
+    if (!modal || !grid) return;
+
+    this.pendingAvatarSelection = this.currentActiveProfile?.avatar || 'rockbrazil-avatar-01';
+
+    let gridHtml = '';
+    // 15 avatares oficiais (todos 100% gratuitos)
+    for (let i = 1; i <= 15; i++) {
+      const num = String(i).padStart(2, '0');
+      const avatarId = `rockbrazil-avatar-${num}`;
+      const isSelected = this.pendingAvatarSelection === avatarId;
+      gridHtml += `
+        <div class="avatar-card-item ${isSelected ? 'selected' : ''}"
+             data-avatar-id="${avatarId}"
+             data-avatar-name="Avatar ${i}"
+             data-avatar-src="images/avatars/avatar-${num}.webp"
+             role="radio"
+             aria-checked="${isSelected}"
+             tabindex="0"
+             aria-label="Avatar oficial ${i}">
+          <img src="images/avatars/avatar-${num}.webp" alt="Avatar ${i}" class="avatar-thumb-img" loading="lazy" />
+        </div>
+      `;
+    }
+
+    // Opção de Foto da Conta Google se disponível
+    if (googlePhotoUrl) {
+      const isSelected = this.pendingAvatarSelection === googlePhotoUrl;
+      gridHtml += `
+        <div class="avatar-card-item ${isSelected ? 'selected' : ''}"
+             data-avatar-id="${googlePhotoUrl}"
+             data-avatar-name="Foto Google"
+             data-avatar-src="${googlePhotoUrl}"
+             role="radio"
+             aria-checked="${isSelected}"
+             tabindex="0"
+             aria-label="Foto da Conta Google">
+          <img src="${googlePhotoUrl}" alt="Foto Google" class="avatar-thumb-img" loading="lazy" />
+        </div>
+      `;
+    }
+
+    grid.innerHTML = gridHtml;
+
+    const updatePreview = (id: string, name: string, src: string) => {
+      this.pendingAvatarSelection = id;
+      if (previewImg) previewImg.src = src;
+      if (previewLabel) previewLabel.textContent = name;
+      grid.querySelectorAll('.avatar-card-item').forEach((item) => {
+        const itemEl = item as HTMLElement;
+        const matches = itemEl.dataset.avatarId === id;
+        itemEl.classList.toggle('selected', matches);
+        itemEl.setAttribute('aria-checked', matches ? 'true' : 'false');
+      });
+    };
+
+    if (this.pendingAvatarSelection.startsWith('rockbrazil-avatar-')) {
+      const num = this.pendingAvatarSelection.replace('rockbrazil-avatar-', '');
+      updatePreview(this.pendingAvatarSelection, `Avatar ${parseInt(num, 10)}`, `images/avatars/avatar-${num}.webp`);
+    } else if (googlePhotoUrl && this.pendingAvatarSelection === googlePhotoUrl) {
+      updatePreview(googlePhotoUrl, 'Foto Google', googlePhotoUrl);
+    } else {
+      updatePreview('rockbrazil-avatar-01', 'Avatar 1', 'images/avatars/avatar-01.webp');
+    }
+
+    grid.querySelectorAll('.avatar-card-item').forEach((card) => {
+      const c = card as HTMLElement;
+      c.addEventListener('click', () => {
+        updatePreview(c.dataset.avatarId!, c.dataset.avatarName!, c.dataset.avatarSrc!);
+      });
+      c.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          updatePreview(c.dataset.avatarId!, c.dataset.avatarName!, c.dataset.avatarSrc!);
+        }
+      });
+    });
+
+    modal.classList.remove('hidden');
+  }
+
+  async openGlobalRankingModal(): Promise<void> {
+    const modal = document.getElementById('modal-global-ranking');
+    if (!modal) return;
+
+    modal.classList.remove('hidden');
+    await this.loadRankingView('general');
+  }
+
+  async loadRankingView(filter: 'general' | 'song' | 'difficulty'): Promise<void> {
+    this.currentRankFilter = filter;
+    const container = document.getElementById('ranking-list-container');
+    const filtersBar = document.getElementById('ranking-filters-bar');
+    const songSelect = document.getElementById('rank-song-select') as HTMLSelectElement;
+    const diffSelector = document.getElementById('rank-diff-selector');
+    const myPositionCard = document.getElementById('ranking-my-card');
+
+    if (!container) return;
+
+    document.querySelectorAll('.rank-tab-btn').forEach((btn) => {
+      btn.classList.toggle('active', (btn as HTMLElement).dataset.filter === filter);
+    });
+
+    if (filter === 'general') {
+      filtersBar?.classList.add('hidden');
+      songSelect?.classList.add('hidden');
+      diffSelector?.classList.add('hidden');
+    } else if (filter === 'song') {
+      filtersBar?.classList.remove('hidden');
+      songSelect?.classList.remove('hidden');
+      diffSelector?.classList.add('hidden');
+
+      if (songSelect && songSelect.options.length === 0 && this.cachedSongs.length > 0) {
+        songSelect.innerHTML = this.cachedSongs.map(s => `<option value="${s.id}">${s.title} - ${s.artist}</option>`).join('');
+        this.currentRankSongId = songSelect.value || (this.cachedSongs[0]?.id || '');
+      }
+    } else if (filter === 'difficulty') {
+      filtersBar?.classList.remove('hidden');
+      songSelect?.classList.add('hidden');
+      diffSelector?.classList.remove('hidden');
+    }
+
+    container.innerHTML = '<div class="ranking-loading">Carregando pontuações oficiais...</div>';
+
+    try {
+      const data = await RankingService.fetchRanking(
+        filter,
+        filter === 'song' ? (this.currentRankSongId || (this.cachedSongs && this.cachedSongs[0]?.id)) : undefined,
+        filter === 'difficulty' ? this.currentRankDiff : undefined,
+        30
+      );
+
+      if (!data || data.length === 0) {
+        container.innerHTML = '<div class="ranking-loading">Nenhum recorde registrado ainda nesta categoria. Seja o primeiro a pontuar!</div>';
+        if (myPositionCard) myPositionCard.classList.add('hidden');
+        return;
+      }
+
+      const currentUid = this.currentActiveProfile?.id;
+      let myRankRow: any = null;
+
+      container.innerHTML = data.map((entry: any, index: number) => {
+        const rank = index + 1;
+        const isMyRow = currentUid && entry.uid === currentUid;
+        if (isMyRow) myRankRow = { ...entry, rank };
+
+        let medal = `${rank}º`;
+        if (rank === 1) medal = '🥇';
+        else if (rank === 2) medal = '🥈';
+        else if (rank === 3) medal = '🥉';
+
+        const subDetail = filter === 'general'
+          ? `${entry.songsCount || 1} músicas registradas`
+          : `${entry.songTitle || ''} (${(entry.difficulty || '').toUpperCase()})`;
+
+        return `
+          <div class="ranking-row rank-${rank <= 3 ? rank : 'normal'} ${isMyRow ? 'my-row' : ''}">
+            <div class="rank-col-left">
+              <span class="rank-pos">${medal}</span>
+              <div class="rank-avatar-box">
+                ${renderAvatarHtml(entry.avatar, 'rank-avatar-img')}
+              </div>
+              <div class="rank-info">
+                <span class="rank-player-name">${entry.playerName || 'Rockeiro'}${isMyRow ? ' (Você)' : ''}</span>
+                <span class="rank-sub-detail">${subDetail}</span>
+              </div>
+            </div>
+            <div class="rank-col-right">
+              <span class="rank-score">${(entry.totalScore || entry.score || 0).toLocaleString('pt-BR')} PTS</span>
+              ${entry.accuracy !== undefined ? `<span class="rank-accuracy">${entry.accuracy}% precisão</span>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+    } catch (err: any) {
+      container.innerHTML = `<div class="ranking-loading" style="color:#f87171;">Não foi possível carregar o ranking no momento. Verifique sua conexão com a internet.</div>`;
+    }
   }
 
   showProfileCreateModal(): void {
@@ -1085,6 +1358,7 @@ export class UIManager {
   }
 
   renderSongLibrary(songs: SongMetadata[], activeProfile?: PlayerProfile | null): void {
+    this.cachedSongs = songs;
     if (activeProfile !== undefined) {
       this.currentActiveProfile = activeProfile;
     }

@@ -196,6 +196,12 @@
           <span class="profile-switch-hint">Perfil</span>
         </button>
 
+        <!-- Ranking Button (Top Right: Exclusive for Google Accounts) -->
+        <button id="btn-menu-ranking" class="ranking-header-pill hidden" aria-label="Ranking Global">
+          <span class="ranking-header-icon">🏆</span>
+          <span class="ranking-header-text">RANKING</span>
+        </button>
+
         <!-- 6 Interactive Hotspot Buttons perfectly positioned over menu-bg.jpg -->
         <button id="hotspot-jogar" class="menu-hotspot hotspot-jogar" aria-label="Jogar" title="Jogar"></button>
         <button id="hotspot-musicas" class="menu-hotspot hotspot-musicas" aria-label="Minhas Músicas" title="Minhas Músicas"></button>
@@ -405,6 +411,7 @@
                   <span class="active-badge">Ativo</span>
                 </div>
                 <span id="active-profile-type" class="player-account-type">Modo Convidado</span>
+                <button type="button" id="btn-open-change-avatar" class="btn-change-avatar">ALTERAR AVATAR</button>
               </div>
             </div>
             <div class="player-coins-pill">
@@ -470,6 +477,78 @@
             <button id="btn-open-create-new-profile" class="profiles-action-btn btn-new-profile">+ Novo perfil</button>
             <button id="btn-close-player-profiles" class="profiles-action-btn btn-close-profiles">Fechar</button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE SELEÇÃO DE AVATAR (15 AVATARES OFICIAIS GRATUITOS - V13.3.1) -->
+    <div id="modal-select-avatar" class="modal-backdrop hidden">
+      <div class="avatar-modal-card">
+        <div class="avatar-modal-header">
+          <h2 class="avatar-modal-title">ESCOLHA SEU AVATAR</h2>
+          <p class="avatar-modal-subtitle">Todos os 15 avatares oficiais do RockBrazil são 100% gratuitos!</p>
+        </div>
+
+        <!-- Área de Prévia Ampliada -->
+        <div class="avatar-preview-section">
+          <div class="avatar-preview-frame">
+            <img id="avatar-preview-img" src="images/avatars/avatar-01.webp" alt="Prévia do Avatar" class="avatar-preview-img" />
+            <span class="avatar-preview-check">✓ SELECIONADO</span>
+          </div>
+          <span id="avatar-preview-label" class="avatar-preview-name">Avatar 01</span>
+        </div>
+
+        <!-- Grade Responsiva com os 15 Avatares Oficiais (5x3 desktop, 3x5 celular) -->
+        <div id="avatar-options-grid" class="avatar-options-grid" role="radiogroup" aria-label="Selecione seu avatar"></div>
+
+        <!-- Botões de Ação -->
+        <div class="avatar-modal-actions">
+          <button type="button" id="btn-confirm-avatar" class="avatar-action-btn btn-confirm-avatar">CONFIRMAR AVATAR</button>
+          <button type="button" id="btn-cancel-avatar" class="avatar-action-btn btn-cancel-avatar">CANCELAR</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DO RANKING GLOBAL (EXCLUSIVO PARA CONTAS GOOGLE - V13.3.1) -->
+    <div id="modal-global-ranking" class="modal-backdrop hidden">
+      <div class="ranking-modal-card">
+        <div class="ranking-modal-header">
+          <div class="ranking-header-title-row">
+            <h2 class="ranking-modal-title">RANKING GLOBAL</h2>
+            <span class="ranking-exclusive-badge">👑 EXCLUSIVO GOOGLE</span>
+          </div>
+          <p class="ranking-modal-subtitle">Recordes oficiais sincronizados na nuvem em tempo real.</p>
+        </div>
+
+        <!-- Abas de Filtro -->
+        <div class="ranking-tabs-row">
+          <button id="rank-tab-general" class="rank-tab-btn active" data-filter="general">🏆 GERAL</button>
+          <button id="rank-tab-song" class="rank-tab-btn" data-filter="song">🎵 POR MÚSICA</button>
+          <button id="rank-tab-diff" class="rank-tab-btn" data-filter="difficulty">⚡ POR DIFICULDADE</button>
+        </div>
+
+        <!-- Barra de Seletores (Música / Dificuldade) -->
+        <div id="ranking-filters-bar" class="ranking-filters-bar hidden">
+          <select id="rank-song-select" class="ranking-select hidden" aria-label="Selecionar música"></select>
+          <div id="rank-diff-selector" class="ranking-diff-selector hidden">
+            <button class="rank-diff-btn" data-diff="EASY">FÁCIL</button>
+            <button class="rank-diff-btn active" data-diff="MEDIUM">MÉDIO</button>
+            <button class="rank-diff-btn" data-diff="HARD">DIFÍCIL</button>
+            <button class="rank-diff-btn" data-diff="EXPERT">EXPERT</button>
+          </div>
+        </div>
+
+        <!-- Lista de Pontuações -->
+        <div id="ranking-list-container" class="ranking-list-container">
+          <div class="ranking-loading">Carregando pontuações oficiais...</div>
+        </div>
+
+        <!-- Card da Posição do Jogador Atual -->
+        <div id="ranking-my-card" class="ranking-my-card hidden"></div>
+
+        <!-- Rodapé -->
+        <div class="ranking-footer-actions">
+          <button type="button" id="btn-close-ranking" class="ranking-action-btn btn-close-ranking">FECHAR</button>
         </div>
       </div>
     </div>
@@ -683,7 +762,7 @@
             <label for="cfg-mute-on-miss">Silenciar música ao errar</label>
             <span class="settings-hint">A música fica muda quando você erra uma nota e volta quando você acerta.</span>
           </div>
-          <input type="checkbox" id="cfg-mute-on-miss" class="rock-toggle">
+          <input type="checkbox" id="cfg-mute-on-miss" class="rock-toggle" checked>
         </div>
 
         <div class="settings-group" style="margin-top: 10px;">
@@ -702,7 +781,7 @@
     <!-- 13. TUTORIAL (COMO JOGAR) -->
     <div id="screen-howtoplay" class="overlay-screen hidden notebook-page">
       <div class="notebook-dialog-card tutorial-card">
-        <h2 class="notebook-dialog-title">TUTORIAL & AJUDA</h2>
+        <h2 class="notebook-dialog-title">TUTORIAL</h2>
         <div class="marker-underline small"></div>
         <div class="tutorial-content">
           <div class="tutorial-step">
@@ -733,6 +812,71 @@
             <div class="step-badge">5</div>
             <div>
               <strong>Teclado no PC:</strong> Use as teclas <kbd>A</kbd> <kbd>S</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd> ou <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> <kbd>5</kbd>.
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-badge">6</div>
+            <div>
+              <strong>O que são RockCoins?</strong> RockCoins são moedas virtuais 100% gratuitas do RockBrazil, conquistadas ao completar músicas. Não é necessário gastar dinheiro real!
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-badge">7</div>
+            <div>
+              <strong>Como Ganhar RockCoins?</strong> As moedas são concedidas ao concluir qualquer música:<br>
+              • <strong>Fácil:</strong> +1 RockCoin<br>
+              • <strong>Médio:</strong> +2 RockCoins<br>
+              • <strong>Difícil:</strong> +3 RockCoins<br>
+              • <strong>Expert:</strong> +3 RockCoins (+2 bônus com Full Combo = <strong>5 no total</strong>)<br>
+              <em>Partidas abandonadas não concedem moedas.</em>
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-badge">8</div>
+            <div>
+              <strong>Como Desbloquear Músicas?</strong> Novos perfis começam com 3 faixas gratuitas (<em>1406</em>, <em>À Sua Maneira</em> e <em>Admirável Chip Novo</em>). As demais custam <strong>5 RockCoins</strong> cada. Basta tocar na música com cadeado e confirmar o desbloqueio para disponibilizá-la permanentemente naquele perfil!<br>
+              <em>Exemplo prático:</em> Você completou uma música no Expert com Full Combo e ganhou 5 RockCoins. Agora já pode desbloquear uma nova música!
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-badge">9</div>
+            <div>
+              <strong>O que é Full Combo?</strong> É completar uma faixa acertando todas as notas sem cometer nenhum erro (0 misses). No Expert, concede o prêmio máximo de 5 RockCoins!
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-badge">10</div>
+            <div>
+              <strong>Como Funcionam as Estrelas?</strong> O desempenho de 1 a 5 estrelas é calculado pela precisão ponderada dos acertos (Perfect = 100%, Great = 75%, Good = 50%):<br>
+              ★★★★★ <strong>5 Estrelas:</strong> 95% ou mais<br>
+              ★★★★☆ <strong>4 Estrelas:</strong> 85% a 94%<br>
+              ★★★☆☆ <strong>3 Estrelas:</strong> 70% a 84%<br>
+              ★★☆☆☆ <strong>2 Estrelas:</strong> 55% a 69%<br>
+              ★☆☆☆☆ <strong>1 Estrela:</strong> menos de 55%
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-badge">11</div>
+            <div>
+              <strong>Silenciar ao Errar:</strong> Ao errar uma nota, a música é silenciada instantaneamente até você acertar novamente. Esta opção vem <strong>ativada por padrão</strong> para novos jogadores e pode ser alterada nas Configurações.
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-badge">12</div>
+            <div>
+              <strong>Calibração de Áudio:</strong> Se as notas parecerem adiantadas ou atrasadas em relação à música no seu aparelho, ajuste o offset de áudio na tela de Configurações.
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-badge">13</div>
+            <div>
+              <strong>Perfis de Jogadores & 15 Avatares Oficiais:</strong> Cada perfil mantém seus próprios recordes, moedas e estatísticas. Os 15 avatares oficiais do RockBrazil são <strong>100% gratuitos</strong> para todos os jogadores. Escolha e altere seu avatar quando quiser!
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-badge">14</div>
+            <div>
+              <strong>Ranking Global (Exclusivo Google):</strong> O Ranking Global online sincronizado na nuvem é exclusivo para jogadores conectados com conta Google. Jogadores convidados aproveitam o jogo livremente, mantendo seus recordes gravados no dispositivo.
             </div>
           </div>
         </div>

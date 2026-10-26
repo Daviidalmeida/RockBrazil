@@ -28,13 +28,19 @@ export class SettingsManager {
       audioOffsetMs: 0,
       noteSpeedMultiplier: 1.0,
       visualEffectsEnabled: true,
-      muteOnMiss: false
+      muteOnMiss: true
     };
 
     try {
       const stored = localStorage.getItem('rockbrazil_settings');
       if (stored) {
-        return { ...defaultSettings, ...JSON.parse(stored) };
+        const parsed = JSON.parse(stored);
+        // Respeita explicitamente true ou false salvos anteriormente.
+        // Se a propriedade nunca foi salva (undefined ou null), define como true por padrão.
+        const muteOnMiss = parsed.muteOnMiss !== undefined && parsed.muteOnMiss !== null
+          ? Boolean(parsed.muteOnMiss)
+          : true;
+        return { ...defaultSettings, ...parsed, muteOnMiss };
       }
     } catch {
       // Ignore

@@ -23,6 +23,7 @@ import { SessionState } from './game/session/sessionState';
 import { ChartTimeline } from './game/timeline/chartTimeline';
 import { AuthService } from './firebase/authService';
 import { FirestoreService } from './firebase/firestoreService';
+import { RankingService } from './firebase/rankingService';
 
 class RockBrazilGame {
   private settingsManager: SettingsManager;
@@ -263,7 +264,13 @@ class RockBrazilGame {
       } else {
         current.id = user.uid;
         if (user.displayName) current.name = user.displayName;
-        if (user.photoURL) current.avatar = '🎸';
+        if (user.photoURL) {
+          if (!current.avatar || current.avatar === '🎸' || current.avatar === '👤') {
+            current.avatar = user.photoURL;
+          }
+        } else if (!current.avatar || current.avatar === '🎸' || current.avatar === '👤') {
+          current.avatar = 'rockbrazil-avatar-01';
+        }
         await FirestoreService.syncProfileToCloud(user.uid, current);
       }
 
@@ -399,7 +406,35 @@ class RockBrazilGame {
       }
     };
 
-    // Profiles (V13.3)
+    // Profiles (V13.3 & V13.3.1)
+    this.ui.googlePhotoUrlProvider = () => {
+      return AuthService.getCurrentUser()?.photoURL || undefined;
+    };
+
+    this.ui.onAvatarConfirmed = async (avatarId: string) => {
+      const updated = await this.profileManager.updateActiveAvatar(avatarId);
+      if (updated) {
+        this.ui.setProfileHeader(updated);
+        const profilesModal = document.getElementById('modal-player-profiles');
+        if (profilesModal && !profilesModal.classList.contains('hidden')) {
+          await this.ui.openPlayerProfilesModal();
+        }
+        if (updated.accountType === 'google') {
+          FirestoreService.syncProfileToCloud(updated.id, updated).catch(() => {});
+          RankingService.updateUserGlobalSummary(updated, updated.id, updated.name, avatarId).catch(() => {});
+        }
+      }
+    };
+
+    this.ui.onOpenRankingClicked = () => {
+      const profile = this.profileManager.getActiveProfile();
+      if (RankingService.isEligibleForRanking(profile)) {
+        this.ui.openGlobalRankingModal();
+      } else {
+        this.ui.openPlayerProfilesModal();
+      }
+    };
+
     this.ui.onCreateProfileConfirmed = async (name, avatar) => {
       const created = await this.profileManager.createProfile(name, avatar);
       this.ui.setProfileHeader(created);
@@ -1399,6 +1434,20 @@ class RockBrazilGame {
         this.currentSong.artist
       );
       this.library.saveSongRecord(this.currentSong.id, this.currentDifficulty, recordResult.record);
+
+      // V13.3.1: Envio ao Ranking Global online para contas Google
+      const activeProf = this.profileManager.getActiveProfile();
+      if (activeProf && recordResult) {
+        RankingService.submitRecordIfEligible(
+          activeProf,
+          this.currentSong.id,
+          this.currentSong.title,
+          this.currentSong.artist,
+          this.currentDifficulty,
+          stats,
+          recordResult
+        ).catch((rErr) => console.warn('[finishSong] Falha ao enviar ao Ranking Global:', rErr));
+      }
     } catch (recErr) {
       console.error('[finishSong] Erro ao gravar recorde da partida:', recErr);
     }

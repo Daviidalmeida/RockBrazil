@@ -2,9 +2,40 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Cada jogador autenticado só tem permissão para ler e gravar seu próprio perfil
+
+    // Função de verificação estrita de usuário autenticado via Google
+    function isGoogleUser() {
+      return request.auth != null &&
+        request.auth.token.firebase.sign_in_provider == 'google.com';
+    }
+
+    // Perfil privado do usuário: apenas o próprio dono autenticado pode ler e gravar
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Ranking Geral Consolidado (exclusivo para contas Google)
+    match /rankings_summary/{userId} {
+      allow read: if isGoogleUser();
+      allow write: if isGoogleUser() &&
+        request.auth.uid == userId &&
+        request.resource.data.totalScore is number &&
+        request.resource.data.totalScore >= 0 &&
+        request.resource.data.playerName is string &&
+        request.resource.data.playerName.size() <= 35 &&
+        (!('email' in request.resource.data));
+    }
+
+    // Recordes por Música e Dificuldade (exclusivo para contas Google)
+    match /rankings_song/{recordId} {
+      allow read: if isGoogleUser();
+      allow write: if isGoogleUser() &&
+        request.auth.uid == request.resource.data.uid &&
+        request.resource.data.score is number &&
+        request.resource.data.score >= 0 &&
+        request.resource.data.playerName is string &&
+        request.resource.data.playerName.size() <= 35 &&
+        (!('email' in request.resource.data));
     }
 
     // Bloqueia qualquer outro acesso não autorizado por padrão
