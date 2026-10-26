@@ -56,14 +56,37 @@ export class FirestoreService {
    * Não duplica RockCoins e sempre preserva os maiores recordes e pontuações.
    */
   public static mergeProfiles(local: PlayerProfile, cloud: Partial<PlayerProfile>): PlayerProfile {
+    // Se os dados da nuvem forem anteriores à Temporada 1 (< 14.0),
+    // pertencem à fase de testes e NÃO restauram recordes ou moedas antigas
+    const isCloudLegacyTest = cloud.migrationVersion !== undefined && cloud.migrationVersion < 14.0;
+    if (isCloudLegacyTest) {
+      return {
+        ...local,
+        name: cloud.name || local.name,
+        avatar: cloud.avatar || local.avatar,
+        rockCoins: Math.max(0, local.rockCoins || 0),
+        unlockedSongIds: local.unlockedSongIds && local.unlockedSongIds.length > 0
+          ? [...local.unlockedSongIds]
+          : ['mam-1406', 'cap-sua-maneira', 'pit-chip-novo'],
+        records: { ...local.records },
+        settings: { ...local.settings, ...cloud.settings },
+        migrationVersion: 14.0
+      };
+    }
+
     const merged: PlayerProfile = {
       ...local,
       name: cloud.name || local.name,
       avatar: cloud.avatar || local.avatar,
       // Moedas: adota o maior valor válido existente
       rockCoins: Math.max(local.rockCoins || 0, cloud.rockCoins || 0),
+      unlockedSongIds: Array.from(new Set([
+        ...(local.unlockedSongIds || ['mam-1406', 'cap-sua-maneira', 'pit-chip-novo']),
+        ...(cloud.unlockedSongIds || [])
+      ])),
       records: { ...local.records },
-      settings: { ...local.settings, ...cloud.settings }
+      settings: { ...local.settings, ...cloud.settings },
+      migrationVersion: 14.0
     };
 
     if (cloud.records) {

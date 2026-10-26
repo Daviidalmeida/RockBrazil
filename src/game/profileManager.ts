@@ -4,6 +4,9 @@ import { FirestoreService } from '../firebase/firestoreService';
 
 export const INITIAL_UNLOCKED_SONG_IDS: string[] = ['mam-1406', 'cap-sua-maneira', 'pit-chip-novo'];
 export const UNLOCK_COST_ROCKCOINS = 5;
+export const SEASON_1_RESET_KEY = 'rb_season_1_reset_v14';
+export const CURRENT_SEASON_TAG = 's1';
+export const MIGRATION_VERSION_S1 = 14.0;
 
 export interface OfficialAvatar {
   id: string;
@@ -148,9 +151,62 @@ export class ProfileManager {
     totalCoinsEarned: 0,
     totalCoinsSpent: 0,
     transactions: [],
-    migrationVersion: 13.3,
+    migrationVersion: 14.0,
     accountType: 'guest'
   };
+
+  /**
+   * Executa o Reset Total da Temporada 1 uma única vez.
+   * Cria backup prévio, invalida dados e filas de testes antigos, e define o estado oficial.
+   */
+  public static performSeason1ResetIfNeeded(): { resetPerformed: boolean; backupKey?: string } {
+    try {
+      if (typeof localStorage === 'undefined') return { resetPerformed: false };
+
+      const alreadyReset = localStorage.getItem(SEASON_1_RESET_KEY);
+      if (alreadyReset === 'true') {
+        return { resetPerformed: false };
+      }
+
+      // 1. Backup de segurança dos dados locais de teste antes de qualquer exclusão
+      const backupData: Record<string, any> = {
+        timestamp: Date.now(),
+        date: new Date().toISOString(),
+        note: 'Backup automático pré-reset Temporada 1 RockBrazil',
+        activeProfileId: localStorage.getItem('rb_active_profile_id'),
+        fallbackProfiles: localStorage.getItem('rb_profiles_fallback'),
+        settings: localStorage.getItem('rockbrazil_settings'),
+        pendingSync: localStorage.getItem('rb_pending_ranking_sync'),
+        authPreference: localStorage.getItem('rb_auth_preference')
+      };
+      const backupKey = `rb_backup_pre_season_1_${Date.now()}`;
+      localStorage.setItem(backupKey, JSON.stringify(backupData));
+      localStorage.setItem('rb_last_backup_pre_season_1_key', backupKey);
+
+      // 2. Limpar filas de sincronização offline antigas (impede republicação de recordes da fase de testes!)
+      localStorage.removeItem('rb_pending_ranking_sync');
+      localStorage.removeItem('rb_profiles_fallback');
+      localStorage.removeItem('rb_active_profile_id');
+      localStorage.removeItem('rb_guest_profile');
+
+      // 3. Limpar bancos IndexedDB antigos do navegador
+      if (typeof indexedDB !== 'undefined') {
+        try {
+          indexedDB.deleteDatabase(this.DB_NAME);
+        } catch {
+          // Ignore
+        }
+      }
+
+      // 4. Marcação definitiva do reset da Temporada 1 (acontece apenas uma única vez!)
+      localStorage.setItem(SEASON_1_RESET_KEY, 'true');
+
+      return { resetPerformed: true, backupKey };
+    } catch (err) {
+      console.warn('[ProfileManager] Erro no reset da Temporada 1:', err);
+      return { resetPerformed: false };
+    }
+  }
 
   private static getStorageItem(key: string): string | null {
     try {
@@ -195,40 +251,31 @@ export class ProfileManager {
   }
 
   async init(catalogSongIds?: string[]): Promise<{ isFirstRun: boolean; activeProfile: PlayerProfile }> {
-    const profiles = await this.getAllProfiles();
-
-    if (profiles.length === 0) {
-      this.activeProfile = { ...ProfileManager.GUEST_PROFILE };
-      return { isFirstRun: true, activeProfile: this.activeProfile };
-    }
+    ProfileManager.performSeason1ResetIfNeeded();
 
     const savedActiveId = ProfileManager.getStorageItem('rb_active_profile_id');
-    let current = profiles.find((p) => p.id === savedActiveId);
-    if (!current) {
-      current = savedActiveId === 'guest' ? { ...ProfileManager.GUEST_PROFILE } : profiles[0];
+
+    if (savedActiveId && savedActiveId !== 'guest') {
+      const stored = await this.getProfileByUid(savedActiveId);
+      if (stored) {
+        this.activeProfile = this.migrateProfile(stored, catalogSongIds);
+        return { isFirstRun: false, activeProfile: this.activeProfile };
+      }
     }
 
-    current = this.migrateProfile(current, catalogSongIds);
-    this.activeProfile = current;
-    ProfileManager.setStorageItem('rb_active_profile_id', current.id);
-    return { isFirstRun: false, activeProfile: current };
+    const guest = this.loadGuestProfile();
+    this.activeProfile = this.migrateProfile(guest, catalogSongIds);
+    ProfileManager.setStorageItem('rb_active_profile_id', 'guest');
+    return { isFirstRun: false, activeProfile: this.activeProfile };
   }
 
   public migrateProfile(profile: PlayerProfile, catalogSongIds?: string[]): PlayerProfile {
+    // Compatibilidade com testes legados que passaram catalogSongIds explicitamente sem versão
     if (!profile.migrationVersion || profile.migrationVersion < 13.3) {
-      if (!profile.unlockedSongIds || profile.unlockedSongIds.length === 0) {
-        if (catalogSongIds && catalogSongIds.length > 0) {
-          profile.unlockedSongIds = [...catalogSongIds];
-        } else {
-          const recordsSongs = Object.keys(profile.records || {});
-          const historySongs = (profile.history || []).map((h) => h.songId);
-          const existingPlayed = Array.from(new Set([...recordsSongs, ...historySongs]));
-          if (existingPlayed.length > 0) {
-            profile.unlockedSongIds = Array.from(new Set([...INITIAL_UNLOCKED_SONG_IDS, ...existingPlayed]));
-          } else {
-            profile.unlockedSongIds = [...INITIAL_UNLOCKED_SONG_IDS];
-          }
-        }
+      if (catalogSongIds && catalogSongIds.length > 0) {
+        profile.unlockedSongIds = [...catalogSongIds];
+      } else {
+        profile.unlockedSongIds = [...INITIAL_UNLOCKED_SONG_IDS];
       }
       if (profile.rockCoins === undefined) {
         profile.rockCoins = 0;
@@ -259,44 +306,181 @@ export class ProfileManager {
       }
       profile.migrationVersion = 13.3;
       this.saveProfileToDB(profile).catch(() => {});
-    } else {
-      // Mesmo se já migrado para 13.3, garante que muteOnMiss indefinido se torne true sem sobrescrever false existente
-      if (!profile.settings) {
-        profile.settings = {
-          musicVolume: 0.85,
-          sfxVolume: 0.9,
-          audioOffsetMs: 0,
-          noteSpeedMultiplier: 1.0,
-          visualEffectsEnabled: true,
-          muteOnMiss: true
-        };
-      } else if (profile.settings.muteOnMiss === undefined || profile.settings.muteOnMiss === null) {
-        profile.settings.muteOnMiss = true;
-      }
+      return profile;
     }
+
+    // Se estiver na versão 13.3 e migrando para 14.0 (Temporada 1)
+    if (profile.migrationVersion < 14.0) {
+      if (!profile.unlockedSongIds || profile.unlockedSongIds.length === 0) {
+        profile.unlockedSongIds = [...INITIAL_UNLOCKED_SONG_IDS];
+      }
+      profile.migrationVersion = 14.0;
+    }
+
+    // Garante preferências de áudio e muteOnMiss
+    if (!profile.settings) {
+      profile.settings = {
+        musicVolume: 0.85,
+        sfxVolume: 0.9,
+        audioOffsetMs: 0,
+        noteSpeedMultiplier: 1.0,
+        visualEffectsEnabled: true,
+        muteOnMiss: true
+      };
+    } else if (profile.settings.muteOnMiss === undefined || profile.settings.muteOnMiss === null) {
+      profile.settings.muteOnMiss = true;
+    }
+
     return profile;
   }
 
   async updateActiveAvatar(avatarId: string): Promise<PlayerProfile | null> {
     if (!this.activeProfile) return null;
     this.activeProfile.avatar = avatarId;
-    if (this.activeProfile.id !== 'guest') {
-      await this.saveProfileToDB(this.activeProfile);
-    }
+    await this.saveProfileToDB(this.activeProfile);
     return this.activeProfile;
   }
 
+  /**
+   * Obtém um perfil persistido diretamente pelo UID.
+   */
+  public async getProfileByUid(uid: string): Promise<PlayerProfile | null> {
+    if (!uid) return null;
+    if (uid === 'guest') return this.loadGuestProfile();
+
+    const all = await this.getAllStoredProfiles();
+    return all.find((p) => p.id === uid) || null;
+  }
+
+  /**
+   * Define e recupera o perfil único oficial da conta Google autenticada.
+   */
+  public async setGoogleProfile(uid: string, name?: string, avatar?: string): Promise<PlayerProfile> {
+    if (!uid || uid === 'guest') {
+      return this.setGuestMode();
+    }
+
+    let profile = await this.getProfileByUid(uid);
+    if (!profile) {
+      const publicName = (name || 'Rockeiro').split('@')[0].trim().substring(0, 24);
+      profile = {
+        id: uid,
+        name: publicName,
+        avatar: avatar || 'rockbrazil-avatar-01',
+        createdAt: Date.now(),
+        lastPlayedAt: Date.now(),
+        settings: {
+          musicVolume: 0.85,
+          sfxVolume: 0.9,
+          audioOffsetMs: 0,
+          noteSpeedMultiplier: 1.0,
+          visualEffectsEnabled: true,
+          muteOnMiss: true
+        },
+        records: {},
+        history: [],
+        rockCoins: 0,
+        unlockedSongIds: [...INITIAL_UNLOCKED_SONG_IDS],
+        totalCoinsEarned: 0,
+        totalCoinsSpent: 0,
+        transactions: [],
+        migrationVersion: 14.0,
+        accountType: 'google'
+      };
+    } else {
+      profile.accountType = 'google';
+      if (name && (!profile.name || profile.name === 'Convidado')) {
+        profile.name = name.split('@')[0].trim().substring(0, 24);
+      }
+      if (avatar && (!profile.avatar || profile.avatar === 'rockbrazil-avatar-01')) {
+        profile.avatar = avatar;
+      }
+    }
+
+    ProfileManager.setStorageItem(SEASON_1_RESET_KEY, 'true');
+    this.activeProfile = profile;
+    ProfileManager.setStorageItem('rb_active_profile_id', uid);
+    await this.saveProfileToDB(profile);
+    return profile;
+  }
+
+  /**
+   * Converte permanentemente o perfil de Convidado em perfil oficial Google ao vincular.
+   */
+  public linkGuestToGoogle(uid: string, name?: string, avatar?: string): PlayerProfile {
+    const guest = this.loadGuestProfile();
+    const publicName = (name || (guest.name !== 'Convidado' ? guest.name : 'Rockeiro')).split('@')[0].trim().substring(0, 24);
+
+    const googleProfile: PlayerProfile = {
+      ...guest,
+      id: uid,
+      name: publicName,
+      avatar: avatar || guest.avatar || 'rockbrazil-avatar-01',
+      accountType: 'google',
+      migrationVersion: 14.0
+    };
+
+    this.activeProfile = googleProfile;
+    ProfileManager.setStorageItem('rb_active_profile_id', uid);
+    this.saveProfileToDB(googleProfile).catch(() => {});
+
+    // Limpa o slot de convidado para que não guarde os dados do jogador agora vinculado
+    this.saveGuestProfile({ ...ProfileManager.GUEST_PROFILE });
+
+    return googleProfile;
+  }
+
+  /**
+   * Ativa o Modo Convidado único.
+   * Regra de Identidade: Não permite trocar para convidado se autenticado com Google.
+   */
   setGuestMode(): PlayerProfile {
-    this.activeProfile = { ...ProfileManager.GUEST_PROFILE };
+    if (this.activeProfile && this.activeProfile.accountType === 'google' && this.activeProfile.id !== 'guest') {
+      return this.activeProfile;
+    }
+
+    const guest = this.loadGuestProfile();
+    this.activeProfile = guest;
     ProfileManager.setStorageItem('rb_active_profile_id', 'guest');
     return this.activeProfile;
+  }
+
+  public loadGuestProfile(): PlayerProfile {
+    try {
+      const stored = ProfileManager.getStorageItem('rb_guest_profile');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.id === 'guest') {
+          return parsed;
+        }
+      }
+    } catch {
+      // Ignore
+    }
+    return { ...ProfileManager.GUEST_PROFILE };
+  }
+
+  public saveGuestProfile(profile: PlayerProfile): void {
+    ProfileManager.setStorageItem('rb_guest_profile', JSON.stringify(profile));
   }
 
   getActiveProfile(): PlayerProfile {
     return this.activeProfile || ProfileManager.GUEST_PROFILE;
   }
 
+  /**
+   * V13.4: Retorna todos os perfis armazenados ou o perfil ativo único.
+   */
   async getAllProfiles(): Promise<PlayerProfile[]> {
+    const all = await this.getAllStoredProfiles();
+    if (all.length > 0) return all;
+    return [this.getActiveProfile()];
+  }
+
+  /**
+   * Recupera todos os perfis armazenados localmente (IndexedDB / Fallback).
+   */
+  public async getAllStoredProfiles(): Promise<PlayerProfile[]> {
     try {
       const db = await ProfileManager.openDB();
       return new Promise((resolve) => {
@@ -336,10 +520,11 @@ export class ProfileManager {
       totalCoinsEarned: 0,
       totalCoinsSpent: 0,
       transactions: [],
-      migrationVersion: 13.3,
+      migrationVersion: 14.0,
       accountType
     };
 
+    ProfileManager.setStorageItem(SEASON_1_RESET_KEY, 'true');
     await this.saveProfileToDB(newProfile);
     this.activeProfile = newProfile;
     ProfileManager.setStorageItem('rb_active_profile_id', newProfile.id);
@@ -347,7 +532,8 @@ export class ProfileManager {
   }
 
   async switchProfile(id: string): Promise<PlayerProfile | null> {
-    const profiles = await this.getAllProfiles();
+    if (this.activeProfile?.id === id) return this.activeProfile;
+    const profiles = await this.getAllStoredProfiles();
     const target = profiles.find((p) => p.id === id);
     if (target) {
       this.activeProfile = target;
@@ -785,7 +971,12 @@ export class ProfileManager {
     }
   }
 
-  private async saveProfileToDB(profile: PlayerProfile): Promise<void> {
+  public async saveProfileToDB(profile: PlayerProfile): Promise<void> {
+    if (profile.id === 'guest') {
+      this.saveGuestProfile(profile);
+      return;
+    }
+
     try {
       const db = await ProfileManager.openDB();
       await new Promise<void>((resolve, reject) => {

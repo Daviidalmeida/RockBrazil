@@ -655,6 +655,11 @@ export class UIManager {
     const modal = document.getElementById('modal-player-profiles') || this.modalProfileManager;
     if (!modal) return;
 
+    const titleEl = modal.querySelector('.profiles-title');
+    if (titleEl) titleEl.textContent = 'MEU PERFIL';
+    const subtitleEl = modal.querySelector('.profiles-subtitle');
+    if (subtitleEl) subtitleEl.textContent = 'Acompanhe suas estatísticas, conquistas e evolução no RockBrazil.';
+
     const profile = this.currentActiveProfile;
     if (profile) {
       const avatarEl = document.getElementById('active-profile-avatar');

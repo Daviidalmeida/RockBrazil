@@ -188,8 +188,7 @@ class RockBrazilGame {
 
   private async initGame(): Promise<void> {
     // 1. Initialize Profile System (Boot direct to menu as guest or active profile)
-    const catalogIds = this.library.getActiveSongs().map((s) => s.id);
-    const { activeProfile } = await this.profileManager.init(catalogIds);
+    const { activeProfile } = await this.profileManager.init();
     this.ui.setProfileHeader(activeProfile);
 
     // V13.3: Wire Unlock & Profile Provider Callbacks
@@ -256,25 +255,16 @@ class RockBrazilGame {
 
   private async handleUserAuthenticated(user: any): Promise<void> {
     try {
+      let current = await this.profileManager.setGoogleProfile(user.uid, user.displayName, user.photoURL);
       const cloudData = await FirestoreService.fetchProfileFromCloud(user.uid);
-      let current = this.profileManager.getActiveProfile();
 
       if (cloudData) {
         current = FirestoreService.mergeProfiles(current, cloudData);
+        await this.profileManager.saveProfileToDB(current);
       } else {
-        current.id = user.uid;
-        if (user.displayName) current.name = user.displayName;
-        if (user.photoURL) {
-          if (!current.avatar || current.avatar === '🎸' || current.avatar === '👤') {
-            current.avatar = user.photoURL;
-          }
-        } else if (!current.avatar || current.avatar === '🎸' || current.avatar === '👤') {
-          current.avatar = 'rockbrazil-avatar-01';
-        }
         await FirestoreService.syncProfileToCloud(user.uid, current);
       }
 
-      this.profileManager.updateActiveProfile(current);
       this.ui.setProfileHeader(current);
       this.ui.renderSongLibrary(this.library.getActiveSongs(), current);
     } catch (err) {
@@ -352,11 +342,13 @@ class RockBrazilGame {
       this.ui.showScreen(GameState.MENU);
     };
 
-    this.ui.onSwitchAccountModeClicked = () => {
+    this.ui.onSwitchAccountModeClicked = async () => {
       if (this.state === GameState.PLAYING || this.state === GameState.COUNTDOWN) {
         alert('Não é possível trocar de conta durante uma partida ativa. Conclua ou saia da música primeiro.');
         return;
       }
+      // V13.4: Sair da conta desconecta sem converter o perfil Google em convidado
+      await AuthService.signOutUser();
       this.state = GameState.LOGIN;
       this.ui.showScreen(GameState.LOGIN);
     };

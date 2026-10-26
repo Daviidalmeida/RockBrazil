@@ -3,42 +3,181 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Função de verificação estrita de usuário autenticado via Google
+    // =========================================================================
+    // FUNÇÕES AUXILIARES DE AUTENTICAÇÃO E VALIDAÇÃO
+    // =========================================================================
+
+    // Verifica estritamente se o usuário está autenticado via Google (provedor google.com)
     function isGoogleUser() {
       return request.auth != null &&
         request.auth.token.firebase.sign_in_provider == 'google.com';
     }
 
-    // Perfil privado do usuário: apenas o próprio dono autenticado pode ler e gravar
+    // Validações de texto (tamanho e tipo)
+    function isValidPlayerName(name) {
+      return name is string && name.size() >= 1 && name.size() <= 35;
+    }
+
+    function isValidAvatar(avatar) {
+      return avatar is string && avatar.size() >= 1 && avatar.size() <= 60;
+    }
+
+    function isValidDifficulty(diff) {
+      return diff in ['EASY', 'MEDIUM', 'HARD', 'EXPERT'];
+    }
+
+    // Validações numéricas e limites plausíveis de pontuação
+    function isValidScore(score) {
+      return score is number && score >= 0 && score <= 2000000;
+    }
+
+    function isValidTotalScore(totalScore) {
+      return totalScore is number && totalScore >= 0 && totalScore <= 500000000;
+    }
+
+    function isValidAccuracy(acc) {
+      return acc is number && acc >= 0 && acc <= 100;
+    }
+
+    function isValidMaxCombo(combo) {
+      return combo is number && combo >= 0 && combo <= 10000;
+    }
+
+    function isValidStars(stars) {
+      return stars is number && stars >= 1 && stars <= 5;
+    }
+
+    function isValidSeason(season) {
+      return season == 's1';
+    }
+
+    // Ausência absoluta de campos confidenciais ou dados privados
+    function hasNoPrivateData() {
+      return !('email' in request.resource.data) &&
+        !('token' in request.resource.data) &&
+        !('password' in request.resource.data) &&
+        !('secret' in request.resource.data);
+    }
+
+    // =========================================================================
+    // COLEÇÃO: users/{userId} — PERFIS PRIVADOS DE JOGADORES
+    // =========================================================================
+    // Apenas o próprio usuário autenticado pode ler ou gravar em seu perfil
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Ranking Geral Consolidado (exclusivo para contas Google)
+    // =========================================================================
+    // COLEÇÃO: rankings_summary/{userId} — RESUMO DO RANKING GERAL (TEMPORADA 1)
+    // =========================================================================
     match /rankings_summary/{userId} {
+      // Leitura permitida exclusivamente para contas Google
       allow read: if isGoogleUser();
-      allow write: if isGoogleUser() &&
+
+      // Bloqueio rigoroso de exclusão de dados pelos clientes
+      allow delete: if false;
+
+      // Criação de resumo de pontuação
+      allow create: if isGoogleUser() &&
         request.auth.uid == userId &&
-        request.resource.data.totalScore is number &&
-        request.resource.data.totalScore >= 0 &&
-        request.resource.data.playerName is string &&
-        request.resource.data.playerName.size() <= 35 &&
-        (!('email' in request.resource.data));
+        request.resource.data.uid == request.auth.uid &&
+        request.resource.data.keys().hasOnly(['uid', 'playerName', 'avatar', 'totalScore', 'songsCount', 'updatedAt', 'season']) &&
+        request.resource.data.keys().hasAll(['uid', 'playerName', 'avatar', 'totalScore', 'songsCount', 'updatedAt', 'season']) &&
+        isValidPlayerName(request.resource.data.playerName) &&
+        isValidAvatar(request.resource.data.avatar) &&
+        isValidTotalScore(request.resource.data.totalScore) &&
+        request.resource.data.songsCount is number &&
+        request.resource.data.songsCount >= 0 &&
+        request.resource.data.songsCount <= 1000 &&
+        request.resource.data.updatedAt is number &&
+        isValidSeason(request.resource.data.season) &&
+        hasNoPrivateData();
+
+      // Atualização de resumo: impede regressão de totalScore e protege identidade
+      allow update: if isGoogleUser() &&
+        request.auth.uid == userId &&
+        request.resource.data.uid == resource.data.uid &&
+        request.resource.data.season == resource.data.season &&
+        request.resource.data.totalScore >= resource.data.totalScore &&
+        request.resource.data.keys().hasOnly(['uid', 'playerName', 'avatar', 'totalScore', 'songsCount', 'updatedAt', 'season']) &&
+        isValidPlayerName(request.resource.data.playerName) &&
+        isValidAvatar(request.resource.data.avatar) &&
+        isValidTotalScore(request.resource.data.totalScore) &&
+        request.resource.data.songsCount is number &&
+        request.resource.data.songsCount >= 0 &&
+        request.resource.data.songsCount <= 1000 &&
+        request.resource.data.updatedAt is number &&
+        isValidSeason(request.resource.data.season) &&
+        hasNoPrivateData();
     }
 
-    // Recordes por Música e Dificuldade (exclusivo para contas Google)
+    // =========================================================================
+    // COLEÇÃO: rankings_song/{recordId} — RECORDES POR MÚSICA E DIFICULDADE (S1)
+    // =========================================================================
     match /rankings_song/{recordId} {
+      // Leitura permitida exclusivamente para contas Google
       allow read: if isGoogleUser();
-      allow write: if isGoogleUser() &&
+
+      // Bloqueio rigoroso de exclusão de recordes pelos clientes
+      allow delete: if false;
+
+      // Criação de recorde individual
+      allow create: if isGoogleUser() &&
         request.auth.uid == request.resource.data.uid &&
-        request.resource.data.score is number &&
-        request.resource.data.score >= 0 &&
-        request.resource.data.playerName is string &&
-        request.resource.data.playerName.size() <= 35 &&
-        (!('email' in request.resource.data));
+        recordId == (request.resource.data.songId + '_' + request.resource.data.difficulty + '_' + request.auth.uid) &&
+        request.resource.data.keys().hasOnly(['uid', 'songId', 'songTitle', 'artist', 'difficulty', 'score', 'accuracy', 'maxCombo', 'stars', 'playerName', 'avatar', 'updatedAt', 'season']) &&
+        request.resource.data.keys().hasAll(['uid', 'songId', 'songTitle', 'artist', 'difficulty', 'score', 'accuracy', 'maxCombo', 'stars', 'playerName', 'avatar', 'updatedAt', 'season']) &&
+        request.resource.data.songId is string &&
+        request.resource.data.songId.size() >= 1 &&
+        request.resource.data.songId.size() <= 64 &&
+        request.resource.data.songTitle is string &&
+        request.resource.data.songTitle.size() >= 1 &&
+        request.resource.data.songTitle.size() <= 80 &&
+        request.resource.data.artist is string &&
+        request.resource.data.artist.size() >= 1 &&
+        request.resource.data.artist.size() <= 80 &&
+        isValidDifficulty(request.resource.data.difficulty) &&
+        isValidScore(request.resource.data.score) &&
+        isValidAccuracy(request.resource.data.accuracy) &&
+        isValidMaxCombo(request.resource.data.maxCombo) &&
+        isValidStars(request.resource.data.stars) &&
+        isValidPlayerName(request.resource.data.playerName) &&
+        isValidAvatar(request.resource.data.avatar) &&
+        request.resource.data.updatedAt is number &&
+        isValidSeason(request.resource.data.season) &&
+        hasNoPrivateData();
+
+      // Atualização de recorde: impede downgrade de pontuação e garante imutabilidade de chaves
+      allow update: if isGoogleUser() &&
+        request.auth.uid == request.resource.data.uid &&
+        recordId == (request.resource.data.songId + '_' + request.resource.data.difficulty + '_' + request.auth.uid) &&
+        request.resource.data.uid == resource.data.uid &&
+        request.resource.data.songId == resource.data.songId &&
+        request.resource.data.difficulty == resource.data.difficulty &&
+        request.resource.data.season == resource.data.season &&
+        request.resource.data.score >= resource.data.score &&
+        request.resource.data.keys().hasOnly(['uid', 'songId', 'songTitle', 'artist', 'difficulty', 'score', 'accuracy', 'maxCombo', 'stars', 'playerName', 'avatar', 'updatedAt', 'season']) &&
+        request.resource.data.songTitle is string &&
+        request.resource.data.songTitle.size() >= 1 &&
+        request.resource.data.songTitle.size() <= 80 &&
+        request.resource.data.artist is string &&
+        request.resource.data.artist.size() >= 1 &&
+        request.resource.data.artist.size() <= 80 &&
+        isValidDifficulty(request.resource.data.difficulty) &&
+        isValidScore(request.resource.data.score) &&
+        isValidAccuracy(request.resource.data.accuracy) &&
+        isValidMaxCombo(request.resource.data.maxCombo) &&
+        isValidStars(request.resource.data.stars) &&
+        isValidPlayerName(request.resource.data.playerName) &&
+        isValidAvatar(request.resource.data.avatar) &&
+        request.resource.data.updatedAt is number &&
+        isValidSeason(request.resource.data.season) &&
+        hasNoPrivateData();
     }
 
-    // Bloqueia qualquer outro acesso não autorizado por padrão
+    // =========================================================================
+    // BLOQUEIO GERAL PADRÃO
+    // =========================================================================
     match /{document=**} {
       allow read, write: if false;
     }

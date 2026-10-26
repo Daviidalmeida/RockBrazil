@@ -16,6 +16,8 @@ import { PlayerProfile, Difficulty, SongRecord, GameStats } from '../types';
 import { RecordMatchResult } from '../game/profileManager';
 import { AuthService } from './authService';
 
+export const CURRENT_SEASON = 's1';
+
 export interface GlobalRankingEntry {
   uid: string;
   playerName: string;
@@ -29,6 +31,7 @@ export interface GlobalRankingEntry {
   maxCombo?: number;
   stars?: number;
   updatedAt: number;
+  season?: string;
   rank?: number;
 }
 
@@ -39,6 +42,7 @@ export interface GlobalSummaryEntry {
   totalScore: number;
   songsCount: number;
   updatedAt: number;
+  season?: string;
   rank?: number;
 }
 
@@ -97,19 +101,20 @@ export class RankingService {
     const publicName = rawName.split('@')[0].trim().substring(0, 24);
     const avatar = profile.avatar || 'rockbrazil-avatar-01';
 
-    const payload = {
+    const payload: GlobalRankingEntry = {
       uid,
       songId,
       songTitle,
       artist,
       difficulty,
       score: recordResult.newScore,
-      accuracy: stats.accuracy || 0,
+      accuracy: Math.round((stats.accuracy || 0) * 10) / 10,
       maxCombo: stats.maxCombo || 0,
-      stars: stats.stars || 1,
+      stars: Math.min(5, Math.max(1, stats.stars || 1)),
       playerName: publicName,
       avatar,
-      updatedAt: Date.now()
+      updatedAt: Date.now(),
+      season: CURRENT_SEASON
     };
 
     if (!db || typeof navigator !== 'undefined' && !navigator.onLine) {
@@ -177,14 +182,16 @@ export class RankingService {
       if (totalScore <= 0) return;
 
       const summaryRef = doc(db, this.COLLECTION_RANKINGS_SUMMARY, uid);
-      await setDoc(summaryRef, {
+      const summaryPayload: GlobalSummaryEntry = {
         uid,
         playerName: publicName,
         avatar,
         totalScore,
         songsCount: count,
-        updatedAt: Date.now()
-      }, { merge: true });
+        updatedAt: Date.now(),
+        season: CURRENT_SEASON
+      };
+      await setDoc(summaryRef, summaryPayload, { merge: true });
     } catch (err) {
       console.warn('[RankingService] Erro ao atualizar resumo do ranking geral:', err);
     }
@@ -197,7 +204,8 @@ export class RankingService {
     filter: RankingFilterType,
     songId?: string,
     difficulty?: Difficulty,
-    maxLimit: number = 30
+    maxLimit: number = 30,
+    season: string = CURRENT_SEASON
   ): Promise<GlobalRankingEntry[] | GlobalSummaryEntry[]> {
     if (!db) {
       throw new Error('Serviço de banco de dados indisponível.');
@@ -213,7 +221,9 @@ export class RankingService {
         let r = 1;
         snapshot.forEach((d) => {
           const data = d.data() as GlobalSummaryEntry;
-          list.push({ ...data, rank: r++ });
+          if (!data.season || data.season === season) {
+            list.push({ ...data, rank: r++ });
+          }
         });
         return list;
       } else {
@@ -238,7 +248,9 @@ export class RankingService {
         let r = 1;
         snapshot.forEach((d) => {
           const data = d.data() as GlobalRankingEntry;
-          list.push({ ...data, rank: r++ });
+          if (!data.season || data.season === season) {
+            list.push({ ...data, rank: r++ });
+          }
         });
         return list;
       }
@@ -278,6 +290,9 @@ export class RankingService {
       const remaining: any[] = [];
       for (const item of queue) {
         try {
+          if (!item.season) {
+            item.season = CURRENT_SEASON;
+          }
           const docId = `${item.songId}_${item.difficulty}_${item.uid}`;
           const recordRef = doc(db, this.COLLECTION_RANKINGS_SONG, docId);
           await setDoc(recordRef, item, { merge: true });
