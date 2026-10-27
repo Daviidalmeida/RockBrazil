@@ -5,7 +5,7 @@ import { InputController } from '../src/game/input/inputController';
 import { GameEngine } from '../src/game/engine';
 import { Note, Lane } from '../src/types';
 
-describe('ROCKBRAZIL V13.5.1 — CORREÇÃO URGENTE DE ZOOM NO IPHONE', () => {
+describe('ROCKBRAZIL V13.5.2 — CORREÇÃO DEFINITIVA DE ZOOM NO IPHONE', () => {
   const rootDir = path.resolve(__dirname, '..');
   const indexHtml = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf-8');
   const styleCss = fs.readFileSync(path.join(rootDir, 'src/style.css'), 'utf-8');
@@ -20,16 +20,16 @@ describe('ROCKBRAZIL V13.5.1 — CORREÇÃO URGENTE DE ZOOM NO IPHONE', () => {
       expect(indexHtml).toMatch(/<meta\s+name=["']viewport["']\s+content=["'][^"']*width=device-width[^"']*viewport-fit=cover[^"']*["']/i);
     });
 
-    it('NÃO deve usar user-scalable=no ou maximum-scale=1 como bloqueio principal no viewport', () => {
-      // Regra 8: Preservar zoom e acessibilidade fora da partida
+    it('NÃO deve usar user-scalable=no ou maximum-scale=1 como bloqueio estático no index.html', () => {
+      // Fora da partida, acessibilidade preservada no HTML base
       expect(indexHtml).not.toMatch(/<meta\s+name=["']viewport["'][^>]*user-scalable=no/i);
       expect(indexHtml).not.toMatch(/<meta\s+name=["']viewport["'][^>]*maximum-scale=1\.0/i);
     });
 
-    it('NÃO deve aplicar touch-action: none globalmente em html, body', () => {
-      // Regra 4: Evitar aplicar bloqueios globais de zoom a menus, tutorial, perfil
-      // html, body deve ter touch-action: manipulation para acessibilidade e navegação fluida
-      expect(styleCss).toMatch(/html,\s*body\s*\{[^}]*touch-action:\s*manipulation;/);
+    it('deve aplicar touch-action: pan-y e overscroll-behavior: none em html, body para impedir pinch-zoom global', () => {
+      // touch-action: pan-y permite rolagem vertical sem autorizar pinch-zoom do Safari
+      expect(styleCss).toMatch(/html,\s*body\s*\{[^}]*touch-action:\s*pan-y;/);
+      expect(styleCss).toMatch(/html,\s*body\s*\{[^}]*overscroll-behavior:\s*none;/);
     });
   });
 
@@ -65,32 +65,41 @@ describe('ROCKBRAZIL V13.5.1 — CORREÇÃO URGENTE DE ZOOM NO IPHONE', () => {
       expect(styleCss).toMatch(/button,[^}]*touch-action:\s*manipulation;/);
       expect(styleCss).toMatch(/\.btn-rock,[^}]*touch-action:\s*manipulation;/);
     });
+
+    it('deve configurar .results-screen-container com enquadramento total e overscroll-behavior: none', () => {
+      expect(styleCss).toMatch(/\.results-screen-container\s*\{[^}]*overscroll-behavior:\s*none;/);
+    });
   });
 
   // =========================================================================
-  // 3. LISTENERS DE GESTO E TOQUE NO SAFARI (PREVENÇÃO DE ZOOM ACIDENTAL)
+  // 3. LISTENERS DE GESTO E MULTITOUCH NO SAFARI (CAPTURE PHASE)
   // =========================================================================
   describe('3. Prevenção de Gestos Nativos no iOS Safari (main.ts)', () => {
-    it('deve registrar listeners para gesturestart, gesturechange e gestureend impedindo zoom de 2 dedos', () => {
-      expect(mainTs).toContain("document.addEventListener('gesturestart', preventSafariGestureZoom, { passive: false });");
-      expect(mainTs).toContain("document.addEventListener('gesturechange', preventSafariGestureZoom, { passive: false });");
-      expect(mainTs).toContain("document.addEventListener('gestureend', preventSafariGestureZoom, { passive: false });");
+    it('deve registrar listeners na fase CAPTURE para touchstart e touchmove com e.touches.length > 1', () => {
+      expect(mainTs).toContain("window.addEventListener('touchstart', preventMultiTouchGesture, { passive: false, capture: true });");
+      expect(mainTs).toContain("window.addEventListener('touchmove', preventMultiTouchGesture, { passive: false, capture: true });");
+      expect(mainTs).toContain("document.addEventListener('touchstart', preventMultiTouchGesture, { passive: false, capture: true });");
+      expect(mainTs).toContain("document.addEventListener('touchmove', preventMultiTouchGesture, { passive: false, capture: true });");
     });
 
-    it('deve restringir preventDefault de gestos estritamente para quando o jogo estiver em PLAYING ou COUNTDOWN', () => {
-      expect(mainTs).toContain('(this.state === GameState.PLAYING || this.state === GameState.COUNTDOWN) && e.cancelable');
+    it('deve registrar listeners na fase CAPTURE para gesturestart, gesturechange e gestureend', () => {
+      expect(mainTs).toContain("window.addEventListener('gesturestart', preventSafariGestureZoom, { passive: false, capture: true });");
+      expect(mainTs).toContain("document.addEventListener('gesturestart', preventSafariGestureZoom, { passive: false, capture: true });");
     });
 
-    it('deve tratar touchstart, touchmove e touchend no fretBoard com passive: false e preventDefault cancelável', () => {
-      expect(mainTs).toContain("fretBoard.addEventListener('touchstart', preventFretTouch, { passive: false });");
-      expect(mainTs).toContain("fretBoard.addEventListener('touchmove', preventFretTouch, { passive: false });");
-      expect(mainTs).toContain("fretBoard.addEventListener('touchend', preventFretTouch, { passive: false });");
+    it('deve registrar listener de touchend com detecção de toque duplo (< 300ms) com preventDefault', () => {
+      expect(mainTs).toContain("window.addEventListener('touchend', preventDoubleTapZoom, { passive: false, capture: true });");
+      expect(mainTs).toContain("now - lastTapTime <= 300");
     });
 
-    it('deve tratar touch events no canvasContainer para evitar rolagem ou zoom acidental ao tocar próximo às pistas', () => {
-      expect(mainTs).toContain("canvasContainer.addEventListener('touchstart', preventCanvasTouch, { passive: false });");
-      expect(mainTs).toContain("canvasContainer.addEventListener('touchmove', preventCanvasTouch, { passive: false });");
-      expect(mainTs).toContain("canvasContainer.addEventListener('touchend', preventCanvasTouch, { passive: false });");
+    it('deve possuir métodos setGameplayViewport() e resetViewportScale() para controle dinâmico da escala', () => {
+      expect(mainTs).toContain('public setGameplayViewport(lock: boolean): void');
+      expect(mainTs).toContain('public resetViewportScale(): void');
+    });
+
+    it('deve monitorar window.visualViewport resize/scroll para reverter ampliações indesejadas na gameplay', () => {
+      expect(mainTs).toContain("window.visualViewport.addEventListener('resize'");
+      expect(mainTs).toContain("this.resetViewportScale()");
     });
 
     it('deve registrar tratamento para touchcancel limpando todas as pistas com releaseAllLanes()', () => {
@@ -275,6 +284,11 @@ describe('ROCKBRAZIL V13.5.1 — CORREÇÃO URGENTE DE ZOOM NO IPHONE', () => {
 
     it('deve chamar releaseAllLanes() ao iniciar uma nova partida em startNewMatch()', () => {
       expect(mainTs).toMatch(/private async startNewMatch\([\s\S]*?this\.releaseAllLanes\(\);/);
+    });
+
+    it('deve chamar setGameplayViewport(true) ao iniciar partida e setGameplayViewport(false) ao finalizar', () => {
+      expect(mainTs).toMatch(/private async startNewMatch\([\s\S]*?this\.setGameplayViewport\(true\);/);
+      expect(mainTs).toMatch(/private async finishSong\(\): Promise<void> \{[\s\S]*?this\.setGameplayViewport\(false\);[\s\S]*?this\.resetViewportScale\(\);/);
     });
 
     it('deve limpar activeLanes e visual pressed mesmo se pausado durante releaseLane()', () => {

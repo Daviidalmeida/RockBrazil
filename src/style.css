@@ -43,7 +43,8 @@ html, body {
   color: #ffffff;
   font-family: var(--font-ui);
   overflow: hidden;
-  touch-action: manipulation;
+  touch-action: pan-y;
+  overscroll-behavior: none;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -61,6 +62,7 @@ html, body {
   max-height: 100dvh;
   background: #08080c;
   overflow: hidden;
+  overscroll-behavior: none;
   display: flex;
   flex-direction: column;
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
@@ -2174,14 +2176,20 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   width: 100vw;
+  width: 100dvw;
+  height: 100%;
   height: 100vh;
+  height: 100dvh;
   background: #000;
   overflow: hidden;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 100;
+  touch-action: pan-y;
+  overscroll-behavior: none;
 }
 
 .results-art-wrapper {
@@ -4179,4 +4187,5 @@ button,
   user-select: none !important;
   -webkit-user-select: none !important;
   -webkit-touch-callout: none !important;
+  overscroll-behavior: none !important;
 }

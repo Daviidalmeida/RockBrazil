@@ -260,6 +260,8 @@ class RockBrazilGame {
       return await this.profileManager.getAllProfiles();
     };
     this.ui.onReturnToLibraryClicked = () => {
+      this.setGameplayViewport(false);
+      this.resetViewportScale();
       this.audio.stop();
       this.ytPlayer.stop();
       this.state = GameState.SONG_SELECT;
@@ -850,16 +852,61 @@ class RockBrazilGame {
     window.addEventListener('click', unlockAudio, { passive: true });
     window.addEventListener('keydown', unlockAudio, { passive: true });
 
-    // V13.5.1: iOS Safari Gesture Zoom Prevention
-    // Intercepts proprietary multi-finger pinch gestures strictly during gameplay
+    // V13.5.2: Intercept multi-finger touches in the CAPTURE phase on window and document.
+    // In iOS Safari, UIPinchGestureRecognizer starts at the native level when 2 touches are detected.
+    // Calling preventDefault on multi-touch touchstart/touchmove during capture phase stops the native recognizer.
+    const preventMultiTouchGesture = (e: TouchEvent) => {
+      if (this.state === GameState.PLAYING || this.state === GameState.COUNTDOWN) {
+        if (e.touches && e.touches.length > 1 && e.cancelable) {
+          e.preventDefault();
+        }
+      }
+    };
+    window.addEventListener('touchstart', preventMultiTouchGesture, { passive: false, capture: true });
+    window.addEventListener('touchmove', preventMultiTouchGesture, { passive: false, capture: true });
+    document.addEventListener('touchstart', preventMultiTouchGesture, { passive: false, capture: true });
+    document.addEventListener('touchmove', preventMultiTouchGesture, { passive: false, capture: true });
+
+    // iOS Safari proprietary gesture events (pinch/zoom)
     const preventSafariGestureZoom = (e: Event) => {
       if ((this.state === GameState.PLAYING || this.state === GameState.COUNTDOWN) && e.cancelable) {
         e.preventDefault();
       }
     };
-    document.addEventListener('gesturestart', preventSafariGestureZoom, { passive: false });
-    document.addEventListener('gesturechange', preventSafariGestureZoom, { passive: false });
-    document.addEventListener('gestureend', preventSafariGestureZoom, { passive: false });
+    window.addEventListener('gesturestart', preventSafariGestureZoom, { passive: false, capture: true });
+    window.addEventListener('gesturechange', preventSafariGestureZoom, { passive: false, capture: true });
+    window.addEventListener('gestureend', preventSafariGestureZoom, { passive: false, capture: true });
+    document.addEventListener('gesturestart', preventSafariGestureZoom, { passive: false, capture: true });
+    document.addEventListener('gesturechange', preventSafariGestureZoom, { passive: false, capture: true });
+    document.addEventListener('gestureend', preventSafariGestureZoom, { passive: false, capture: true });
+
+    // Prevent double-tap to zoom during gameplay
+    let lastTapTime = 0;
+    const preventDoubleTapZoom = (e: TouchEvent) => {
+      if (this.state === GameState.PLAYING || this.state === GameState.COUNTDOWN) {
+        const now = Date.now();
+        if (now - lastTapTime <= 300 && e.cancelable) {
+          e.preventDefault();
+        }
+        lastTapTime = now;
+      }
+    };
+    window.addEventListener('touchend', preventDoubleTapZoom, { passive: false, capture: true });
+    document.addEventListener('touchend', preventDoubleTapZoom, { passive: false, capture: true });
+
+    // VisualViewport observer: if any scale deviation occurs during gameplay, immediately reset
+    if (typeof window !== 'undefined' && window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        if ((this.state === GameState.PLAYING || this.state === GameState.COUNTDOWN) && window.visualViewport && window.visualViewport.scale !== 1) {
+          this.resetViewportScale();
+        }
+      });
+      window.visualViewport.addEventListener('scroll', () => {
+        if (this.state === GameState.PLAYING || this.state === GameState.COUNTDOWN) {
+          window.scrollTo(0, 0);
+        }
+      });
+    }
 
     const fretBoard = document.getElementById('fret-board');
     if (!fretBoard) return;
@@ -870,12 +917,12 @@ class RockBrazilGame {
         e.preventDefault();
       }
     };
-    fretBoard.addEventListener('touchstart', preventFretTouch, { passive: false });
-    fretBoard.addEventListener('touchmove', preventFretTouch, { passive: false });
-    fretBoard.addEventListener('touchend', preventFretTouch, { passive: false });
+    fretBoard.addEventListener('touchstart', preventFretTouch, { passive: false, capture: true });
+    fretBoard.addEventListener('touchmove', preventFretTouch, { passive: false, capture: true });
+    fretBoard.addEventListener('touchend', preventFretTouch, { passive: false, capture: true });
     fretBoard.addEventListener('contextmenu', (e: Event) => {
       if (e.cancelable) e.preventDefault();
-    });
+    }, { capture: true });
 
     // Highway canvas container touch gesture prevention
     const canvasContainer = document.getElementById('canvas-container');
@@ -885,14 +932,14 @@ class RockBrazilGame {
           e.preventDefault();
         }
       };
-      canvasContainer.addEventListener('touchstart', preventCanvasTouch, { passive: false });
-      canvasContainer.addEventListener('touchmove', preventCanvasTouch, { passive: false });
-      canvasContainer.addEventListener('touchend', preventCanvasTouch, { passive: false });
+      canvasContainer.addEventListener('touchstart', preventCanvasTouch, { passive: false, capture: true });
+      canvasContainer.addEventListener('touchmove', preventCanvasTouch, { passive: false, capture: true });
+      canvasContainer.addEventListener('touchend', preventCanvasTouch, { passive: false, capture: true });
       canvasContainer.addEventListener('contextmenu', (e: Event) => {
         if ((this.state === GameState.PLAYING || this.state === GameState.COUNTDOWN) && e.cancelable) {
           e.preventDefault();
         }
-      });
+      }, { capture: true });
     }
 
     // Multitouch touchstart/pointerdown (independent multi-lane recognition)
@@ -1007,6 +1054,38 @@ class RockBrazilGame {
     return this.masterClock.getTime();
   }
 
+  public setGameplayViewport(lock: boolean): void {
+    const viewportMeta = document.querySelector('meta[name="viewport"]');
+    if (viewportMeta) {
+      if (lock) {
+        viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+      } else {
+        viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
+      }
+    }
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
+  }
+
+  public resetViewportScale(): void {
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
+    const viewportMeta = document.querySelector('meta[name="viewport"]');
+    if (viewportMeta) {
+      viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+      setTimeout(() => {
+        if (this.state !== GameState.PLAYING && this.state !== GameState.COUNTDOWN) {
+          viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
+        }
+        if (typeof window !== 'undefined') {
+          window.scrollTo(0, 0);
+        }
+      }, 50);
+    }
+  }
+
   public releaseAllLanes(): void {
     this.pointerLaneMap.clear();
     const lanes = Array.from(this.activeLanes);
@@ -1050,6 +1129,7 @@ class RockBrazilGame {
     this.clearResumeCountdown();
     this.clearCountdown();
     this.releaseAllLanes();
+    this.setGameplayViewport(true);
     this.audio.stop();
     this.ytPlayer.stop();
     this.ui.showAutoplayUnblockPrompt(false);
@@ -1520,6 +1600,8 @@ class RockBrazilGame {
     this.clearCountdown();
     this.clearResumeCountdown();
     this.releaseAllLanes();
+    this.setGameplayViewport(false);
+    this.resetViewportScale();
 
     try {
       this.audio.stop();
