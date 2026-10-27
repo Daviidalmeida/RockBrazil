@@ -44,6 +44,7 @@ export class InputController {
   private handleKeyUpBound: (e: KeyboardEvent) => void;
   private handlePointerDownBound: (e: PointerEvent) => void;
   private handlePointerUpBound: (e: PointerEvent) => void;
+  private handleTouchBound?: (e: TouchEvent) => void;
 
   constructor(callbacks: InputControllerCallbacks) {
     this.callbacks = callbacks;
@@ -67,6 +68,12 @@ export class InputController {
     if (fretBoardElement) {
       this.fretBoardElement = fretBoardElement;
       this.fretBoardElement.addEventListener('pointerdown', this.handlePointerDownBound, { passive: false });
+      this.handleTouchBound = (e: TouchEvent) => {
+        if (e.cancelable) e.preventDefault();
+      };
+      this.fretBoardElement.addEventListener('touchstart', this.handleTouchBound, { passive: false });
+      this.fretBoardElement.addEventListener('touchmove', this.handleTouchBound, { passive: false });
+      this.fretBoardElement.addEventListener('touchend', this.handleTouchBound, { passive: false });
     }
   }
 
@@ -210,6 +217,11 @@ export class InputController {
     }
     if (this.fretBoardElement) {
       this.fretBoardElement.removeEventListener('pointerdown', this.handlePointerDownBound);
+      if (this.handleTouchBound) {
+        this.fretBoardElement.removeEventListener('touchstart', this.handleTouchBound);
+        this.fretBoardElement.removeEventListener('touchmove', this.handleTouchBound);
+        this.fretBoardElement.removeEventListener('touchend', this.handleTouchBound);
+      }
       this.fretBoardElement = null;
     }
     this.releaseAll();

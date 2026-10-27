@@ -850,18 +850,64 @@ class RockBrazilGame {
     window.addEventListener('click', unlockAudio, { passive: true });
     window.addEventListener('keydown', unlockAudio, { passive: true });
 
+    // V13.5.1: iOS Safari Gesture Zoom Prevention
+    // Intercepts proprietary multi-finger pinch gestures strictly during gameplay
+    const preventSafariGestureZoom = (e: Event) => {
+      if ((this.state === GameState.PLAYING || this.state === GameState.COUNTDOWN) && e.cancelable) {
+        e.preventDefault();
+      }
+    };
+    document.addEventListener('gesturestart', preventSafariGestureZoom, { passive: false });
+    document.addEventListener('gesturechange', preventSafariGestureZoom, { passive: false });
+    document.addEventListener('gestureend', preventSafariGestureZoom, { passive: false });
+
     const fretBoard = document.getElementById('fret-board');
     if (!fretBoard) return;
 
-    // Multitouch touchstart/pointerdown
+    // Prevent Safari double-tap to zoom and native gesture triggers on fret board
+    const preventFretTouch = (e: TouchEvent) => {
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+    };
+    fretBoard.addEventListener('touchstart', preventFretTouch, { passive: false });
+    fretBoard.addEventListener('touchmove', preventFretTouch, { passive: false });
+    fretBoard.addEventListener('touchend', preventFretTouch, { passive: false });
+    fretBoard.addEventListener('contextmenu', (e: Event) => {
+      if (e.cancelable) e.preventDefault();
+    });
+
+    // Highway canvas container touch gesture prevention
+    const canvasContainer = document.getElementById('canvas-container');
+    if (canvasContainer) {
+      const preventCanvasTouch = (e: TouchEvent) => {
+        if ((this.state === GameState.PLAYING || this.state === GameState.COUNTDOWN) && e.cancelable) {
+          e.preventDefault();
+        }
+      };
+      canvasContainer.addEventListener('touchstart', preventCanvasTouch, { passive: false });
+      canvasContainer.addEventListener('touchmove', preventCanvasTouch, { passive: false });
+      canvasContainer.addEventListener('touchend', preventCanvasTouch, { passive: false });
+      canvasContainer.addEventListener('contextmenu', (e: Event) => {
+        if ((this.state === GameState.PLAYING || this.state === GameState.COUNTDOWN) && e.cancelable) {
+          e.preventDefault();
+        }
+      });
+    }
+
+    // Multitouch touchstart/pointerdown (independent multi-lane recognition)
     fretBoard.addEventListener('pointerdown', (e: PointerEvent) => {
-      e.preventDefault();
+      if (e.cancelable) {
+        e.preventDefault();
+      }
       const target = (e.target as HTMLElement).closest('.fret-button') as HTMLElement;
       if (!target) return;
 
       const lane = Number(target.dataset.lane) as Lane;
-      this.pointerLaneMap.set(e.pointerId, lane);
-      this.pressLane(lane);
+      if (!isNaN(lane) && lane >= 0 && lane <= 4) {
+        this.pointerLaneMap.set(e.pointerId, lane);
+        this.pressLane(lane);
+      }
     }, { passive: false });
 
     const handlePointerUp = (e: PointerEvent) => {
@@ -882,7 +928,12 @@ class RockBrazilGame {
     };
 
     window.addEventListener('pointerup', handlePointerUp);
-    window.addEventListener('pointercancel', handlePointerUp);
+    window.addEventListener('pointercancel', (e: PointerEvent) => {
+      handlePointerUp(e);
+    });
+    window.addEventListener('touchcancel', () => {
+      this.releaseAllLanes();
+    });
 
     // Keyboard on PC
     window.addEventListener('keydown', (e: KeyboardEvent) => {
@@ -956,6 +1007,14 @@ class RockBrazilGame {
     return this.masterClock.getTime();
   }
 
+  public releaseAllLanes(): void {
+    this.pointerLaneMap.clear();
+    const lanes = Array.from(this.activeLanes);
+    for (const lane of lanes) {
+      this.releaseLane(lane);
+    }
+  }
+
   private pressLane(lane: Lane): void {
     if (this.isResumingCountdown || this.state !== GameState.PLAYING || this.isFinishing) return;
     this.activeLanes.add(lane);
@@ -968,11 +1027,10 @@ class RockBrazilGame {
   }
 
   private releaseLane(lane: Lane): void {
-    if (this.isResumingCountdown || this.state !== GameState.PLAYING || this.isFinishing) return;
     this.activeLanes.delete(lane);
     this.ui.setLaneVisualActive(lane, false);
 
-    if (this.state === GameState.PLAYING) {
+    if (this.state === GameState.PLAYING && !this.isResumingCountdown && !this.isFinishing) {
       const chartTime = this.getChartTime();
       this.engine.handleLaneRelease(lane, chartTime);
     }
@@ -991,6 +1049,7 @@ class RockBrazilGame {
     this.isFinishing = false;
     this.clearResumeCountdown();
     this.clearCountdown();
+    this.releaseAllLanes();
     this.audio.stop();
     this.ytPlayer.stop();
     this.ui.showAutoplayUnblockPrompt(false);
@@ -1110,6 +1169,7 @@ class RockBrazilGame {
 
   private async startCountdown(sessionId: number): Promise<void> {
     this.clearCountdown();
+    this.releaseAllLanes();
     this.audio.stop();
     this.audio.resetMuteOnMiss();
     this.ytPlayer.setMuted(false);
@@ -1267,6 +1327,7 @@ class RockBrazilGame {
   private pauseGame(): void {
     if (this.isFinishing) return;
     if (this.state !== GameState.PLAYING && this.state !== GameState.COUNTDOWN) return;
+    this.releaseAllLanes();
     this.clearResumeCountdown();
     this.state = GameState.PAUSED;
     this.masterClock.pause();
@@ -1333,6 +1394,7 @@ class RockBrazilGame {
 
   private async handleGameOver(stats: any): Promise<void> {
     this.clearCountdown();
+    this.releaseAllLanes();
     this.audio.stop();
     this.ytPlayer.stop();
     this.audio.playSfxGameOver();
@@ -1457,6 +1519,7 @@ class RockBrazilGame {
 
     this.clearCountdown();
     this.clearResumeCountdown();
+    this.releaseAllLanes();
 
     try {
       this.audio.stop();
