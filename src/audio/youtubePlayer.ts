@@ -115,6 +115,10 @@ export class YouTubePlayerController {
       return;
     }
 
+    const origin = (typeof window !== 'undefined' && window.location.origin && window.location.origin.startsWith('http'))
+      ? window.location.origin
+      : undefined;
+
     try {
       this.player = new window.YT.Player(elementId, {
         height: '100%',
@@ -128,13 +132,19 @@ export class YouTubePlayerController {
           modestbranding: 1,
           rel: 0,
           playsinline: 1,
-          origin: window.location.origin
+          enablejsapi: 1,
+          ...(origin ? { origin } : {})
         },
         events: {
           onReady: () => {
             this.isReady = true;
             this.setPlaybackState(PlaybackState.READY);
-            if (this.volume !== undefined && this.player.setVolume) {
+            if (this.currentVideoId && this.player && typeof this.player.cueVideoById === 'function') {
+              try {
+                this.player.cueVideoById({ videoId: this.currentVideoId, startSeconds: 0 });
+              } catch {}
+            }
+            if (this.volume !== undefined && typeof this.player.setVolume === 'function') {
               this.player.setVolume(this.volume);
             }
             if (this.events.onReady) this.events.onReady();
@@ -224,14 +234,34 @@ export class YouTubePlayerController {
     this.lastObservedPerfTime = 0;
     this.lastRawPlayerTime = -1;
 
-    if (this.player && this.player.cueVideoById) {
+    if (!this.player) {
+      await this.init();
+    }
+
+    if (this.player && typeof this.player.cueVideoById === 'function') {
       try {
-        this.player.cueVideoById(videoId);
+        this.player.cueVideoById({
+          videoId,
+          startSeconds: 0
+        });
+        this.isFallbackMode = false;
       } catch {
         // Fallback
       }
     }
     this.setPlaybackState(PlaybackState.READY);
+  }
+
+  /**
+   * Desbloqueia / pré-ativa reprodução sob contexto de gesto direto do usuário
+   */
+  public prime(): void {
+    if (this.player && typeof this.player.playVideo === 'function' && typeof this.player.pauseVideo === 'function') {
+      try {
+        this.player.playVideo();
+        this.player.pauseVideo();
+      } catch {}
+    }
   }
 
   /**

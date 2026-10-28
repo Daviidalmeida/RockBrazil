@@ -774,7 +774,7 @@ export class ProfileManager {
       date: timestamp,
       hits,
       misses,
-      isFullCombo: (misses === 0 && cleared && playableCount > 0),
+      isFullCombo: (misses === 0 && ((stats as any).extraPressCount || 0) === 0 && cleared && playableCount > 0),
       earnedCoins: cleared ? earnedCoins : 0
     };
 
@@ -785,9 +785,9 @@ export class ProfileManager {
 
     this.activeProfile.lastPlayedAt = timestamp;
 
-    // V13.5: Avaliação automática de Conquistas da Temporada 1 (apenas catálogo brasileiro)
+    // V13.5 / V13.7: Avaliação automática de Conquistas da Temporada 1 (apenas catálogo brasileiro)
     if (!isInternational) {
-      const isFC = (misses === 0 && cleared && playableCount > 0);
+      const isFC = (misses === 0 && ((stats as any).extraPressCount || 0) === 0 && cleared && playableCount > 0);
       this.checkAndUnlockAchievements(stats, cleared, isFC);
     }
 

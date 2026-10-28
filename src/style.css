@@ -147,7 +147,7 @@ html, body {
   top: 10px;
   right: 12px;
   pointer-events: auto;
-  z-index: 12;
+  z-index: 9999;
 }
 
 .hud-pause-btn {
@@ -155,19 +155,30 @@ html, body {
   border: 1.5px solid rgba(255, 255, 255, 0.25);
   border-radius: 8px;
   color: #ffffff;
-  padding: 6px;
+  min-width: 46px;
+  min-height: 46px;
+  padding: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .hud-pause-btn:hover {
   background: #ff2a5f;
   border-color: #ff2a5f;
   transform: scale(1.05);
+}
+
+.hud-pause-btn:active {
+  transform: scale(0.95);
+  background: #e02454;
 }
 
 /* 3. Top Center Progress */
@@ -4084,6 +4095,87 @@ html, body {
   border: 1px solid rgba(148, 163, 184, 0.25);
 }
 
+/* V13.7: Animação de Conquista Desbloqueada Exclusiva do Meu Perfil */
+@keyframes achievementRevealGlow {
+  0% {
+    transform: scale(0.92);
+    box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+    border-color: rgba(255, 215, 0, 0.3);
+  }
+  40% {
+    transform: scale(1.06);
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.8), inset 0 0 15px rgba(255, 215, 0, 0.4);
+    border-color: #ffd700;
+  }
+  70% {
+    transform: scale(1.02);
+    box-shadow: 0 0 18px rgba(255, 215, 0, 0.5);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 215, 0, 0.6);
+  }
+}
+
+@keyframes shimmerSweep {
+  0% { transform: translateX(-100%) rotate(25deg); opacity: 0; }
+  30% { opacity: 0.85; }
+  100% { transform: translateX(200%) rotate(25deg); opacity: 0; }
+}
+
+@keyframes sparkleBurst {
+  0% { transform: scale(0) rotate(0deg); opacity: 0; }
+  50% { transform: scale(1.4) rotate(180deg); opacity: 1; }
+  100% { transform: scale(1) rotate(360deg); opacity: 0; }
+}
+
+.achievement-card.newly-unlocked {
+  animation: achievementRevealGlow 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--anim-delay, 0s);
+  position: relative;
+  overflow: hidden;
+}
+
+.achievement-card.newly-unlocked .achievement-shine-shimmer {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.5) 45%,
+    rgba(255, 215, 0, 0.6) 50%,
+    transparent 60%
+  );
+  pointer-events: none;
+  animation: shimmerSweep 1.2s ease-in-out forwards;
+  animation-delay: calc(var(--anim-delay, 0s) + 0.2s);
+}
+
+.achievement-card.newly-unlocked .achievement-sparkle {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 16px;
+  pointer-events: none;
+  animation: sparkleBurst 1.2s ease-out forwards;
+  animation-delay: calc(var(--anim-delay, 0s) + 0.3s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .achievement-card.newly-unlocked {
+    animation: none !important;
+    border-color: #ffd700 !important;
+  }
+  .achievement-card.newly-unlocked .achievement-shine-shimmer,
+  .achievement-card.newly-unlocked .achievement-sparkle {
+    display: none !important;
+  }
+}
+
 /* 5. Botão Discreto do Google no Perfil */
 .btn-google-discreet {
   display: inline-flex;
@@ -4226,66 +4318,4 @@ button,
 .intl-status-badge.status-unavailable {
   background: #b91c1c;
   color: #ffffff;
-}
-
-.pause-sync-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  margin: 6px 0 14px 0;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px dashed rgba(0, 0, 0, 0.15);
-  border-radius: 8px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.pause-sync-label {
-  font-family: var(--font-display, sans-serif);
-  font-size: 11px;
-  font-weight: 700;
-  color: #475569;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.pause-sync-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-
-.btn-offset-step {
-  background: #1e293b;
-  color: #f8fafc;
-  border: 1px solid #334155;
-  border-radius: 6px;
-  font-family: var(--font-display, monospace);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 4px 10px;
-  cursor: pointer;
-  transition: transform 0.1s ease, background 0.15s ease;
-  touch-action: manipulation;
-}
-
-.btn-offset-step:hover {
-  background: #334155;
-  transform: scale(1.05);
-}
-
-.btn-offset-step:active {
-  transform: scale(0.95);
-}
-
-.pause-offset-val {
-  font-family: var(--font-display, monospace);
-  font-size: 14px;
-  font-weight: 900;
-  color: #0f172a;
-  min-width: 65px;
-  text-align: center;
 }

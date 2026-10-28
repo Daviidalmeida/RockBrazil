@@ -110,6 +110,18 @@ class RockBrazilGame {
           this.ui.showAutoplayUnblockPrompt(true);
         }
       },
+      onError: (errCode) => {
+        console.warn('[YouTube] Erro ao carregar vídeo do YouTube:', errCode);
+        if (this.state === GameState.COUNTDOWN || (this.state as any) === 'WAITING_FOR_AUDIO' || this.state === GameState.PLAYING) {
+          this.clearCountdown();
+          this.masterClock.pause();
+          this.audio.stop();
+          this.ytPlayer.stop();
+          this.ui.showAutoplayUnblockPrompt(false);
+          alert(`Este vídeo do YouTube está temporariamente indisponível para incorporação direta (Código ${errCode}). A partida não foi iniciada e seu saldo de RockCoins foi preservado.`);
+          this.ui.showScreen(GameState.SONG_SELECT);
+        }
+      },
       onEnded: () => {
         if (this.state === GameState.PLAYING && !this.isFinishing) {
           this.handleSongEnded();
@@ -533,6 +545,9 @@ class RockBrazilGame {
 
     // Gameplay
     this.ui.onPlayGameRequested = async (song, diff) => {
+      if (song.type === 'youtube' && song.youtubeVideoId) {
+        this.ytPlayer.prime();
+      }
       await this.startNewMatch(song, diff);
     };
 
@@ -869,6 +884,9 @@ class RockBrazilGame {
     // In iOS Safari, UIPinchGestureRecognizer starts at the native level when 2 touches are detected.
     // Calling preventDefault on multi-touch touchstart/touchmove during capture phase stops the native recognizer.
     const preventMultiTouchGesture = (e: TouchEvent) => {
+      if ((e.target as HTMLElement)?.closest('#btn-pause, .hud-pause-btn, #screen-pause')) {
+        return;
+      }
       if (this.state === GameState.PLAYING || this.state === GameState.COUNTDOWN) {
         if (e.touches && e.touches.length > 1 && e.cancelable) {
           e.preventDefault();
@@ -882,6 +900,9 @@ class RockBrazilGame {
 
     // iOS Safari proprietary gesture events (pinch/zoom)
     const preventSafariGestureZoom = (e: Event) => {
+      if ((e.target as HTMLElement)?.closest('#btn-pause, .hud-pause-btn, #screen-pause')) {
+        return;
+      }
       if ((this.state === GameState.PLAYING || this.state === GameState.COUNTDOWN) && e.cancelable) {
         e.preventDefault();
       }
@@ -896,6 +917,9 @@ class RockBrazilGame {
     // Prevent double-tap to zoom during gameplay
     let lastTapTime = 0;
     const preventDoubleTapZoom = (e: TouchEvent) => {
+      if ((e.target as HTMLElement)?.closest('#btn-pause, .hud-pause-btn, #screen-pause')) {
+        return;
+      }
       if (this.state === GameState.PLAYING || this.state === GameState.COUNTDOWN) {
         const now = Date.now();
         if (now - lastTapTime <= 300 && e.cancelable) {

@@ -228,31 +228,62 @@ export class RankingService {
         return list;
       } else {
         const songColl = collection(db, this.COLLECTION_RANKINGS_SONG);
-        const constraints: QueryConstraint[] = [];
+        let list: GlobalRankingEntry[] = [];
 
-        if (filter === 'song' && songId) {
-          constraints.push(where('songId', '==', songId));
-        }
-
-        if (difficulty) {
-          constraints.push(where('difficulty', '==', difficulty));
-        }
-
-        constraints.push(orderBy('score', 'desc'));
-        constraints.push(limit(maxLimit));
-
-        const q = query(songColl, ...constraints);
-        const snapshot = await getDocs(q);
-
-        const list: GlobalRankingEntry[] = [];
-        let r = 1;
-        snapshot.forEach((d) => {
-          const data = d.data() as GlobalRankingEntry;
-          if (!data.season || data.season === season) {
-            list.push({ ...data, rank: r++ });
+        try {
+          const constraints: QueryConstraint[] = [];
+          if (songId) {
+            constraints.push(where('songId', '==', songId));
           }
-        });
-        return list;
+          if (difficulty) {
+            constraints.push(where('difficulty', '==', difficulty));
+          }
+          constraints.push(orderBy('score', 'desc'));
+          constraints.push(limit(maxLimit));
+
+          const q = query(songColl, ...constraints);
+          const snapshot = await getDocs(q);
+          snapshot.forEach((d) => {
+            const data = d.data() as GlobalRankingEntry;
+            if (!data.season || data.season === season) {
+              // Exclui faixas de teste internacionais do ranking oficial brasileiro
+              if (!data.songId?.startsWith('intl-')) {
+                list.push(data);
+              }
+            }
+          });
+        } catch (indexErr: any) {
+          // Se o Firestore acusar ausência de índice composto (failed-precondition),
+          // executa consulta resiliente com filtros de igualdade e ordenação em memória
+          console.warn('[RankingService] Índice composto em preparação, executando consulta com ordenação em memória:', indexErr?.message);
+          const fallbackConstraints: QueryConstraint[] = [];
+          if (songId) {
+            fallbackConstraints.push(where('songId', '==', songId));
+          }
+          if (difficulty) {
+            fallbackConstraints.push(where('difficulty', '==', difficulty));
+          }
+          fallbackConstraints.push(limit(maxLimit * 3));
+
+          const fallbackQuery = query(songColl, ...fallbackConstraints);
+          const snapshot = await getDocs(fallbackQuery);
+          snapshot.forEach((d) => {
+            const data = d.data() as GlobalRankingEntry;
+            if (!data.season || data.season === season) {
+              if (!data.songId?.startsWith('intl-')) {
+                list.push(data);
+              }
+            }
+          });
+          list.sort((a, b) => (b.score || 0) - (a.score || 0));
+        }
+
+        // Atribui o rank sequencial e limita aos melhores
+        const finalList: GlobalRankingEntry[] = list.slice(0, maxLimit).map((item, idx) => ({
+          ...item,
+          rank: idx + 1
+        }));
+        return finalList;
       }
     } catch (err: any) {
       console.warn('[RankingService] Erro ao carregar ranking do Firestore:', err);

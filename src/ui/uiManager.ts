@@ -114,7 +114,6 @@ export class UIManager {
   private valSfx: HTMLElement;
   private valOffset: HTMLElement;
   private valSpeed: HTMLElement;
-  private pauseOffsetValue: HTMLElement | null = null;
   private overlayUnblockAudio: HTMLElement | null = null;
 
   // Callbacks
@@ -197,7 +196,6 @@ export class UIManager {
     this.screenCountdown = document.getElementById('screen-countdown')!;
     this.countdownNumber = document.getElementById('countdown-number')!;
     this.screenPause = document.getElementById('screen-pause')!;
-    this.pauseOffsetValue = document.getElementById('pause-offset-value');
     this.overlayUnblockAudio = document.getElementById('overlay-unblock-audio');
     this.screenGameOver = document.getElementById('screen-game-over')!;
     this.screenResult = document.getElementById('screen-result')!;
@@ -510,10 +508,28 @@ export class UIManager {
       this.modalDifficulty.classList.add('hidden');
     });
 
-    // In-game Pause & Controls
-    document.getElementById('btn-pause')?.addEventListener('click', () => {
+    // In-game Pause & Controls (Instant 1-touch response on mobile and desktop)
+    const pauseBtn = document.getElementById('btn-pause');
+    let lastPauseTriggerTime = 0;
+    const triggerPause = (e?: Event) => {
+      const now = Date.now();
+      if (now - lastPauseTriggerTime < 350) return;
+      lastPauseTriggerTime = now;
+      if (e && e.cancelable) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       this.onPauseClicked?.();
+    };
+
+    pauseBtn?.addEventListener('pointerdown', (e) => {
+      triggerPause(e);
+    }, { passive: false });
+
+    pauseBtn?.addEventListener('click', (e) => {
+      triggerPause(e);
     });
+
     document.getElementById('btn-resume')?.addEventListener('click', () => {
       this.onResumeClicked?.();
     });
@@ -525,14 +541,6 @@ export class UIManager {
     });
     document.getElementById('btn-songs-pause')?.addEventListener('click', () => {
       this.onOpenSongSelectClicked?.();
-    });
-
-    // V13.6 In-game Pause Sync Offset Adjustment
-    document.getElementById('btn-pause-offset-minus')?.addEventListener('click', () => {
-      this.onAdjustSongOffsetClicked?.(-20);
-    });
-    document.getElementById('btn-pause-offset-plus')?.addEventListener('click', () => {
-      this.onAdjustSongOffsetClicked?.(+20);
     });
 
     // Autoplay unblock button
@@ -719,18 +727,36 @@ export class UIManager {
         };
       }
 
-      // V13.5: Renderização das 8 Conquistas da Temporada 1
+      // V13.5 / V13.7: Renderização das 8 Conquistas da Temporada 1 com animação exclusiva em MEU PERFIL
       if (this.getAchievementsProvider) {
         const achievements = this.getAchievementsProvider();
         const gridEl = document.getElementById('achievements-grid');
         const countEl = document.getElementById('achievements-progress-count');
         const unlockedCount = achievements.filter((a) => a.unlocked).length;
         if (countEl) countEl.textContent = `${unlockedCount} / ${achievements.length}`;
+
+        // Recupera histórico de conquistas já exibidas nesta aba para este perfil
+        const seenKey = `rb_seen_achievements_${profile?.id || 'guest'}`;
+        let seenIds: string[] = [];
+        try {
+          seenIds = JSON.parse(localStorage.getItem(seenKey) || '[]');
+        } catch {}
+        const seenSet = new Set(seenIds);
+
+        let newUnlockIndex = 0;
+        const newlySeen: string[] = [];
+
         if (gridEl) {
           gridEl.innerHTML = achievements.map((a) => {
+            const isNewlyUnlocked = a.unlocked && !seenSet.has(a.definition.id);
+            if (isNewlyUnlocked) {
+              newlySeen.push(a.definition.id);
+            }
+            const animDelay = isNewlyUnlocked ? `${(newUnlockIndex++) * 0.25}s` : '0s';
             const statusText = a.unlocked ? 'CONQUISTADO' : 'BLOQUEADO';
             return `
-              <div class="achievement-card ${a.unlocked ? 'unlocked' : 'locked'}">
+              <div class="achievement-card ${a.unlocked ? 'unlocked' : 'locked'} ${isNewlyUnlocked ? 'newly-unlocked' : ''}" style="${isNewlyUnlocked ? `--anim-delay: ${animDelay};` : ''}">
+                ${isNewlyUnlocked ? '<div class="achievement-shine-shimmer"></div><span class="achievement-sparkle">✨</span>' : ''}
                 <span class="achievement-icon">${a.definition.icon}</span>
                 <span class="achievement-title">${a.definition.title}</span>
                 <span class="achievement-desc">${a.definition.description}</span>
@@ -738,6 +764,14 @@ export class UIManager {
               </div>
             `;
           }).join('');
+
+          // Persiste as conquistas visualizadas para exibir a animação apenas uma vez por conquista
+          if (newlySeen.length > 0) {
+            try {
+              newlySeen.forEach(id => seenSet.add(id));
+              localStorage.setItem(seenKey, JSON.stringify(Array.from(seenSet)));
+            } catch {}
+          }
         }
       }
 
@@ -1002,11 +1036,14 @@ export class UIManager {
     } else if (filter === 'song') {
       filtersBar?.classList.remove('hidden');
       songSelect?.classList.remove('hidden');
-      diffSelector?.classList.add('hidden');
+      diffSelector?.classList.remove('hidden');
 
-      if (songSelect && songSelect.options.length === 0 && this.cachedSongs.length > 0) {
-        songSelect.innerHTML = this.cachedSongs.map(s => `<option value="${s.id}">${s.title} - ${s.artist}</option>`).join('');
-        this.currentRankSongId = songSelect.value || (this.cachedSongs[0]?.id || '');
+      if (songSelect && (songSelect.options.length === 0 || !this.currentRankSongId)) {
+        const brazilianSongs = this.cachedSongs.filter(s => !s.isInternational && !s.id.startsWith('intl-'));
+        if (brazilianSongs.length > 0) {
+          songSelect.innerHTML = brazilianSongs.map(s => `<option value="${s.id}">${s.title} - ${s.artist}</option>`).join('');
+          this.currentRankSongId = songSelect.value || brazilianSongs[0].id;
+        }
       }
     } else if (filter === 'difficulty') {
       filtersBar?.classList.remove('hidden');
@@ -1017,10 +1054,17 @@ export class UIManager {
     container.innerHTML = '<div class="ranking-loading">Carregando pontuações oficiais...</div>';
 
     try {
+      const selectedSongId = filter === 'song'
+        ? (this.currentRankSongId || songSelect?.value || (this.cachedSongs.find(s => !s.isInternational)?.id))
+        : undefined;
+      const selectedDiff = filter === 'difficulty' || filter === 'song'
+        ? (this.currentRankDiff || 'MEDIUM')
+        : undefined;
+
       const data = await RankingService.fetchRanking(
         filter,
-        filter === 'song' ? (this.currentRankSongId || (this.cachedSongs && this.cachedSongs[0]?.id)) : undefined,
-        filter === 'difficulty' ? this.currentRankDiff : undefined,
+        selectedSongId,
+        selectedDiff,
         30
       );
 
@@ -1143,9 +1187,6 @@ export class UIManager {
     this.screenSongSelect.classList.toggle('hidden', state !== GameState.SONG_SELECT);
     this.screenCountdown.classList.toggle('hidden', state !== GameState.COUNTDOWN);
     this.screenPause.classList.toggle('hidden', state !== GameState.PAUSED);
-    if (state === GameState.PAUSED && this.currentSelectedSong) {
-      this.updatePauseOffsetDisplay(CalibrationManager.getSongOffsetMs(this.currentSelectedSong.id));
-    }
     this.screenGameOver.classList.toggle('hidden', state !== GameState.GAME_OVER);
     this.screenResult.classList.toggle('hidden', state !== GameState.RESULTS);
     this.screenSettings.classList.toggle('hidden', state !== GameState.SETTINGS);
@@ -1157,7 +1198,7 @@ export class UIManager {
       this.hudElement.classList.remove('hidden');
     } else {
       this.hudElement.classList.add('hidden');
-      if (state !== GameState.COUNTDOWN) {
+      if (state !== GameState.COUNTDOWN && state !== GameState.PAUSED) {
         this.setYouTubePlayerVisibility(false);
       }
     }
@@ -1178,11 +1219,8 @@ export class UIManager {
     }
   }
 
-  public updatePauseOffsetDisplay(offsetMs: number): void {
-    const valEl = document.getElementById('pause-offset-val');
-    if (valEl) {
-      valEl.textContent = `${offsetMs > 0 ? '+' : ''}${offsetMs} ms`;
-    }
+  public updatePauseOffsetDisplay(_offsetMs: number): void {
+    // Painel de offset visual removido da tela de Pause conforme requisitos da V13.7
   }
 
   setLaneVisualActive(lane: Lane, active: boolean): void {
@@ -1195,10 +1233,8 @@ export class UIManager {
     this.countdownNumber.textContent = text;
   }
 
-  setPauseCalibrationOffset(offsetMs: number): void {
-    if (this.pauseOffsetValue) {
-      this.pauseOffsetValue.textContent = `${offsetMs > 0 ? `+${offsetMs}` : offsetMs} ms`;
-    }
+  setPauseCalibrationOffset(_offsetMs: number): void {
+    // V13.7: Painel visual de offset removido do menu de pausa
   }
 
   showAutoplayUnblockPrompt(show: boolean): void {
@@ -1431,17 +1467,18 @@ export class UIManager {
     }
     this.resultMiss.textContent = misses.toString();
 
-    // 100% de precisão caso 0 erros
-    let accuracyPct = 100;
-    if (misses > 0) {
-      const totalEvalNotes = hits + misses;
+    const extraPresses = (stats as any).extraPressCount || 0;
+    // Precisão calculada com base em acertos e erros totais (misses + toques extras)
+    let accuracyPct = stats.accuracy !== undefined ? stats.accuracy : 100;
+    if (stats.accuracy === undefined) {
+      const totalEvalNotes = hits + misses + extraPresses;
       accuracyPct = totalEvalNotes > 0 ? Math.round((hits / totalEvalNotes) * 100) : 0;
     }
     this.resultAccuracy.textContent = `${accuracyPct}%`;
     this.resultMaxCombo.textContent = stats.maxCombo.toString();
 
-    // 5. Faixa de Conquista: FULL COMBO! (Regra Estrita V13.5)
-    const isFullCombo = Boolean(cleared) && (misses === 0) && (playable > 0) && (hits >= playable);
+    // 5. Faixa de Conquista: FULL COMBO! (Regra Estrita V13.7: 0 misses e 0 toques extras)
+    const isFullCombo = Boolean(cleared) && (misses === 0) && (extraPresses === 0) && (playable > 0) && (hits >= playable);
     const achieveBanner = document.getElementById('result-achievement-banner');
     const achieveText = document.getElementById('result-achievement-text');
     if (achieveBanner && achieveText) {

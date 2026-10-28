@@ -94,6 +94,7 @@ export interface GameStats {
   greatCount: number;
   goodCount: number;
   missCount: number;
+  extraPressCount?: number;
   totalNotes: number;
   stars?: number;
   accuracy?: number;

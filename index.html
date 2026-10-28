@@ -15,19 +15,21 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Montserrat:wght@400;600;700;900&family=Permanent+Marker&family=Kalam:wght@400;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/style.css">
+  <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
   <div id="game-app">
+
+    <!-- Top Left: YouTube Miniplayer (Global Gameplay Layer) -->
+    <div id="yt-player-container" class="yt-miniplayer-box hidden">
+      <div id="yt-player-frame"></div>
+      <div class="yt-miniplayer-frame-decor"></div>
+    </div>
 
     <!-- ========================================================
          TOP & SIDE HUD LAYER (IN-GAME)
          ======================================================== -->
     <header id="hud" class="hud-layer hidden">
-      <!-- Top Left: YouTube Miniplayer (Sem badges obstrutivos sobre o vídeo) -->
-      <div id="yt-player-container" class="yt-miniplayer-box">
-        <div id="yt-player-frame"></div>
-        <div class="yt-miniplayer-frame-decor"></div>
-      </div>
 
       <!-- Top Right: Pause button -->
       <div class="hud-top-right">
@@ -635,16 +637,6 @@
         <div class="marker-underline small"></div>
 
 
-
-        <!-- V13.6 Ajuste Rápido de Sincronização por Música -->
-        <div id="pause-sync-box" class="pause-sync-box">
-          <span class="pause-sync-label">Ajuste de Offset (Áudio/Vídeo):</span>
-          <div class="pause-sync-controls">
-            <button id="btn-pause-offset-minus" class="btn-offset-step" title="-20ms" type="button">-20ms</button>
-            <span id="pause-offset-val" class="pause-offset-val">0 ms</span>
-            <button id="btn-pause-offset-plus" class="btn-offset-step" title="+20ms" type="button">+20ms</button>
-          </div>
-        </div>
 
         <div class="dialog-buttons">
           <button id="btn-resume" class="notebook-bar-btn btn-select">CONTINUAR</button>

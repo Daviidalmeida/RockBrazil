@@ -19,6 +19,7 @@ export class GameEngine {
   private greatCount = 0;
   private goodCount = 0;
   private missCount = 0;
+  private extraPressCount = 0;
   private isDead = false;
 
   // Event callbacks
@@ -51,6 +52,7 @@ export class GameEngine {
     this.score = 0;
     this.combo = 0;
     this.maxCombo = 0;
+    this.extraPressCount = 0;
     this.rockMeter = 50; // Initial 50% life
     this.perfectCount = 0;
     this.greatCount = 0;
@@ -168,19 +170,19 @@ export class GameEngine {
    */
   getAccuracy(): number {
     const hits = this.getHitsCount();
-    const total = hits + this.missCount;
+    const total = hits + this.missCount + this.extraPressCount;
     if (total === 0) return 0;
-    return Math.round((hits / total) * 100);
+    return Math.max(0, Math.round((hits / total) * 100));
   }
 
   /**
    * Precisão ponderada interna preservada para distribuição justa de estrelas
    */
   private getWeightedPrecision(): number {
-    const total = this.perfectCount + this.greatCount + this.goodCount + this.missCount;
+    const total = this.perfectCount + this.greatCount + this.goodCount + this.missCount + this.extraPressCount;
     if (total === 0) return 0;
     const weighted = this.perfectCount * 1.0 + this.greatCount * 0.75 + this.goodCount * 0.5;
-    return Math.round((weighted / total) * 100);
+    return Math.max(0, Math.round((weighted / total) * 100));
   }
 
   calculateStars(): number {
@@ -204,11 +206,12 @@ export class GameEngine {
       greatCount: this.greatCount,
       goodCount: this.goodCount,
       missCount: this.missCount,
+      extraPressCount: this.extraPressCount,
       totalNotes: this.notes.length,
       stars: this.calculateStars(),
       accuracy: this.getAccuracy(),
       hitsCount: hits,
-      playableNotesCount: hits + this.missCount
+      playableNotesCount: hits + this.missCount + this.extraPressCount
     };
   }
 
@@ -311,6 +314,15 @@ export class GameEngine {
       }
 
       return result;
+    }
+
+    // V13.7: Penalização de toque incorreto / entrada extra sem nota na pista
+    this.extraPressCount++;
+    this.combo = 0; // Quebra o combo imediatamente
+    this.rockMeter = Math.max(0, this.rockMeter - rates.loss * 0.5);
+
+    if (this.settings.muteOnMiss) {
+      this.onMuteRequested?.(true);
     }
 
     return null;
