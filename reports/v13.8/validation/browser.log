@@ -1,0 +1,21 @@
+{
+  "captures": 16,
+  "buttons": [
+    "replay",
+    "songs",
+    "ranking"
+  ],
+  "reducedMotion": {
+    "effects": "reduced",
+    "particles": false
+  },
+  "performance": {
+    "frames": 180,
+    "notes": 2000,
+    "medianMs": 0.6999999999534339,
+    "p95Ms": 1.400000000023283,
+    "environment": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+    "caveat": "Headless desktop renderer benchmark, not physical mobile FPS."
+  },
+  "errors": []
+}

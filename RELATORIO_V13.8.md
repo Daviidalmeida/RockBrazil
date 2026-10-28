@@ -167,3 +167,7 @@ O push desta branch **não muda o endereço público do GitHub Pages**. Após os
 - `tests/v13_8PlaybackAndFeedback.test.ts`
 - `RELATORIO_V13.8.md` — este relatório.
 - `reports/v13.8/` — 21 screenshots finais, relatórios JSON, logs e resumo de validação; sem mídia extraída do YouTube.
+
+## 10. Conferência do CI remoto
+
+As execuções [40692390415](https://github.com/Daviidalmeida/RockBrazil/actions/runs/40692390415) e [40692584062](https://github.com/Daviidalmeida/RockBrazil/actions/runs/40692584062), referentes ao código/testes enviados, terminaram com `success`. O envio posterior de documentação dispara novas execuções; seu estado atualizado permanece disponível no PR. Sucesso do CI não valida streaming do YouTube nem aparelhos físicos.
