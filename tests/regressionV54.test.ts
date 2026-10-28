@@ -211,7 +211,7 @@ describe('ROCKBRAZIL V5.4 — SUÍTE COMPLETA DE REGRESSÃO E CONFORMIDADE', () 
       player.seekTo(15.5);
       expect(player.getCurrentTime()).toBe(15.5);
 
-      expect(player.isBuffering()).toBe(false);
+      expect(player.isPlaying()).toBe(false); // Paused/unavailable player must not advance gameplay.
 
       player.setVolume(75);
       player.stop();

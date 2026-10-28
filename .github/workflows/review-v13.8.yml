@@ -1,0 +1,34 @@
+name: Validate review branch
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: ['codex/v13.8']
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Capture responsive UI fixtures
+        run: |
+          npm run dev > /tmp/vite.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -sf http://localhost:5173/RockBrazil/ > /dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/verify-v13.8-ui.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v13.8-browser-evidence
+          path: reports/v13.8/
