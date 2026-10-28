@@ -124,4 +124,3 @@ stdout | tests/auditOriginalCharts.test.ts > V8 Backup & Chart Audit > audits al
       Tests  501 passed (501)
    Start at  12:53:57
    Duration  21.24s (transform 6.12s, setup 1ms, collect 13.77s, tests 3.47s, environment 4ms, prepare 1.35s)
-
