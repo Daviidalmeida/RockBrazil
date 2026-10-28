@@ -114,14 +114,16 @@ describe('ROCKBRAZIL BETA — SUÍTE MASTER DE SINCRONIZAÇÃO E CONTROLE AUDITI
 
   // 5. Simulação: Vídeo inicia normalmente
   it('5. Vídeo inicia normalmente: transição imediata para PLAYING com tempo progressivo', () => {
+    let mockYtTime = 0;
     const player = new YouTubePlayerController();
     (player as any).player = {
-      getCurrentTime: () => 0.15,
+      getCurrentTime: () => mockYtTime,
       getPlayerState: () => 1,
       playVideo: () => {}
     };
 
     player.play();
+    mockYtTime += 0.15; // V13.8 requires two advancing samples, not a nonzero constant.
     (player as any).handlePlayerStateChange(1);
 
     expect(player.getPlaybackState()).toBe(PlaybackState.PLAYING);
@@ -139,6 +141,7 @@ describe('ROCKBRAZIL BETA — SUÍTE MASTER DE SINCRONIZAÇÃO E CONTROLE AUDITI
     };
 
     player.play();
+    mockYtTime += 0.15; // V13.8 requires two advancing samples, not a nonzero constant.
     (player as any).handlePlayerStateChange(1);
     const timeBeforeBuffering = player.getCurrentTime();
 

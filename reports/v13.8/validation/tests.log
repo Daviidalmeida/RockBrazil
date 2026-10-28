@@ -1,0 +1,126 @@
+
+> rockbrazil@1.0.0 test
+> vitest run
+
+
+ RUN  v1.6.1 /workspace/RockBrazil
+
+ ✓ tests/regressionV6SessionEngine.test.ts  (16 tests) 7ms
+ ✓ tests/regressionV13_3ResultsAndProfiles.test.ts  (20 tests) 17ms
+ ✓ tests/firestoreRulesSecurity.test.ts  (26 tests) 4ms
+ ✓ tests/regressionV53.test.ts  (17 tests) 22ms
+ ✓ tests/iosGameplayTouchAndZoom.test.ts  (27 tests) 6ms
+ ✓ tests/v13_6InternationalAndZipImporter.test.ts  (20 tests) 27ms
+stdout | tests/audioSyncMaster.test.ts > ROCKBRAZIL BETA — SUÍTE MASTER DE SINCRONIZAÇÃO E CONTROLE AUDITIVO (20 CENÁRIOS) > 1. Vídeo demora 2 segundos para iniciar: o relógio e as notas não devem avançar durante o atraso
+[DIAG +0.0ms] FIRST_YT_PROGRESSION {"rawTime":0.05}
+
+stdout | tests/audioSyncMaster.test.ts > ROCKBRAZIL BETA — SUÍTE MASTER DE SINCRONIZAÇÃO E CONTROLE AUDITIVO (20 CENÁRIOS) > 5. Vídeo inicia normalmente: transição imediata para PLAYING com tempo progressivo
+[DIAG +1.7ms] FIRST_YT_PROGRESSION {"rawTime":0.15}
+
+stdout | tests/audioSyncMaster.test.ts > ROCKBRAZIL BETA — SUÍTE MASTER DE SINCRONIZAÇÃO E CONTROLE AUDITIVO (20 CENÁRIOS) > 6. Vídeo entra em buffering: relógio congela imediatamente e combo é preservado
+[DIAG +1.9ms] FIRST_YT_PROGRESSION {"rawTime":5.15}
+
+stdout | tests/audioSyncMaster.test.ts > ROCKBRAZIL BETA — SUÍTE MASTER DE SINCRONIZAÇÃO E CONTROLE AUDITIVO (20 CENÁRIOS) > 7. Vídeo retoma após buffering: reconexão temporal sem saltos bruscos
+[DIAG +2.0ms] FIRST_YT_PROGRESSION {"rawTime":5.2}
+
+ ✓ tests/audioSyncMaster.test.ts  (20 tests) 7ms
+ ✓ tests/regressionV13_3_1AvatarsAndRanking.test.ts  (20 tests) 8ms
+ ✓ tests/regressionBeta.test.ts  (21 tests) 260ms
+ ✓ tests/regressionV13MuteAndEconomy.test.ts  (20 tests) 7ms
+ ✓ tests/v13_5MysteryAndAchievements.test.ts  (25 tests) 8ms
+ ✓ tests/regressionV54.test.ts  (12 tests) 40ms
+ ✓ tests/season1ResetAndSingleProfile.test.ts  (13 tests) 6ms
+ ✓ tests/regressionV7DeepSync.test.ts  (10 tests) 49ms
+ ✓ tests/v13_7GeneralStabilityAndGameplay.test.ts  (15 tests) 7ms
+stdout | tests/v13_8PlaybackAndFeedback.test.ts > V13.8 simulated player contract (does not validate YouTube streaming) > a PLAYING event at a nonzero frozen timestamp does not confirm playback
+[DIAG +0.0ms] FIRST_YT_PROGRESSION {"rawTime":15.06}
+
+stdout | tests/v13_8PlaybackAndFeedback.test.ts > V13.8 simulated player contract (does not validate YouTube streaming) > freezes buffering and requires fresh progress on resume
+[DIAG +-3000.0ms] FIRST_YT_PROGRESSION {"rawTime":0.1}
+
+stdout | tests/v13_8PlaybackAndFeedback.test.ts > V13.8 simulated player contract (does not validate YouTube streaming) > freezes buffering and requires fresh progress on resume
+[DIAG +-1960.0ms] FIRST_YT_PROGRESSION {"rawTime":0.2}
+
+stdout | tests/v13_8PlaybackAndFeedback.test.ts > V13.8 simulated player contract (does not validate YouTube streaming) > stalls the musical clock when state=PLAYING but timestamps stop
+[DIAG +-3000.0ms] FIRST_YT_PROGRESSION {"rawTime":0.1}
+
+ ✓ tests/v13_8PlaybackAndFeedback.test.ts  (22 tests) 70ms
+ ✓ tests/regressionV12AudioVisual.test.ts  (19 tests) 34ms
+ ✓ tests/regressionV13_2LoginAndGameplay.test.ts  (14 tests) 5ms
+ ✓ tests/regressionV51.test.ts  (15 tests) 37ms
+ ✓ tests/syncMeasurementSuite.test.ts  (5 tests) 50ms
+stdout | tests/syncMeasurementSuite.test.ts > ROCKBRAZIL BETA — SUÍTE DE TESTES DE MEDIÇÃO DE SINCRONIZAÇÃO V2 > 5. Tabela de Medição Multi-Faixas do Catálogo RockBrazil
+
+--- TABELA DE MEDIÇÃO DE SINCRONIZAÇÃO ROCKBRAZIL BETA (V2) ---
+┌─────────┬─────────────────────────┬─────────┬────────────┬──────────────┬──────────┬──────────┬────────────┬────────┐
+│ (index) │ Música                  │ Eventos │ Média (ms) │ Mediana (ms) │ P95 (ms) │ Máx (ms) │ % <= ±30ms │ Status │
+├─────────┼─────────────────────────┼─────────┼────────────┼──────────────┼──────────┼──────────┼────────────┼────────┤
+│ 0       │ 'De Borest'             │ 899     │ 0.5        │ 1            │ 1        │ 1        │ '100%'     │ 'PASS' │
+│ 1       │ 'À Sua Maneira'         │ 1115    │ 0.55       │ 1            │ 1        │ 1        │ '100%'     │ 'PASS' │
+│ 2       │ 'Papo Reto'             │ 1574    │ 0.46       │ 0            │ 1        │ 1        │ '100%'     │ 'PASS' │
+│ 3       │ 'Irreversível'          │ 1851    │ 0.5        │ 1            │ 1        │ 1        │ '100%'     │ 'PASS' │
+│ 4       │ 'Admirável Chip Novo'   │ 892     │ 0.47       │ 0            │ 1        │ 1        │ '100%'     │ 'PASS' │
+│ 5       │ 'Destruir Tudo de Novo' │ 1386    │ 0.38       │ 0            │ 1        │ 1        │ '100%'     │ 'PASS' │
+│ 6       │ 'Anna Júlia'            │ 1162    │ 0.5        │ 1            │ 1        │ 1        │ '100%'     │ 'PASS' │
+│ 7       │ '1406'                  │ 908     │ 0.51       │ 1            │ 1        │ 1        │ '100%'     │ 'PASS' │
+└─────────┴─────────────────────────┴─────────┴────────────┴──────────────┴──────────┴──────────┴────────────┴────────┘
+
+ ✓ tests/syncRegressionV3.test.ts  (8 tests) 929ms
+ ✓ tests/regressionV52.test.ts  (10 tests) 84ms
+ ✓ tests/regressionV56.test.ts  (18 tests) 55ms
+ ✓ tests/regressionV57.test.ts  (16 tests) 64ms
+ ✓ tests/regressionV10Stability.test.ts  (11 tests) 180ms
+ ✓ tests/regressionV4RealAudit.test.ts  (10 tests) 5ms
+ ✓ tests/regressionV8EngineAndCharts.test.ts  (11 tests) 14ms
+ ✓ tests/regressionV11AudioAudit.test.ts  (10 tests) 9ms
+ ✓ tests/lisarb2Integration.test.ts  (8 tests) 1325ms
+ ✓ tests/regressionV5Performance.test.ts  (5 tests) 3ms
+ ✓ tests/deBorestAudit.test.ts  (10 tests) 36ms
+ ✓ tests/audioClock.test.ts  (7 tests) 4ms
+ ✓ tests/guitarAnalysis.test.ts  (3 tests) 3ms
+ ✓ tests/auditOriginalCharts.test.ts  (1 test) 41ms
+stdout | tests/auditOriginalCharts.test.ts > V8 Backup & Chart Audit > audits all 31 songs, measures first note timestamps, and creates original manifest
+
+================ AUDITORIA ORIGINAL DOS CHARTS (31 MÚSICAS) ================
+ 1. [mam-1406] "1406" - Mamonas Assassinas | 1ª Nota: 12.391s (EASY) | Notas (E/M/H/X): 324/558/749/908
+ 2. [cap-sua-maneira] "À Sua Maneira" - Capital Inicial | 1ª Nota: 4.364s (EASY) | Notas (E/M/H/X): 362/832/1034/1115
+ 3. [pit-chip-novo] "Admirável Chip Novo" - Pitty | 1ª Nota: 6.981s (EASY) | Notas (E/M/H/X): 316/575/913/892
+ 4. [los-anna-julia] "Anna Júlia" - Los Hermanos | 1ª Nota: 2.019s (EASY) | Notas (E/M/H/X): 230/664/1155/1162
+ 5. [kua-de-borest] "De Borest" - Kuase Nada | 1ª Nota: 6.565s (EASY) | Notas (E/M/H/X): 260/578/755/899
+ 6. [mam-debil-metal] "Débil Metal" - Mamonas Assassinas | 1ª Nota: 3.404s (EASY) | Notas (E/M/H/X): 349/780/893/936
+ 7. [mam-chopis-centis] "Chopis Centis" - Mamonas Assassinas | 1ª Nota: 4.217s (EASY) | Notas (E/M/H/X): 220/880/1018/1018
+ 8. [df-destruir-tudo] "Destruir Tudo de Novo" - Dead Fish | 1ª Nota: 2.455s (EASY) | Notas (E/M/H/X): 935/1048/1302/1386
+ 9. [sup-garota-berlim] "Garota de Berlim" - Supla | 1ª Nota: 2.5s (EASY) | Notas (E/M/H/X): 239/590/1026/1099
+10. [cbjr-hoje-acordei] "Hoje Eu Acordei Feliz" - Charlie Brown Jr. | 1ª Nota: 3.692s (EASY) | Notas (E/M/H/X): 107/385/774/1292
+11. [cpm-irreversivel] "Irreversível" - CPM 22 | 1ª Nota: 3.865s (EASY) | Notas (E/M/H/X): 734/1146/1863/1851
+12. [mam-jumento-celestino] "Jumento Celestino" - Mamonas Assassinas | 1ª Nota: 10.364s (EASY) | Notas (E/M/H/X): 254/501/762/768
+13. [lan-lata-velha] "Lata Velha" - Landau | 1ª Nota: 3.98s (EASY) | Notas (E/M/H/X): 213/380/436/454
+14. [cbjr-nao-e-serio] "Não É Sério" - Charlie Brown Jr. | 1ª Nota: 7.25s (EASY) | Notas (E/M/H/X): 338/626/692/697
+15. [eng-era-um-garoto] "Era Um Garoto Que Como Eu Amava os Beatles e os Rolling Stones" - Engenheiros do Hawaii | 1ª Nota: 3.2s (EASY) | Notas (E/M/H/X): 386/624/1004/1182
+16. [cbjr-champagne] "Champagne e Água Benta" - Charlie Brown Jr. | 1ª Nota: 4.174s (EASY) | Notas (E/M/H/X): 219/548/824/824
+17. [pit-equalize] "Equalize" - Pitty | 1ª Nota: 2.283s (EASY) | Notas (E/M/H/X): 449/686/841/1117
+18. [tih-tropa-elite] "Tropa de Elite" - Tihuana | 1ª Nota: 10.004s (EASY) | Notas (E/M/H/X): 404/1064/1083/1083
+19. [mam-sabao-cra-cra] "Sabão Crá-Crá" - Mamonas Assassinas | 1ª Nota: 2.526s (EASY) | Notas (E/M/H/X): 59/155/156/156
+20. [cbjr-so-por-uma-noite] "Só por uma Noite" - Charlie Brown Jr. | 1ª Nota: 2.55s (EASY) | Notas (E/M/H/X): 177/492/849/1118
+21. [mat-ela-roubou-caminhao] "Ela Roubou Meu Caminhão" - Matanza | 1ª Nota: 3.2s (EASY) | Notas (E/M/H/X): 242/797/1356/1535
+22. [mas-evil-papagali] "Evil Papagali" - Massacration | 1ª Nota: 3.286s (EASY) | Notas (E/M/H/X): 432/838/1843/2010
+23. [det-nao-reclame-mais] "Não Reclame Mais" - Detonautas | 1ª Nota: 5.75s (EASY) | Notas (E/M/H/X): 393/1197/1241/1249
+24. [cbjr-papo-reto] "Papo Reto" - Charlie Brown Jr. | 1ª Nota: 4.773s (EASY) | Notas (E/M/H/X): 144/411/856/1574
+25. [mam-mundo-animal] "Mundo Animal" - Mamonas Assassinas | 1ª Nota: 9.824s (MEDIUM) | Notas (E/M/H/X): 212/759/1222/2002
+26. [mas-metal-is-the-law] "Metal Is The Law" - Massacration | 1ª Nota: 4.645s (EASY) | Notas (E/M/H/X): 288/911/1503/2229
+27. [mas-metal-milkshake] "Metal Milkshake" - Massacration | 1ª Nota: 4.8s (EXPERT) | Notas (E/M/H/X): 298/783/943/1111
+28. [cue-quem-matou-bozo] "Quem Matou o Bozo" - Cueio Limão | 1ª Nota: 1.5s (EASY) | Notas (E/M/H/X): 228/412/696/752
+29. [har-dormi-na-praca] "Dormi na Praça" - Hardneja Sertacore | 1ª Nota: 3.512s (EASY) | Notas (E/M/H/X): 169/547/836/952
+30. [pit-mascara] "Máscara" - Pitty | 1ª Nota: 4.8s (EASY) | Notas (E/M/H/X): 131/546/1054/1561
+31. [cue-minha-juventude] "Minha Juventude" - Cueio Limão | 1ª Nota: 1.5s (EASY) | Notas (E/M/H/X): 237/430/715/798
+
+ ✓ tests/v13_6_1InternationalTabFix.test.ts  (4 tests) 5ms
+ ✓ tests/githubPagesDeploy.test.ts  (4 tests) 3ms
+ ✓ tests/profileManager.test.ts  (3 tests) 3ms
+ ✓ tests/midiChartParser.test.ts  (2 tests) 3ms
+ ✓ tests/songLibrary.test.ts  (3 tests) 30ms
+
+ Test Files  39 passed (39)
+      Tests  501 passed (501)
+   Start at  12:53:57
+   Duration  21.24s (transform 6.12s, setup 1ms, collect 13.77s, tests 3.47s, environment 4ms, prepare 1.35s)

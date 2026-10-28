@@ -1,0 +1,1747 @@
+{
+  "description": "Real Chromium screenshots and geometry assertions with injected result statistics; no complete song or YouTube playback is implied.",
+  "viewports": [
+    {
+      "width": 320,
+      "height": 568,
+      "fullCombo": false,
+      "path": "reports/v13.8/results-320x568.png",
+      "boxes": [
+        {
+          "selector": ".results-title",
+          "x": 19,
+          "y": 115.671875,
+          "width": 282,
+          "height": 23,
+          "bottom": 138.671875,
+          "right": 301
+        },
+        {
+          "selector": ".results-header-overlay",
+          "x": 19,
+          "y": 143.671875,
+          "width": 282,
+          "height": 58.28125,
+          "bottom": 201.953125,
+          "right": 301
+        },
+        {
+          "selector": "#result-stars-row",
+          "x": 19,
+          "y": 206.953125,
+          "width": 282,
+          "height": 33,
+          "bottom": 239.953125,
+          "right": 301
+        },
+        {
+          "selector": ".results-central-panel",
+          "x": 19,
+          "y": 244.953125,
+          "width": 282,
+          "height": 101.1875,
+          "bottom": 346.140625,
+          "right": 301
+        },
+        {
+          "selector": ".results-stats-quad",
+          "x": 19,
+          "y": 351.140625,
+          "width": 282,
+          "height": 73,
+          "bottom": 424.140625,
+          "right": 301
+        },
+        {
+          "selector": ".results-judgments",
+          "x": 19,
+          "y": 429.140625,
+          "width": 282,
+          "height": 29.1875,
+          "bottom": 458.328125,
+          "right": 301
+        },
+        {
+          "selector": ".results-extra",
+          "x": 19,
+          "y": 463.328125,
+          "width": 282,
+          "height": 10,
+          "bottom": 473.328125,
+          "right": 301
+        },
+        {
+          "selector": ".results-buttons-overlay",
+          "x": 19,
+          "y": 478.328125,
+          "width": 282,
+          "height": 48,
+          "bottom": 526.328125,
+          "right": 301
+        }
+      ],
+      "buttons": [
+        {
+          "height": 48,
+          "width": 90,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 90,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 90,
+          "textInside": true,
+          "reachable": true
+        }
+      ],
+      "scrollWidth": 320,
+      "clientWidth": 320
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "fullCombo": true,
+      "path": "reports/v13.8/results-320x568-full-combo.png",
+      "boxes": [
+        {
+          "selector": ".results-title",
+          "x": 19,
+          "y": 99.171875,
+          "width": 282,
+          "height": 23,
+          "bottom": 122.171875,
+          "right": 301
+        },
+        {
+          "selector": ".results-header-overlay",
+          "x": 19,
+          "y": 127.171875,
+          "width": 282,
+          "height": 58.28125,
+          "bottom": 185.453125,
+          "right": 301
+        },
+        {
+          "selector": "#result-stars-row",
+          "x": 19,
+          "y": 190.453125,
+          "width": 282,
+          "height": 33,
+          "bottom": 223.453125,
+          "right": 301
+        },
+        {
+          "selector": ".results-central-panel",
+          "x": 19,
+          "y": 228.453125,
+          "width": 282,
+          "height": 101.1875,
+          "bottom": 329.640625,
+          "right": 301
+        },
+        {
+          "selector": ".results-stats-quad",
+          "x": 19,
+          "y": 334.640625,
+          "width": 282,
+          "height": 73,
+          "bottom": 407.640625,
+          "right": 301
+        },
+        {
+          "selector": ".results-judgments",
+          "x": 19,
+          "y": 412.640625,
+          "width": 282,
+          "height": 29.1875,
+          "bottom": 441.828125,
+          "right": 301
+        },
+        {
+          "selector": ".results-extra",
+          "x": 19,
+          "y": 446.828125,
+          "width": 282,
+          "height": 10,
+          "bottom": 456.828125,
+          "right": 301
+        },
+        {
+          "selector": ".results-achievement-banner:not(.hidden)",
+          "x": 19,
+          "y": 461.828125,
+          "width": 282,
+          "height": 28,
+          "bottom": 489.828125,
+          "right": 301
+        },
+        {
+          "selector": ".results-buttons-overlay",
+          "x": 19,
+          "y": 494.828125,
+          "width": 282,
+          "height": 48,
+          "bottom": 542.828125,
+          "right": 301
+        }
+      ],
+      "buttons": [
+        {
+          "height": 48,
+          "width": 90,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 90,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 90,
+          "textInside": true,
+          "reachable": true
+        }
+      ],
+      "scrollWidth": 320,
+      "clientWidth": 320
+    },
+    {
+      "width": 360,
+      "height": 640,
+      "fullCombo": false,
+      "path": "reports/v13.8/results-360x640.png",
+      "boxes": [
+        {
+          "selector": ".results-title",
+          "x": 21,
+          "y": 139.125,
+          "width": 318,
+          "height": 23,
+          "bottom": 162.125,
+          "right": 339
+        },
+        {
+          "selector": ".results-header-overlay",
+          "x": 21,
+          "y": 169.15625,
+          "width": 318,
+          "height": 66,
+          "bottom": 235.15625,
+          "right": 339
+        },
+        {
+          "selector": "#result-stars-row",
+          "x": 21,
+          "y": 242.1875,
+          "width": 318,
+          "height": 33,
+          "bottom": 275.1875,
+          "right": 339
+        },
+        {
+          "selector": ".results-central-panel",
+          "x": 21,
+          "y": 282.21875,
+          "width": 318,
+          "height": 107.1875,
+          "bottom": 389.40625,
+          "right": 339
+        },
+        {
+          "selector": ".results-stats-quad",
+          "x": 21,
+          "y": 396.4375,
+          "width": 318,
+          "height": 81,
+          "bottom": 477.4375,
+          "right": 339
+        },
+        {
+          "selector": ".results-judgments",
+          "x": 21,
+          "y": 484.46875,
+          "width": 318,
+          "height": 29.1875,
+          "bottom": 513.65625,
+          "right": 339
+        },
+        {
+          "selector": ".results-extra",
+          "x": 21,
+          "y": 520.6875,
+          "width": 318,
+          "height": 10,
+          "bottom": 530.6875,
+          "right": 339
+        },
+        {
+          "selector": ".results-buttons-overlay",
+          "x": 21,
+          "y": 537.71875,
+          "width": 318,
+          "height": 48,
+          "bottom": 585.71875,
+          "right": 339
+        }
+      ],
+      "buttons": [
+        {
+          "height": 48,
+          "width": 102,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 102,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 102,
+          "textInside": true,
+          "reachable": true
+        }
+      ],
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "width": 360,
+      "height": 640,
+      "fullCombo": true,
+      "path": "reports/v13.8/results-360x640-full-combo.png",
+      "boxes": [
+        {
+          "selector": ".results-title",
+          "x": 21,
+          "y": 121.609375,
+          "width": 318,
+          "height": 23,
+          "bottom": 144.609375,
+          "right": 339
+        },
+        {
+          "selector": ".results-header-overlay",
+          "x": 21,
+          "y": 151.640625,
+          "width": 318,
+          "height": 66,
+          "bottom": 217.640625,
+          "right": 339
+        },
+        {
+          "selector": "#result-stars-row",
+          "x": 21,
+          "y": 224.671875,
+          "width": 318,
+          "height": 33,
+          "bottom": 257.671875,
+          "right": 339
+        },
+        {
+          "selector": ".results-central-panel",
+          "x": 21,
+          "y": 264.703125,
+          "width": 318,
+          "height": 107.1875,
+          "bottom": 371.890625,
+          "right": 339
+        },
+        {
+          "selector": ".results-stats-quad",
+          "x": 21,
+          "y": 378.921875,
+          "width": 318,
+          "height": 81,
+          "bottom": 459.921875,
+          "right": 339
+        },
+        {
+          "selector": ".results-judgments",
+          "x": 21,
+          "y": 466.953125,
+          "width": 318,
+          "height": 29.1875,
+          "bottom": 496.140625,
+          "right": 339
+        },
+        {
+          "selector": ".results-extra",
+          "x": 21,
+          "y": 503.171875,
+          "width": 318,
+          "height": 10,
+          "bottom": 513.171875,
+          "right": 339
+        },
+        {
+          "selector": ".results-achievement-banner:not(.hidden)",
+          "x": 21,
+          "y": 520.203125,
+          "width": 318,
+          "height": 28,
+          "bottom": 548.203125,
+          "right": 339
+        },
+        {
+          "selector": ".results-buttons-overlay",
+          "x": 21,
+          "y": 555.234375,
+          "width": 318,
+          "height": 48,
+          "bottom": 603.234375,
+          "right": 339
+        }
+      ],
+      "buttons": [
+        {
+          "height": 48,
+          "width": 102,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 102,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 102,
+          "textInside": true,
+          "reachable": true
+        }
+      ],
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "width": 375,
+      "height": 667,
+      "fullCombo": false,
+      "path": "reports/v13.8/results-375x667.png",
+      "boxes": [
+        {
+          "selector": ".results-title",
+          "x": 21,
+          "y": 153.578125,
+          "width": 333,
+          "height": 23,
+          "bottom": 176.578125,
+          "right": 354
+        },
+        {
+          "selector": ".results-header-overlay",
+          "x": 21,
+          "y": 183.90625,
+          "width": 333,
+          "height": 66,
+          "bottom": 249.90625,
+          "right": 354
+        },
+        {
+          "selector": "#result-stars-row",
+          "x": 21,
+          "y": 257.234375,
+          "width": 333,
+          "height": 33,
+          "bottom": 290.234375,
+          "right": 354
+        },
+        {
+          "selector": ".results-central-panel",
+          "x": 21,
+          "y": 297.5625,
+          "width": 333,
+          "height": 107.1875,
+          "bottom": 404.75,
+          "right": 354
+        },
+        {
+          "selector": ".results-stats-quad",
+          "x": 21,
+          "y": 412.078125,
+          "width": 333,
+          "height": 81,
+          "bottom": 493.078125,
+          "right": 354
+        },
+        {
+          "selector": ".results-judgments",
+          "x": 21,
+          "y": 500.40625,
+          "width": 333,
+          "height": 29.1875,
+          "bottom": 529.59375,
+          "right": 354
+        },
+        {
+          "selector": ".results-extra",
+          "x": 21,
+          "y": 536.921875,
+          "width": 333,
+          "height": 10,
+          "bottom": 546.921875,
+          "right": 354
+        },
+        {
+          "selector": ".results-buttons-overlay",
+          "x": 21,
+          "y": 554.25,
+          "width": 333,
+          "height": 48,
+          "bottom": 602.25,
+          "right": 354
+        }
+      ],
+      "buttons": [
+        {
+          "height": 48,
+          "width": 107,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 107,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 107,
+          "textInside": true,
+          "reachable": true
+        }
+      ],
+      "scrollWidth": 375,
+      "clientWidth": 375
+    },
+    {
+      "width": 375,
+      "height": 667,
+      "fullCombo": true,
+      "path": "reports/v13.8/results-375x667-full-combo.png",
+      "boxes": [
+        {
+          "selector": ".results-title",
+          "x": 21,
+          "y": 135.90625,
+          "width": 333,
+          "height": 23,
+          "bottom": 158.90625,
+          "right": 354
+        },
+        {
+          "selector": ".results-header-overlay",
+          "x": 21,
+          "y": 166.234375,
+          "width": 333,
+          "height": 66,
+          "bottom": 232.234375,
+          "right": 354
+        },
+        {
+          "selector": "#result-stars-row",
+          "x": 21,
+          "y": 239.5625,
+          "width": 333,
+          "height": 33,
+          "bottom": 272.5625,
+          "right": 354
+        },
+        {
+          "selector": ".results-central-panel",
+          "x": 21,
+          "y": 279.890625,
+          "width": 333,
+          "height": 107.1875,
+          "bottom": 387.078125,
+          "right": 354
+        },
+        {
+          "selector": ".results-stats-quad",
+          "x": 21,
+          "y": 394.40625,
+          "width": 333,
+          "height": 81,
+          "bottom": 475.40625,
+          "right": 354
+        },
+        {
+          "selector": ".results-judgments",
+          "x": 21,
+          "y": 482.734375,
+          "width": 333,
+          "height": 29.1875,
+          "bottom": 511.921875,
+          "right": 354
+        },
+        {
+          "selector": ".results-extra",
+          "x": 21,
+          "y": 519.25,
+          "width": 333,
+          "height": 10,
+          "bottom": 529.25,
+          "right": 354
+        },
+        {
+          "selector": ".results-achievement-banner:not(.hidden)",
+          "x": 21,
+          "y": 536.578125,
+          "width": 333,
+          "height": 28,
+          "bottom": 564.578125,
+          "right": 354
+        },
+        {
+          "selector": ".results-buttons-overlay",
+          "x": 21,
+          "y": 571.90625,
+          "width": 333,
+          "height": 48,
+          "bottom": 619.90625,
+          "right": 354
+        }
+      ],
+      "buttons": [
+        {
+          "height": 48,
+          "width": 107,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 107,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 107,
+          "textInside": true,
+          "reachable": true
+        }
+      ],
+      "scrollWidth": 375,
+      "clientWidth": 375
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "fullCombo": false,
+      "path": "reports/v13.8/results-390x844.png",
+      "boxes": [
+        {
+          "selector": ".results-title",
+          "x": 21,
+          "y": 237.84375,
+          "width": 348,
+          "height": 23.40625,
+          "bottom": 261.25,
+          "right": 369
+        },
+        {
+          "selector": ".results-header-overlay",
+          "x": 21,
+          "y": 270.53125,
+          "width": 348,
+          "height": 66,
+          "bottom": 336.53125,
+          "right": 369
+        },
+        {
+          "selector": "#result-stars-row",
+          "x": 21,
+          "y": 345.8125,
+          "width": 348,
+          "height": 33,
+          "bottom": 378.8125,
+          "right": 369
+        },
+        {
+          "selector": ".results-central-panel",
+          "x": 21,
+          "y": 388.09375,
+          "width": 348,
+          "height": 107.1875,
+          "bottom": 495.28125,
+          "right": 369
+        },
+        {
+          "selector": ".results-stats-quad",
+          "x": 21,
+          "y": 504.5625,
+          "width": 348,
+          "height": 81,
+          "bottom": 585.5625,
+          "right": 369
+        },
+        {
+          "selector": ".results-judgments",
+          "x": 21,
+          "y": 594.84375,
+          "width": 348,
+          "height": 29.1875,
+          "bottom": 624.03125,
+          "right": 369
+        },
+        {
+          "selector": ".results-extra",
+          "x": 21,
+          "y": 633.3125,
+          "width": 348,
+          "height": 10,
+          "bottom": 643.3125,
+          "right": 369
+        },
+        {
+          "selector": ".results-buttons-overlay",
+          "x": 21,
+          "y": 652.59375,
+          "width": 348,
+          "height": 48,
+          "bottom": 700.59375,
+          "right": 369
+        }
+      ],
+      "buttons": [
+        {
+          "height": 48,
+          "width": 112,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 112,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 112,
+          "textInside": true,
+          "reachable": true
+        }
+      ],
+      "scrollWidth": 390,
+      "clientWidth": 390
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "fullCombo": true,
+      "path": "reports/v13.8/results-390x844-full-combo.png",
+      "boxes": [
+        {
+          "selector": ".results-title",
+          "x": 21,
+          "y": 219.203125,
+          "width": 348,
+          "height": 23.40625,
+          "bottom": 242.609375,
+          "right": 369
+        },
+        {
+          "selector": ".results-header-overlay",
+          "x": 21,
+          "y": 251.890625,
+          "width": 348,
+          "height": 66,
+          "bottom": 317.890625,
+          "right": 369
+        },
+        {
+          "selector": "#result-stars-row",
+          "x": 21,
+          "y": 327.171875,
+          "width": 348,
+          "height": 33,
+          "bottom": 360.171875,
+          "right": 369
+        },
+        {
+          "selector": ".results-central-panel",
+          "x": 21,
+          "y": 369.453125,
+          "width": 348,
+          "height": 107.1875,
+          "bottom": 476.640625,
+          "right": 369
+        },
+        {
+          "selector": ".results-stats-quad",
+          "x": 21,
+          "y": 485.921875,
+          "width": 348,
+          "height": 81,
+          "bottom": 566.921875,
+          "right": 369
+        },
+        {
+          "selector": ".results-judgments",
+          "x": 21,
+          "y": 576.203125,
+          "width": 348,
+          "height": 29.1875,
+          "bottom": 605.390625,
+          "right": 369
+        },
+        {
+          "selector": ".results-extra",
+          "x": 21,
+          "y": 614.671875,
+          "width": 348,
+          "height": 10,
+          "bottom": 624.671875,
+          "right": 369
+        },
+        {
+          "selector": ".results-achievement-banner:not(.hidden)",
+          "x": 21,
+          "y": 633.953125,
+          "width": 348,
+          "height": 28,
+          "bottom": 661.953125,
+          "right": 369
+        },
+        {
+          "selector": ".results-buttons-overlay",
+          "x": 21,
+          "y": 671.234375,
+          "width": 348,
+          "height": 48,
+          "bottom": 719.234375,
+          "right": 369
+        }
+      ],
+      "buttons": [
+        {
+          "height": 48,
+          "width": 112,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 112,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 112,
+          "textInside": true,
+          "reachable": true
+        }
+      ],
+      "scrollWidth": 390,
+      "clientWidth": 390
+    },
+    {
+      "width": 412,
+      "height": 915,
+      "fullCombo": false,
+      "path": "reports/v13.8/results-412x915.png",
+      "boxes": [
+        {
+          "selector": ".results-title",
+          "x": 21,
+          "y": 272.703125,
+          "width": 370,
+          "height": 24.71875,
+          "bottom": 297.421875,
+          "right": 391
+        },
+        {
+          "selector": ".results-header-overlay",
+          "x": 21,
+          "y": 307.421875,
+          "width": 370,
+          "height": 66,
+          "bottom": 373.421875,
+          "right": 391
+        },
+        {
+          "selector": "#result-stars-row",
+          "x": 21,
+          "y": 383.421875,
+          "width": 370,
+          "height": 33,
+          "bottom": 416.421875,
+          "right": 391
+        },
+        {
+          "selector": ".results-central-panel",
+          "x": 21,
+          "y": 426.421875,
+          "width": 370,
+          "height": 108.234375,
+          "bottom": 534.65625,
+          "right": 391
+        },
+        {
+          "selector": ".results-stats-quad",
+          "x": 21,
+          "y": 544.65625,
+          "width": 370,
+          "height": 81,
+          "bottom": 625.65625,
+          "right": 391
+        },
+        {
+          "selector": ".results-judgments",
+          "x": 21,
+          "y": 635.65625,
+          "width": 370,
+          "height": 29.1875,
+          "bottom": 664.84375,
+          "right": 391
+        },
+        {
+          "selector": ".results-extra",
+          "x": 21,
+          "y": 674.84375,
+          "width": 370,
+          "height": 10,
+          "bottom": 684.84375,
+          "right": 391
+        },
+        {
+          "selector": ".results-buttons-overlay",
+          "x": 21,
+          "y": 694.84375,
+          "width": 370,
+          "height": 48,
+          "bottom": 742.84375,
+          "right": 391
+        }
+      ],
+      "buttons": [
+        {
+          "height": 48,
+          "width": 119.328125,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 119.328125,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 119.34375,
+          "textInside": true,
+          "reachable": true
+        }
+      ],
+      "scrollWidth": 412,
+      "clientWidth": 412
+    },
+    {
+      "width": 412,
+      "height": 915,
+      "fullCombo": true,
+      "path": "reports/v13.8/results-412x915-full-combo.png",
+      "boxes": [
+        {
+          "selector": ".results-title",
+          "x": 21,
+          "y": 253.703125,
+          "width": 370,
+          "height": 24.71875,
+          "bottom": 278.421875,
+          "right": 391
+        },
+        {
+          "selector": ".results-header-overlay",
+          "x": 21,
+          "y": 288.421875,
+          "width": 370,
+          "height": 66,
+          "bottom": 354.421875,
+          "right": 391
+        },
+        {
+          "selector": "#result-stars-row",
+          "x": 21,
+          "y": 364.421875,
+          "width": 370,
+          "height": 33,
+          "bottom": 397.421875,
+          "right": 391
+        },
+        {
+          "selector": ".results-central-panel",
+          "x": 21,
+          "y": 407.421875,
+          "width": 370,
+          "height": 108.234375,
+          "bottom": 515.65625,
+          "right": 391
+        },
+        {
+          "selector": ".results-stats-quad",
+          "x": 21,
+          "y": 525.65625,
+          "width": 370,
+          "height": 81,
+          "bottom": 606.65625,
+          "right": 391
+        },
+        {
+          "selector": ".results-judgments",
+          "x": 21,
+          "y": 616.65625,
+          "width": 370,
+          "height": 29.1875,
+          "bottom": 645.84375,
+          "right": 391
+        },
+        {
+          "selector": ".results-extra",
+          "x": 21,
+          "y": 655.84375,
+          "width": 370,
+          "height": 10,
+          "bottom": 665.84375,
+          "right": 391
+        },
+        {
+          "selector": ".results-achievement-banner:not(.hidden)",
+          "x": 21,
+          "y": 675.84375,
+          "width": 370,
+          "height": 28,
+          "bottom": 703.84375,
+          "right": 391
+        },
+        {
+          "selector": ".results-buttons-overlay",
+          "x": 21,
+          "y": 713.84375,
+          "width": 370,
+          "height": 48,
+          "bottom": 761.84375,
+          "right": 391
+        }
+      ],
+      "buttons": [
+        {
+          "height": 48,
+          "width": 119.328125,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 119.328125,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 119.34375,
+          "textInside": true,
+          "reachable": true
+        }
+      ],
+      "scrollWidth": 412,
+      "clientWidth": 412
+    },
+    {
+      "width": 430,
+      "height": 932,
+      "fullCombo": false,
+      "path": "reports/v13.8/results-430x932.png",
+      "boxes": [
+        {
+          "selector": ".results-title",
+          "x": 21,
+          "y": 282.0625,
+          "width": 388,
+          "height": 25.796875,
+          "bottom": 307.859375,
+          "right": 409
+        },
+        {
+          "selector": ".results-header-overlay",
+          "x": 21,
+          "y": 317.859375,
+          "width": 388,
+          "height": 66,
+          "bottom": 383.859375,
+          "right": 409
+        },
+        {
+          "selector": "#result-stars-row",
+          "x": 21,
+          "y": 393.859375,
+          "width": 388,
+          "height": 33,
+          "bottom": 426.859375,
+          "right": 409
+        },
+        {
+          "selector": ".results-central-panel",
+          "x": 21,
+          "y": 436.859375,
+          "width": 388,
+          "height": 109.84375,
+          "bottom": 546.703125,
+          "right": 409
+        },
+        {
+          "selector": ".results-stats-quad",
+          "x": 21,
+          "y": 556.703125,
+          "width": 388,
+          "height": 81,
+          "bottom": 637.703125,
+          "right": 409
+        },
+        {
+          "selector": ".results-judgments",
+          "x": 21,
+          "y": 647.703125,
+          "width": 388,
+          "height": 29.1875,
+          "bottom": 676.890625,
+          "right": 409
+        },
+        {
+          "selector": ".results-extra",
+          "x": 21,
+          "y": 686.890625,
+          "width": 388,
+          "height": 10,
+          "bottom": 696.890625,
+          "right": 409
+        },
+        {
+          "selector": ".results-buttons-overlay",
+          "x": 21,
+          "y": 706.890625,
+          "width": 388,
+          "height": 48,
+          "bottom": 754.890625,
+          "right": 409
+        }
+      ],
+      "buttons": [
+        {
+          "height": 48,
+          "width": 125.328125,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 125.328125,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 125.34375,
+          "textInside": true,
+          "reachable": true
+        }
+      ],
+      "scrollWidth": 430,
+      "clientWidth": 430
+    },
+    {
+      "width": 430,
+      "height": 932,
+      "fullCombo": true,
+      "path": "reports/v13.8/results-430x932-full-combo.png",
+      "boxes": [
+        {
+          "selector": ".results-title",
+          "x": 21,
+          "y": 263.0625,
+          "width": 388,
+          "height": 25.796875,
+          "bottom": 288.859375,
+          "right": 409
+        },
+        {
+          "selector": ".results-header-overlay",
+          "x": 21,
+          "y": 298.859375,
+          "width": 388,
+          "height": 66,
+          "bottom": 364.859375,
+          "right": 409
+        },
+        {
+          "selector": "#result-stars-row",
+          "x": 21,
+          "y": 374.859375,
+          "width": 388,
+          "height": 33,
+          "bottom": 407.859375,
+          "right": 409
+        },
+        {
+          "selector": ".results-central-panel",
+          "x": 21,
+          "y": 417.859375,
+          "width": 388,
+          "height": 109.84375,
+          "bottom": 527.703125,
+          "right": 409
+        },
+        {
+          "selector": ".results-stats-quad",
+          "x": 21,
+          "y": 537.703125,
+          "width": 388,
+          "height": 81,
+          "bottom": 618.703125,
+          "right": 409
+        },
+        {
+          "selector": ".results-judgments",
+          "x": 21,
+          "y": 628.703125,
+          "width": 388,
+          "height": 29.1875,
+          "bottom": 657.890625,
+          "right": 409
+        },
+        {
+          "selector": ".results-extra",
+          "x": 21,
+          "y": 667.890625,
+          "width": 388,
+          "height": 10,
+          "bottom": 677.890625,
+          "right": 409
+        },
+        {
+          "selector": ".results-achievement-banner:not(.hidden)",
+          "x": 21,
+          "y": 687.890625,
+          "width": 388,
+          "height": 28,
+          "bottom": 715.890625,
+          "right": 409
+        },
+        {
+          "selector": ".results-buttons-overlay",
+          "x": 21,
+          "y": 725.890625,
+          "width": 388,
+          "height": 48,
+          "bottom": 773.890625,
+          "right": 409
+        }
+      ],
+      "buttons": [
+        {
+          "height": 48,
+          "width": 125.328125,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 125.328125,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 125.34375,
+          "textInside": true,
+          "reachable": true
+        }
+      ],
+      "scrollWidth": 430,
+      "clientWidth": 430
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "fullCombo": false,
+      "path": "reports/v13.8/results-1440x900.png",
+      "boxes": [
+        {
+          "selector": ".results-title",
+          "x": 471,
+          "y": 265.84375,
+          "width": 498,
+          "height": 32,
+          "bottom": 297.84375,
+          "right": 969
+        },
+        {
+          "selector": ".results-header-overlay",
+          "x": 471,
+          "y": 307.734375,
+          "width": 498,
+          "height": 71.1875,
+          "bottom": 378.921875,
+          "right": 969
+        },
+        {
+          "selector": "#result-stars-row",
+          "x": 471,
+          "y": 388.8125,
+          "width": 498,
+          "height": 33,
+          "bottom": 421.8125,
+          "right": 969
+        },
+        {
+          "selector": ".results-central-panel",
+          "x": 471,
+          "y": 431.703125,
+          "width": 498,
+          "height": 122.59375,
+          "bottom": 554.296875,
+          "right": 969
+        },
+        {
+          "selector": ".results-stats-quad",
+          "x": 471,
+          "y": 564.1875,
+          "width": 498,
+          "height": 81,
+          "bottom": 645.1875,
+          "right": 969
+        },
+        {
+          "selector": ".results-judgments",
+          "x": 471,
+          "y": 655.078125,
+          "width": 498,
+          "height": 29.1875,
+          "bottom": 684.265625,
+          "right": 969
+        },
+        {
+          "selector": ".results-extra",
+          "x": 471,
+          "y": 694.15625,
+          "width": 498,
+          "height": 10,
+          "bottom": 704.15625,
+          "right": 969
+        },
+        {
+          "selector": ".results-buttons-overlay",
+          "x": 471,
+          "y": 714.046875,
+          "width": 498,
+          "height": 48,
+          "bottom": 762.046875,
+          "right": 969
+        }
+      ],
+      "buttons": [
+        {
+          "height": 48,
+          "width": 162,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 162,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 162,
+          "textInside": true,
+          "reachable": true
+        }
+      ],
+      "scrollWidth": 1440,
+      "clientWidth": 1440
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "fullCombo": true,
+      "path": "reports/v13.8/results-1440x900-full-combo.png",
+      "boxes": [
+        {
+          "selector": ".results-title",
+          "x": 471,
+          "y": 246.890625,
+          "width": 498,
+          "height": 32,
+          "bottom": 278.890625,
+          "right": 969
+        },
+        {
+          "selector": ".results-header-overlay",
+          "x": 471,
+          "y": 288.78125,
+          "width": 498,
+          "height": 71.1875,
+          "bottom": 359.96875,
+          "right": 969
+        },
+        {
+          "selector": "#result-stars-row",
+          "x": 471,
+          "y": 369.859375,
+          "width": 498,
+          "height": 33,
+          "bottom": 402.859375,
+          "right": 969
+        },
+        {
+          "selector": ".results-central-panel",
+          "x": 471,
+          "y": 412.75,
+          "width": 498,
+          "height": 122.59375,
+          "bottom": 535.34375,
+          "right": 969
+        },
+        {
+          "selector": ".results-stats-quad",
+          "x": 471,
+          "y": 545.234375,
+          "width": 498,
+          "height": 81,
+          "bottom": 626.234375,
+          "right": 969
+        },
+        {
+          "selector": ".results-judgments",
+          "x": 471,
+          "y": 636.125,
+          "width": 498,
+          "height": 29.1875,
+          "bottom": 665.3125,
+          "right": 969
+        },
+        {
+          "selector": ".results-extra",
+          "x": 471,
+          "y": 675.203125,
+          "width": 498,
+          "height": 10,
+          "bottom": 685.203125,
+          "right": 969
+        },
+        {
+          "selector": ".results-achievement-banner:not(.hidden)",
+          "x": 471,
+          "y": 695.09375,
+          "width": 498,
+          "height": 28,
+          "bottom": 723.09375,
+          "right": 969
+        },
+        {
+          "selector": ".results-buttons-overlay",
+          "x": 471,
+          "y": 732.984375,
+          "width": 498,
+          "height": 48,
+          "bottom": 780.984375,
+          "right": 969
+        }
+      ],
+      "buttons": [
+        {
+          "height": 48,
+          "width": 162,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 162,
+          "textInside": true,
+          "reachable": true
+        },
+        {
+          "height": 48,
+          "width": 162,
+          "textInside": true,
+          "reachable": true
+        }
+      ],
+      "scrollWidth": 1440,
+      "clientWidth": 1440
+    }
+  ],
+  "errors": [],
+  "buttons": [
+    "replay",
+    "songs",
+    "ranking"
+  ],
+  "reducedMotion": {
+    "effects": "reduced",
+    "particles": false
+  },
+  "persistedEffects": "REDUCED",
+  "geometry": [
+    {
+      "progress": 0,
+      "lanes": [
+        {
+          "x": 186.24,
+          "y": 76.5,
+          "laneWidth": 26.880000000000003,
+          "scale": 0.35,
+          "currentWidth": 134.4,
+          "highwayLeft": 172.8
+        },
+        {
+          "x": 213.12,
+          "y": 76.5,
+          "laneWidth": 26.880000000000003,
+          "scale": 0.35,
+          "currentWidth": 134.4,
+          "highwayLeft": 172.8
+        },
+        {
+          "x": 240,
+          "y": 76.5,
+          "laneWidth": 26.880000000000003,
+          "scale": 0.35,
+          "currentWidth": 134.4,
+          "highwayLeft": 172.8
+        },
+        {
+          "x": 266.88,
+          "y": 76.5,
+          "laneWidth": 26.880000000000003,
+          "scale": 0.35,
+          "currentWidth": 134.4,
+          "highwayLeft": 172.8
+        },
+        {
+          "x": 293.76,
+          "y": 76.5,
+          "laneWidth": 26.880000000000003,
+          "scale": 0.35,
+          "currentWidth": 134.4,
+          "highwayLeft": 172.8
+        }
+      ]
+    },
+    {
+      "progress": 0.25,
+      "lanes": [
+        {
+          "x": 167.24963800421315,
+          "y": 174.1533306919543,
+          "laneWidth": 36.37518099789342,
+          "scale": 0.4459556537411493,
+          "currentWidth": 181.87590498946713,
+          "highwayLeft": 149.06204750526643
+        },
+        {
+          "x": 203.62481900210656,
+          "y": 174.1533306919543,
+          "laneWidth": 36.37518099789342,
+          "scale": 0.4459556537411493,
+          "currentWidth": 181.87590498946713,
+          "highwayLeft": 149.06204750526643
+        },
+        {
+          "x": 240,
+          "y": 174.1533306919543,
+          "laneWidth": 36.37518099789342,
+          "scale": 0.4459556537411493,
+          "currentWidth": 181.87590498946713,
+          "highwayLeft": 149.06204750526643
+        },
+        {
+          "x": 276.3751809978934,
+          "y": 174.1533306919543,
+          "laneWidth": 36.37518099789342,
+          "scale": 0.4459556537411493,
+          "currentWidth": 181.87590498946713,
+          "highwayLeft": 149.06204750526643
+        },
+        {
+          "x": 312.7503619957869,
+          "y": 174.1533306919543,
+          "laneWidth": 36.37518099789342,
+          "scale": 0.4459556537411493,
+          "currentWidth": 181.87590498946713,
+          "highwayLeft": 149.06204750526643
+        }
+      ]
+    },
+    {
+      "progress": 0.5,
+      "lanes": [
+        {
+          "x": 136.81409416977752,
+          "y": 330.6607331055051,
+          "laneWidth": 51.59295291511124,
+          "scale": 0.599742216959302,
+          "currentWidth": 257.9647645755562,
+          "highwayLeft": 111.01761771222189
+        },
+        {
+          "x": 188.40704708488875,
+          "y": 330.6607331055051,
+          "laneWidth": 51.59295291511124,
+          "scale": 0.599742216959302,
+          "currentWidth": 257.9647645755562,
+          "highwayLeft": 111.01761771222189
+        },
+        {
+          "x": 240,
+          "y": 330.6607331055051,
+          "laneWidth": 51.59295291511124,
+          "scale": 0.599742216959302,
+          "currentWidth": 257.9647645755562,
+          "highwayLeft": 111.01761771222189
+        },
+        {
+          "x": 291.59295291511125,
+          "y": 330.6607331055051,
+          "laneWidth": 51.59295291511124,
+          "scale": 0.599742216959302,
+          "currentWidth": 257.9647645755562,
+          "highwayLeft": 111.01761771222189
+        },
+        {
+          "x": 343.1859058302225,
+          "y": 330.6607331055051,
+          "laneWidth": 51.59295291511124,
+          "scale": 0.599742216959302,
+          "currentWidth": 257.9647645755562,
+          "highwayLeft": 111.01761771222189
+        }
+      ]
+    },
+    {
+      "progress": 0.75,
+      "lanes": [
+        {
+          "x": 99.75105991731739,
+          "y": 521.248397580026,
+          "laneWidth": 70.12447004134131,
+          "scale": 0.7870165660272364,
+          "currentWidth": 350.6223502067065,
+          "highwayLeft": 64.68882489664674
+        },
+        {
+          "x": 169.87552995865872,
+          "y": 521.248397580026,
+          "laneWidth": 70.12447004134131,
+          "scale": 0.7870165660272364,
+          "currentWidth": 350.6223502067065,
+          "highwayLeft": 64.68882489664674
+        },
+        {
+          "x": 240,
+          "y": 521.248397580026,
+          "laneWidth": 70.12447004134131,
+          "scale": 0.7870165660272364,
+          "currentWidth": 350.6223502067065,
+          "highwayLeft": 64.68882489664674
+        },
+        {
+          "x": 310.12447004134134,
+          "y": 521.248397580026,
+          "laneWidth": 70.12447004134131,
+          "scale": 0.7870165660272364,
+          "currentWidth": 350.6223502067065,
+          "highwayLeft": 64.68882489664674
+        },
+        {
+          "x": 380.2489400826826,
+          "y": 521.248397580026,
+          "laneWidth": 70.12447004134131,
+          "scale": 0.7870165660272364,
+          "currentWidth": 350.6223502067065,
+          "highwayLeft": 64.68882489664674
+        }
+      ]
+    },
+    {
+      "progress": 1,
+      "lanes": [
+        {
+          "x": 57.6,
+          "y": 738,
+          "laneWidth": 91.2,
+          "scale": 1,
+          "currentWidth": 456,
+          "highwayLeft": 12
+        },
+        {
+          "x": 148.8,
+          "y": 738,
+          "laneWidth": 91.2,
+          "scale": 1,
+          "currentWidth": 456,
+          "highwayLeft": 12
+        },
+        {
+          "x": 240,
+          "y": 738,
+          "laneWidth": 91.2,
+          "scale": 1,
+          "currentWidth": 456,
+          "highwayLeft": 12
+        },
+        {
+          "x": 331.2,
+          "y": 738,
+          "laneWidth": 91.2,
+          "scale": 1,
+          "currentWidth": 456,
+          "highwayLeft": 12
+        },
+        {
+          "x": 422.40000000000003,
+          "y": 738,
+          "laneWidth": 91.2,
+          "scale": 1,
+          "currentWidth": 456,
+          "highwayLeft": 12
+        }
+      ]
+    }
+  ],
+  "performance": {
+    "frames": 180,
+    "notes": 2000,
+    "medianMs": 0.6999999999534339,
+    "p95Ms": 1.400000000023283,
+    "environment": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+    "caveat": "Headless desktop renderer benchmark, not physical mobile FPS."
+  },
+  "hud": {
+    "multiplierBottom": 179.265625,
+    "judgmentTop": 179.265625,
+    "judgmentRight": 72
+  }
+}

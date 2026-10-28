@@ -53,8 +53,16 @@ export class PreStartSystem {
     resources.prepareRenderer();
 
     // 2. Prepare audio player (cued / prerolled)
-    await resources.prepareAudio();
-    if (this.currentSessionId !== sessionId) return;
+    try {
+      const audioReady = await resources.prepareAudio();
+      if (!audioReady || this.currentSessionId !== sessionId) return;
+    } catch {
+      if (this.currentSessionId === sessionId) {
+        this.cancel();
+        events.onPlaybackFailed?.('AUDIO_PREPARATION_FAILED');
+      }
+      return;
+    }
 
     // 3. Begin synchronized 3-second countdown (3... 2... 1... ROCK!)
     if (this.hasStartedCountdown) return;
@@ -157,6 +165,7 @@ export class PreStartSystem {
   ): void {
     if (this.currentSessionId !== sessionId) return;
     this.cancel();
+    this.currentSessionId = sessionId;
     this.isWaitingForAudio = true;
     resources.startAudioPlayback();
     this.waitForAudioAdvance(sessionId, resources, events);
@@ -176,6 +185,7 @@ export class PreStartSystem {
    * Cancels any active countdown or polling
    */
   public cancel(): void {
+    this.currentSessionId = -1;
     this.hasStartedCountdown = false;
     this.hasEnteredPlaying = false;
     if (this.timer !== null) {

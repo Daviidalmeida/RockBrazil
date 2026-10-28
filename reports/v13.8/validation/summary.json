@@ -1,0 +1,41 @@
+{
+  "typescript": {
+    "command": "npx tsc --noEmit",
+    "exitCode": 0
+  },
+  "installation": {
+    "command": "npm ci --cache /tmp/rockbrazil-npm --no-audit --no-fund",
+    "exitCode": 0
+  },
+  "tests": {
+    "command": "npm test",
+    "exitCode": 0,
+    "passed": 501,
+    "files": 39
+  },
+  "build": {
+    "command": "npm run build",
+    "exitCode": 0,
+    "warning": "Large bundle: 8,944.83 kB JS before gzip"
+  },
+  "browser": {
+    "command": "node scripts/verify-v13.8-ui.mjs",
+    "exitCode": 0,
+    "target": "Production build via vite preview, /RockBrazil/",
+    "fixtureScreenshots": 16,
+    "errors": [],
+    "performance": {
+      "frames": 180,
+      "notes": 2000,
+      "medianMs": 0.6999999999534339,
+      "p95Ms": 1.400000000023283,
+      "environment": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+      "caveat": "Headless desktop renderer benchmark, not physical mobile FPS."
+    }
+  },
+  "youtube": {
+    "realPlaybackConfirmed": false,
+    "songsAttempted": 5,
+    "limitation": "YouTube iframe_api access failed through environment proxy; ERR_TUNNEL_CONNECTION_FAILED"
+  }
+}

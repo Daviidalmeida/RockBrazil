@@ -28,6 +28,7 @@ export class SettingsManager {
       audioOffsetMs: 0,
       noteSpeedMultiplier: 1.0,
       visualEffectsEnabled: true,
+      effectsMode: 'NORMAL',
       muteOnMiss: true
     };
 

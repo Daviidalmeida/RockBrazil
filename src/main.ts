@@ -1,3 +1,4 @@
+import { videoCoversChart } from './game/sync/videoChartCompatibility';
 import { GameState, Lane, HitResult, SongMetadata, Difficulty, Note, PlaybackState } from './types';
 import { AudioManager } from './audio/audioManager';
 import { BeatmapManager } from './game/beatmapManager';
@@ -11,7 +12,8 @@ import { GuitarPipeline } from './audio/analysis/guitarPipeline';
 import { VisualEditor } from './editor/visualEditor';
 import { ZipChartLoader } from './audio/zipChartLoader';
 import { UniversalChartImporter } from './audio/universalChartImporter';
-import { YouTubePlayerController } from './audio/youtubePlayer';
+import { applyEffectsPreference } from './game/visualEffects';
+import { YouTubePlayerController, youtubeErrorMessage } from './audio/youtubePlayer';
 import { AutoMusicFinder } from './game/catalog/musicFinder';
 import { CalibrationManager } from './game/sync/calibrationManager';
 import { UnifiedMasterClock } from './game/sync/masterClock';
@@ -95,33 +97,25 @@ class RockBrazilGame {
         this.masterClock.setBuffering(buffering);
       },
       onPlaybackConfirmed: (_videoTime) => {
-        // Áudio confirmado em avanço real: transição imediata para PLAYING no Unified Master Clock
+        if (this.state === GameState.PAUSED || this.isResumingCountdown) { this.ytPlayer.pause(); return; }
+        if (this.state !== GameState.COUNTDOWN && this.state !== GameState.PLAYING) return;
+        if (!videoCoversChart(this.ytPlayer.getDuration(), this.engine.getLastNoteEndTime(), CalibrationManager.getSongOffsetMs(this.currentSong.id))) {
+          this.handleYouTubeFailure('CHART_VIDEO_MISMATCH');
+          return;
+        }
         SyncDiagnostics.get().recordPlayingEvent(_videoTime);
         this.masterClock.startPlayback();
         this.clearCountdown();
-        if (this.state === GameState.COUNTDOWN || (this.state as any) === 'WAITING_FOR_AUDIO') {
-          this.state = GameState.PLAYING;
-          this.ui.showAutoplayUnblockPrompt(false);
-          this.ui.showScreen(GameState.PLAYING);
-        }
+        this.state = GameState.PLAYING;
+        this.ui.showAutoplayUnblockPrompt(false);
+        this.ui.showScreen(GameState.PLAYING);
       },
       onAutoplayBlocked: () => {
-        if (this.state === GameState.COUNTDOWN || (this.state as any) === 'WAITING_FOR_AUDIO') {
+        if (this.state === GameState.COUNTDOWN || this.state === GameState.PLAYING) {
           this.ui.showAutoplayUnblockPrompt(true);
         }
       },
-      onError: (errCode) => {
-        console.warn('[YouTube] Erro ao carregar vídeo do YouTube:', errCode);
-        if (this.state === GameState.COUNTDOWN || (this.state as any) === 'WAITING_FOR_AUDIO' || this.state === GameState.PLAYING) {
-          this.clearCountdown();
-          this.masterClock.pause();
-          this.audio.stop();
-          this.ytPlayer.stop();
-          this.ui.showAutoplayUnblockPrompt(false);
-          alert(`Este vídeo do YouTube está temporariamente indisponível para incorporação direta (Código ${errCode}). A partida não foi iniciada e seu saldo de RockCoins foi preservado.`);
-          this.ui.showScreen(GameState.SONG_SELECT);
-        }
-      },
+      onError: (code) => this.handleYouTubeFailure(code),
       onEnded: () => {
         if (this.state === GameState.PLAYING && !this.isFinishing) {
           this.handleSongEnded();
@@ -152,7 +146,10 @@ class RockBrazilGame {
     const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
     this.renderer = new GameRenderer(canvas);
     this.renderer.noteSpeedMultiplier = settings.noteSpeedMultiplier;
-    this.renderer.visualEffectsEnabled = settings.visualEffectsEnabled;
+    this.renderer.visualEffectsEnabled = !applyEffectsPreference(settings);
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').addEventListener?.('change', () => {
+      this.renderer.visualEffectsEnabled = !applyEffectsPreference(this.settingsManager.getSettings());
+    });
 
     this.sessionController = new GameSessionController(
       this.masterClock,
@@ -363,9 +360,11 @@ class RockBrazilGame {
     this.engine.onHit = (result: HitResult) => {
       // Partículas visuais e faíscas sem alterar a geometria ou causar tremedeira na pista
       this.renderer.spawnHitParticles(result.lane);
+      this.ui.showJudgment(result.judgment);
     };
 
     this.engine.onMiss = () => {
+      this.ui.showJudgment('MISS');
       // Falhas geram feedback auditivo/visual sem tremer o Canvas
     };
 
@@ -652,11 +651,11 @@ class RockBrazilGame {
       } else {
         this.renderer.speedPreset = 'NORMAL';
       }
-      this.renderer.visualEffectsEnabled = updated.visualEffectsEnabled;
+      this.renderer.visualEffectsEnabled = !applyEffectsPreference(updated);
       if (this.currentSong) {
         this.masterClock.setOffsets(
           CalibrationManager.getSongOffsetMs(this.currentSong.id),
-          updated.audioOffsetMs || 0
+          0
         );
       }
       const active = this.profileManager.getActiveProfile();
@@ -666,31 +665,16 @@ class RockBrazilGame {
     };
 
     this.ui.onUnblockAudioClicked = async () => {
-      try {
-        await this.audio.ensureResumed();
-      } catch (e) {
-        console.warn('[Audio] Falha ao desbloquear AudioContext com gesto do usuário:', e);
-      }
-
       const hasLocal = this.currentSong?.type === 'audio-file' || Boolean(this.currentSong?.audioUrl) || Boolean(this.currentSong?.audioBuffer);
-      if (hasLocal && this.currentSong?.audioBuffer) {
-        this.ytPlayer.stop();
-        await this.audio.playAudioBuffer(this.currentSong.audioBuffer, 0);
-        this.masterClock.startPlayback();
-        this.state = GameState.PLAYING;
-        this.ui.showAutoplayUnblockPrompt(false);
-        this.ui.showScreen(GameState.PLAYING);
-      } else if (!hasLocal && this.currentSong?.type === 'youtube' && this.currentSong?.youtubeVideoId) {
-        SyncDiagnostics.get().recordPlayVideoCommand(this.currentSong.youtubeVideoId || '');
+      if (!hasLocal && this.currentSong?.type === 'youtube') {
         this.ytPlayer.play();
+        // Keep the direct iframe play control reachable if the browser rejects scripted playback.
+        this.ui.showAutoplayUnblockPrompt(true);
+        return;
       }
-
+      await this.audio.ensureResumed();
       if (this.activePreStartResources && this.activePreStartEvents) {
-        this.prestartSystem.retryAudio(
-          this.currentMatchSessionId,
-          this.activePreStartResources,
-          this.activePreStartEvents
-        );
+        this.prestartSystem.retryAudio(this.currentMatchSessionId, this.activePreStartResources, this.activePreStartEvents);
       }
     };
 
@@ -1133,12 +1117,14 @@ class RockBrazilGame {
 
   private pressLane(lane: Lane): void {
     if (this.isResumingCountdown || this.state !== GameState.PLAYING || this.isFinishing) return;
+    if (this.activeLanes.has(lane) || (this.currentSong?.type === 'youtube' && !this.ytPlayer.isPlaying())) return;
     this.activeLanes.add(lane);
     this.ui.setLaneVisualActive(lane, true);
 
     if (this.state === GameState.PLAYING) {
       const chartTime = this.getChartTime();
-      this.engine.handleLanePress(lane, chartTime);
+      const result = this.engine.handleLanePress(lane, chartTime);
+      if (!result) this.ui.showJudgment('MISS');
     }
   }
 
@@ -1181,7 +1167,8 @@ class RockBrazilGame {
     this.masterClock.reset();
     const hasLocalAudio = song.type === 'audio-file' || Boolean(song.audioUrl) || Boolean(song.audioBuffer);
     if (!hasLocalAudio && song.type === 'youtube' && song.youtubeVideoId) {
-      await this.ensureYouTubePlayerReady();
+      try { await this.ensureYouTubePlayerReady(); } catch { return; }
+      if (sessionId !== this.currentMatchSessionId) return;
       this.masterClock.setSource(this.ytPlayer);
       this.ui.setYouTubePlayerVisibility(true);
     } else {
@@ -1431,13 +1418,25 @@ class RockBrazilGame {
     }
   }
 
+  private handleYouTubeFailure(code: number | string): void {
+    this.clearCountdown(); this.clearResumeCountdown();
+    this.masterClock.pause(); this.audio.stop(); this.ytPlayer.stop();
+    this.releaseAllLanes(); this.setGameplayViewport(false);
+    this.ui.showAutoplayUnblockPrompt(false);
+    this.ui.setYouTubePlayerVisibility(false);
+    this.state = GameState.SONG_SELECT;
+    this.ui.showScreen(GameState.SONG_SELECT);
+    alert(`${youtubeErrorMessage(code)} (Código ${code}). A partida foi interrompida sem gravar resultado ou cobrar RockCoins.`);
+  }
+
   private async ensureYouTubePlayerReady(): Promise<void> {
     if (this.ytInitialized) return;
-    this.ytInitialized = true;
     try {
       await this.ytPlayer.init();
-    } catch (err) {
-      console.warn('[YouTube] Falha ao inicializar API do YouTube:', err);
+      this.ytInitialized = true;
+    } catch (error) {
+      this.ytInitialized = false;
+      throw error;
     }
   }
 
@@ -1486,14 +1485,15 @@ class RockBrazilGame {
             this.resumeCountdownTimer = setTimeout(() => {
               if (!this.isResumingCountdown) return;
               this.isResumingCountdown = false;
-              this.state = GameState.PLAYING;
-              this.ui.showScreen(GameState.PLAYING);
-              this.masterClock.resume();
+              // YouTube remains frozen until two player timestamps confirm resumed playback.
 
               const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
               if (!hasLocal && this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
                 this.ytPlayer.resume();
               } else {
+                this.state = GameState.PLAYING;
+                this.ui.showScreen(GameState.PLAYING);
+                this.masterClock.resume();
                 this.audio.resume();
               }
             }, 300);
@@ -1643,7 +1643,7 @@ class RockBrazilGame {
     try {
       this.audio.stop();
       this.ytPlayer.stop();
-      this.audio.playSfxVictory();
+      // Crowd reaction begins with the results presentation below.
     } catch (err) {
       console.warn('[finishSong] Erro ao parar reprodutores ou tocar SFX:', err);
     }
@@ -1690,6 +1690,7 @@ class RockBrazilGame {
     try {
       this.ui.showCelebration(() => {
         this.ui.showResults(this.currentSong, stats, recordResult, this.currentDifficulty, true);
+        this.audio.playCrowdReaction(stats.stars || 1, stats.missCount === 0 && !stats.extraPressCount && stats.totalNotes > 0 && stats.hitsCount === stats.totalNotes);
       });
     } catch (uiErr) {
       console.error('[finishSong] Erro na interface ao exibir resultados:', uiErr);

@@ -1,3 +1,4 @@
+import { reducedEffects } from '../game/visualEffects';
 import { GameStats, HitJudgment, GameState, Lane, SongMetadata, Difficulty, GameSettings } from '../types';
 import { PlayerProfile, LeaderboardEntry, RecordMatchResult, AchievementDefinition, ProfileStats } from '../game/profileManager';
 import { RockCoinsManager } from '../game/economy/rockCoinsManager';
@@ -622,6 +623,10 @@ export class UIManager {
       this.onSettingsChanged?.({ noteSpeedMultiplier: Number(val) });
     });
 
+    document.getElementById('cfg-effects-mode')?.addEventListener('change', (event) => {
+      const effectsMode = (event.target as HTMLSelectElement).value === 'REDUCED' ? 'REDUCED' : 'NORMAL';
+      this.onSettingsChanged?.({ effectsMode });
+    });
     this.checkFx?.addEventListener('change', () => {
       this.onSettingsChanged?.({ visualEffectsEnabled: this.checkFx.checked });
     });
@@ -906,7 +911,7 @@ export class UIManager {
 
     modal.classList.remove('hidden');
 
-    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReducedMotion = reducedEffects() || document.documentElement.dataset.effects === 'reduced';
     if (prefersReducedMotion) {
       if (flipCard) flipCard.classList.add('revealed');
     } else {
@@ -1164,6 +1169,8 @@ export class UIManager {
     if (this.sliderSpeed) this.sliderSpeed.value = Math.round(settings.noteSpeedMultiplier * 10).toString();
     if (this.valSpeed) this.valSpeed.textContent = `${settings.noteSpeedMultiplier.toFixed(1)}x`;
 
+    const modeSelect = document.getElementById('cfg-effects-mode') as HTMLSelectElement | null;
+    if (modeSelect) modeSelect.value = settings.effectsMode ?? 'NORMAL';
     if (this.checkFx) this.checkFx.checked = settings.visualEffectsEnabled;
     if (this.checkMuteOnMiss) this.checkMuteOnMiss.checked = Boolean(settings.muteOnMiss);
   }
@@ -1205,6 +1212,7 @@ export class UIManager {
   }
 
   public setYouTubePlayerVisibility(visible: boolean): void {
+    document.getElementById('game-app')?.classList.toggle('youtube-active', visible);
     if (!this.ytPlayerContainer) {
       this.ytPlayerContainer = document.getElementById('yt-player-container');
     }
@@ -1238,9 +1246,21 @@ export class UIManager {
   }
 
   showAutoplayUnblockPrompt(show: boolean): void {
+    document.getElementById('yt-player-container')?.classList.toggle('yt-awaiting-gesture', show);
     if (this.overlayUnblockAudio) {
       this.overlayUnblockAudio.classList.toggle('hidden', !show);
     }
+  }
+
+  showJudgment(judgment: 'PERFECT' | 'GREAT' | 'GOOD' | 'MISS'): void {
+    const el = document.getElementById('hud-judgment');
+    if (!el) return;
+    el.textContent = judgment;
+    el.className = `judge-${judgment.toLowerCase()}`;
+    el.getAnimations?.().forEach(animation => animation.cancel());
+    el.animate?.([{ opacity: 1 }, { opacity: 1, offset: 0.65 }, { opacity: 0 }], {
+      duration: 500, fill: 'forwards'
+    });
   }
 
   updateHUD(stats: GameStats, currentTime: number, duration: number): void {
@@ -1321,6 +1341,7 @@ export class UIManager {
   }
 
   showCelebration(onComplete: () => void): void {
+    if (document.documentElement.dataset.effects === 'reduced' || reducedEffects()) { onComplete(); return; }
     if (this.overlayCelebration) {
       let isDone = false;
       const done = () => {
@@ -1334,7 +1355,7 @@ export class UIManager {
       };
       this.overlayCelebration.classList.remove('hidden');
       this.overlayCelebration.onclick = done;
-      setTimeout(done, 2200);
+      setTimeout(done, 650);
     } else {
       onComplete();
     }
@@ -1399,13 +1420,18 @@ export class UIManager {
     const diffEl = document.getElementById('result-song-diff');
     if (diffEl) diffEl.textContent = difficulty;
     const coverEl = document.getElementById('result-album-cover') as HTMLImageElement;
-    if (coverEl) coverEl.src = song.coverUrl || 'images/default-cover.png';
+    if (coverEl) {
+      const fallback = new URL(`${import.meta.env.BASE_URL}images/default-cover.png`, window.location.origin).href;
+      coverEl.onerror = () => { coverEl.onerror = null; coverEl.src = fallback; };
+      coverEl.src = song.coverUrl || fallback;
+    }
 
     // 2. Stars
     const starCount = stats.stars || 1;
     const starEls = this.resultStarsRow.querySelectorAll('.star-item');
     starEls.forEach((el, idx) => {
       el.classList.toggle('active', idx < starCount);
+      (el as HTMLElement).style.setProperty('--star-delay', `${idx * 130}ms`);
     });
 
     // 3. Central Metallic Panel: Novo Recorde, Pontuação Final, RockCoins
@@ -1420,7 +1446,7 @@ export class UIManager {
 
     // Counter animation for score
     const targetScore = stats.score;
-    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReducedMotion = reducedEffects() || document.documentElement.dataset.effects === 'reduced';
     if (prefersReducedMotion || targetScore === 0) {
       this.resultScore.textContent = `${targetScore.toLocaleString('pt-BR')} PTS`;
     } else {
@@ -1447,7 +1473,7 @@ export class UIManager {
         difficulty,
         misses,
         playable,
-        true
+        cleared
       );
       coinsEl.textContent = `+${earnedCoins}`;
     }
@@ -1465,7 +1491,11 @@ export class UIManager {
     if (this.resultGood) {
       this.resultGood.textContent = stats.goodCount.toString();
     }
-    this.resultMiss.textContent = misses.toString();
+    this.resultMiss.textContent = (misses + (stats.extraPressCount || 0)).toString();
+    const noteMiss = document.getElementById('result-note-miss');
+    if (noteMiss) noteMiss.textContent = misses.toString();
+    const extra = document.getElementById('result-extra');
+    if (extra) extra.textContent = String(stats.extraPressCount || 0);
 
     const extraPresses = (stats as any).extraPressCount || 0;
     // Precisão calculada com base em acertos e erros totais (misses + toques extras)
