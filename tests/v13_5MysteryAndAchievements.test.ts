@@ -139,20 +139,16 @@ describe('ROCKBRAZIL V13.5 — MEGA ATUALIZAÇÃO OFICIAL', () => {
     });
   });
 
-  describe('Fase 5: Aba Músicas Internacionais (EM BREVE...) Desativada', () => {
-    it('5.1. A aba de músicas secundárias foi renomeada para EM BREVE... e está totalmente desabilitada', () => {
+  describe('Fase 5: Aba Músicas Internacionais Ativada na V13.6', () => {
+    it('5.1. A aba de músicas internacionais está presente e habilitada na V13.6', () => {
       const html = fs.readFileSync(path.resolve(__dirname, '../index.html'), 'utf-8');
       expect(html).toContain('id="tab-songs-custom"');
-      expect(html).toContain('disabled');
-      expect(html).toContain('aria-disabled="true"');
-      expect(html).toContain('disabled-tab');
-      expect(html).toContain('EM BREVE...');
+      expect(html).toContain('INTERNACIONAIS');
     });
 
-    it('5.2. CSS aplica pointer-events: none e opacidade reduzida na aba desabilitada', () => {
+    it('5.2. CSS preserva estilo de abas do caderno', () => {
       const css = fs.readFileSync(path.resolve(__dirname, '../src/style.css'), 'utf-8');
-      expect(css).toContain('.notebook-filter-tab.disabled-tab');
-      expect(css).toContain('pointer-events: none !important');
+      expect(css).toContain('.notebook-filter-tab');
     });
   });
 

@@ -4,9 +4,15 @@ export class CalibrationManager {
   private static readonly STORAGE_KEY = 'rockbrazil_calibration_v2';
   private static cache: Record<string, SongCalibration> | null = null;
 
-  // V8: All 31 charts are physically normalized at the source.
-  // No recording-specific hardcoded offsets to prevent double application.
-  private static readonly VERIFIED_DEFAULTS: Record<string, number> = {};
+  // V8: Brazilian charts are normalized at source (0ms).
+  // V13.6: International songs with video intro offsets (e.g. AC/DC River Plate -2000ms from song.ini)
+  private static readonly VERIFIED_DEFAULTS: Record<string, number> = {
+    'intl-acdc-highway-to-hell': -2000,
+    'intl-gnr-paradise-city': 0,
+    'intl-gnr-sweet-child-o-mine': 0,
+    'intl-gnr-welcome-to-the-jungle': 0,
+    'intl-lp-numb': 0
+  };
 
   private static load(): Record<string, SongCalibration> {
     if (this.cache !== null) return this.cache;
@@ -62,7 +68,7 @@ export class CalibrationManager {
     data[songId] = {
       songId,
       videoId: videoId || data[songId]?.videoId || '',
-      chartOffsetMs: Math.max(-500, Math.min(500, Math.round(offsetMs))),
+      chartOffsetMs: Math.max(-5000, Math.min(5000, Math.round(offsetMs))),
       inputLatencyMs: data[songId]?.inputLatencyMs || 0,
       calibrationStatus: 'USER_CALIBRATED',
       lastCalibrated: Date.now()

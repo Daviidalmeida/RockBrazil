@@ -150,6 +150,12 @@ export interface SongMetadata {
   reviewStatus?: 'VERIFIED' | 'PENDING' | 'REJECTED';
   licenseStatus?: 'EMBED_ALLOWED' | 'EMBED_RESTRICTED';
   chartStatus?: 'SMART_CHART_READY' | 'CUSTOM' | 'MIDI';
+
+  // V13.6 International Songs Integration
+  isInternational?: boolean;
+  internationalStatus?: 'PRONTA PARA TESTE' | 'CHART EM PREPARAÇÃO' | 'VÍDEO NÃO CONFIGURADO' | 'VÍDEO INDISPONÍVEL';
+  recordingVersion?: string;
+  charter?: string;
 }
 
 export type NoteSpeedPreset = 'LENTA' | 'NORMAL' | 'RÁPIDA';

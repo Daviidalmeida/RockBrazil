@@ -3,6 +3,7 @@ import { Note, Lane, Difficulty, BeatmapByDifficulty, getLanesForDifficulty } fr
 import { MidiChartParser } from './midiChartParser';
 import { REAL_COMMUNITY_CHARTS } from '../game/catalog/realChartsRegistry';
 import { LISARB2_COMMUNITY_CHARTS } from '../game/catalog/lisarb2ChartsRegistry';
+import { INTERNATIONAL_COMMUNITY_CHARTS } from '../game/catalog/internationalChartsRegistry';
 
 export type InstrumentTrackType =
   | 'guitar'
@@ -726,6 +727,7 @@ export class UniversalChartImporter {
     return (
       REAL_COMMUNITY_CHARTS[songId] ||
       LISARB2_COMMUNITY_CHARTS[songId] ||
+      INTERNATIONAL_COMMUNITY_CHARTS[songId] ||
       this.CONVERTED_REGISTRY.get(songId)
     );
   }
@@ -734,6 +736,7 @@ export class UniversalChartImporter {
     return (
       !!REAL_COMMUNITY_CHARTS[songId] ||
       !!LISARB2_COMMUNITY_CHARTS[songId] ||
+      !!INTERNATIONAL_COMMUNITY_CHARTS[songId] ||
       this.CONVERTED_REGISTRY.has(songId)
     );
   }

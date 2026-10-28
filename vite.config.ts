@@ -13,6 +13,12 @@ export default defineConfig({
           fs.rmSync(customSongsDir, { recursive: true, force: true });
           console.log('🔒 Removido dist/custom-songs: arquivos de áudio protegidos excluídos da build.');
         }
+        // V13.6: Exclusão estrita dos pacotes ZIP originais e áudios protegidos internacionais
+        const intlDir = path.resolve(__dirname, 'dist/musicas-internacionais');
+        if (fs.existsSync(intlDir)) {
+          fs.rmSync(intlDir, { recursive: true, force: true });
+          console.log('🔒 Removido dist/musicas-internacionais: arquivos ZIP e áudios protegidos excluídos da build.');
+        }
         // Suporte a recarregamento no GitHub Pages
         const indexPath = path.resolve(__dirname, 'dist/index.html');
         const fallbackPath = path.resolve(__dirname, 'dist/404.html');

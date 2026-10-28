@@ -1,5 +1,6 @@
 import { SongMetadata, Difficulty, SongRecord } from '../types';
 import { OFFICIAL_BRAZILIAN_CATALOG } from './catalog/catalogData';
+import { INTERNATIONAL_SONGS_CATALOG } from './catalog/internationalCatalog';
 
 export const LEGACY_PROCEDURAL_SONGS: SongMetadata[] = [
   {
@@ -86,21 +87,40 @@ export class SongLibrary {
   }
 
   private initDefaultSongs(): void {
-    // Official Brazilian Catalog (31 songs)
+    // Official Brazilian Catalog (162 songs)
     const brazilianCatalog = OFFICIAL_BRAZILIAN_CATALOG.map((s) => ({
       ...s,
       records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
     }));
 
+    // Official International Catalog (V13.6)
+    const internationalCatalog = INTERNATIONAL_SONGS_CATALOG.map((s) => ({
+      ...s,
+      records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
+    }));
+
     // Preserves procedural songs as legacy backup so existing regression tests and features remain stable
-    this.songs = [...brazilianCatalog, ...this.legacyBackup.map((s) => ({ ...s }))];
+    this.songs = [...brazilianCatalog, ...internationalCatalog, ...this.legacyBackup.map((s) => ({ ...s }))];
   }
 
   /**
-   * Returns active songs for the in-game library (31 Brazilian songs + custom imported songs)
+   * Returns active songs according to active tab filter:
+   * - 'all' (default): 162 Brazilian songs
+   * - 'custom' | 'international': 5 International songs
    */
-  getActiveSongs(): SongMetadata[] {
-    return this.songs.filter((s) => (s.type === 'youtube' || s.type === 'audio-file' || s.id.startsWith('custom-')) && s.id !== 'tnt-acdc');
+  getActiveSongs(filter = 'all'): SongMetadata[] {
+    if (filter === 'custom' || filter === 'international') {
+      return this.songs.filter((s) => s.isInternational === true);
+    }
+    return this.songs.filter((s) => !s.isInternational && (s.type === 'youtube' || s.type === 'audio-file' || s.id.startsWith('custom-')) && s.id !== 'tnt-acdc');
+  }
+
+  getBrazilianSongs(): SongMetadata[] {
+    return this.getActiveSongs('all');
+  }
+
+  getInternationalSongs(): SongMetadata[] {
+    return this.getActiveSongs('international');
   }
 
   /**

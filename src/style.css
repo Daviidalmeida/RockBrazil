@@ -4189,3 +4189,103 @@ button,
   -webkit-touch-callout: none !important;
   overscroll-behavior: none !important;
 }
+
+/* ========================================================
+   V13.6: MÚSICAS INTERNACIONAIS & SINCRONIZAÇÃO POR MÚSICA
+   ======================================================== */
+.intl-status-badge {
+  display: inline-block;
+  font-family: var(--font-display, sans-serif);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  margin-top: 4px;
+  width: fit-content;
+}
+
+.intl-status-badge.status-ready {
+  background: #15803d;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(21, 128, 61, 0.4);
+}
+
+.intl-status-badge.status-prep {
+  background: #d97706;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(217, 119, 6, 0.4);
+}
+
+.intl-status-badge.status-unconfigured {
+  background: #475569;
+  color: #e2e8f0;
+}
+
+.intl-status-badge.status-unavailable {
+  background: #b91c1c;
+  color: #ffffff;
+}
+
+.pause-sync-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0 14px 0;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px dashed rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.pause-sync-label {
+  font-family: var(--font-display, sans-serif);
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pause-sync-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.btn-offset-step {
+  background: #1e293b;
+  color: #f8fafc;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  font-family: var(--font-display, monospace);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.15s ease;
+  touch-action: manipulation;
+}
+
+.btn-offset-step:hover {
+  background: #334155;
+  transform: scale(1.05);
+}
+
+.btn-offset-step:active {
+  transform: scale(0.95);
+}
+
+.pause-offset-val {
+  font-family: var(--font-display, monospace);
+  font-size: 14px;
+  font-weight: 900;
+  color: #0f172a;
+  min-width: 65px;
+  text-align: center;
+}

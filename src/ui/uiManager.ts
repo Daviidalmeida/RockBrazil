@@ -2,6 +2,8 @@ import { GameStats, HitJudgment, GameState, Lane, SongMetadata, Difficulty, Game
 import { PlayerProfile, LeaderboardEntry, RecordMatchResult, AchievementDefinition, ProfileStats } from '../game/profileManager';
 import { RockCoinsManager } from '../game/economy/rockCoinsManager';
 import { RankingService } from '../firebase/rankingService';
+import { INTERNATIONAL_METADATA_CONFIG } from '../game/catalog/internationalCatalog';
+import { CalibrationManager } from '../game/sync/calibrationManager';
 
 export function renderAvatarHtml(avatar?: string, className: string = 'avatar-thumb-img'): string {
   if (!avatar) {
@@ -134,6 +136,7 @@ export class UIManager {
   public onSettingsChanged?: (settings: Partial<GameSettings>) => void;
   public onTestBeepClicked?: () => void;
   public onCalibrationOffsetChange?: (deltaMs: number, reset?: boolean) => void;
+  public onAdjustSongOffsetClicked?: (deltaMs: number) => void;
   public onUnblockAudioClicked?: () => void;
   public onUnblockCancelClicked?: () => void;
   public onReturnToLibraryClicked?: () => void;
@@ -522,6 +525,14 @@ export class UIManager {
     });
     document.getElementById('btn-songs-pause')?.addEventListener('click', () => {
       this.onOpenSongSelectClicked?.();
+    });
+
+    // V13.6 In-game Pause Sync Offset Adjustment
+    document.getElementById('btn-pause-offset-minus')?.addEventListener('click', () => {
+      this.onAdjustSongOffsetClicked?.(-20);
+    });
+    document.getElementById('btn-pause-offset-plus')?.addEventListener('click', () => {
+      this.onAdjustSongOffsetClicked?.(+20);
     });
 
     // Autoplay unblock button
@@ -1132,6 +1143,9 @@ export class UIManager {
     this.screenSongSelect.classList.toggle('hidden', state !== GameState.SONG_SELECT);
     this.screenCountdown.classList.toggle('hidden', state !== GameState.COUNTDOWN);
     this.screenPause.classList.toggle('hidden', state !== GameState.PAUSED);
+    if (state === GameState.PAUSED && this.currentSelectedSong) {
+      this.updatePauseOffsetDisplay(CalibrationManager.getSongOffsetMs(this.currentSelectedSong.id));
+    }
     this.screenGameOver.classList.toggle('hidden', state !== GameState.GAME_OVER);
     this.screenResult.classList.toggle('hidden', state !== GameState.RESULTS);
     this.screenSettings.classList.toggle('hidden', state !== GameState.SETTINGS);
@@ -1161,6 +1175,13 @@ export class UIManager {
         this.ytPlayerContainer.classList.add('hidden');
         this.ytPlayerContainer.style.setProperty('display', 'none', 'important');
       }
+    }
+  }
+
+  public updatePauseOffsetDisplay(offsetMs: number): void {
+    const valEl = document.getElementById('pause-offset-val');
+    if (valEl) {
+      valEl.textContent = `${offsetMs > 0 ? '+' : ''}${offsetMs} ms`;
     }
   }
 
@@ -1436,7 +1457,11 @@ export class UIManager {
     this.showScreen(GameState.RESULTS);
   }
 
-  renderSongLibrary(songs: SongMetadata[], activeProfile?: PlayerProfile | null): void {
+  renderSongLibrary(songs: SongMetadata[], activeProfile?: PlayerProfile | null, filterOverride?: string): void {
+    if (filterOverride) {
+      this.currentFilter = filterOverride as any;
+    }
+    const isIntlTab = this.currentFilter === 'custom' || (this.currentFilter as string) === 'international';
     this.cachedSongs = songs;
     if (activeProfile !== undefined) {
       this.currentActiveProfile = activeProfile;
@@ -1444,7 +1469,15 @@ export class UIManager {
     const profile = this.currentActiveProfile;
 
     // Regra V13.5: O catálogo exibe SOMENTE as músicas já desbloqueadas pelo jogador!
+    // V13.6: Músicas internacionais são sempre desbloqueadas e gratuitas para teste!
     const isSongUnlocked = (songId: string) => {
+      const s = songs.find((item) => item.id === songId);
+      if (s?.isInternational) {
+        return true;
+      }
+      if (isIntlTab) {
+        return true;
+      }
       if (this.isSongUnlockedChecker) {
         return this.isSongUnlockedChecker(songId);
       }
@@ -1459,10 +1492,14 @@ export class UIManager {
       coinValEl.textContent = (profile?.rockCoins ?? 0).toString();
     }
 
-    // Atualiza o contador de progresso da coleção (ex: 3 / 162 MÚSICAS)
+    // Atualiza o contador de progresso da coleção
     const progEl = document.getElementById('collection-progress-pill');
     if (progEl) {
-      progEl.textContent = `${unlockedSongs.length} / 162 MÚSICAS`;
+      if (isIntlTab) {
+        progEl.textContent = `${unlockedSongs.length} INTERNACIONAIS (TESTE)`;
+      } else {
+        progEl.textContent = `${unlockedSongs.length} / 162 MÚSICAS`;
+      }
     }
 
     const titleEl = document.getElementById('library-screen-title');
@@ -1506,6 +1543,19 @@ export class UIManager {
 
       const scoreText = bestScore > 0 ? `${bestScore.toLocaleString('pt-BR')} PTS` : '0 PTS';
 
+      let statusBadgeHtml = '';
+      if (song.isInternational) {
+        const status = song.internationalStatus || 'PRONTA PARA TESTE';
+        const cls = status === 'PRONTA PARA TESTE'
+          ? 'status-ready'
+          : status === 'CHART EM PREPARAÇÃO'
+          ? 'status-prep'
+          : status === 'VÍDEO NÃO CONFIGURADO'
+          ? 'status-unconfigured'
+          : 'status-unavailable';
+        statusBadgeHtml = `<span class="intl-status-badge ${cls}">${status}</span>`;
+      }
+
       let fileNoticeHtml = '';
       if (!song.isAvailable && song.requiresFile) {
         fileNoticeHtml = `
@@ -1529,6 +1579,7 @@ export class UIManager {
             <div class="row-song-info">
               <span class="row-song-title">${index + 1}. ${song.title}</span>
               <span class="row-song-artist">${song.artist}</span>
+              ${statusBadgeHtml}
               ${fileNoticeHtml}
             </div>
           </div>
@@ -1540,34 +1591,36 @@ export class UIManager {
       `;
     }).join('');
 
-    // Append Card Misterioso ou Aviso de Coleção Completa
-    if (unlockedSongs.length < 162) {
-      rowsHtml += `
-        <div class="notebook-song-row mystery-song-card" id="card-mystery-song" role="button" tabindex="0" aria-label="Desbloquear Próxima Música por 5 RockCoins">
-          <div class="mystery-card-left">
-            <div class="mystery-icon-box">
-              <span class="mystery-question-mark">?</span>
+    // Append Card Misterioso APENAS na aba brasileira
+    if (!isIntlTab) {
+      if (unlockedSongs.length < 162) {
+        rowsHtml += `
+          <div class="notebook-song-row mystery-song-card" id="card-mystery-song" role="button" tabindex="0" aria-label="Desbloquear Próxima Música por 5 RockCoins">
+            <div class="mystery-card-left">
+              <div class="mystery-icon-box">
+                <span class="mystery-question-mark">?</span>
+              </div>
+              <div class="mystery-card-info">
+                <span class="mystery-card-title">[?] DESBLOQUEAR PRÓXIMA MÚSICA</span>
+                <span class="mystery-card-cost">CUSTO: 5 ROCKCOINS</span>
+              </div>
             </div>
-            <div class="mystery-card-info">
-              <span class="mystery-card-title">[?] DESBLOQUEAR PRÓXIMA MÚSICA</span>
-              <span class="mystery-card-cost">CUSTO: 5 ROCKCOINS</span>
+            <button type="button" class="btn-unlock-mystery" id="btn-unlock-mystery">
+              <span>DESBLOQUEAR</span>
+            </button>
+          </div>
+        `;
+      } else {
+        rowsHtml += `
+          <div class="collection-completed-box" id="collection-completed-box">
+            <span class="completed-star-icon">🏆</span>
+            <div class="completed-text-content">
+              <span class="completed-title">COLEÇÃO COMPLETA!</span>
+              <span class="completed-desc">Parabéns! Você desbloqueou todas as 162 músicas do RockBrazil!</span>
             </div>
           </div>
-          <button type="button" class="btn-unlock-mystery" id="btn-unlock-mystery">
-            <span>DESBLOQUEAR</span>
-          </button>
-        </div>
-      `;
-    } else {
-      rowsHtml += `
-        <div class="collection-completed-box" id="collection-completed-box">
-          <span class="completed-star-icon">🏆</span>
-          <div class="completed-text-content">
-            <span class="completed-title">COLEÇÃO COMPLETA!</span>
-            <span class="completed-desc">Parabéns! Você desbloqueou todas as 162 músicas do RockBrazil!</span>
-          </div>
-        </div>
-      `;
+        `;
+      }
     }
 
     this.songsListContainer.innerHTML = rowsHtml;
@@ -1584,14 +1637,20 @@ export class UIManager {
         if (!song) return;
 
         if (this.currentSelectedSong?.id === song.id) {
-          if (song.isAvailable) {
+          if (song.isInternational) {
+            if (song.internationalStatus && song.internationalStatus !== 'PRONTA PARA TESTE') {
+              alert(`Esta música está com status "${song.internationalStatus}" e não pode ser iniciada no momento.`);
+              return;
+            }
+            this.openDifficultyModal(song, profile);
+          } else if (song.isAvailable) {
             this.openDifficultyModal(song, profile);
           } else {
             alert(`O arquivo de áudio de "${song.title}" não está disponível no servidor. Utilize "VINCULAR" ou "IMPORTAR MÚSICA" para carregar seu arquivo.`);
           }
         } else {
           this.currentSelectedSong = song;
-          this.renderSongLibrary(songs, profile);
+          this.renderSongLibrary(songs, profile, this.currentFilter);
         }
       });
     });
@@ -1641,7 +1700,23 @@ export class UIManager {
     if (artistEl) artistEl.textContent = song.artist;
 
     const diffs: Difficulty[] = ['EASY', 'MEDIUM', 'HARD', 'EXPERT'];
+    const config = INTERNATIONAL_METADATA_CONFIG[song.id];
+    const allowedDiffs = config ? config.availableDifficulties : diffs;
+
     diffs.forEach((d) => {
+      const btn = document.querySelector(`.btn-diff-choice[data-diff="${d}"]`) as HTMLButtonElement | null;
+      if (btn) {
+        if (!allowedDiffs.includes(d)) {
+          btn.disabled = true;
+          btn.style.opacity = '0.35';
+          btn.style.pointerEvents = 'none';
+        } else {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          btn.style.pointerEvents = 'auto';
+        }
+      }
+
       const recEl = document.getElementById(`record-${d.toLowerCase()}`);
       if (recEl) {
         const rec = profile?.records[song.id]?.[d];

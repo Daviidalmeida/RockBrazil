@@ -5,6 +5,7 @@ dist-ssr/
 
 # Arquivos de áudio comercial e pacotes AutoChart (não versionar publicamente)
 public/custom-songs/**
+public/musicas-internacionais/**
 *.mp3
 *.wav
 *.ogg

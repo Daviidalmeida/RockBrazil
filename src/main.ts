@@ -409,10 +409,23 @@ class RockBrazilGame {
     };
 
     // Navigation
-    this.ui.onOpenSongSelectClicked = (filter) => {
+    this.ui.onOpenSongSelectClicked = (filter = 'all') => {
       this.state = GameState.SONG_SELECT;
-      this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
+      const songs = this.library.getActiveSongs(filter);
+      this.ui.renderSongLibrary(songs, this.profileManager.getActiveProfile(), filter);
       this.ui.showScreen(GameState.SONG_SELECT);
+    };
+
+    this.ui.onAdjustSongOffsetClicked = (deltaMs: number) => {
+      if (this.currentSong) {
+        const updated = CalibrationManager.adjustOffsetMs(
+          this.currentSong.id,
+          deltaMs,
+          this.currentSong.youtubeVideoId || ''
+        );
+        this.masterClock.setOffsets(updated, 0);
+        this.ui.updatePauseOffsetDisplay(updated);
+      }
     };
 
     this.ui.onOpenSettingsClicked = () => {
@@ -1615,19 +1628,21 @@ class RockBrazilGame {
 
     let recordResult: any = undefined;
     try {
+      const isIntl = Boolean(this.currentSong?.isInternational || this.currentSong?.id.startsWith('intl-'));
       recordResult = await this.profileManager.recordMatch(
         this.currentSong.id,
         this.currentSong.title,
         this.currentDifficulty,
         stats,
         true,
-        this.currentSong.artist
+        this.currentSong.artist,
+        isIntl
       );
       this.library.saveSongRecord(this.currentSong.id, this.currentDifficulty, recordResult.record);
 
-      // V13.3.1: Envio ao Ranking Global online para contas Google
+      // V13.3.1: Envio ao Ranking Global online para contas Google (exclusivo para catálogo brasileiro oficial)
       const activeProf = this.profileManager.getActiveProfile();
-      if (activeProf && recordResult) {
+      if (activeProf && recordResult && !isIntl) {
         RankingService.submitRecordIfEligible(
           activeProf,
           this.currentSong.id,

@@ -662,13 +662,15 @@ export class ProfileManager {
     diff: Difficulty,
     stats: GameStats,
     cleared: boolean,
-    songArtist?: string
+    songArtist?: string,
+    isInternational?: boolean
   ): Promise<RecordMatchResult> {
     const timestamp = Date.now();
     const hits = stats.hitsCount ?? (stats.perfectCount + stats.greatCount + stats.goodCount);
     const misses = stats.missCount ?? 0;
     const playableCount = stats.playableNotesCount ?? (hits + misses);
-    const earnedCoins = RockCoinsManager.calculateReward(
+    // V13.6: Músicas internacionais em teste não geram RockCoins
+    const earnedCoins = isInternational ? 0 : RockCoinsManager.calculateReward(
       diff,
       misses,
       playableCount,
@@ -783,9 +785,11 @@ export class ProfileManager {
 
     this.activeProfile.lastPlayedAt = timestamp;
 
-    // V13.5: Avaliação automática de Conquistas da Temporada 1
-    const isFC = (misses === 0 && cleared && playableCount > 0);
-    this.checkAndUnlockAchievements(stats, cleared, isFC);
+    // V13.5: Avaliação automática de Conquistas da Temporada 1 (apenas catálogo brasileiro)
+    if (!isInternational) {
+      const isFC = (misses === 0 && cleared && playableCount > 0);
+      this.checkAndUnlockAchievements(stats, cleared, isFC);
+    }
 
     await this.saveProfileToDB(this.activeProfile);
 
@@ -805,6 +809,9 @@ export class ProfileManager {
   }
 
   public isSongUnlocked(songId: string): boolean {
+    if (songId.startsWith('intl-')) {
+      return true; // Músicas internacionais são gratuitas e desbloqueadas para teste
+    }
     const profile = this.getActiveProfile();
     if (!profile.unlockedSongIds || profile.unlockedSongIds.length === 0) {
       return INITIAL_UNLOCKED_SONG_IDS.includes(songId);

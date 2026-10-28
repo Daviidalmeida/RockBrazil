@@ -226,10 +226,10 @@
           <div class="marker-underline"></div>
         </div>
 
-        <!-- Filter Tabs: Todas / Em Breve & Collection Progress Counter -->
+        <!-- Filter Tabs: Todas / Internacionais & Collection Progress Counter -->
         <div class="notebook-filter-row">
-          <button id="tab-songs-all" class="notebook-filter-tab active">TODAS AS FAIXAS</button>
-          <button id="tab-songs-custom" class="notebook-filter-tab disabled-tab" disabled aria-disabled="true" title="Em breve novas músicas internacionais">EM BREVE...</button>
+          <button id="tab-songs-all" class="notebook-filter-tab active" title="Catálogo de Músicas Brasileiras">TODAS AS FAIXAS</button>
+          <button id="tab-songs-custom" class="notebook-filter-tab" title="Catálogo de Músicas Internacionais">INTERNACIONAIS</button>
           <div id="collection-progress-pill" class="collection-progress-pill" aria-label="Progresso da Coleção">3 / 162 MÚSICAS</div>
         </div>
 
@@ -635,6 +635,16 @@
         <div class="marker-underline small"></div>
 
 
+
+        <!-- V13.6 Ajuste Rápido de Sincronização por Música -->
+        <div id="pause-sync-box" class="pause-sync-box">
+          <span class="pause-sync-label">Ajuste de Offset (Áudio/Vídeo):</span>
+          <div class="pause-sync-controls">
+            <button id="btn-pause-offset-minus" class="btn-offset-step" title="-20ms" type="button">-20ms</button>
+            <span id="pause-offset-val" class="pause-offset-val">0 ms</span>
+            <button id="btn-pause-offset-plus" class="btn-offset-step" title="+20ms" type="button">+20ms</button>
+          </div>
+        </div>
 
         <div class="dialog-buttons">
           <button id="btn-resume" class="notebook-bar-btn btn-select">CONTINUAR</button>
