@@ -38,11 +38,11 @@ export interface NoteVisualTheme {
 
 export const NOTE_VISUAL_THEME: NoteVisualTheme = {
   laneColors: [
-    { core: '#22c55e', glow: 'rgba(34, 197, 94, 0.45)', dark: '#14532d', light: '#86efac' }, // 0: Verde suave equilibrado
-    { core: '#f43f5e', glow: 'rgba(244, 63, 94, 0.45)', dark: '#881337', light: '#fda4af' }, // 1: Vermelho carmim suave
-    { core: '#eab308', glow: 'rgba(234, 179, 8, 0.45)',  dark: '#713f12', light: '#fde047' }, // 2: Amarelo âmbar confortável
-    { core: '#0ea5e9', glow: 'rgba(14, 165, 233, 0.45)', dark: '#075985', light: '#7dd3fc' }, // 3: Azul celeste nítido
-    { core: '#f97316', glow: 'rgba(249, 115, 22, 0.45)', dark: '#7c2d12', light: '#fdba74' }  // 4: Laranja coral confortável
+    { core: '#24e879', glow: 'rgba(34, 197, 94, 0.45)', dark: '#14532d', light: '#86efac' }, // 0: Verde suave equilibrado
+    { core: '#ff385f', glow: 'rgba(244, 63, 94, 0.45)', dark: '#881337', light: '#fda4af' }, // 1: Vermelho carmim suave
+    { core: '#ffd426', glow: 'rgba(234, 179, 8, 0.45)',  dark: '#713f12', light: '#fde047' }, // 2: Amarelo âmbar confortável
+    { core: '#19c8ff', glow: 'rgba(14, 165, 233, 0.45)', dark: '#075985', light: '#7dd3fc' }, // 3: Azul celeste nítido
+    { core: '#ff8b26', glow: 'rgba(249, 115, 22, 0.45)', dark: '#7c2d12', light: '#fdba74' }  // 4: Laranja coral confortável
   ],
   highlightAlpha: 0.35,
   chromeRimAlpha: 0.65,
@@ -367,7 +367,11 @@ export class GameRenderer {
     const bottomY = h * 0.99;
 
     const topW = w * this.highwayTopWidthRatio;
-    const bottomW = w * this.highwayBottomWidthRatio;
+    // The configured bottom width belongs to the strike line, as in note/receptor projection.
+    // Extrapolate the board to its lower edge so lane rails and gems share the same geometry.
+    const strikeW = w * this.highwayBottomWidthRatio;
+    const bottomW = topW + (strikeW - topW) *
+      ((bottomY - horizonY) / (h * this.strikeLineYRatio - horizonY));
 
     const topLeftX = (w - topW) / 2;
     const topRightX = topLeftX + topW;
@@ -735,7 +739,7 @@ export class GameRenderer {
     // 1. Draw Chord Connector Beams (tight 20ms tolerance)
     const chordGroups = new Map<number, Note[]>();
     for (const note of visibleNotes) {
-      const roundedTime = Math.round(note.time * 50) / 50; // 20ms quantization
+      const roundedTime = note.time; // Only actual simultaneous notes share a chord beam.
       if (!chordGroups.has(roundedTime)) chordGroups.set(roundedTime, []);
       chordGroups.get(roundedTime)!.push(note);
     }
@@ -794,6 +798,13 @@ export class GameRenderer {
 
       ctx.fillStyle = gemGrad;
       ctx.fill();
+
+      // A narrow neon edge keeps the existing ellipse and dimensions unchanged.
+      if (this.visualEffectsEnabled) {
+        ctx.strokeStyle = color.glow;
+        ctx.lineWidth = Math.max(2, 3 * scale);
+        ctx.stroke();
+      }
 
       // Chrome Rim
       ctx.lineWidth = Math.max(1.2, 2.0 * scale);

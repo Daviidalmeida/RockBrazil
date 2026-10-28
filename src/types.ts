@@ -168,6 +168,7 @@ export interface GameSettings {
   noteSpeedMultiplier: number; // 0.8 to 2.0
   noteSpeedPreset?: NoteSpeedPreset; // 'LENTA' | 'NORMAL' | 'RÁPIDA'
   visualEffectsEnabled: boolean;
+  effectsMode?: 'NORMAL' | 'REDUCED';
   muteOnMiss?: boolean; // V13: Silenciar música ao errar
 }
 
