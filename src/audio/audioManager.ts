@@ -514,4 +514,71 @@ export class AudioManager {
       osc.stop(t + 0.45);
     });
   }
+
+  // V13.8.1: Aplausos de plateia de show sintetizados via Web Audio API (procedural, sem violação de direitos autorais)
+  private isCrowdApplausePlaying = false;
+
+  playSfxCrowdApplause(reaction: 'NORMAL' | 'FIVE_STARS' | 'FULL_COMBO' = 'NORMAL'): void {
+    if (!this.ctx || !this.sfxGainNode || this.settings.sfxVolume <= 0) return;
+    if (this.isCrowdApplausePlaying) return; // evita reprodução duplicada
+
+    try {
+      this.isCrowdApplausePlaying = true;
+      const duration = reaction === 'FULL_COMBO' ? 3.8 : (reaction === 'FIVE_STARS' ? 3.2 : 2.6);
+      const sampleRate = this.ctx.sampleRate;
+      const bufferSize = Math.floor(sampleRate * duration);
+      const buffer = this.ctx.createBuffer(2, bufferSize, sampleRate);
+
+      // Síntese procedural de aplausos estéreo (ruído rosa + impulsos densos de palmas)
+      for (let ch = 0; ch < 2; ch++) {
+        const data = buffer.getChannelData(ch);
+        let b0 = 0, b1 = 0, b2 = 0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          b0 = 0.99886 * b0 + white * 0.0555179;
+          b1 = 0.99332 * b1 + white * 0.0750759;
+          b2 = 0.96900 * b2 + white * 0.1538520;
+          let sample = (b0 + b1 + b2 + white * 0.5362) * 0.12;
+
+          // Claps aleatórios dispersos simulando multidão
+          if (Math.random() < 0.012) {
+            sample += (Math.random() * 2 - 1) * 0.8;
+          }
+          data[i] = sample;
+        }
+      }
+
+      const source = this.ctx.createBufferSource();
+      source.buffer = buffer;
+
+      // Filtro passa-banda acústico de estádio
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(reaction === 'FULL_COMBO' ? 1400 : 1150, this.ctx.currentTime);
+      filter.Q.setValueAtTime(1.1, this.ctx.currentTime);
+
+      const gain = this.ctx.createGain();
+      const t = this.ctx.currentTime;
+      const baseVol = (reaction === 'FULL_COMBO' ? 0.6 : (reaction === 'FIVE_STARS' ? 0.5 : 0.38)) * this.settings.sfxVolume;
+
+      // Fade-in e fade-out suaves
+      gain.gain.setValueAtTime(0.001, t);
+      gain.gain.linearRampToValueAtTime(baseVol, t + 0.28);
+      gain.gain.setValueAtTime(baseVol, t + duration - 0.7);
+      gain.gain.linearRampToValueAtTime(0.001, t + duration);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.sfxGainNode);
+
+      source.start(t);
+      source.stop(t + duration);
+
+      source.onended = () => {
+        this.isCrowdApplausePlaying = false;
+      };
+    } catch {
+      this.isCrowdApplausePlaying = false;
+    }
+  }
 }

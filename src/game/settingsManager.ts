@@ -28,6 +28,7 @@ export class SettingsManager {
       audioOffsetMs: 0,
       noteSpeedMultiplier: 1.0,
       visualEffectsEnabled: true,
+      visualEffectsMode: 'NORMAL',
       muteOnMiss: true
     };
 
@@ -40,7 +41,8 @@ export class SettingsManager {
         const muteOnMiss = parsed.muteOnMiss !== undefined && parsed.muteOnMiss !== null
           ? Boolean(parsed.muteOnMiss)
           : true;
-        return { ...defaultSettings, ...parsed, muteOnMiss };
+        const visualEffectsMode = parsed.visualEffectsMode === 'REDUZIDO' ? 'REDUZIDO' : 'NORMAL';
+        return { ...defaultSettings, ...parsed, muteOnMiss, visualEffectsMode };
       }
     } catch {
       // Ignore

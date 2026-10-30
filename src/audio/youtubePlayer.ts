@@ -8,6 +8,71 @@ declare global {
   }
 }
 
+export interface YouTubeErrorDetails {
+  code: number | string;
+  title: string;
+  message: string;
+  canRetry: boolean;
+  isEmbedBlocked: boolean;
+}
+
+export function parseYouTubeError(errCode: any): YouTubeErrorDetails {
+  const code = typeof errCode === 'object' && errCode !== null ? (errCode.data ?? errCode.code ?? errCode) : errCode;
+  const numCode = Number(code);
+
+  switch (numCode) {
+    case 2:
+      return {
+        code: 2,
+        title: 'Parâmetro Inválido (Código 2)',
+        message: 'O identificador do vídeo do YouTube contém caracteres inválidos ou formato incorreto.',
+        canRetry: true,
+        isEmbedBlocked: false
+      };
+    case 5:
+      return {
+        code: 5,
+        title: 'Erro de Reprodução HTML5 (Código 5)',
+        message: 'Não foi possível reproduzir este conteúdo no player HTML5 do navegador.',
+        canRetry: true,
+        isEmbedBlocked: false
+      };
+    case 100:
+      return {
+        code: 100,
+        title: 'Vídeo Não Encontrado (Código 100)',
+        message: 'O vídeo solicitado foi removido ou configurado como privado no YouTube.',
+        canRetry: false,
+        isEmbedBlocked: true
+      };
+    case 101:
+    case 150:
+      return {
+        code: numCode,
+        title: 'Incorporação Desativada (Código ' + numCode + ')',
+        message: 'O proprietário deste vídeo desativou a reprodução incorporada em sites externos.',
+        canRetry: false,
+        isEmbedBlocked: true
+      };
+    case 153:
+      return {
+        code: 153,
+        title: 'Restrição de Política de Origem (Código 153)',
+        message: 'A política de segurança de origem ou cabeçalho Referrer restringiu o acesso ao player.',
+        canRetry: true,
+        isEmbedBlocked: false
+      };
+    default:
+      return {
+        code: code ?? 'UNKNOWN',
+        title: 'Aviso do YouTube',
+        message: 'Ocorreu uma instabilidade na reprodução do YouTube. Verifique sua conexão e tente novamente.',
+        canRetry: true,
+        isEmbedBlocked: false
+      };
+  }
+}
+
 export interface YouTubePlayerEvents {
   onReady?: () => void;
   onStateChange?: (state: number) => void;
@@ -16,7 +81,7 @@ export interface YouTubePlayerEvents {
   onPlaybackConfirmed?: (videoTime: number) => void;
   onAutoplayBlocked?: () => void;
   onEnded?: () => void;
-  onError?: (err: any) => void;
+  onError?: (err: any, details?: YouTubeErrorDetails) => void;
 }
 
 export class YouTubePlayerController {
@@ -24,9 +89,10 @@ export class YouTubePlayerController {
   private isApiLoaded = false;
   private isReady = false;
   private currentVideoId = '';
+  private pendingElementId = 'yt-player-frame'; // ID do elemento alvo para criação lazy do player
 
-  // Playback State Machine
-  private playbackState: PlaybackState = PlaybackState.PREPARING;
+  // Playback State Machine com os 10 estados explícitos oficiais (V13.8.1)
+  private playbackState: PlaybackState = PlaybackState.UNINITIALIZED;
 
   // Master Audio Clock
   private lastObservedVideoTime = 0;
@@ -60,9 +126,13 @@ export class YouTubePlayerController {
   }
 
   /**
-   * Initializes the YouTube IFrame API
+   * Inicializa a API do YouTube IFrame de forma lazy.
+   * Apenas registra o callback de API pronta — NÃO cria o player ainda.
+   * O player é criado apenas em loadVideo(), quando o container já está visível.
    */
   async init(elementId = 'yt-player-frame'): Promise<void> {
+    this.pendingElementId = elementId;
+
     if (typeof window === 'undefined' || typeof document === 'undefined') {
       this.isReady = true;
       this.isFallbackMode = true;
@@ -71,8 +141,10 @@ export class YouTubePlayerController {
     }
 
     if (window.YT && window.YT.Player) {
+      // API já disponível — marca como pronta mas NÃO cria o player ainda
       this.isApiLoaded = true;
-      this.createPlayer(elementId);
+      this.isReady = true;
+      this.setPlaybackState(PlaybackState.READY);
       return;
     }
 
@@ -90,11 +162,15 @@ export class YouTubePlayerController {
       window.onYouTubeIframeAPIReady = () => {
         if (prevCallback) prevCallback();
         this.isApiLoaded = true;
-        this.createPlayer(elementId);
-        resolve();
+        // NÃO cria o player aqui — aguarda loadVideo() ser chamado com container visível
+        if (!this.isReady) {
+          this.isReady = true;
+          this.setPlaybackState(PlaybackState.READY);
+          resolve();
+        }
       };
 
-      // Fallback timeout in case offline or blocked
+      // Timeout de fallback para ambientes offline ou bloqueados
       setTimeout(() => {
         if (!this.isReady) {
           this.isReady = true;
@@ -102,22 +178,60 @@ export class YouTubePlayerController {
           this.setPlaybackState(PlaybackState.READY);
           resolve();
         }
-      }, 3000);
+      }, 5000);
     });
   }
 
+  private ensureTargetElement(elementId: string): HTMLElement | null {
+    let el = document.getElementById(elementId);
+    if (!el && typeof document !== 'undefined') {
+      const container = document.getElementById('yt-player-container');
+      if (container) {
+        el = document.createElement('div');
+        el.id = elementId;
+        container.insertBefore(el, container.firstChild);
+        console.log('[RockBrazil YouTube] Elemento #' + elementId + ' recriado dentro de #yt-player-container');
+      }
+    }
+    return el;
+  }
+
   private createPlayer(elementId: string): void {
-    const el = document.getElementById(elementId);
-    if (!el || !window.YT || !window.YT.Player) {
+    // Garantir que o elemento existe no DOM antes de prosseguir
+    const el = this.ensureTargetElement(elementId);
+    if (!el) {
+      console.warn('[RockBrazil YouTube] Elemento #' + elementId + ' não encontrado no DOM. Adiando criação do player.');
+      requestAnimationFrame(() => {
+        const retryEl = this.ensureTargetElement(elementId);
+        if (retryEl && window.YT && window.YT.Player) {
+          this._doCreatePlayer(elementId);
+        } else {
+          console.error('[RockBrazil YouTube] Elemento ainda ausente após rAF. Ativando modo fallback.');
+          this.isReady = true;
+          this.isFallbackMode = true;
+          this.setPlaybackState(PlaybackState.READY);
+        }
+      });
+      return;
+    }
+
+    if (!window.YT || !window.YT.Player) {
+      console.warn('[RockBrazil YouTube] API do YouTube não disponível. Ativando modo fallback.');
       this.isReady = true;
       this.isFallbackMode = true;
       this.setPlaybackState(PlaybackState.READY);
       return;
     }
 
+    this._doCreatePlayer(elementId);
+  }
+
+  private _doCreatePlayer(elementId: string): void {
     const origin = (typeof window !== 'undefined' && window.location.origin && window.location.origin.startsWith('http'))
       ? window.location.origin
       : undefined;
+
+    console.log('[RockBrazil YouTube] Criando YT.Player em #' + elementId + ' | origin:', origin);
 
     try {
       this.player = new window.YT.Player(elementId, {
@@ -139,6 +253,7 @@ export class YouTubePlayerController {
           onReady: () => {
             this.isReady = true;
             this.setPlaybackState(PlaybackState.READY);
+            console.log('[RockBrazil YouTube] Player pronto. currentVideoId:', this.currentVideoId);
             if (this.currentVideoId && this.player && typeof this.player.cueVideoById === 'function') {
               try {
                 this.player.cueVideoById({ videoId: this.currentVideoId, startSeconds: 0 });
@@ -153,13 +268,15 @@ export class YouTubePlayerController {
             this.handlePlayerStateChange(event.data);
           },
           onError: (err: any) => {
-            console.warn('[RockBrazil YouTube] Player Warning:', err);
+            const details = parseYouTubeError(err);
+            console.warn('[RockBrazil YouTube] Player Warning:', err, details);
             this.setPlaybackState(PlaybackState.ERROR);
-            if (this.events.onError) this.events.onError(err);
+            if (this.events.onError) this.events.onError(err, details);
           }
         }
       });
-    } catch {
+    } catch (err) {
+      console.error('[RockBrazil YouTube] Falha ao criar YT.Player:', err);
       this.isReady = true;
       this.isFallbackMode = true;
       this.setPlaybackState(PlaybackState.READY);
@@ -223,7 +340,8 @@ export class YouTubePlayerController {
   }
 
   /**
-   * Prepares and cues a video in advance (State: PREPARING -> READY)
+   * Prepara e encaminha um vídeo para reprodução (Estado: PREPARING → READY).
+   * Se o player ainda não foi criado (inicialização lazy), cria agora com o container visível.
    */
   async loadVideo(videoId: string): Promise<void> {
     this.currentVideoId = videoId;
@@ -235,7 +353,30 @@ export class YouTubePlayerController {
     this.lastRawPlayerTime = -1;
 
     if (!this.player) {
-      await this.init();
+      // Criação lazy: container já deve estar visível neste ponto
+      if (this.isApiLoaded && window.YT && window.YT.Player) {
+        // API disponível — criar o player sincronamente
+        this.createPlayer(this.pendingElementId);
+        // Aguardar onReady do player (máx 5s)
+        await new Promise<void>((resolve) => {
+          const timeout = setTimeout(() => resolve(), 5000);
+          const prevOnReady = this.events.onReady;
+          const oneShot = () => {
+            clearTimeout(timeout);
+            if (prevOnReady) prevOnReady();
+            this.events.onReady = prevOnReady;
+            resolve();
+          };
+          this.events.onReady = oneShot;
+        });
+      } else {
+        // API ainda carregando — aguardar init()
+        await this.init(this.pendingElementId);
+        if (!this.player && !this.isFallbackMode && this.isApiLoaded && window.YT && window.YT.Player) {
+          this.createPlayer(this.pendingElementId);
+          await new Promise<void>((resolve) => setTimeout(resolve, 3000));
+        }
+      }
     }
 
     if (this.player && typeof this.player.cueVideoById === 'function') {
@@ -245,15 +386,19 @@ export class YouTubePlayerController {
           startSeconds: 0
         });
         this.isFallbackMode = false;
-      } catch {
-        // Fallback
+        console.log('[RockBrazil YouTube] cueVideoById chamado para:', videoId);
+      } catch (err) {
+        console.warn('[RockBrazil YouTube] Falha em cueVideoById:', err);
       }
+    } else if (!this.isFallbackMode) {
+      console.warn('[RockBrazil YouTube] player.cueVideoById indisponível. isFallback:', this.isFallbackMode);
     }
     this.setPlaybackState(PlaybackState.READY);
   }
 
   /**
-   * Desbloqueia / pré-ativa reprodução sob contexto de gesto direto do usuário
+   * Desbloqueia / pré-ativa reprodução sob contexto de gesto direto do usuário.
+   * Se o player ainda não foi criado (lazy init), armazena o pedido para executar após onReady.
    */
   public prime(): void {
     if (this.player && typeof this.player.playVideo === 'function' && typeof this.player.pauseVideo === 'function') {
@@ -262,10 +407,11 @@ export class YouTubePlayerController {
         this.player.pauseVideo();
       } catch {}
     }
+    // Se o player ainda não existe, o prime será feito pelo onReady interno em createPlayer
   }
 
   /**
-   * Requests playback and awaits genuine confirmation that video time is advancing
+   * Solicita reprodução e aguarda confirmação genuína de que o tempo do vídeo está avançando
    */
   public play(): void {
     if (this.playbackState === PlaybackState.PLAYING) return;
@@ -277,9 +423,12 @@ export class YouTubePlayerController {
       try {
         this.player.playVideo();
       } catch {
-        this.isFallbackMode = true;
+        // Falha pontual — não ativar fallback permanentemente
+        console.warn('[RockBrazil YouTube] playVideo() falhou.');
       }
-    } else {
+    } else if (!this.player) {
+      // Player não criado (situação inesperada após loadVideo) — ativar fallback temporário
+      console.warn('[RockBrazil YouTube] play() chamado sem player criado. Usando fallback.');
       this.isFallbackMode = true;
     }
 

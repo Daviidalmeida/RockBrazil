@@ -60,17 +60,22 @@ export enum GameState {
 }
 
 /**
- * ROCKBRAZIL BETA — AUDIO-DRIVEN GAMEPLAY STATE MACHINE
- * Guarantees notes only move when audio is genuinely confirmed advancing
+ * ROCKBRAZIL BETA — AUDIO-DRIVEN GAMEPLAY STATE MACHINE (V13.8.1)
+ * Estados explícitos de reprodução para YouTube e Áudio Master
  */
 export enum PlaybackState {
-  PREPARING = 'PREPARING',
+  UNINITIALIZED = 'UNINITIALIZED',
+  LOADING = 'LOADING',
+  PREPARING = 'PREPARING', // compatibilidade
   READY = 'READY',
-  WAITING_FOR_AUDIO = 'WAITING_FOR_AUDIO',
+  WAITING_USER_GESTURE = 'WAITING_USER_GESTURE',
+  STARTING = 'STARTING',
+  WAITING_FOR_AUDIO = 'WAITING_FOR_AUDIO', // compatibilidade
   PLAYING = 'PLAYING',
   BUFFERING = 'BUFFERING',
   PAUSED = 'PAUSED',
-  FINISHED = 'FINISHED',
+  ENDED = 'ENDED',
+  FINISHED = 'FINISHED', // compatibilidade
   ERROR = 'ERROR'
 }
 
@@ -160,6 +165,7 @@ export interface SongMetadata {
 }
 
 export type NoteSpeedPreset = 'LENTA' | 'NORMAL' | 'RÁPIDA';
+export type VisualEffectsMode = 'NORMAL' | 'REDUZIDO';
 
 export interface GameSettings {
   musicVolume: number; // 0.0 to 1.0
@@ -168,6 +174,7 @@ export interface GameSettings {
   noteSpeedMultiplier: number; // 0.8 to 2.0
   noteSpeedPreset?: NoteSpeedPreset; // 'LENTA' | 'NORMAL' | 'RÁPIDA'
   visualEffectsEnabled: boolean;
+  visualEffectsMode?: VisualEffectsMode; // V13.8.1: 'NORMAL' | 'REDUZIDO'
   muteOnMiss?: boolean; // V13: Silenciar música ao errar
 }
 

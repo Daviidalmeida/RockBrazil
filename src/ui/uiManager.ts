@@ -97,6 +97,7 @@ export class UIManager {
   private resultGreat: HTMLElement | null = null;
   private resultGood: HTMLElement | null = null;
   private resultMiss: HTMLElement;
+  private resultMissDetail: HTMLElement | null = null;
 
   // Game Over Elements
   private gameOverScore: HTMLElement;
@@ -221,10 +222,11 @@ export class UIManager {
     this.resultAccuracy = document.getElementById('result-accuracy')!;
     this.resultMaxCombo = document.getElementById('result-maxcombo')!;
     this.resultHits = document.getElementById('result-hits');
-    this.resultPerfect = document.getElementById('result-perfect');
-    this.resultGreat = document.getElementById('result-great');
-    this.resultGood = document.getElementById('result-good');
+    this.resultPerfect = document.getElementById('result-judge-perfect') || document.getElementById('result-perfect');
+    this.resultGreat = document.getElementById('result-judge-great') || document.getElementById('result-great');
+    this.resultGood = document.getElementById('result-judge-good') || document.getElementById('result-good');
     this.resultMiss = document.getElementById('result-miss')!;
+    this.resultMissDetail = document.getElementById('result-judge-miss') || document.getElementById('result-miss-detail');
 
     this.gameOverScore = document.getElementById('gameover-score')!;
     this.gameOverCombo = document.getElementById('gameover-combo')!;
@@ -624,6 +626,19 @@ export class UIManager {
 
     this.checkFx?.addEventListener('change', () => {
       this.onSettingsChanged?.({ visualEffectsEnabled: this.checkFx.checked });
+    });
+
+    const btnFxNormal = document.getElementById('btn-fx-normal');
+    const btnFxReduced = document.getElementById('btn-fx-reduced');
+    btnFxNormal?.addEventListener('click', () => {
+      btnFxNormal.classList.add('active');
+      btnFxReduced?.classList.remove('active');
+      this.onSettingsChanged?.({ visualEffectsMode: 'NORMAL', visualEffectsEnabled: true });
+    });
+    btnFxReduced?.addEventListener('click', () => {
+      btnFxReduced.classList.add('active');
+      btnFxNormal?.classList.remove('active');
+      this.onSettingsChanged?.({ visualEffectsMode: 'REDUZIDO', visualEffectsEnabled: true });
     });
 
     this.checkMuteOnMiss?.addEventListener('change', () => {
@@ -1166,6 +1181,16 @@ export class UIManager {
 
     if (this.checkFx) this.checkFx.checked = settings.visualEffectsEnabled;
     if (this.checkMuteOnMiss) this.checkMuteOnMiss.checked = Boolean(settings.muteOnMiss);
+
+    const btnFxNormal = document.getElementById('btn-fx-normal');
+    const btnFxReduced = document.getElementById('btn-fx-reduced');
+    if (settings.visualEffectsMode === 'REDUZIDO') {
+      btnFxReduced?.classList.add('active');
+      btnFxNormal?.classList.remove('active');
+    } else {
+      btnFxNormal?.classList.add('active');
+      btnFxReduced?.classList.remove('active');
+    }
   }
 
   showLoginLoading(loading: boolean): void {
@@ -1217,6 +1242,40 @@ export class UIManager {
         this.ytPlayerContainer.style.setProperty('display', 'none', 'important');
       }
     }
+  }
+
+  public showYouTubeErrorModal(
+    details: { title: string; message: string; canRetry: boolean },
+    onRetry: () => void,
+    onBack: () => void
+  ): void {
+    const modal = document.getElementById('modal-youtube-error');
+    if (!modal) return;
+    const titleEl = document.getElementById('yt-error-title');
+    const msgEl = document.getElementById('yt-error-message');
+    const retryBtn = document.getElementById('btn-yt-error-retry');
+    const backBtn = document.getElementById('btn-yt-error-back');
+
+    if (titleEl) titleEl.textContent = details.title;
+    if (msgEl) msgEl.textContent = details.message;
+    if (retryBtn) {
+      retryBtn.style.display = details.canRetry ? 'block' : 'none';
+      retryBtn.onclick = () => {
+        modal.classList.add('hidden');
+        onRetry();
+      };
+    }
+    if (backBtn) {
+      backBtn.onclick = () => {
+        modal.classList.add('hidden');
+        onBack();
+      };
+    }
+    modal.classList.remove('hidden');
+  }
+
+  public hideYouTubeErrorModal(): void {
+    document.getElementById('modal-youtube-error')?.classList.add('hidden');
   }
 
   public updatePauseOffsetDisplay(_offsetMs: number): void {
@@ -1401,11 +1460,21 @@ export class UIManager {
     const coverEl = document.getElementById('result-album-cover') as HTMLImageElement;
     if (coverEl) coverEl.src = song.coverUrl || 'images/default-cover.png';
 
-    // 2. Stars
+    // 2. Stars — V13.8.1: animação de revelação sequencial
     const starCount = stats.stars || 1;
     const starEls = this.resultStarsRow.querySelectorAll('.star-item');
+    const prefersReducedMotionCheck = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     starEls.forEach((el, idx) => {
-      el.classList.toggle('active', idx < starCount);
+      el.classList.remove('active', 'reveal-animate');
+      if (idx < starCount) {
+        if (prefersReducedMotionCheck) {
+          el.classList.add('active');
+        } else {
+          setTimeout(() => {
+            el.classList.add('active', 'reveal-animate');
+          }, 350 + idx * 160);
+        }
+      }
     });
 
     // 3. Central Metallic Panel: Novo Recorde, Pontuação Final, RockCoins
@@ -1466,6 +1535,9 @@ export class UIManager {
       this.resultGood.textContent = stats.goodCount.toString();
     }
     this.resultMiss.textContent = misses.toString();
+    if (this.resultMissDetail) {
+      this.resultMissDetail.textContent = misses.toString();
+    }
 
     const extraPresses = (stats as any).extraPressCount || 0;
     // Precisão calculada com base em acertos e erros totais (misses + toques extras)

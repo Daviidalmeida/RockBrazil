@@ -38,14 +38,14 @@ export interface NoteVisualTheme {
 
 export const NOTE_VISUAL_THEME: NoteVisualTheme = {
   laneColors: [
-    { core: '#22c55e', glow: 'rgba(34, 197, 94, 0.45)', dark: '#14532d', light: '#86efac' }, // 0: Verde suave equilibrado
-    { core: '#f43f5e', glow: 'rgba(244, 63, 94, 0.45)', dark: '#881337', light: '#fda4af' }, // 1: Vermelho carmim suave
-    { core: '#eab308', glow: 'rgba(234, 179, 8, 0.45)',  dark: '#713f12', light: '#fde047' }, // 2: Amarelo âmbar confortável
-    { core: '#0ea5e9', glow: 'rgba(14, 165, 233, 0.45)', dark: '#075985', light: '#7dd3fc' }, // 3: Azul celeste nítido
-    { core: '#f97316', glow: 'rgba(249, 115, 22, 0.45)', dark: '#7c2d12', light: '#fdba74' }  // 4: Laranja coral confortável
+    { core: '#10b981', glow: 'rgba(16, 185, 129, 0.55)', dark: '#064e3b', light: '#a7f3d0' }, // 0: Verde Esmeralda Neon
+    { core: '#ff2a5f', glow: 'rgba(255, 42, 95, 0.55)',   dark: '#881337', light: '#fecdd3' }, // 1: Vermelho Carmim Neon
+    { core: '#fbbf24', glow: 'rgba(251, 191, 36, 0.55)',  dark: '#78350f', light: '#fef08a' }, // 2: Amarelo Ouro Neon
+    { core: '#06b6d4', glow: 'rgba(6, 182, 212, 0.55)',   dark: '#083344', light: '#bae6fd' }, // 3: Azul Ciano Neon
+    { core: '#ff6b00', glow: 'rgba(255, 107, 0, 0.55)',   dark: '#7c2d12', light: '#fed7aa' }  // 4: Laranja Fogo Neon
   ],
-  highlightAlpha: 0.35,
-  chromeRimAlpha: 0.65,
+  highlightAlpha: 0.38,
+  chromeRimAlpha: 0.75,
   softCenterBlend: true,
   coverWatermarkAlpha: 0.22
 };
@@ -81,6 +81,7 @@ export class GameRenderer {
   public speedPreset: NoteSpeedPreset = 'NORMAL';
   public noteSpeedMultiplier = 1.0;
   public visualEffectsEnabled = true;
+  public visualEffectsMode: 'NORMAL' | 'REDUZIDO' = 'NORMAL';
 
   get baseNoteSpeed(): number {
     switch (this.speedPreset) {
@@ -224,11 +225,12 @@ export class GameRenderer {
     const coords = this.getLanePositionAtProgress(lane, 1.0);
     const color = this.laneColors[lane];
 
-    // Burst particles from object pool
-    const particleCount = 14;
+    // Burst particles from object pool (otimizado no modo REDUZIDO)
+    const isReduced = this.visualEffectsMode === 'REDUZIDO';
+    const particleCount = isReduced ? 5 : 14;
     for (let i = 0; i < particleCount; i++) {
       const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.4;
-      const speed = Math.random() * 4.5 + 2.0;
+      const speed = isReduced ? (Math.random() * 2.5 + 1.5) : (Math.random() * 4.5 + 2.0);
       this.particles.push(
         this.obtainParticle(
           coords.x,
@@ -243,17 +245,19 @@ export class GameRenderer {
       );
     }
 
-    // Expanding shockwave ring from object pool
-    this.rings.push(
-      this.obtainRing(
-        coords.x,
-        coords.y,
-        coords.laneWidth * 0.3,
-        coords.laneWidth * 0.95,
-        color.core,
-        1.0
-      )
-    );
+    // Expanding shockwave ring from object pool (somente no modo NORMAL)
+    if (!isReduced) {
+      this.rings.push(
+        this.obtainRing(
+          coords.x,
+          coords.y,
+          coords.laneWidth * 0.3,
+          coords.laneWidth * 0.95,
+          color.core,
+          1.0
+        )
+      );
+    }
   }
 
   /**
@@ -732,29 +736,44 @@ export class GameRenderer {
       }
     }
 
-    // 1. Draw Chord Connector Beams (tight 20ms tolerance)
+    // 1. Group notes into chords (tolerance ~25ms)
+    // Synchronize reference time for notes in the same chord so they share the exact same y, persp, and scale
+    const chordTimeMap = new Map<Note, number>();
     const chordGroups = new Map<number, Note[]>();
     for (const note of visibleNotes) {
-      const roundedTime = Math.round(note.time * 50) / 50; // 20ms quantization
+      const roundedTime = Math.round(note.time * 40) / 40; // 25ms quantization
       if (!chordGroups.has(roundedTime)) chordGroups.set(roundedTime, []);
       chordGroups.get(roundedTime)!.push(note);
     }
 
+    chordGroups.forEach((groupNotes) => {
+      if (groupNotes.length > 1) {
+        // Enforce the exact same reference timestamp for all notes in the chord
+        const leaderTime = groupNotes[0].time;
+        for (const n of groupNotes) {
+          chordTimeMap.set(n, leaderTime);
+        }
+      }
+    });
+
+    // 1. Draw Chord Connector Beams
     ctx.save();
     chordGroups.forEach((groupNotes) => {
       if (groupNotes.length > 1) {
         groupNotes.sort((a, b) => a.lane - b.lane);
         const first = groupNotes[0];
         const last = groupNotes[groupNotes.length - 1];
+        const leaderTime = chordTimeMap.get(first) ?? first.time;
+        const chordProgress = 1.0 - ((leaderTime - currentTime) / this.noteSpeed);
 
-        const pFirst = this.getLanePositionAtProgress(first.lane, 1.0 - ((first.time - currentTime) / this.noteSpeed));
-        const pLast = this.getLanePositionAtProgress(last.lane, 1.0 - ((last.time - currentTime) / this.noteSpeed));
+        const pFirst = this.getLanePositionAtProgress(first.lane, chordProgress);
+        const pLast = this.getLanePositionAtProgress(last.lane, chordProgress);
 
         ctx.beginPath();
         ctx.moveTo(pFirst.x, pFirst.y);
         ctx.lineTo(pLast.x, pLast.y);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
-        ctx.lineWidth = Math.max(2, 3.5 * pFirst.scale);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.95)';
+        ctx.lineWidth = Math.max(2.2, 4.0 * pFirst.scale);
         ctx.stroke();
       }
     });
@@ -762,7 +781,8 @@ export class GameRenderer {
 
     // 2. Draw 3D Note Gems (Optimized Sleek Frets: rx = 44%, ry = 17% to prevent clumping)
     for (const note of visibleNotes) {
-      const timeRemaining = note.time - currentTime;
+      const effectiveTime = chordTimeMap.get(note) ?? note.time;
+      const timeRemaining = effectiveTime - currentTime;
       const progress = 1.0 - (timeRemaining / this.noteSpeed);
 
       const { x, y, laneWidth, scale } = this.getLanePositionAtProgress(note.lane, progress);
@@ -773,13 +793,21 @@ export class GameRenderer {
 
       ctx.save();
 
+      // Soft neon ambient glow behind note (only if not REDUZIDO)
+      if (this.visualEffectsMode !== 'REDUZIDO') {
+        ctx.beginPath();
+        ctx.ellipse(x, y, rx * 1.25, ry * 1.35, 0, 0, Math.PI * 2);
+        ctx.fillStyle = color.glow;
+        ctx.fill();
+      }
+
       // 3D Bottom Bevel (Darker base for depth volume)
       ctx.beginPath();
       ctx.ellipse(x, y + ry * 0.35, rx, ry * 0.9, 0, 0, Math.PI * 2);
       ctx.fillStyle = color.dark;
       ctx.fill();
 
-      // Main Gem Body (Rich Radial Gradient)
+      // Main Gem Body (Rich Radiant Neon Gradient)
       ctx.beginPath();
       ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
 
@@ -796,7 +824,7 @@ export class GameRenderer {
       ctx.fill();
 
       // Chrome Rim
-      ctx.lineWidth = Math.max(1.2, 2.0 * scale);
+      ctx.lineWidth = Math.max(1.2, 2.2 * scale);
       ctx.strokeStyle = `rgba(255, 255, 255, ${NOTE_VISUAL_THEME.chromeRimAlpha})`;
       ctx.stroke();
 

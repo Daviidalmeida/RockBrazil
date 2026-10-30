@@ -7,6 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0a0a0f">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>RockBrazil Beta - Rhythm Guitar</title>
   <meta name="application-name" content="RockBrazil Beta">
   <meta property="og:title" content="RockBrazil Beta - Rhythm Guitar">
@@ -61,6 +62,8 @@
             <span class="combo-text">COMBO</span>
           </div>
         </div>
+        <!-- V13.8.1: Indicador de julgamento PERFEITO/ÓTIMO/BOM/ERRO -->
+        <div id="hud-judgement" class="hud-judgement-label" aria-live="polite" aria-atomic="true"></div>
       </div>
 
       <!-- Right Side HUD: Exclusive Industrial Vertical ROCKBRAZIL Meter -->
@@ -657,6 +660,17 @@
       </div>
     </div>
 
+    <!-- 9.2 MODAL DE ERRO DO YOUTUBE (V13.8.1) -->
+    <div id="modal-youtube-error" class="overlay-screen hidden" style="background: rgba(0,0,0,0.88); z-index: 1005;">
+      <div class="notebook-dialog-card" style="text-align: center; max-width: 390px; padding: 24px; display: flex; flex-direction: column; gap: 12px;">
+        <div style="font-size: 2.2rem; margin-bottom: 2px;">⚡</div>
+        <h2 id="yt-error-title" style="font-size: 1.3rem; color: #ef4444; margin-bottom: 4px;">AVISO DO YOUTUBE</h2>
+        <p id="yt-error-message" style="font-size: 0.95rem; color: #333; margin-bottom: 12px; line-height: 1.4;">Mensagem de erro aqui.</p>
+        <button id="btn-yt-error-retry" class="notebook-bar-btn btn-select" style="font-size: 1.05rem; padding: 11px 20px; width: 100%;">TENTAR NOVAMENTE 🔄</button>
+        <button id="btn-yt-error-back" class="notebook-bar-btn btn-back" style="font-size: 0.95rem; padding: 10px 20px; width: 100%;">VOLTAR AO CATÁLOGO 🎵</button>
+      </div>
+    </div>
+
     <!-- 10. DERROTA (GAME OVER: ROCK METER = 0%) -->
     <div id="screen-game-over" class="overlay-screen hidden">
       <div class="notebook-dialog-card gameover-dialog">
@@ -745,6 +759,26 @@
           </div>
         </div>
 
+        <!-- DETALHAMENTO DE JULGAMENTOS V13.8.1: PERFECT, GREAT, GOOD, MISS -->
+        <div class="results-judgments-row">
+          <div class="judgment-badge-item badge-perfect">
+            <span class="j-badge-label">PERFEITO</span>
+            <span id="result-judge-perfect" class="j-badge-val">0</span>
+          </div>
+          <div class="judgment-badge-item badge-great">
+            <span class="j-badge-label">ÓTIMO</span>
+            <span id="result-judge-great" class="j-badge-val">0</span>
+          </div>
+          <div class="judgment-badge-item badge-good">
+            <span class="j-badge-label">BOM</span>
+            <span id="result-judge-good" class="j-badge-val">0</span>
+          </div>
+          <div class="judgment-badge-item badge-miss">
+            <span class="j-badge-label">ERRO</span>
+            <span id="result-judge-miss" class="j-badge-val">0</span>
+          </div>
+        </div>
+
         <!-- FAIXA DE CONQUISTA: FULL COMBO! -->
         <div id="result-achievement-banner" class="results-achievement-banner hidden">
           <span id="result-achievement-text" class="results-achievement-text">FULL COMBO!</span>
@@ -796,7 +830,16 @@
           <input type="range" id="cfg-speed" min="8" max="20" step="1" value="10" class="rock-slider">
         </div>
 
-        <div class="settings-group toggle-group">
+        <div class="settings-group">
+          <label>Efeitos Visuais e Desempenho:</label>
+          <div class="effects-mode-selector" style="display: flex; gap: 8px; margin-top: 6px;">
+            <button type="button" id="btn-fx-normal" class="notebook-filter-tab active" style="flex:1; padding: 6px 12px; font-size: 13px;">NORMAL</button>
+            <button type="button" id="btn-fx-reduced" class="notebook-filter-tab" style="flex:1; padding: 6px 12px; font-size: 13px;">REDUZIDO</button>
+          </div>
+          <span class="settings-hint">Modo REDUZIDO diminui partículas e faíscas para máxima fluidez em celulares.</span>
+        </div>
+
+        <div class="settings-group toggle-group" style="display: none;">
           <label for="cfg-fx">Efeitos Visuais e Chamas</label>
           <input type="checkbox" id="cfg-fx" checked class="rock-toggle">
         </div>
