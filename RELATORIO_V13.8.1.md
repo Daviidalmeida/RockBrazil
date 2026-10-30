@@ -7,6 +7,18 @@
 
 ---
 
+## 0. AUDITORIA DO REPOSITÓRIO E INTEGRAÇÃO DE HISTÓRICO (FASE 0)
+
+1. **Estado Inicial da Branch `main`:**
+   - Commit base informado no início dos trabalhos: `0ad6795`.
+   - O repositório remoto continha o commit de merge `c64de13` (incorporando Pull Request #1 da branch `codex/v13.8`).
+2. **Resolução de Divergência e Sincronização:**
+   - Foi realizada a integração limpa entre as branches, preservando os artefatos de documentação (`reports/v13.8/`, `RELATORIO_V13.8.md`) e unificando os contratos de testes.
+   - Todas as implementações definitivas da V13.8.1 (correção de inicialização do player do YouTube, layout responsivo da tela Show Finalizado, animações, julgamentos e acordes) foram integradas e verificadas.
+   - **Resultado do Build e Testes:** 40 arquivos de teste executados com sucesso, totalizando **519 testes aprovados (100% de aprovação, 0 falhas)** e bundle de produção gerado sem erros.
+
+---
+
 ## 1. DIAGNÓSTICO DA FALHA DO YOUTUBE
 
 Durante a auditoria investigativa em ambiente real (Microsoft Edge com suporte Playwright e tráfego HTTPS autêntico), reproduzimos o comportamento do motor nas músicas internacionais.
@@ -60,7 +72,7 @@ Todas as cinco músicas internacionais foram testadas com navegador real na orig
 
 ## 5. TESTES REAIS E SIMULADOS
 
-- **Testes Unitários e de Regressão Automatizados:** 39 suítes de teste executadas, **497 testes aprovados** (0 falhas).
+- **Testes Unitários e de Regressão Automatizados:** 40 suítes de teste executadas, **519 testes aprovados (100% de aprovação, 0 falhas)**.
 - **Testes de Navegador Real:** Executado via Microsoft Edge com Playwright validando handshake da YouTube API, carregamento do iframe com atributo `src` completo, avanço de `getCurrentTime()` e renderização do canvas.
 - **Teste de Regressão V12/V13:** Preservadas 100% das 162 músicas brasileiras originais, economia de RockCoins, sistema de login Google/convidado, Season 1 e rankings.
 

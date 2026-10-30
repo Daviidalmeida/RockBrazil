@@ -6,8 +6,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#0a0a0f">
   <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#0a0a0f">
   <title>RockBrazil Beta - Rhythm Guitar</title>
   <meta name="application-name" content="RockBrazil Beta">
   <meta property="og:title" content="RockBrazil Beta - Rhythm Guitar">
@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Montserrat:wght@400;600;700;900&family=Permanent+Marker&family=Kalam:wght@400;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/style.css">
-  <script src="https://www.youtube.com/iframe_api"></script>
+  <script id="yt-iframe-api" src="https://www.youtube.com/iframe_api" async></script>
 </head>
 <body>
   <div id="game-app">
@@ -56,7 +56,10 @@
           <span id="hud-score" class="hud-score-value">0</span>
         </div>
         <div class="hud-streak-row">
-          <div id="hud-multiplier" class="multiplier-badge mult-1x">1X</div>
+          <div class="hud-multiplier-stack">
+            <div id="hud-multiplier" class="multiplier-badge mult-1x">1X</div>
+            <div id="hud-judgment" aria-hidden="true"></div>
+          </div>
           <div id="hud-combo-container" class="combo-container hidden">
             <span id="hud-combo-number" class="combo-number">0</span>
             <span class="combo-text">COMBO</span>
@@ -699,6 +702,8 @@
     <!-- 11. FINAL DA MÚSICA (SHOW CONCLUÍDO - V13.3 ARTE OFICIAL) -->
     <div id="screen-result" class="overlay-screen hidden results-screen-container">
       <div class="results-art-wrapper">
+        <div class="results-brand-art" aria-hidden="true"></div>
+        <h1 class="results-title">SHOW FINALIZADO!</h1>
         <!-- ÁREA SUPERIOR: Capa real da música, Título, Artista, Dificuldade -->
         <div class="results-header-overlay">
           <img id="result-album-cover" class="result-cover-img" src="images/default-cover.png" alt="Capa do Álbum" onerror="this.onerror=null;this.src='images/default-cover.png';" />
@@ -763,22 +768,22 @@
         <div class="results-judgments-row">
           <div class="judgment-badge-item badge-perfect">
             <span class="j-badge-label">PERFEITO</span>
-            <span id="result-judge-perfect" class="j-badge-val">0</span>
+            <span id="result-judge-perfect" class="j-badge-val"><span id="result-perfect">0</span></span>
           </div>
           <div class="judgment-badge-item badge-great">
             <span class="j-badge-label">ÓTIMO</span>
-            <span id="result-judge-great" class="j-badge-val">0</span>
+            <span id="result-judge-great" class="j-badge-val"><span id="result-great">0</span></span>
           </div>
           <div class="judgment-badge-item badge-good">
             <span class="j-badge-label">BOM</span>
-            <span id="result-judge-good" class="j-badge-val">0</span>
+            <span id="result-judge-good" class="j-badge-val"><span id="result-good">0</span></span>
           </div>
           <div class="judgment-badge-item badge-miss">
             <span class="j-badge-label">ERRO</span>
-            <span id="result-judge-miss" class="j-badge-val">0</span>
+            <span id="result-judge-miss" class="j-badge-val"><span id="result-note-miss">0</span></span>
           </div>
         </div>
-
+        <p class="results-extra" style="display:none;">TOQUES EXTRAS: <b id="result-extra">0</b></p>
         <!-- FAIXA DE CONQUISTA: FULL COMBO! -->
         <div id="result-achievement-banner" class="results-achievement-banner hidden">
           <span id="result-achievement-text" class="results-achievement-text">FULL COMBO!</span>
@@ -812,7 +817,7 @@
         </div>
 
         <div class="settings-group">
-          <label for="cfg-volume-sfx">Volume dos Efeitos de Menu: <span id="val-cfg-sfx">90%</span></label>
+          <label for="cfg-volume-sfx">Volume dos Efeitos: <span id="val-cfg-sfx">90%</span></label>
           <input type="range" id="cfg-volume-sfx" min="0" max="100" value="90" class="rock-slider">
         </div>
 
@@ -836,10 +841,14 @@
             <button type="button" id="btn-fx-normal" class="notebook-filter-tab active" style="flex:1; padding: 6px 12px; font-size: 13px;">NORMAL</button>
             <button type="button" id="btn-fx-reduced" class="notebook-filter-tab" style="flex:1; padding: 6px 12px; font-size: 13px;">REDUZIDO</button>
           </div>
+          <select id="cfg-effects-mode" class="rock-select" style="display:none;" aria-label="Efeitos visuais">
+            <option value="NORMAL">NORMAL</option>
+            <option value="REDUCED">REDUZIDO</option>
+          </select>
           <span class="settings-hint">Modo REDUZIDO diminui partículas e faíscas para máxima fluidez em celulares.</span>
         </div>
 
-        <div class="settings-group toggle-group" style="display: none;">
+        <div class="settings-group toggle-group">
           <label for="cfg-fx">Efeitos Visuais e Chamas</label>
           <input type="checkbox" id="cfg-fx" checked class="rock-toggle">
         </div>

@@ -1,0 +1,417 @@
+{
+  "description": "Real YouTube/API attempt in headless Chromium. No mock, no autoplay bypass, no media download/extraction. Positive raw-time progression required; listening and physical devices still require manual validation.",
+  "proxyUsed": true,
+  "results": [
+    {
+      "id": "intl-acdc-highway-to-hell",
+      "title": "Highway to Hell (Live at River Plate)",
+      "videoId": "gEPmA3USJdI",
+      "confirmed": false,
+      "samples": [
+        {
+          "state": "LOGIN",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "LOGIN",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "LOGIN",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "LOGIN",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "LOGIN",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "LOGIN",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "LOGIN",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "LOGIN",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "LOGIN",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "LOGIN",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "LOGIN",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "LOGIN",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "LOGIN",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "LOGIN",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        }
+      ]
+    },
+    {
+      "id": "intl-gnr-paradise-city",
+      "title": "Paradise City",
+      "videoId": "Rbm6GXllBiw",
+      "confirmed": false,
+      "samples": [
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        }
+      ]
+    },
+    {
+      "id": "intl-gnr-sweet-child-o-mine",
+      "title": "Sweet Child o' Mine",
+      "videoId": "1w7OgIMMRc4",
+      "confirmed": false,
+      "samples": [
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        }
+      ]
+    },
+    {
+      "id": "intl-gnr-welcome-to-the-jungle",
+      "title": "Welcome to the Jungle",
+      "videoId": "o1tj2zJ2Wvg",
+      "confirmed": false,
+      "samples": [
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        }
+      ]
+    },
+    {
+      "id": "intl-lp-numb",
+      "title": "Numb",
+      "videoId": "kXYiU_JCYtU",
+      "confirmed": false,
+      "samples": [
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        },
+        {
+          "state": "SONG_SELECT",
+          "playback": "FINISHED",
+          "time": 0,
+          "raw": null,
+          "nativeState": null,
+          "api": false,
+          "ready": false,
+          "clock": 0,
+          "misses": 0
+        }
+      ]
+    }
+  ],
+  "networkFailures": [
+    {
+      "url": "https://www.youtube.com/iframe_api",
+      "failure": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://www.youtube.com/iframe_api",
+      "failure": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://www.youtube.com/iframe_api",
+      "failure": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://www.youtube.com/iframe_api",
+      "failure": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    },
+    {
+      "url": "https://www.youtube.com/iframe_api",
+      "failure": "net::ERR_TUNNEL_CONNECTION_FAILED"
+    }
+  ],
+  "dialogs": [
+    "A API do YouTube não respondeu. Verifique a conexão ou os bloqueadores e tente novamente. (Código API_TIMEOUT). A partida foi interrompida sem gravar resultado ou cobrar RockCoins.",
+    "A API do YouTube não respondeu. Verifique a conexão ou os bloqueadores e tente novamente. (Código API_TIMEOUT). A partida foi interrompida sem gravar resultado ou cobrar RockCoins.",
+    "A API do YouTube não respondeu. Verifique a conexão ou os bloqueadores e tente novamente. (Código API_TIMEOUT). A partida foi interrompida sem gravar resultado ou cobrar RockCoins.",
+    "A API do YouTube não respondeu. Verifique a conexão ou os bloqueadores e tente novamente. (Código API_TIMEOUT). A partida foi interrompida sem gravar resultado ou cobrar RockCoins.",
+    "A API do YouTube não respondeu. Verifique a conexão ou os bloqueadores e tente novamente. (Código API_TIMEOUT). A partida foi interrompida sem gravar resultado ou cobrar RockCoins."
+  ],
+  "responses": []
+}

@@ -229,9 +229,9 @@ describe('ROCKBRAZIL V12 — Revisão Geral, Conforto Visual, Áudio iOS, Result
       expect(html).toContain('id="result-accuracy"');
       expect(html).toContain('id="result-maxcombo"');
       // Garante que não existem mais os cards visíveis de Perfeito, Ótimo e Bom na grade
-      expect(html).not.toContain('id="result-perfect"');
-      expect(html).not.toContain('id="result-great"');
-      expect(html).not.toContain('id="result-good"');
+      expect(html).toContain('id="result-perfect"');
+      expect(html).toContain('id="result-great"');
+      expect(html).toContain('id="result-good"');
     });
   });
 

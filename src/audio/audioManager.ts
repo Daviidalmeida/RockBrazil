@@ -1,3 +1,4 @@
+import { createCrowdSamples, CrowdIntensity } from './crowdReaction';
 import { RockSynth, PROCEDURAL_TRACKS } from './rockSynth';
 import { GameSettings, PlaybackState } from '../types';
 
@@ -20,6 +21,8 @@ export class AudioManager {
   private isUsingProcedural = true;
   private onEndedCallback: (() => void) | null = null;
   private isUnlocked = false;
+  private crowdSource: AudioBufferSourceNode | null = null;
+  private crowdPlayed = false;
 
   constructor(settings: GameSettings) {
     this.settings = settings;
@@ -264,6 +267,9 @@ export class AudioManager {
   }
 
   stop(): void {
+    this.crowdSource?.stop();
+    this.crowdSource = null;
+    this.crowdPlayed = false;
     this.synth.stopTrack();
     this.isFilePlaying = false;
     this.isFilePaused = false;
@@ -491,6 +497,31 @@ export class AudioManager {
     gain.connect(this.sfxGainNode);
     osc.start(t);
     osc.stop(t + 0.7);
+  }
+
+  playCrowdReaction(stars: number, fullCombo: boolean, cleared = true): void {
+    if (!cleared || this.crowdPlayed || this.settings.sfxVolume <= 0 || !this.ctx ||
+        this.ctx.state !== 'running' || !this.sfxGainNode) return;
+    this.crowdPlayed = true;
+    const intensity: CrowdIntensity = fullCombo ? 'FULL_COMBO' : stars >= 5 ? 'FIVE_STARS' : 'NORMAL';
+    const channels = createCrowdSamples(this.ctx.sampleRate, intensity);
+    const buffer = this.ctx.createBuffer(2, channels[0].length, this.ctx.sampleRate);
+    channels.forEach((channel, index) => buffer.copyToChannel(new Float32Array(channel), index));
+    const source = this.ctx.createBufferSource();
+    const gain = this.ctx.createGain();
+    source.buffer = buffer;
+    const now = this.ctx.currentTime;
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.55, now + 0.14);
+    gain.gain.setValueAtTime(0.55, now + buffer.duration - 0.65);
+    gain.gain.linearRampToValueAtTime(0, now + buffer.duration);
+    source.connect(gain); gain.connect(this.sfxGainNode);
+    this.crowdSource = source;
+    source.onended = () => {
+      source.disconnect(); gain.disconnect();
+      if (this.crowdSource === source) this.crowdSource = null;
+    };
+    source.start();
   }
 
   playSfxVictory(): void {

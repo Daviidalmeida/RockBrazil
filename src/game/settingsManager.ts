@@ -29,6 +29,7 @@ export class SettingsManager {
       noteSpeedMultiplier: 1.0,
       visualEffectsEnabled: true,
       visualEffectsMode: 'NORMAL',
+      effectsMode: 'NORMAL',
       muteOnMiss: true
     };
 
@@ -42,7 +43,8 @@ export class SettingsManager {
           ? Boolean(parsed.muteOnMiss)
           : true;
         const visualEffectsMode = parsed.visualEffectsMode === 'REDUZIDO' ? 'REDUZIDO' : 'NORMAL';
-        return { ...defaultSettings, ...parsed, muteOnMiss, visualEffectsMode };
+        const effectsMode = (parsed.effectsMode === 'REDUCED' || visualEffectsMode === 'REDUZIDO') ? 'REDUCED' : 'NORMAL';
+        return { ...defaultSettings, ...parsed, muteOnMiss, visualEffectsMode, effectsMode };
       }
     } catch {
       // Ignore

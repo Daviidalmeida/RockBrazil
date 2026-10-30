@@ -162,7 +162,7 @@ export class GameEngine {
   /**
    * FASE 5 — Novo Cálculo Oficial de Precisão V12:
    * Precisão = (Acertos / Total de notas julgáveis) × 100
-   * Onde Total de notas julgáveis = Acertos + Erros
+   * Denominador = acertos + notas perdidas + toques extras (regra V13.7).
    *
    * Se o jogador acertar todas as notas julgáveis, a precisão é 100%,
    * independentemente da classificação interna (Bom, Ótimo ou Perfeito).
@@ -320,6 +320,10 @@ export class GameEngine {
     this.extraPressCount++;
     this.combo = 0; // Quebra o combo imediatamente
     this.rockMeter = Math.max(0, this.rockMeter - rates.loss * 0.5);
+    if (this.rockMeter <= 0) {
+      this.isDead = true;
+      this.onGameOver?.(this.getStats());
+    }
 
     if (this.settings.muteOnMiss) {
       this.onMuteRequested?.(true);

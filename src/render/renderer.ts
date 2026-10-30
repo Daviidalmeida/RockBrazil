@@ -371,7 +371,11 @@ export class GameRenderer {
     const bottomY = h * 0.99;
 
     const topW = w * this.highwayTopWidthRatio;
-    const bottomW = w * this.highwayBottomWidthRatio;
+    // The configured bottom width belongs to the strike line, as in note/receptor projection.
+    // Extrapolate the board to its lower edge so lane rails and gems share the same geometry.
+    const strikeW = w * this.highwayBottomWidthRatio;
+    const bottomW = topW + (strikeW - topW) *
+      ((bottomY - horizonY) / (h * this.strikeLineYRatio - horizonY));
 
     const topLeftX = (w - topW) / 2;
     const topRightX = topLeftX + topW;
@@ -822,6 +826,13 @@ export class GameRenderer {
 
       ctx.fillStyle = gemGrad;
       ctx.fill();
+
+      // A narrow neon edge keeps the existing ellipse and dimensions unchanged.
+      if (this.visualEffectsEnabled) {
+        ctx.strokeStyle = color.glow;
+        ctx.lineWidth = Math.max(2, 3 * scale);
+        ctx.stroke();
+      }
 
       // Chrome Rim
       ctx.lineWidth = Math.max(1.2, 2.2 * scale);

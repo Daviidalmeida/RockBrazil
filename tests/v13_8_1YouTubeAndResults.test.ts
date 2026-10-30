@@ -61,20 +61,42 @@ describe('ROCKBRAZIL V13.8.1 — SUÍTE DE TESTES DEFINITIVA', () => {
     });
 
     it('deve iniciar no estado UNINITIALIZED e progredir para READY', async () => {
+      class MockPlayer {
+        constructor(_el, cfg) {
+          setTimeout(() => cfg.events.onReady?.({ target: this }), 10);
+        }
+        getIframe() { return { setAttribute: vi.fn() }; }
+        setVolume() {}
+        unMute() {}
+      }
+      vi.stubGlobal('window', { YT: { Player: MockPlayer }, location: { origin: 'https://test.com' } });
+      vi.stubGlobal('document', {
+        getElementById: () => ({ appendChild: vi.fn(), insertBefore: vi.fn() }),
+        createElement: () => ({ setAttribute: vi.fn() }),
+        querySelector: () => null
+      });
+
       const controller = new YouTubePlayerController();
       expect(controller.getPlaybackState()).toBe(PlaybackState.UNINITIALIZED);
 
       await controller.init();
       expect(controller.getPlaybackState()).toBe(PlaybackState.READY);
+      vi.unstubAllGlobals();
     });
 
-    it('deve simular playback com fallback offline sem falhar', async () => {
+    it('deve verificar transição de estado para WAITING_FOR_AUDIO ao dar play', async () => {
+      let time = 0;
       const controller = new YouTubePlayerController();
-      await controller.init();
+      (controller as any).player = {
+        playVideo: vi.fn(),
+        getCurrentTime: () => time,
+        getPlayerState: () => 1
+      };
+      (controller as any).isReady = true;
       controller.play();
-      
-      const isPlaying = await controller.waitForPlaying(500);
-      expect(isPlaying).toBe(true);
+      expect(controller.getPlaybackState()).toBe(PlaybackState.WAITING_FOR_AUDIO);
+      time = 0.2;
+      (controller as any).verifyAudioProgression();
       expect(controller.getPlaybackState()).toBe(PlaybackState.PLAYING);
       expect(controller.getCurrentTime()).toBeGreaterThanOrEqual(0);
     });
