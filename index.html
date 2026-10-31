@@ -1100,7 +1100,19 @@
             </button>
             <h2 style="font-family: var(--font-display); font-size: 22px; color: #a78bfa; margin: 0; letter-spacing: 1.5px;">⚡ ROCK AI ENGINE</h2>
           </div>
-          <span style="font-size: 11px; background: rgba(167, 139, 250, 0.2); color: #c4b5fd; padding: 2px 8px; border-radius: 12px; font-weight: bold; border: 1px solid rgba(167, 139, 250, 0.4);">ADMIN V13.9</span>
+          <span style="font-size: 11px; background: rgba(167, 139, 250, 0.2); color: #c4b5fd; padding: 2px 8px; border-radius: 12px; font-weight: bold; border: 1px solid rgba(167, 139, 250, 0.4);">ADMIN V13.9.1 PRO</span>
+        </div>
+
+        <!-- AI Engine Status Banner (V13.9.1 Rock AI Pro) -->
+        <div id="rockai-engine-banner" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 6px; padding: 6px 10px; font-size: 11px; display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="rockai-bridge-status" style="color: #34d399; font-weight: bold;">● SERVIÇO IA LOCAL: VERIFICANDO...</span>
+            <button id="btn-rockai-recheck-bridge" style="background: none; border: none; color: #a78bfa; font-size: 10px; cursor: pointer; text-decoration: underline;">Verificar</button>
+          </div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; font-size: 10px; color: rgba(255,255,255,0.7);">
+            <span id="rockai-engine-sep" style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;">SEPARAÇÃO: HTDemucs 6S (Guitar)</span>
+            <span id="rockai-engine-trans" style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;">TRANSCRIÇÃO: Spotify Basic Pitch</span>
+          </div>
         </div>
 
         <!-- Navigation Tabs -->
@@ -1190,6 +1202,12 @@
         <!-- Tab 4: CATÁLOGO & CHARTS -->
         <div class="rockai-tab-panel hidden" data-tab="drafts" style="display: flex; flex-direction: column; gap: 8px;">
           <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px;">Rascunhos e Músicas Registradas:</div>
+          <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+            <label for="rockai-import-chart-file" style="flex: 1; padding: 8px; font-size: 11px; text-align: center; cursor: pointer; background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 6px; color: #fff; font-weight: bold; border: 1px solid rgba(255,255,255,0.2);">
+              📥 IMPORTAR CHART / MIDI PROCESSADO POR IA
+            </label>
+            <input type="file" id="rockai-import-chart-file" accept=".json,.mid,.midi" style="display: none;">
+          </div>
           <div id="rockai-drafts-list"></div>
         </div>
 

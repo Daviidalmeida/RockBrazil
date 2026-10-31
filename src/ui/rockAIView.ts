@@ -6,7 +6,9 @@ import {
   RockAIStorageService,
   AutochartGenerationResult,
   AlignmentCalibrationState,
-  PILOT_SONG_V13_9
+  PILOT_SONG_V13_9,
+  RockAILocalBridge,
+  BridgeBackendStatus
 } from '../game/rockai';
 import { VisualEditor } from '../editor/visualEditor';
 import { Note, Lane, Difficulty, SongMetadata } from '../types';
@@ -17,6 +19,7 @@ export class RockAIView {
   private currentJobId: string | null = null;
   private currentResult: AutochartGenerationResult | null = null;
   private currentAlignment: AlignmentCalibrationState | null = null;
+  private bridgeStatus: BridgeBackendStatus | null = null;
 
   // UI Elements
   private tabButtons: NodeListOf<HTMLButtonElement>;
@@ -34,6 +37,13 @@ export class RockAIView {
   private offsetDisplay: HTMLElement;
   private alignStatusBadge: HTMLElement;
   private draftListContainer: HTMLElement;
+
+  // Bridge Status Elements
+  private bridgeStatusText: HTMLElement | null = null;
+  private engineSepBadge: HTMLElement | null = null;
+  private engineTransBadge: HTMLElement | null = null;
+  private btnRecheckBridge: HTMLButtonElement | null = null;
+  private importChartInput: HTMLInputElement | null = null;
 
   // Callbacks
   public onExitRequested?: () => void;
@@ -61,9 +71,57 @@ export class RockAIView {
     this.alignStatusBadge = container.querySelector('#rockai-align-status') as HTMLElement;
     this.draftListContainer = container.querySelector('#rockai-drafts-list') as HTMLElement;
 
+    // Bridge elements
+    this.bridgeStatusText = container.querySelector('#rockai-bridge-status');
+    this.engineSepBadge = container.querySelector('#rockai-engine-sep');
+    this.engineTransBadge = container.querySelector('#rockai-engine-trans');
+    this.btnRecheckBridge = container.querySelector('#btn-rockai-recheck-bridge') as HTMLButtonElement;
+    this.importChartInput = container.querySelector('#rockai-import-chart-file') as HTMLInputElement;
+
     this.setupEventListeners();
     this.ensurePilotSongRegistered();
     this.renderDraftsList();
+    this.checkLocalAIBridge();
+  }
+
+  public async checkLocalAIBridge(): Promise<void> {
+    if (this.bridgeStatusText) {
+      this.bridgeStatusText.textContent = '● SERVIÇO IA LOCAL: VERIFICANDO...';
+      this.bridgeStatusText.style.color = '#fbbf24';
+    }
+
+    const status = await RockAILocalBridge.probeBackend();
+    this.bridgeStatus = status;
+
+    if (status.online) {
+      if (this.bridgeStatusText) {
+        this.bridgeStatusText.textContent = `● IA LOCAL CONECTADA (${status.device?.toUpperCase() || 'CPU'})`;
+        this.bridgeStatusText.style.color = '#34d399';
+      }
+      if (this.engineSepBadge) {
+        this.engineSepBadge.textContent = `SEPARAÇÃO: ${status.demucsModel || 'HTDemucs 6S'} (IA Real)`;
+        this.engineSepBadge.style.color = '#a78bfa';
+        this.engineSepBadge.style.borderColor = 'rgba(167, 139, 250, 0.4)';
+      }
+      if (this.engineTransBadge) {
+        this.engineTransBadge.textContent = 'TRANSCRIÇÃO: Spotify Basic Pitch (Neural)';
+        this.engineTransBadge.style.color = '#38bdf8';
+        this.engineTransBadge.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+      }
+    } else {
+      if (this.bridgeStatusText) {
+        this.bridgeStatusText.textContent = '○ IA LOCAL OFFLINE (FALLBACK DSP ATIVO)';
+        this.bridgeStatusText.style.color = '#f87171';
+      }
+      if (this.engineSepBadge) {
+        this.engineSepBadge.textContent = 'SEPARAÇÃO: DSP Passa-Faixa (Fallback sem IA)';
+        this.engineSepBadge.style.color = 'rgba(255, 255, 255, 0.6)';
+      }
+      if (this.engineTransBadge) {
+        this.engineTransBadge.textContent = 'TRANSCRIÇÃO: YIN Estimator (Fallback sem IA)';
+        this.engineTransBadge.style.color = 'rgba(255, 255, 255, 0.6)';
+      }
+    }
   }
 
   private setupEventListeners(): void {
@@ -103,7 +161,7 @@ export class RockAIView {
     // 3. Audio File Validation
     this.audioFileInput?.addEventListener('change', () => {
       const file = this.audioFileInput.files?.[0];
-      const hint = this.container.querySelector('#rockai-file-hint') as HTMLElement;
+      const hint = this.container.querySelector('#rockai-audio-hint') as HTMLElement;
       if (file && hint) {
         const valRes = AudioPreparationService.validateFile(file);
         if (valRes.isValid) {
@@ -145,7 +203,7 @@ export class RockAIView {
       });
     });
 
-    // 8. Alignment Status Dropdown / Button
+    // 8. Alignment Status Validation Button
     this.container.querySelector('#btn-rockai-validate-sync')?.addEventListener('click', () => {
       if (this.currentAlignment) {
         this.currentAlignment = ChartVideoAlignmentService.setValidationStatus(
@@ -155,6 +213,36 @@ export class RockAIView {
         ChartVideoAlignmentService.saveAlignment(this.currentAlignment);
         this.updateAlignmentUI();
         alert('Sincronização validada com sucesso pelo usuário!');
+      }
+    });
+
+    // 9. Recheck Bridge Button
+    this.btnRecheckBridge?.addEventListener('click', () => {
+      this.checkLocalAIBridge();
+    });
+
+    // 10. Import Pre-Processed AI Chart File
+    this.importChartInput?.addEventListener('change', async (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (files && files[0]) {
+        try {
+          const text = await files[0].text();
+          const imported = RockAILocalBridge.parseImportedChartJson(text);
+          RockAIStorageService.saveGeneratedChart(imported);
+          
+          // Also register or update draft
+          MusicSourceManager.registerSong({
+            title: imported.title,
+            artist: imported.artist,
+            category: 'Rock Internacional',
+            youtubeUrl: imported.youtubeVideoId ? `https://www.youtube.com/watch?v=${imported.youtubeVideoId}` : ''
+          });
+
+          this.renderDraftsList();
+          alert(`Chart importado com sucesso!\n\nMúsica: ${imported.title} - ${imported.artist}\nModo: ${imported.engineMode}\nSeparação: ${imported.stemMetadata.modelName}\nTranscrição: ${imported.transcriptionMetadata.modelName}`);
+        } catch (err: any) {
+          alert(`Falha ao importar chart: ${err.message}`);
+        }
       }
     });
   }
@@ -169,11 +257,16 @@ export class RockAIView {
   }
 
   private async handleAnalyzeClicked(): Promise<void> {
-    const ytUrl = this.ytUrlInput.value.trim();
-    const title = this.songTitleInput.value.trim();
-    const artist = this.songArtistInput.value.trim();
-    const category = this.songCategoryInput.value.trim() || 'Rock';
-    const file = this.audioFileInput.files?.[0];
+    const ytUrl = this.ytUrlInput?.value.trim() || '';
+    const title = this.songTitleInput?.value.trim() || '';
+    const artist = this.songArtistInput?.value.trim() || '';
+    const category = this.songCategoryInput?.value.trim() || 'Rock Internacional';
+    const file = this.audioFileInput?.files?.[0];
+
+    if (!title || !artist) {
+      alert('Preencha o nome da música e do artista.');
+      return;
+    }
 
     const ytValidation = MusicSourceManager.validateYouTubeUrl(ytUrl);
     if (!ytValidation.isValid) {
@@ -218,7 +311,10 @@ export class RockAIView {
           RockAIStorageService.saveGeneratedChart(prog.result);
           this.renderDraftsList();
           setTimeout(() => {
-            alert('Análise da ROCK AI concluída com sucesso! Os 4 charts foram gerados e validados.');
+            const engineInfo = prog.result?.engineMode === 'REAL_AI' 
+              ? 'Processado com Demucs HTDemucs 6S e Spotify Basic Pitch!'
+              : 'Processado em modo FALLBACK DSP (Serviço local de IA indisponível).';
+            alert(`Análise da ROCK AI concluída com sucesso!\n\n${engineInfo}`);
             this.currentAlignment = ChartVideoAlignmentService.getAlignment(prog.result!.songId);
             this.updateAlignmentUI();
             this.selectTab('sync');
@@ -268,10 +364,25 @@ export class RockAIView {
       const statusClass = d.status === 'ANALISADO' || chartResult ? 'completed' : 'pending';
       const statusText = chartResult ? 'CHARTS GERADOS (4 DIFICULDADES)' : d.status;
 
+      let badgeHtml = '';
+      if (chartResult) {
+        if (chartResult.engineMode === 'REAL_AI') {
+          badgeHtml = '<span style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; border: 1px solid rgba(16, 185, 129, 0.4); margin-left: 4px;">IA PRO (DEMUCS + BASIC PITCH)</span>';
+        } else if (chartResult.engineMode === 'HYBRID') {
+          badgeHtml = '<span style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; margin-left: 4px;">HÍBRIDO</span>';
+        } else {
+          badgeHtml = '<span style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; margin-left: 4px;">DSP FALLBACK</span>';
+        }
+      }
+
       html += `
         <div class="rockai-draft-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
           <div>
-            <div style="font-weight: bold; font-size: 14px; color: #fff;">${d.title} ${isPilot ? '<span style="background: #f59e0b; color: #000; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: 800; margin-left: 6px;">PILOTO V13.9</span>' : ''}</div>
+            <div style="font-weight: bold; font-size: 14px; color: #fff;">
+              ${d.title}
+              ${isPilot ? '<span style="background: #f59e0b; color: #000; font-size: 10px; padding: 2px 5px; border-radius: 4px; font-weight: 800; margin-left: 6px;">PILOTO V13.9.1</span>' : ''}
+              ${badgeHtml}
+            </div>
             <div style="font-size: 12px; color: rgba(255,255,255,0.6);">${d.artist} • ${d.category}</div>
             <div style="font-size: 11px; margin-top: 4px; font-weight: 600;" class="rockai-draft-status ${statusClass}">Status: ${statusText}</div>
           </div>

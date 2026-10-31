@@ -4,6 +4,8 @@ export type RockAIJobStatus = 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED' |
 
 export type AlignmentStatus = 'NAO_CALIBRADO' | 'EM_TESTE' | 'VALIDADO_PELO_USUARIO';
 
+export type RockAIEngineMode = 'REAL_AI' | 'HYBRID' | 'FALLBACK_DSP';
+
 export interface YouTubeValidationResult {
   isValid: boolean;
   videoId: string | null;
@@ -32,18 +34,41 @@ export interface PreparedAudio {
 }
 
 export interface StemSeparationMetadata {
-  modelName: string;
+  modelName: string; // e.g. "htdemucs_6s" or "RockAI-HarmonicDspSeparator-v1 (FALLBACK)"
   modelVersion: string;
   targetInstrument: 'guitar';
   qualityEstimate: number; // 0.0 to 1.0
   duration: number;
   processingTimeMs: number;
   interferenceWarnings: string[];
+  isRealAI: boolean;
+  device?: 'cpu' | 'cuda' | 'mps';
+  separationModel: 'HTDEMUCS_6S' | 'DSP_BANDPASS_FALLBACK';
 }
 
 export interface IsolatedGuitarStem {
   audio: PreparedAudio;
   metadata: StemSeparationMetadata;
+}
+
+export interface BasicPitchRawNote {
+  pitchMidi: number;
+  startTime: number;
+  endTime: number;
+  duration: number;
+  confidence: number;
+  amplitude?: number;
+}
+
+export interface TranscriptionMetadata {
+  engine: 'SPOTIFY_BASIC_PITCH' | 'YIN_DSP_FALLBACK';
+  modelName: string;
+  version: string;
+  isRealAI: boolean;
+  polyphonic: boolean;
+  notesDetectedCount: number;
+  midiExportedPath?: string;
+  averageConfidence?: number;
 }
 
 export interface DetectedMusicalEvent {
@@ -93,7 +118,11 @@ export interface AutochartGenerationResult {
     chartVideoOffsetMs: number;
     status: AlignmentStatus;
   };
+  stemMetadata: StemSeparationMetadata;
+  transcriptionMetadata: TranscriptionMetadata;
+  engineMode: RockAIEngineMode;
   generatedAt: string;
+  midiExport?: string; // Base64 or MIDI events JSON
 }
 
 export interface RockAIJobProgress {
@@ -103,6 +132,7 @@ export interface RockAIJobProgress {
   progressPercent: number; // 0 to 100
   error?: string;
   result?: AutochartGenerationResult;
+  engineMode?: RockAIEngineMode;
 }
 
 export type JobProgressCallback = (progress: RockAIJobProgress) => void;

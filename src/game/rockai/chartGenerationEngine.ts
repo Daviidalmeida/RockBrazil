@@ -1,38 +1,108 @@
 import { BeatmapByDifficulty, Note, Difficulty } from '../../types';
-import { PreparedAudio, AutochartQualityMetrics } from './contracts';
+import {
+  PreparedAudio,
+  IsolatedGuitarStem,
+  AutochartQualityMetrics,
+  TranscriptionMetadata,
+  RockAIEngineMode,
+  DetectedMusicalEvent
+} from './contracts';
 import { TempoAndBeatAnalyzer } from './tempoAndBeatAnalyzer';
 import { MusicalEventDetector } from './musicalEventDetector';
-import { GuitarTranscriptionService } from './guitarTranscriptionService';
+import { SpotifyBasicPitchAdapter, BasicPitchTranscriptionOutput } from './spotifyBasicPitchAdapter';
 import { DifficultyChartBuilder } from './difficultyChartBuilder';
+
+export interface ChartGenerationOutput {
+  charts: BeatmapByDifficulty;
+  bpm: number;
+  metrics: AutochartQualityMetrics;
+  transcriptionMetadata: TranscriptionMetadata;
+  engineMode: RockAIEngineMode;
+  midiDataUri?: string;
+  detectedEvents: DetectedMusicalEvent[];
+}
 
 export class ChartGenerationEngine {
   /**
-   * Generates the 4 charts and calculates quality metrics from prepared audio.
+   * Generates the 4 charts and calculates quality metrics from isolated guitar stem.
+   * Leverages Spotify Basic Pitch for neural transcription and fallback YIN when offline.
+   */
+  public static async generateFromStem(
+    stem: IsolatedGuitarStem,
+    basicPitchAdapter?: SpotifyBasicPitchAdapter
+  ): Promise<ChartGenerationOutput> {
+    const adapter = basicPitchAdapter || new SpotifyBasicPitchAdapter();
+    const audio = stem.audio;
+
+    // 1. Tempo & Beat Grid
+    const tempo = TempoAndBeatAnalyzer.analyze(audio);
+
+    // 2. Real Spotify Basic Pitch Transcription (with YIN fallback if offline)
+    const transcriptionRes: BasicPitchTranscriptionOutput = await adapter.transcribe(stem);
+    let events = transcriptionRes.events;
+
+    // If Basic Pitch found zero events (e.g. silent audio), supplement with onset detector
+    if (events.length === 0) {
+      const fallbackEvents = MusicalEventDetector.detectEvents(audio);
+      events = fallbackEvents;
+    }
+
+    // 3. Build 4 Difficulties using strict physical rules
+    const charts = DifficultyChartBuilder.buildCharts(events, tempo, audio.duration);
+
+    // 4. Calculate Quality Metrics
+    const metrics = this.calculateMetrics(charts, events, audio.duration);
+
+    // 5. Determine Engine Mode
+    const isSeparationAI = stem.metadata.isRealAI;
+    const isTranscriptionAI = transcriptionRes.metadata.isRealAI;
+
+    let engineMode: RockAIEngineMode = 'FALLBACK_DSP';
+    if (isSeparationAI && isTranscriptionAI) {
+      engineMode = 'REAL_AI';
+    } else if (isSeparationAI || isTranscriptionAI) {
+      engineMode = 'HYBRID';
+    }
+
+    return {
+      charts,
+      bpm: tempo.bpm,
+      metrics,
+      transcriptionMetadata: transcriptionRes.metadata,
+      engineMode,
+      midiDataUri: transcriptionRes.midiDataUri,
+      detectedEvents: events
+    };
+  }
+
+  /**
+   * Synchronous / legacy fallback generator directly from audio.
    */
   public static generate(audio: PreparedAudio): {
     charts: BeatmapByDifficulty;
     bpm: number;
     metrics: AutochartQualityMetrics;
+    transcriptionMetadata: TranscriptionMetadata;
+    engineMode: RockAIEngineMode;
   } {
-    // 1. Tempo & Beat Grid
     const tempo = TempoAndBeatAnalyzer.analyze(audio);
-
-    // 2. Event Detection
     const rawEvents = MusicalEventDetector.detectEvents(audio);
-
-    // 3. Guitar Transcription & Pitch Register
-    const transcribedEvents = GuitarTranscriptionService.transcribe(audio, rawEvents);
-
-    // 4. Build 4 Difficulties
-    const charts = DifficultyChartBuilder.buildCharts(transcribedEvents, tempo, audio.duration);
-
-    // 5. Calculate Metrics
-    const metrics = this.calculateMetrics(charts, transcribedEvents, audio.duration);
+    const charts = DifficultyChartBuilder.buildCharts(rawEvents, tempo, audio.duration);
+    const metrics = this.calculateMetrics(charts, rawEvents, audio.duration);
 
     return {
       charts,
       bpm: tempo.bpm,
-      metrics
+      metrics,
+      transcriptionMetadata: {
+        engine: 'YIN_DSP_FALLBACK',
+        modelName: 'YIN-Pitch-Estimator (FALLBACK)',
+        version: '1.0.0',
+        isRealAI: false,
+        polyphonic: false,
+        notesDetectedCount: rawEvents.length
+      },
+      engineMode: 'FALLBACK_DSP'
     };
   }
 
@@ -78,7 +148,7 @@ export class ChartGenerationEngine {
     }
 
     const avgConfidence = events.length > 0 ? 
-      events.reduce((sum, e) => sum + e.confidence, 0) / events.length : 
+      events.reduce((sum, e) => sum + (e.confidence || 0.8), 0) / events.length : 
       0.80;
 
     const warnings: string[] = [];

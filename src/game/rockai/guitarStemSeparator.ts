@@ -6,10 +6,11 @@ export interface StemSeparatorAdapter {
 }
 
 /**
- * ROCKBRAZIL V13.9 — GUITAR STEM SEPARATOR
+ * ROCKBRAZIL V13.9.1 — GUITAR STEM SEPARATOR (DSP FALLBACK)
  *
- * Implements real client-side spectral harmonic guitar isolation
- * and extensible adapter interface for deep learning (Demucs / HTDemucs).
+ * Implements client-side spectral harmonic bandpass isolation.
+ * Explicitly classified as DSP FALLBACK (never as AI).
+ * Real AI separation is handled by RealGuitarStemAdapter.
  */
 export class GuitarStemSeparator implements StemSeparatorAdapter {
   private customAdapter?: StemSeparatorAdapter;
@@ -25,7 +26,7 @@ export class GuitarStemSeparator implements StemSeparatorAdapter {
       return this.customAdapter.separateGuitar(audio);
     }
 
-    // Client-side real DSP Guitar Stem Isolation:
+    // Client-side DSP Guitar Stem Isolation:
     // 1. Extract raw Float32Array PCM samples
     const pcm = audio.buffer instanceof Float32Array ? 
       audio.buffer : 
@@ -63,7 +64,7 @@ export class GuitarStemSeparator implements StemSeparatorAdapter {
       const lpOut = lpPrevOutput + lpAlpha * (hpOut - lpPrevOutput);
       lpPrevOutput = lpOut;
 
-      // Subtle soft-saturation to emphasize guitar harmonics
+      // Soft-saturation to emphasize guitar harmonics
       const saturated = Math.tanh(lpOut * 1.35);
       outputPcm[i] = saturated;
       totalGuitarEnergy += saturated * saturated;
@@ -82,7 +83,9 @@ export class GuitarStemSeparator implements StemSeparatorAdapter {
     const interferenceRatio = pcm.length > 0 ? (bassInterferenceDetected / pcm.length) : 0;
     const qualityEstimate = Number(Math.max(0.40, Math.min(0.95, 0.70 + energyRatio * 0.25 - interferenceRatio * 0.20)).toFixed(2));
 
-    const warnings: string[] = [];
+    const warnings: string[] = [
+      'FALLBACK DSP: Processado com filtro passa-faixa harmônico (180Hz - 4500Hz). Não constitui isolamento por rede neural profunda.'
+    ];
     if (interferenceRatio > 0.25) {
       warnings.push('Forte presença de contrabaixo detectada nas frequências graves.');
     }
@@ -97,7 +100,10 @@ export class GuitarStemSeparator implements StemSeparatorAdapter {
       qualityEstimate,
       duration,
       processingTimeMs,
-      interferenceWarnings: warnings
+      interferenceWarnings: warnings,
+      isRealAI: false,
+      separationModel: 'DSP_BANDPASS_FALLBACK',
+      device: 'cpu'
     };
 
     const isolatedAudio: PreparedAudio = {
