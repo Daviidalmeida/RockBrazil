@@ -151,3 +151,19 @@ Adicionado ao jogo tanto no menu de pausa quanto via atalho de desenvolvedor (`F
 ## 8. CONCLUSÃO E PRONTIDÃO PARA PRODUÇÃO
 
 A versão **V13.9.3** resolveu integralmente os pontos de insatisfação levantados. A música T.N.T. agora reproduz com seu áudio autêntico via YouTube sem silenciar ao cometer erros, exibe centenas a milhares de notas precisas na esteira, respeita as velocidades visuais aprovadas e conta com diagnósticos transparentes em tempo real.
+
+---
+
+## 9. HOTFIX V13.9.3.1 — GITHUB ACTIONS & PUBLICAÇÃO DEFINITIVA
+
+* **Causa-Raiz das 7 Falhas no GitHub Actions:** Em `tests/tntPipelineReal.test.ts`, os testes 1 a 7 realizavam leitura de um caminho absoluto do Windows específico do ambiente Antigravity (`resultJsonPath = 'C:/Users/David/.gemini/.../scratch/tnt_autochart_result.json'`). No runner Linux do GitHub Actions, o arquivo não existia, fazendo com que `tntData` fosse `null` e gerasse falha ao tentar acessar `.charts`, `.bpm` e `.engineMode`.
+* **Correção Mínima e Segura:** O arquivo de teste `tests/tntPipelineReal.test.ts` foi refatorado para consultar as fontes de dados permanentes já integradas na V13.9.3:
+  * `INTERNATIONAL_SONGS_CATALOG` e `INTERNATIONAL_METADATA_CONFIG['tnt-acdc']` para títulos, artistas, BPM (130) e vídeo (`fGDQ9IukMOc`).
+  * `BeatmapManager` e `RAW_INTERNATIONAL_CHARTS['tnt-acdc']` para a validação real dos charts (703 Fácil, 1.125 Médio, 1.518 Difícil e 1.639 Expert).
+* **Testes Antes/Depois:**
+  * **Antes (GitHub Actions run 41177463825):** 7 failed | 645 passed.
+  * **Depois (GitHub Actions run 41178038320):** **0 failed | 653 passed (51/51 arquivos aprovados)**.
+* **Hash do Commit:** `8288e701c459ba06069d8d5df8f6be4d37c44cf1`
+* **Workflow Run:** https://github.com/Daviidalmeida/RockBrazil/actions/runs/41178038320
+* **Status Final do GitHub Actions:** `COMPLETED` — **SUCCESS** (tanto o job `Build & Test` quanto `Deploy to GitHub Pages` concluíram com status verde).
+* **Site Publicado:** https://daviidalmeida.github.io/RockBrazil/
