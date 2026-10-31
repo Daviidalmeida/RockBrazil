@@ -657,8 +657,42 @@ export class UIManager {
 
     this.sliderSpeed?.addEventListener('input', () => {
       const val = (Number(this.sliderSpeed.value) / 10).toFixed(1);
-      this.valSpeed.textContent = `${val}x`;
-      this.onSettingsChanged?.({ noteSpeedMultiplier: Number(val) });
+      const num = Number(val);
+      const label = num <= 0.85 ? ' (Mais lenta)' : (num >= 1.15 ? ' (Mais rápida)' : ' (Normal)');
+      this.valSpeed.textContent = `${val}x${label}`;
+      const preset = num <= 0.85 ? 'LENTA' : (num >= 1.15 ? 'RÁPIDA' : 'NORMAL');
+      document.getElementById('btn-speed-slow')?.classList.toggle('active', preset === 'LENTA');
+      document.getElementById('btn-speed-normal')?.classList.toggle('active', preset === 'NORMAL');
+      document.getElementById('btn-speed-fast')?.classList.toggle('active', preset === 'RÁPIDA');
+      this.onSettingsChanged?.({ noteSpeedMultiplier: num });
+    });
+
+    const btnSpeedSlow = document.getElementById('btn-speed-slow');
+    const btnSpeedNormal = document.getElementById('btn-speed-normal');
+    const btnSpeedFast = document.getElementById('btn-speed-fast');
+    btnSpeedSlow?.addEventListener('click', () => {
+      btnSpeedSlow.classList.add('active');
+      btnSpeedNormal?.classList.remove('active');
+      btnSpeedFast?.classList.remove('active');
+      if (this.sliderSpeed) this.sliderSpeed.value = '8';
+      if (this.valSpeed) this.valSpeed.textContent = '0.8x (Mais lenta)';
+      this.onSettingsChanged?.({ noteSpeedMultiplier: 0.8 });
+    });
+    btnSpeedNormal?.addEventListener('click', () => {
+      btnSpeedNormal.classList.add('active');
+      btnSpeedSlow?.classList.remove('active');
+      btnSpeedFast?.classList.remove('active');
+      if (this.sliderSpeed) this.sliderSpeed.value = '10';
+      if (this.valSpeed) this.valSpeed.textContent = '1.0x (Normal)';
+      this.onSettingsChanged?.({ noteSpeedMultiplier: 1.0 });
+    });
+    btnSpeedFast?.addEventListener('click', () => {
+      btnSpeedFast.classList.add('active');
+      btnSpeedSlow?.classList.remove('active');
+      btnSpeedNormal?.classList.remove('active');
+      if (this.sliderSpeed) this.sliderSpeed.value = '12';
+      if (this.valSpeed) this.valSpeed.textContent = '1.2x (Mais rápida)';
+      this.onSettingsChanged?.({ noteSpeedMultiplier: 1.2 });
     });
 
     document.getElementById('cfg-effects-mode')?.addEventListener('change', (event) => {
@@ -1252,8 +1286,16 @@ export class UIManager {
     if (this.sliderOffset) this.sliderOffset.value = settings.audioOffsetMs.toString();
     if (this.valOffset) this.valOffset.textContent = `${settings.audioOffsetMs > 0 ? `+${settings.audioOffsetMs}` : settings.audioOffsetMs} ms`;
 
-    if (this.sliderSpeed) this.sliderSpeed.value = Math.round(settings.noteSpeedMultiplier * 10).toString();
-    if (this.valSpeed) this.valSpeed.textContent = `${settings.noteSpeedMultiplier.toFixed(1)}x`;
+    const mult = settings.noteSpeedMultiplier ?? 1.0;
+    if (this.sliderSpeed) this.sliderSpeed.value = Math.round(mult * 10).toString();
+    if (this.valSpeed) {
+      const label = mult <= 0.85 ? ' (Mais lenta)' : (mult >= 1.15 ? ' (Mais rápida)' : ' (Normal)');
+      this.valSpeed.textContent = `${mult.toFixed(1)}x${label}`;
+    }
+    const speedPreset = mult <= 0.85 ? 'LENTA' : (mult >= 1.15 ? 'RÁPIDA' : 'NORMAL');
+    document.getElementById('btn-speed-slow')?.classList.toggle('active', speedPreset === 'LENTA');
+    document.getElementById('btn-speed-normal')?.classList.toggle('active', speedPreset === 'NORMAL');
+    document.getElementById('btn-speed-fast')?.classList.toggle('active', speedPreset === 'RÁPIDA');
 
     const modeSelect = document.getElementById('cfg-effects-mode') as HTMLSelectElement | null;
     if (modeSelect) modeSelect.value = settings.effectsMode ?? 'NORMAL';
@@ -1327,7 +1369,8 @@ export class UIManager {
   public showYouTubeErrorModal(
     details: { title: string; message: string; canRetry: boolean },
     onRetry: () => void,
-    onBack: () => void
+    onBack: () => void,
+    onSelectLocalAudio?: (file: File) => void
   ): void {
     const modal = document.getElementById('modal-youtube-error');
     if (!modal) return;
@@ -1349,6 +1392,20 @@ export class UIManager {
       backBtn.onclick = () => {
         modal.classList.add('hidden');
         onBack();
+      };
+    }
+    const localAudioBtn = document.getElementById('btn-yt-error-local-audio');
+    const localAudioInput = document.getElementById('input-yt-local-audio') as HTMLInputElement | null;
+    if (localAudioBtn && localAudioInput) {
+      localAudioBtn.onclick = () => {
+        localAudioInput.click();
+      };
+      localAudioInput.onchange = () => {
+        const file = localAudioInput.files?.[0];
+        if (file && onSelectLocalAudio) {
+          modal.classList.add('hidden');
+          onSelectLocalAudio(file);
+        }
       };
     }
     modal.classList.remove('hidden');
@@ -1477,21 +1534,35 @@ export class UIManager {
   }
 
   showCelebration(onComplete: () => void): void {
-    if (document.documentElement.dataset.effects === 'reduced' || reducedEffects()) { onComplete(); return; }
     if (this.overlayCelebration) {
       let isDone = false;
+      let countdownRemaining = 5;
+      const countdownEl = document.getElementById('celebration-countdown');
+      if (countdownEl) countdownEl.textContent = '5';
+
+      let intervalId: any = null;
+
       const done = () => {
         if (isDone) return;
         isDone = true;
+        if (intervalId) clearInterval(intervalId);
         if (this.overlayCelebration) {
           this.overlayCelebration.classList.add('hidden');
           this.overlayCelebration.onclick = null;
         }
         onComplete();
       };
+
       this.overlayCelebration.classList.remove('hidden');
       this.overlayCelebration.onclick = done;
-      setTimeout(done, 650);
+
+      intervalId = setInterval(() => {
+        countdownRemaining--;
+        if (countdownEl) countdownEl.textContent = countdownRemaining.toString();
+        if (countdownRemaining <= 0) {
+          done();
+        }
+      }, 1000);
     } else {
       onComplete();
     }

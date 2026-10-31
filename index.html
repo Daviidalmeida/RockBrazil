@@ -653,7 +653,6 @@
           <button id="btn-restart-pause" class="notebook-bar-btn">REINICIAR</button>
           <button id="btn-config-pause" class="notebook-bar-btn">CONFIGURAÇÕES</button>
           <button id="btn-songs-pause" class="notebook-bar-btn btn-back">SAIR DA MÚSICA</button>
-          <button id="btn-pause-diagnostics" class="notebook-bar-mini-btn" style="margin-top: 8px; font-size: 10px; opacity: 0.8; border-color: #00f0ff; color: #0088aa;">⚡ ROCKSINC DIAGNOSTICS</button>
         </div>
       </div>
     </div>
@@ -675,6 +674,8 @@
         <h2 id="yt-error-title" style="font-size: 1.3rem; color: #ef4444; margin-bottom: 4px;">AVISO DO YOUTUBE</h2>
         <p id="yt-error-message" style="font-size: 0.95rem; color: #333; margin-bottom: 12px; line-height: 1.4;">Mensagem de erro aqui.</p>
         <button id="btn-yt-error-retry" class="notebook-bar-btn btn-select" style="font-size: 1.05rem; padding: 11px 20px; width: 100%;">TENTAR NOVAMENTE 🔄</button>
+        <button id="btn-yt-error-local-audio" class="notebook-bar-btn" style="background: #2563eb; color: #fff; font-size: 1.0rem; padding: 10px 20px; width: 100%;">TESTAR COM MEU ÁUDIO 🎧</button>
+        <input type="file" id="input-yt-local-audio" accept="audio/*" style="display: none;" />
         <button id="btn-yt-error-back" class="notebook-bar-btn btn-back" style="font-size: 0.95rem; padding: 10px 20px; width: 100%;">VOLTAR AO CATÁLOGO 🎵</button>
       </div>
     </div>
@@ -842,8 +843,15 @@
         </div>
 
         <div class="settings-group">
-          <label for="cfg-speed">Velocidade Visual das Notas: <span id="val-cfg-speed">1.0x</span></label>
+          <label>Velocidade Visual da Esteira:</label>
+          <div class="speed-preset-selector" style="display: flex; gap: 8px; margin-top: 6px; margin-bottom: 8px;">
+            <button type="button" id="btn-speed-slow" class="notebook-filter-tab" style="flex:1; padding: 6px 8px; font-size: 12px;">MAIS LENTA</button>
+            <button type="button" id="btn-speed-normal" class="notebook-filter-tab active" style="flex:1; padding: 6px 8px; font-size: 12px;">NORMAL</button>
+            <button type="button" id="btn-speed-fast" class="notebook-filter-tab" style="flex:1; padding: 6px 8px; font-size: 12px;">MAIS RÁPIDA</button>
+          </div>
+          <label for="cfg-speed">Ajuste Fino: <span id="val-cfg-speed">1.0x</span></label>
           <input type="range" id="cfg-speed" min="8" max="20" step="1" value="10" class="rock-slider">
+          <span class="settings-hint">Altera apenas a velocidade visual da descida das notas. Não afeta o ritmo, o áudio nem a pontuação.</span>
         </div>
 
         <div class="settings-group">
@@ -1255,13 +1263,15 @@
       </div>
     </div>
 
-    <!-- 8. SPECIAL FINALE: AQUI É ROCKBRAZIL! CELEBRATION OVERLAY -->
+    <!-- 8. SPECIAL FINALE: ROCK BRAZIL — VIVA O ROCK! CELEBRATION OVERLAY (V13.9.4) -->
     <div id="overlay-rockbrazil-celebration" class="celebration-overlay hidden">
       <div class="celebration-content">
         <div class="celebration-glow-radial"></div>
         <div class="celebration-flames"></div>
-        <h1 class="celebration-title">AQUI É ROCKBRAZIL!</h1>
-        <div class="celebration-subtext">SHOW HISTÓRICO CONCLUÍDO!</div>
+        <h1 class="celebration-title" style="font-size: 2.2rem; color: #ffe600; text-shadow: 0 0 20px rgba(255,230,0,0.8); margin-bottom: 8px;">Rock Brazil — Viva o Rock!</h1>
+        <div class="celebration-subtext" style="font-size: 1.2rem; color: #fff; margin-bottom: 14px;">AQUI É ROCKBRAZIL! SHOW FINALIZADO COM SUCESSO!</div>
+        <div id="celebration-countdown" class="celebration-countdown" style="font-size: 3rem; font-weight: bold; color: #00f0ff; text-shadow: 0 0 15px #00f0ff; margin-bottom: 10px;">5</div>
+        <div style="font-size: 0.85rem; color: #ccc;">Toque para avançar aos resultados</div>
       </div>
     </div>
 

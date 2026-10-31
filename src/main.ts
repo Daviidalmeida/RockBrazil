@@ -30,6 +30,7 @@ import { RockSyncEngine } from './game/sync/rockSyncEngine';
 import { RockAIView } from './ui/rockAIView';
 import { AudioPlaybackController } from './audio/audioPlaybackController';
 import { RockSyncAutoFix } from './game/sync/rockSyncAutoFix';
+import { AutonomousMusicIntelligenceEngine } from './game/intelligence';
 
 class RockBrazilGame {
   private settingsManager: SettingsManager;
@@ -49,6 +50,7 @@ class RockBrazilGame {
   private inputController: InputController;
   private sessionController: GameSessionController;
   private rockSync: RockSyncEngine;
+  private musicIntelligence = AutonomousMusicIntelligenceEngine.getInstance();
   private rockAIView: RockAIView | null = null;
 
   private state: GameState = GameState.MENU;
@@ -1776,7 +1778,7 @@ class RockBrazilGame {
           fps: health.fps,
           averageFrameTimeMs: 1000 / Math.max(1, health.fps),
           isBuffering,
-          engineMode: 'REAL_AI'
+          engineMode: this.currentSong?.isInternational ? 'YOUTUBE_CALIBRATED' : 'FALLBACK_DSP'
         });
       }
     } else if (this.state === GameState.PAUSED || this.isResumingCountdown) {
@@ -1807,6 +1809,20 @@ class RockBrazilGame {
 
     requestAnimationFrame(this.gameLoop);
   };
+
+  private async testWithLocalAudio(file: File): Promise<void> {
+    if (!this.currentSong || !this.currentDifficulty) return;
+    try {
+      await this.audio.ensureResumed();
+      const audioBuffer = await this.audio.decodeAudioFile(file);
+      this.currentSong.audioBuffer = audioBuffer;
+      this.currentSong.type = 'audio-file';
+      await this.startNewMatch(this.currentSong, this.currentDifficulty);
+    } catch (err: any) {
+      console.error('[testWithLocalAudio] Falha ao carregar áudio local:', err);
+      alert('Não foi possível decodificar o arquivo de áudio selecionado. Verifique se é um arquivo MP3 ou WAV válido.');
+    }
+  }
 
   private async finishSong(): Promise<void> {
     if (this.isFinishing) return;

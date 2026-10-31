@@ -96,7 +96,15 @@ export class RockAIView {
     this.setupModeSelector();
     this.ensurePilotSongRegistered();
     this.renderDraftsList();
-    this.checkLocalAIBridge();
+    // V13.9.4: Desativa probing automático de localhost em produção para evitar permissão de rede privada do navegador
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      this.checkLocalAIBridge();
+    } else {
+      if (this.bridgeStatusText) {
+        this.bridgeStatusText.textContent = '○ MODO DSP INTELIGENTE (ONLINE)';
+        this.bridgeStatusText.style.color = '#38bdf8';
+      }
+    }
   }
 
   public getAudioSourceResolver(): AudioSourceResolver {
