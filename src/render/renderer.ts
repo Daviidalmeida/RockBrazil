@@ -773,6 +773,16 @@ export class GameRenderer {
         const pFirst = this.getLanePositionAtProgress(first.lane, chordProgress);
         const pLast = this.getLanePositionAtProgress(last.lane, chordProgress);
 
+        // Subtle electric energy aura under chord beam (only if not REDUZIDO)
+        if (this.visualEffectsMode !== 'REDUZIDO') {
+          ctx.beginPath();
+          ctx.moveTo(pFirst.x, pFirst.y);
+          ctx.lineTo(pLast.x, pLast.y);
+          ctx.strokeStyle = 'rgba(255, 220, 100, 0.4)';
+          ctx.lineWidth = Math.max(4.0, 7.0 * pFirst.scale);
+          ctx.stroke();
+        }
+
         ctx.beginPath();
         ctx.moveTo(pFirst.x, pFirst.y);
         ctx.lineTo(pLast.x, pLast.y);
@@ -783,7 +793,7 @@ export class GameRenderer {
     });
     ctx.restore();
 
-    // 2. Draw 3D Note Gems (Optimized Sleek Frets: rx = 44%, ry = 17% to prevent clumping)
+    // 2. Draw 3D Note Gems (V13.8.2 Dynamic & Energetic Modern Frets: rx = 44%, ry = 17%)
     for (const note of visibleNotes) {
       const effectiveTime = chordTimeMap.get(note) ?? note.time;
       const timeRemaining = effectiveTime - currentTime;
@@ -792,17 +802,24 @@ export class GameRenderer {
       const { x, y, laneWidth, scale } = this.getLanePositionAtProgress(note.lane, progress);
       const color = this.laneColors[note.lane];
 
+      // Proportional oval geometry preserving original gameplay hitboxes
       const rx = laneWidth * 0.44 * scale;
       const ry = laneWidth * 0.17 * scale;
+
+      // Dynamic approach luminance: notes subtly intensify luminance as they approach the strike line
+      const approachLuminance = 0.85 + 0.35 * Math.min(1.0, Math.max(0, progress));
 
       ctx.save();
 
       // Soft neon ambient glow behind note (only if not REDUZIDO)
       if (this.visualEffectsMode !== 'REDUZIDO') {
+        ctx.save();
         ctx.beginPath();
-        ctx.ellipse(x, y, rx * 1.25, ry * 1.35, 0, 0, Math.PI * 2);
+        ctx.ellipse(x, y, rx * 1.28, ry * 1.38, 0, 0, Math.PI * 2);
+        ctx.globalAlpha = Math.min(0.65, 0.45 * approachLuminance);
         ctx.fillStyle = color.glow;
         ctx.fill();
+        ctx.restore();
       }
 
       // 3D Bottom Bevel (Darker base for depth volume)
@@ -811,30 +828,31 @@ export class GameRenderer {
       ctx.fillStyle = color.dark;
       ctx.fill();
 
-      // Main Gem Body (Rich Radiant Neon Gradient)
+      // Main Gem Body (Rich Radiant Neon Gradient with Luminous Core)
       ctx.beginPath();
       ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
 
       const gemGrad = ctx.createRadialGradient(
-        x - rx * 0.25, y - ry * 0.35, rx * 0.08,
+        x - rx * 0.20, y - ry * 0.30, rx * 0.04,
         x, y, rx
       );
-      gemGrad.addColorStop(0, color.light);
-      gemGrad.addColorStop(0.35, color.light);
-      gemGrad.addColorStop(0.7, color.core);
-      gemGrad.addColorStop(1, color.dark);
+      gemGrad.addColorStop(0, '#ffffff'); // Energetic specular core spark
+      gemGrad.addColorStop(0.22, color.light);
+      gemGrad.addColorStop(0.58, color.core);
+      gemGrad.addColorStop(0.88, color.dark);
+      gemGrad.addColorStop(1, 'rgba(0, 0, 0, 0.7)');
 
       ctx.fillStyle = gemGrad;
       ctx.fill();
 
-      // A narrow neon edge keeps the existing ellipse and dimensions unchanged.
+      // Dynamic neon edge border
       if (this.visualEffectsEnabled) {
         ctx.strokeStyle = color.glow;
         ctx.lineWidth = Math.max(2, 3 * scale);
         ctx.stroke();
       }
 
-      // Chrome Rim
+      // Chrome Rim (Clean metallic definition)
       ctx.lineWidth = Math.max(1.2, 2.2 * scale);
       ctx.strokeStyle = `rgba(255, 255, 255, ${NOTE_VISUAL_THEME.chromeRimAlpha})`;
       ctx.stroke();
@@ -848,7 +866,7 @@ export class GameRenderer {
         ry * 0.25,
         0, 0, Math.PI * 2
       );
-      ctx.fillStyle = `rgba(255, 255, 255, ${NOTE_VISUAL_THEME.highlightAlpha})`;
+      ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(0.40, NOTE_VISUAL_THEME.highlightAlpha * approachLuminance)})`;
       ctx.fill();
 
       ctx.restore();

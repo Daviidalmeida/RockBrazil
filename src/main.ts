@@ -313,6 +313,18 @@ class RockBrazilGame {
     this.renderer.setDifficulty(this.currentDifficulty);
     this.ui.setDifficultyLanes(this.currentDifficulty);
 
+    // V13.8.2 Sincronização em nuvem e resiliência offline
+    FirestoreService.onSyncStateChange((state, msg) => {
+      this.ui.updateSyncStatus(state, msg);
+    });
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('online', () => {
+        FirestoreService.processPendingSyncs().catch(() => {});
+      });
+      FirestoreService.processPendingSyncs().catch(() => {});
+    }
+
     const savedPref = AuthService.getSavedAuthPreference();
     if (savedPref === 'guest') {
       this.state = GameState.MENU;
@@ -348,10 +360,15 @@ class RockBrazilGame {
 
       if (cloudData) {
         current = FirestoreService.mergeProfiles(current, cloudData);
+        current.updatedAt = Date.now();
         await this.profileManager.saveProfileToDB(current);
+        // Persiste imediatamente o perfil mesclado canônico na nuvem
+        await FirestoreService.syncProfileToCloud(user.uid, current);
       } else {
         await FirestoreService.syncProfileToCloud(user.uid, current);
       }
+
+      FirestoreService.processPendingSyncs().catch(() => {});
 
       this.ui.setProfileHeader(current);
       this.ui.renderSongLibrary(this.library.getActiveSongs(), current);

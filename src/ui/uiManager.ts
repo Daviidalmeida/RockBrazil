@@ -704,6 +704,33 @@ export class UIManager {
     }
   }
 
+  public updateSyncStatus(state: 'synced' | 'syncing' | 'pending' | 'offline' | 'error', message?: string): void {
+    const indicator = document.getElementById('sync-status-indicator');
+    const badge = document.getElementById('active-profile-sync-badge');
+
+    const stateLabels: Record<string, { icon: string; text: string; title: string }> = {
+      synced: { icon: '☁️', text: '☁️ Sincronizado', title: 'Sincronizado com a nuvem' },
+      syncing: { icon: '🔄', text: '🔄 Sincronizando...', title: 'Sincronizando com a nuvem...' },
+      pending: { icon: '⏳', text: '⏳ Pendente', title: message || 'Sincronização pendente' },
+      offline: { icon: '📡', text: '📡 Offline', title: 'Sem conexão à internet' },
+      error: { icon: '⚠️', text: '⚠️ Falha ao Sincronizar', title: message || 'Falha ao sincronizar com a nuvem' }
+    };
+
+    const info = stateLabels[state] || stateLabels.synced;
+
+    if (indicator) {
+      indicator.className = `sync-status-indicator ${state}`;
+      indicator.textContent = info.icon;
+      indicator.title = info.title;
+    }
+
+    if (badge) {
+      badge.className = `profile-sync-status-badge ${state}`;
+      badge.textContent = info.text;
+      badge.title = info.title;
+    }
+  }
+
   async openPlayerProfilesModal(): Promise<void> {
     const modal = document.getElementById('modal-player-profiles') || this.modalProfileManager;
     if (!modal) return;
@@ -724,6 +751,14 @@ export class UIManager {
       if (nameEl) nameEl.textContent = profile.name || 'Convidado';
       if (typeEl) {
         typeEl.textContent = profile.accountType === 'google' ? 'Conta Google' : 'Modo Convidado';
+      }
+      const syncBadge = document.getElementById('active-profile-sync-badge');
+      if (syncBadge) {
+        if (profile.accountType === 'google' && profile.id !== 'guest') {
+          syncBadge.style.display = 'inline-flex';
+        } else {
+          syncBadge.style.display = 'none';
+        }
       }
       if (coinsEl) {
         coinsEl.textContent = `${profile.rockCoins || 0} RockCoins`;

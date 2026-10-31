@@ -118,13 +118,19 @@ html, body {
   pointer-events: none;
 }
 
-/* 1. Top Left YouTube Miniplayer */
+/* 1. Top Left YouTube Miniplayer (V13.8.2 Compact 200x200 CSS pixels) */
 .yt-miniplayer-box {
   position: absolute;
-  top: 10px;
-  left: 12px;
-  width: clamp(140px, 38vw, 200px);
-  aspect-ratio: 16 / 9;
+  top: max(10px, env(safe-area-inset-top));
+  left: max(10px, env(safe-area-inset-left));
+  width: 200px;
+  height: 200px;
+  min-width: 200px;
+  min-height: 200px;
+  max-width: 200px;
+  max-height: 200px;
+  box-sizing: border-box;
+  aspect-ratio: auto;
   border-radius: 8px;
   background: #000000;
   border: 2px solid #585b72;
@@ -139,6 +145,13 @@ html, body {
   height: 100%;
   border: none;
   display: block;
+}
+
+#yt-player-frame iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  display: block !important;
 }
 
 /* 2. Top Right Pause Button */
@@ -2476,11 +2489,6 @@ html, body {
   transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-
-.results-achievement-banner.hidden { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
-.hud-multiplier-stack { display: flex; flex-direction: column; align-items: center; width: 64px; }
-.youtube-active .hud-left-panel { top: calc(max(10px, env(safe-area-inset-top)) + 208px); }
-
 }
 .result-action-btn.btn-library { border-color: #a9535d; background: linear-gradient(#48232b, #1a1014); }
 .result-action-btn.btn-ranking { border-color: #ac9054; background: linear-gradient(#423625, #19150f); }
@@ -2500,8 +2508,7 @@ html[data-effects='reduced'] *, html[data-effects='reduced'] *::before, html[dat
   .stat-quad-item { padding: 5px 7px; }
   .results-score-val { font-size: 32px; }
 }
-/* YouTube embeds require at least 200 x 200 CSS pixels, including mobile. */
-.yt-miniplayer-box { width: 200px; height: 200px; aspect-ratio: auto; top: max(10px, env(safe-area-inset-top)); }
+/* YouTube embed modal unblock overlay adjustment */
 #yt-player-container.yt-awaiting-gesture { z-index: 1001; position: fixed; top: max(8px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); }
 #overlay-unblock-audio .notebook-dialog-card { margin-top: 215px; max-height: calc(100dvh - 230px); overflow-y: auto; }
 
@@ -4423,3 +4430,68 @@ button,
 .results-achievement-banner.hidden { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
 .hud-multiplier-stack { display: flex; flex-direction: column; align-items: center; width: 64px; }
 .youtube-active .hud-left-panel { top: calc(max(10px, env(safe-area-inset-top)) + 208px); }
+
+/* ========================================================
+   V13.8.2 CLOUD SYNC STATUS INDICATOR
+   ======================================================== */
+.sync-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  line-height: 1;
+  margin-left: 4px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  user-select: none;
+}
+
+.sync-status-indicator.syncing {
+  animation: spinSync 1.2s linear infinite;
+  opacity: 0.85;
+}
+
+@keyframes spinSync {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.profile-sync-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  transition: all 0.2s ease;
+}
+
+.profile-sync-status-badge.syncing {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.profile-sync-status-badge.pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.profile-sync-status-badge.offline {
+  background: rgba(107, 114, 128, 0.15);
+  color: #9ca3af;
+  border-color: rgba(107, 114, 128, 0.4);
+}
+
+.profile-sync-status-badge.error {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+

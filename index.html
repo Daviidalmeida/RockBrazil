@@ -202,6 +202,7 @@
           <span id="menu-profile-avatar" class="profile-avatar-icon">👤</span>
           <span id="menu-profile-name" class="profile-player-name">ENTRAR</span>
           <span class="profile-switch-hint">Perfil</span>
+          <span id="sync-status-indicator" class="sync-status-indicator synced" title="Sincronização em nuvem">☁️</span>
         </button>
 
         <!-- Ranking Button (Top Right: Exclusive for Google Accounts) -->
@@ -455,7 +456,10 @@
                     </svg>
                   </button>
                 </div>
-                <span id="active-profile-type" class="player-account-type">Modo Convidado</span>
+                <div class="player-account-row">
+                  <span id="active-profile-type" class="player-account-type">Modo Convidado</span>
+                  <span id="active-profile-sync-badge" class="profile-sync-status-badge synced" title="Status de sincronização">☁️ Sincronizado</span>
+                </div>
                 <button type="button" id="btn-open-change-avatar" class="btn-change-avatar">ALTERAR AVATAR</button>
               </div>
             </div>

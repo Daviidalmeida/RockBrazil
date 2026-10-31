@@ -152,6 +152,7 @@ export interface PlayerProfile {
   migrationVersion?: number;
   accountType?: 'google' | 'guest';
   achievements?: Record<string, { unlockedAt: number }>;
+  updatedAt?: number;
 }
 
 export interface ProfileStats {
@@ -409,7 +410,11 @@ export class ProfileManager {
   async updateActiveAvatar(avatarId: string): Promise<PlayerProfile | null> {
     if (!this.activeProfile) return null;
     this.activeProfile.avatar = avatarId;
+    this.activeProfile.updatedAt = Date.now();
     await this.saveProfileToDB(this.activeProfile);
+    if (this.activeProfile.id && this.activeProfile.id !== 'guest') {
+      FirestoreService.syncProfileToCloud(this.activeProfile.id, this.activeProfile).catch(() => {});
+    }
     return this.activeProfile;
   }
 
@@ -619,9 +624,12 @@ export class ProfileManager {
 
   async updateActiveProfile(updates: Partial<PlayerProfile>): Promise<PlayerProfile | null> {
     if (!this.activeProfile) return null;
-    const updated = { ...this.activeProfile, ...updates };
+    const updated = { ...this.activeProfile, ...updates, updatedAt: Date.now() };
     await this.saveProfileToDB(updated);
     this.activeProfile = updated;
+    if (updated.id && updated.id !== 'guest') {
+      FirestoreService.syncProfileToCloud(updated.id, updated).catch(() => {});
+    }
     return updated;
   }
 
@@ -784,6 +792,7 @@ export class ProfileManager {
     }
 
     this.activeProfile.lastPlayedAt = timestamp;
+    this.activeProfile.updatedAt = timestamp;
 
     // V13.5 / V13.7: Avaliação automática de Conquistas da Temporada 1 (apenas catálogo brasileiro)
     if (!isInternational) {
@@ -860,6 +869,7 @@ export class ProfileManager {
     // Avalia conquistas de coleção após desbloqueio
     this.checkAndUnlockAchievements();
 
+    profile.updatedAt = Date.now();
     await this.saveProfileToDB(profile);
 
     if (profile.id && profile.id !== 'guest') {
@@ -967,6 +977,7 @@ export class ProfileManager {
     // Avalia conquistas de coleção
     this.checkAndUnlockAchievements();
 
+    profile.updatedAt = Date.now();
     await this.saveProfileToDB(profile);
 
     if (profile.id && profile.id !== 'guest') {
