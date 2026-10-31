@@ -221,7 +221,7 @@ export class AudioManager {
 
     // V13: Estágio de ganho isolado para silenciar ao errar sem afetar o volume do usuário
     this.muteGainNode = this.ctx.createGain();
-    const initialMute = this.isMissMuted ? 0.0001 : 1.0;
+    const initialMute = this.isMissMuted ? 0 : 1.0;
     this.muteGainNode.gain.setValueAtTime(initialMute, this.ctx.currentTime);
     this.muteGainNode.connect(this.fileGainNode);
 
@@ -329,8 +329,8 @@ export class AudioManager {
 
     if (this.muteGainNode && this.ctx) {
       const t = this.ctx.currentTime;
-      const target = muted ? 0.0001 : 1.0;
-      // V13.9.5: Fade-in curto de 35ms (20 a 50ms) no HIT, silenciamento imediato de 8ms no MISS
+      const target = muted ? 0 : 1.0;
+      // V13.9.6: Fade-in curto de 35ms (20 a 50ms) no HIT, silenciamento absoluto (0) em 8ms no MISS
       const duration = muted ? 0.008 : 0.035;
       this.muteGainNode.gain.cancelScheduledValues(t);
       this.muteGainNode.gain.setValueAtTime(this.muteGainNode.gain.value, t);

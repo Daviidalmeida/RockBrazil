@@ -566,20 +566,37 @@ export class YouTubePlayerController {
     if (this.isMissMuted === muted) return; // V13.9 RockSync: evita postMessages redundantes no iframe
     this.isMissMuted = muted;
     if (muted) {
-      this.player?.mute?.();
+      try {
+        this.player?.mute?.();
+      } catch (err) {
+        // Ignore
+      }
+      try {
+        // V13.9.6: Garante silêncio absoluto no iframe do YouTube zerando volume além de mutar
+        this.player?.setVolume?.(0);
+      } catch (err) {
+        // Ignore
+      }
     } else {
-      if (smoothFade && this.volume > 0) {
-        // Fade-in curto de 20 a 50ms (35ms) respeitando limites da API oficial do YouTube
-        this.player?.setVolume?.(Math.round(this.volume * 0.35));
+      try {
         this.player?.unMute?.();
-        setTimeout(() => {
-          if (!this.isMissMuted) {
-            this.player?.setVolume?.(this.volume);
-          }
-        }, 35);
-      } else {
-        this.player?.unMute?.();
-        this.player?.setVolume?.(this.volume);
+      } catch (err) {
+        // Ignore
+      }
+      try {
+        if (smoothFade && this.volume > 0) {
+          // Fade-in curto de 20 a 50ms (35ms) respeitando limites da API oficial do YouTube
+          this.player?.setVolume?.(Math.round(this.volume * 0.35));
+          setTimeout(() => {
+            if (!this.isMissMuted) {
+              this.player?.setVolume?.(this.volume);
+            }
+          }, 35);
+        } else {
+          this.player?.setVolume?.(this.volume);
+        }
+      } catch (err) {
+        // Ignore
       }
     }
   }

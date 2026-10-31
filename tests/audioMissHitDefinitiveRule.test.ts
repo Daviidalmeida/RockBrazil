@@ -102,7 +102,7 @@ describe('ROCKBRAZIL — REGRA DEFINITIVA DE ÁUDIO NO MISS / HIT (V13.9.5)', ()
     audioManager.setMuteOnMiss(true);
 
     expect(audioManager.isMuted).toBe(true);
-    expect(mockGainNode.gain.linearRampToValueAtTime).toHaveBeenCalledWith(0.0001, 15.0 + 0.008);
+    expect(mockGainNode.gain.linearRampToValueAtTime).toHaveBeenCalledWith(0, 15.0 + 0.008);
   });
 
   // 3. Enquanto o jogador continuar errando: mantém mudo sem reset nem pause

@@ -72,7 +72,7 @@ describe('ROCKBRAZIL V13.9.3 — SUÍTE DE TESTES: ROCKSYNC AI AUTOFIX (20 CENÁ
   });
 
   // 2. 10 MISS consecutivos
-  it('2. 10 MISS consecutivos: áudio permanece estritamente audível sem mutar', () => {
+  it('2. 10 MISS consecutivos: áudio silenciado conforme regra definitiva sem congelar clock', () => {
     playbackController.setVolume(0.85);
 
     const notes: Note[] = Array.from({ length: 15 }, (_, i) => ({
@@ -101,12 +101,13 @@ describe('ROCKBRAZIL V13.9.3 — SUÍTE DE TESTES: ROCKSYNC AI AUTOFIX (20 CENÁ
     expect(engine.getStats().missCount).toBe(10);
     expect(engine.getStats().combo).toBe(0);
     expect(playbackController.isMuted()).toBe(false);
+    expect(playbackController.isGameplayMissMuted()).toBe(true);
     expect(playbackController.getVolume()).toBe(0.85);
-    expect(ytMock.muted).toBe(false);
+    expect(ytMock.muted).toBe(true);
   });
 
   // 3. 20 MISS consecutivos
-  it('3. 20 MISS consecutivos: highway e relógio continuam sem silenciar áudio', () => {
+  it('3. 20 MISS consecutivos: highway e relógio continuam com áudio silenciado', () => {
     playbackController.setVolume(0.85);
 
     for (let i = 1; i <= 20; i++) {
@@ -118,7 +119,8 @@ describe('ROCKBRAZIL V13.9.3 — SUÍTE DE TESTES: ROCKSYNC AI AUTOFIX (20 CENÁ
 
     expect(rockSync.getState().consecutiveMisses).toBe(20);
     expect(playbackController.isMuted()).toBe(false);
-    expect(ytMock.muted).toBe(false);
+    expect(playbackController.isGameplayMissMuted()).toBe(true);
+    expect(ytMock.muted).toBe(true);
   });
 
   // 4. 50 MISS consecutivos

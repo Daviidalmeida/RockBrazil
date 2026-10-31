@@ -442,9 +442,11 @@ class RockBrazilGame {
         case 'MISS':    this.showJudgement('ERRO',     'judge-miss');    break;
       }
       this.ui.showJudgment(result.judgment);
-      // V13.9.5 REGRA DEFINITIVA: HIT restaura volume com fade-in de 20-50ms sem pausar
+      // V13.9.6 REGRA DEFINITIVA: HIT restaura volume com fade-in de 20-50ms (35ms)
       if (result.judgment !== 'MISS') {
         this.playbackController.handleGameplayHit();
+        this.ytPlayer.setMuted(false, true);
+        this.audio.setMuteOnMiss(false);
       }
     };
 
@@ -453,24 +455,34 @@ class RockBrazilGame {
       // V13.8.1: Indicador de ERRO
       this.showJudgement('ERRO', 'judge-miss');
       this.ui.showJudgment('MISS');
-      // V13.9.5 REGRA DEFINITIVA: MISS silencia imediatamente sem parar esteira ou relógio
+      // V13.9.6 REGRA DEFINITIVA: MISS silencia imediatamente todas as saídas ativas
       this.playbackController.handleGameplayMiss();
+      this.ytPlayer.setMuted(true);
+      this.audio.setMuteOnMiss(true);
     };
 
-    // V13.9.5: Transições de silenciamento no erro (miss/extra press) e restauração no acerto (hit)
+    // V13.9.6: Transições de silenciamento no erro (miss/extra press) e restauração no acerto (hit)
     this.engine.onMuteRequested = (muted: boolean) => {
       if (muted) {
         this.playbackController.handleGameplayMiss();
+        this.ytPlayer.setMuted(true);
+        this.audio.setMuteOnMiss(true);
       } else {
         this.playbackController.handleGameplayHit();
+        this.ytPlayer.setMuted(false, true);
+        this.audio.setMuteOnMiss(false);
       }
     };
 
     this.rockSync.setMuteCallback((muted: boolean) => {
       if (muted) {
         this.playbackController.handleGameplayMiss();
+        this.ytPlayer.setMuted(true);
+        this.audio.setMuteOnMiss(true);
       } else {
         this.playbackController.handleGameplayHit();
+        this.ytPlayer.setMuted(false, true);
+        this.audio.setMuteOnMiss(false);
       }
     });
 
@@ -1305,6 +1317,7 @@ class RockBrazilGame {
     this.masterClock.reset();
     const hasLocalAudio = song.type === 'audio-file' || Boolean(song.audioUrl) || Boolean(song.audioBuffer);
     if (!hasLocalAudio && song.type === 'youtube' && song.youtubeVideoId) {
+      this.playbackController.setActiveSource('youtube', song.id);
       // V13.8.1: Tornar o container visível ANTES de inicializar o player (init lazy)
       this.ui.setYouTubePlayerVisibility(true);
       try {
@@ -1315,6 +1328,7 @@ class RockBrazilGame {
       if (sessionId !== this.currentMatchSessionId) return;
       this.masterClock.setSource(this.ytPlayer);
     } else {
+      this.playbackController.setActiveSource(song.type === 'procedural' ? 'procedural' : 'audio-buffer', song.id);
       this.masterClock.setSource(this.audio);
       this.ytPlayer.stop();
       this.ui.setYouTubePlayerVisibility(false);
@@ -1451,7 +1465,7 @@ class RockBrazilGame {
             console.warn('[PreStart] Chart notes could not be prepared for', this.currentSong.id);
             return false;
           }
-          this.engine = new GameEngine(freshNotes, this.currentDifficulty, this.settingsManager.getSettings());
+          this.engine.reset(freshNotes, this.currentDifficulty);
           notes = this.engine.getNotes();
         }
         // Validate and ensure chronological note ordering
@@ -1487,14 +1501,20 @@ class RockBrazilGame {
       startAudioPlayback: async () => {
         const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
         if (!hasLocal && this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
+          this.playbackController.setActiveSource('youtube', this.currentSong.id);
+          this.playbackController.setPlaybackState(PlaybackState.PLAYING);
           this.ytPlayer.play();
         } else if (this.currentSong.type === 'procedural' && this.currentSong.proceduralTrackId) {
+          this.playbackController.setActiveSource('procedural', this.currentSong.id);
+          this.playbackController.setPlaybackState(PlaybackState.PLAYING);
           this.ytPlayer.stop();
           await this.audio.playProceduralTrack(this.currentSong.proceduralTrackId, 0);
           this.masterClock.startPlayback();
           this.state = GameState.PLAYING;
           this.ui.showScreen(GameState.PLAYING);
         } else if (this.currentSong.audioBuffer) {
+          this.playbackController.setActiveSource('audio-buffer', this.currentSong.id);
+          this.playbackController.setPlaybackState(PlaybackState.PLAYING);
           this.ytPlayer.stop();
           await this.audio.playAudioBuffer(this.currentSong.audioBuffer, 0);
           this.masterClock.startPlayback();
@@ -1681,11 +1701,17 @@ class RockBrazilGame {
               const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
               if (!hasLocal && this.currentSong.type === 'youtube' && this.currentSong.youtubeVideoId) {
                 this.ytPlayer.resume();
+                if (this.playbackController.isGameplayMissMuted()) {
+                  this.ytPlayer.setMuted(true);
+                }
               } else {
                 this.state = GameState.PLAYING;
                 this.ui.showScreen(GameState.PLAYING);
                 this.masterClock.resume();
                 this.audio.resume();
+                if (this.playbackController.isGameplayMissMuted()) {
+                  this.audio.setMuteOnMiss(true);
+                }
               }
             }, 300);
           }

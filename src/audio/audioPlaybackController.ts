@@ -106,22 +106,51 @@ export class AudioPlaybackController {
    *    - Não reiniciar nem pausar a reprodução.
    *    - Não restaurar o volume por temporizador.
    */
+  public setActiveSource(source: AudioSourceType, songId: string | null = null): void {
+    this.activeSource = source;
+    if (songId) this.currentSongId = songId;
+  }
+
+  public setPlaybackState(state: PlaybackState): void {
+    this.setState(state);
+  }
+
+  /**
+   * ROCKBRAZIL V13.9.6 — REGRA DEFINITIVA DE ÁUDIO NO MISS:
+   * 1. Quando o jogador errar uma nota (MISS):
+   *    - Silenciar imediatamente a música.
+   *    - Manter o áudio avançando internamente.
+   *    - Manter a esteira e o relógio sincronizados.
+   * 2. Enquanto o jogador continuar errando:
+   *    - Manter a música muda.
+   *    - Não reiniciar nem pausar a reprodução.
+   *    - Não restaurar o volume por temporizador.
+   */
   public handleGameplayMiss(): void {
     if (this.isMissMuted) return; // Já silenciado por miss
     this.isMissMuted = true;
 
-    if (this.activeSource === 'youtube') {
+    // V13.9.6 HOTFIX CRÍTICO:
+    // Silencia TODAS as fontes (YouTube + Web Audio API) incondicionalmente
+    // garantindo silenciamento imediato independente de activeSource
+    try {
       this.ytPlayer.setMuted(true);
-    } else if (this.activeSource === 'audio-buffer' || this.activeSource === 'procedural') {
+    } catch (e) {
+      console.warn('[AudioPlaybackController] Erro ao mutar YouTube:', e);
+    }
+
+    try {
       this.audioManager.setMuteOnMiss(true);
+    } catch (e) {
+      console.warn('[AudioPlaybackController] Erro ao mutar AudioManager:', e);
     }
   }
 
   /**
-   * ROCKBRAZIL — REGRA DEFINITIVA DE ÁUDIO NO HIT:
+   * ROCKBRAZIL V13.9.6 — REGRA DEFINITIVA DE ÁUDIO NO HIT:
    * 3. SOMENTE quando o jogador acertar uma nota válida (HIT):
    *    - Restaurar o volume da música.
-   *    - Aplicar fade-in curto de 20 a 50ms.
+   *    - Aplicar fade-in curto de 20 a 50ms (35ms).
    *    - Não reiniciar nem alterar a posição.
    */
   public handleGameplayHit(): void {
@@ -129,10 +158,16 @@ export class AudioPlaybackController {
     this.isMissMuted = false;
 
     if (!this.isManualMuted) {
-      if (this.activeSource === 'youtube') {
+      try {
         this.ytPlayer.setMuted(false, true);
-      } else if (this.activeSource === 'audio-buffer' || this.activeSource === 'procedural') {
+      } catch (e) {
+        console.warn('[AudioPlaybackController] Erro ao desmutar YouTube:', e);
+      }
+
+      try {
         this.audioManager.setMuteOnMiss(false);
+      } catch (e) {
+        console.warn('[AudioPlaybackController] Erro ao desmutar AudioManager:', e);
       }
     }
   }
