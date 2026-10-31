@@ -1,18 +1,18 @@
 import { SongCalibration } from '../../types';
+import { INTERNATIONAL_SYNC_REGISTRY } from './internationalSyncRegistry';
 
 export class CalibrationManager {
   private static readonly STORAGE_KEY = 'rockbrazil_calibration_v2';
   private static cache: Record<string, SongCalibration> | null = null;
 
   // V8: Brazilian charts are normalized at source (0ms).
-  // V13.6: International songs with video intro offsets (e.g. AC/DC River Plate -2000ms from song.ini)
-  private static readonly VERIFIED_DEFAULTS: Record<string, number> = {
-    'intl-acdc-highway-to-hell': -2000,
-    'intl-gnr-paradise-city': 0,
-    'intl-gnr-sweet-child-o-mine': 0,
-    'intl-gnr-welcome-to-the-jungle': 0,
-    'intl-lp-numb': 0
-  };
+  // V13.8.4: International songs sync defaults driven by INTERNATIONAL_SYNC_REGISTRY
+  private static getVerifiedDefault(songId: string): number {
+    if (INTERNATIONAL_SYNC_REGISTRY[songId]) {
+      return INTERNATIONAL_SYNC_REGISTRY[songId].chartVideoOffsetMs;
+    }
+    return 0;
+  }
 
   private static load(): Record<string, SongCalibration> {
     if (this.cache !== null) return this.cache;
@@ -45,7 +45,7 @@ export class CalibrationManager {
 
   public static getCalibration(songId: string, videoId = ''): SongCalibration {
     const data = this.load();
-    const defaultOffset = this.VERIFIED_DEFAULTS[songId] || 0;
+    const defaultOffset = this.getVerifiedDefault(songId);
     if (!data[songId]) {
       data[songId] = {
         songId,
@@ -61,6 +61,10 @@ export class CalibrationManager {
 
   public static getSongOffsetMs(songId: string): number {
     return this.getCalibration(songId).chartOffsetMs || 0;
+  }
+
+  public static getOffsetForSong(songId: string): number {
+    return this.getSongOffsetMs(songId);
   }
 
   public static setSongOffsetMs(songId: string, offsetMs: number, videoId = ''): SongCalibration {
@@ -86,7 +90,7 @@ export class CalibrationManager {
 
   public static resetOffsetMs(songId: string): void {
     const data = this.load();
-    const defaultOffset = this.VERIFIED_DEFAULTS[songId] || 0;
+    const defaultOffset = this.getVerifiedDefault(songId);
     if (data[songId]) {
       data[songId].chartOffsetMs = defaultOffset;
       data[songId].calibrationStatus = defaultOffset !== 0 ? 'VERIFIED' : 'DEFAULT';

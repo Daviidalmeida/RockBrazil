@@ -1409,10 +1409,14 @@ export class UIManager {
             clearTimeout(this.comboPopTimeout);
           }
           this.hudComboContainer.classList.add('pop');
+          if (stats.combo > 0 && stats.combo % 10 === 0) {
+            this.hudComboContainer.classList.add('combo-milestone-pop');
+          }
           this.comboPopTimeout = setTimeout(() => {
             this.hudComboContainer.classList.remove('pop');
+            this.hudComboContainer.classList.remove('combo-milestone-pop');
             this.comboPopTimeout = null;
-          }, 120);
+          }, 350);
         }
       }
     } else {
@@ -1423,6 +1427,7 @@ export class UIManager {
           this.comboPopTimeout = null;
         }
         this.hudComboContainer.classList.remove('pop');
+        this.hudComboContainer.classList.remove('combo-milestone-pop');
         this.hudComboContainer.classList.add('hidden');
       }
     }

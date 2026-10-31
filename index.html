@@ -49,24 +49,24 @@
         </div>
       </div>
 
-      <!-- Left Side HUD: Score, Combo, Multiplier (Rock distressed look, no giant black box) -->
+      <!-- Left Side HUD: Compacto, Moderno e Alinhado à Esquerda (V13.8.4 Definitivo) -->
       <div class="hud-left-panel">
-        <div class="hud-score-display">
-          <span class="hud-score-label">PONTOS</span>
-          <span id="hud-score" class="hud-score-value">0</span>
-        </div>
-        <div class="hud-streak-row">
-          <div class="hud-multiplier-stack">
-            <div id="hud-multiplier" class="multiplier-badge mult-1x">1X</div>
-            <div id="hud-judgment" aria-hidden="true"></div>
-          </div>
-          <div id="hud-combo-container" class="combo-container hidden">
-            <span id="hud-combo-number" class="combo-number">0</span>
-            <span class="combo-text">COMBO</span>
+        <!-- Linha 1: [1X] PONTOS / 17.700 -->
+        <div class="hud-primary-row">
+          <div id="hud-multiplier" class="multiplier-badge mult-1x">1X</div>
+          <div class="hud-score-display">
+            <span class="hud-score-label">PONTOS</span>
+            <span id="hud-score" class="hud-score-value">0</span>
           </div>
         </div>
-        <!-- V13.8.1: Indicador de julgamento PERFEITO/ÓTIMO/BOM/ERRO -->
+        <!-- Linha 2: 8 COMBO -->
+        <div id="hud-combo-container" class="combo-container hidden">
+          <span id="hud-combo-number" class="combo-number">0</span>
+          <span class="combo-text">COMBO</span>
+        </div>
+        <!-- Terceira Área: Feedback momentâneo do julgamento (PERFEITO!, ÓTIMO!, BOM, ERRO) -->
         <div id="hud-judgement" class="hud-judgement-label" aria-live="polite" aria-atomic="true"></div>
+        <div id="hud-judgment" class="hidden" style="display:none;" aria-hidden="true"></div>
       </div>
 
       <!-- Right Side HUD: Exclusive Industrial Vertical ROCKBRAZIL Meter -->
@@ -703,12 +703,16 @@
       </div>
     </div>
 
-    <!-- 11. FINAL DA MÚSICA (SHOW CONCLUÍDO - V13.3 ARTE OFICIAL) -->
+    <!-- 11. FINAL DA MÚSICA (SHOW CONCLUÍDO - V13.8.4 LAYOUT DEFINITIVO E ORGANIZADO) -->
     <div id="screen-result" class="overlay-screen hidden results-screen-container">
       <div class="results-art-wrapper">
+        <!-- 1. Logo RockBrazil -->
         <div class="results-brand-art" aria-hidden="true"></div>
-        <h1 class="results-title">SHOW FINALIZADO!</h1>
-        <!-- ÁREA SUPERIOR: Capa real da música, Título, Artista, Dificuldade -->
+
+        <!-- 2. Título SHOW FINALIZADO -->
+        <h1 id="result-title" class="results-title">SHOW FINALIZADO!</h1>
+
+        <!-- 3. Card da música (Capa, Título, Artista, Dificuldade) -->
         <div class="results-header-overlay">
           <img id="result-album-cover" class="result-cover-img" src="images/default-cover.png" alt="Capa do Álbum" onerror="this.onerror=null;this.src='images/default-cover.png';" />
           <div class="result-header-text">
@@ -718,7 +722,7 @@
           </div>
         </div>
 
-        <!-- ÁREA DAS CINCO ESTRELAS -->
+        <!-- 4. Estrelas conquistadas (Área própria isolada sem invadir cartões) -->
         <div id="result-stars-row" class="results-stars-overlay">
           <span class="star-item star-1 active">★</span>
           <span class="star-item star-2 active">★</span>
@@ -727,29 +731,8 @@
           <span class="star-item star-5">★</span>
         </div>
 
-        <!-- PAINEL CENTRAL METÁLICO -->
-        <div class="results-central-panel">
-          <!-- Novo Recorde Pessoal (somente quando realmente houver novo recorde) -->
-          <div id="result-record-banner" class="results-record-stamp hidden">
-            <span class="record-stamp-text">★ NOVO RECORDE PESSOAL! ★</span>
-          </div>
-          <div id="result-record-detail" class="hidden"></div>
-
-          <!-- Pontuação Final -->
-          <div class="results-score-block">
-            <span class="results-score-label">PONTUAÇÃO FINAL</span>
-            <span id="result-score" class="results-score-val">0 PTS</span>
-          </div>
-
-          <!-- RockCoins Ganhas -->
-          <div class="results-coins-block" id="result-coins-container">
-            <span class="results-coins-label">ROCKCOINS GANHAS:</span>
-            <span id="result-coins" class="results-coins-amount">+0</span>
-          </div>
-        </div>
-
-        <!-- QUATRO PAINÉIS: ACERTOS, ERROS, PRECISÃO, MAIOR COMBO -->
-        <div class="results-stats-quad">
+        <!-- 5. Acertos e Erros (Dois cartões em linha exclusiva) -->
+        <div class="results-stats-row results-hits-misses-row">
           <div class="stat-quad-item stat-hits-item">
             <span class="stat-quad-label">ACERTOS</span>
             <span id="result-hits" class="stat-quad-val stat-hits">0</span>
@@ -758,6 +741,10 @@
             <span class="stat-quad-label">ERROS</span>
             <span id="result-miss" class="stat-quad-val stat-miss">0</span>
           </div>
+        </div>
+
+        <!-- 6. Precisão e Maior Combo (Dois cartões em linha exclusiva) -->
+        <div class="results-stats-row results-acc-combo-row">
           <div class="stat-quad-item stat-acc-item">
             <span class="stat-quad-label">PRECISÃO</span>
             <span id="result-accuracy" class="stat-quad-val stat-acc">100%</span>
@@ -768,7 +755,7 @@
           </div>
         </div>
 
-        <!-- DETALHAMENTO DE JULGAMENTOS V13.8.1: PERFECT, GREAT, GOOD, MISS -->
+        <!-- 7. Julgamentos detalhados (PERFEITO, ÓTIMO, BOM, ERRO) -->
         <div class="results-judgments-row">
           <div class="judgment-badge-item badge-perfect">
             <span class="j-badge-label">PERFEITO</span>
@@ -788,12 +775,31 @@
           </div>
         </div>
         <p class="results-extra" style="display:none;">TOQUES EXTRAS: <b id="result-extra">0</b></p>
-        <!-- FAIXA DE CONQUISTA: FULL COMBO! -->
+
+        <!-- Faixa de Conquista FULL COMBO! -->
         <div id="result-achievement-banner" class="results-achievement-banner hidden">
           <span id="result-achievement-text" class="results-achievement-text">FULL COMBO!</span>
         </div>
 
-        <!-- TRÊS BOTÕES INFERIORES: JOGAR NOVAMENTE, SELEÇÃO DE MÚSICAS, RANKING GLOBAL -->
+        <!-- 8. RockCoins ganhas e Pontuação Final (Painel e Linha exclusiva) -->
+        <div class="results-central-panel results-reward-panel">
+          <div id="result-record-banner" class="results-record-stamp hidden">
+            <span class="record-stamp-text">★ NOVO RECORDE PESSOAL! ★</span>
+          </div>
+          <div id="result-record-detail" class="hidden"></div>
+
+          <div class="results-score-block">
+            <span class="results-score-label">PONTUAÇÃO FINAL</span>
+            <span id="result-score" class="results-score-val">0 PTS</span>
+          </div>
+
+          <div class="results-coins-block" id="result-coins-container">
+            <span class="results-coins-label">ROCKCOINS GANHAS:</span>
+            <span id="result-coins" class="results-coins-amount">+0</span>
+          </div>
+        </div>
+
+        <!-- 9. Três Botões de Ação (Totalmente dentro da área útil do painel) -->
         <div class="results-buttons-overlay">
           <button id="btn-play-again" class="result-action-btn btn-replay" aria-label="Jogar Novamente">
             <span>JOGAR NOVAMENTE</span>
