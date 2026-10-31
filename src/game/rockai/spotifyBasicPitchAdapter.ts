@@ -106,7 +106,7 @@ export class SpotifyBasicPitchAdapter {
         onset_threshold: this.config.onsetThreshold,
         frame_threshold: this.config.frameThreshold,
         min_note_len_ms: this.config.minNoteLengthMs,
-        samples: Array.from(pcm.slice(0, Math.min(pcm.length, 44100 * 300))) // Cap sample transfer if needed
+        samples: Array.from(pcm) // V13.9.2: Process full duration without artificial truncation
       };
 
       const controller = new AbortController();

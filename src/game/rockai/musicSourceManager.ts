@@ -1,5 +1,12 @@
 import { SongMetadataInput, YouTubeValidationResult } from './contracts';
 
+export type SongDraftStatus = 
+  | 'AGUARDANDO ÁUDIO AUTORIZADO' 
+  | 'PRONTO PARA ANÁLISE' 
+  | 'ANALISADO' 
+  | 'VÍDEO CADASTRADO / ÁUDIO PARA ANÁLISE INDISPONÍVEL'
+  | 'AGUARDANDO FONTE DE ÁUDIO ANALISÁVEL';
+
 export interface RegisteredSongDraft {
   id: string;
   title: string;
@@ -8,19 +15,22 @@ export interface RegisteredSongDraft {
   youtubeUrl: string;
   youtubeVideoId: string;
   hasAuthorizedAudio: boolean;
-  status: 'AGUARDANDO ÁUDIO AUTORIZADO' | 'PRONTO PARA ANÁLISE' | 'ANALISADO';
+  status: SongDraftStatus;
+  mode?: 'YOUTUBE_LINK_ONLY' | 'AUDIO_FILE_AI';
   audioFileName?: string;
   audioFileSize?: number;
   registeredAt: string;
   licenseNotice?: string;
+  isEmbeddable?: boolean;
 }
 
 /**
- * ROCKBRAZIL V13.9 — MUSIC SOURCE MANAGER
+ * ROCKBRAZIL V13.9.2 — MUSIC SOURCE MANAGER
  *
  * Responsibilities:
  * - Legitimate YouTube URL validation & ID extraction.
- * - Authorized audio file registration (WAV, MP3, FLAC, OGG, M4A).
+ * - Mode A: YouTube Link Only (registers video, associates in catalog, prepares charts without requiring MP3).
+ * - Mode B: Audio File Complete AI (full Demucs + Basic Pitch pipeline).
  * - Strict prohibition of YouTube audio scraping.
  */
 export class MusicSourceManager {
@@ -30,6 +40,8 @@ export class MusicSourceManager {
    * - https://www.youtube.com/watch?v=XXXXXXXXXXX
    * - https://youtu.be/XXXXXXXXXXX
    * - https://www.youtube.com/shorts/XXXXXXXXXXX
+   * - https://www.youtube.com/embed/XXXXXXXXXXX
+   * - Raw 11-character ID
    */
   public static validateYouTubeUrl(url: string): YouTubeValidationResult {
     if (!url || typeof url !== 'string') {
@@ -76,10 +88,21 @@ export class MusicSourceManager {
   }
 
   /**
-   * Creates a registered song entry.
-   * If no authorized audio file is provided, flags strictly as 'AGUARDANDO ÁUDIO AUTORIZADO'.
+   * Checks if video ID is valid format for embedding.
    */
-  public static registerSong(input: SongMetadataInput): RegisteredSongDraft {
+  public static isEmbeddableVideoId(videoId: string): boolean {
+    return /^[a-zA-Z0-9_-]{11}$/.test(videoId);
+  }
+
+  /**
+   * Creates a registered song entry.
+   * In YouTube-only mode (mode === 'YOUTUBE_LINK_ONLY' or when no audio is passed),
+   * sets status to 'VÍDEO CADASTRADO / ÁUDIO PARA ANÁLISE INDISPONÍVEL' or 'AGUARDANDO FONTE DE ÁUDIO ANALISÁVEL'.
+   */
+  public static registerSong(
+    input: SongMetadataInput,
+    mode: 'YOUTUBE_LINK_ONLY' | 'AUDIO_FILE_AI' = 'YOUTUBE_LINK_ONLY'
+  ): RegisteredSongDraft {
     const ytValidation = this.validateYouTubeUrl(input.youtubeUrl);
     if (!ytValidation.isValid || !ytValidation.videoId) {
       throw new Error(ytValidation.error || 'URL do YouTube inválida.');
@@ -94,6 +117,15 @@ export class MusicSourceManager {
     const audioSize = input.audioFile instanceof Blob ? input.audioFile.size : 
                       input.audioFile instanceof ArrayBuffer ? input.audioFile.byteLength : undefined;
 
+    let status: SongDraftStatus;
+    if (hasAudio) {
+      status = 'PRONTO PARA ANÁLISE';
+    } else if (mode === 'YOUTUBE_LINK_ONLY') {
+      status = 'VÍDEO CADASTRADO / ÁUDIO PARA ANÁLISE INDISPONÍVEL';
+    } else {
+      status = 'AGUARDANDO ÁUDIO AUTORIZADO';
+    }
+
     return {
       id: songId,
       title,
@@ -102,10 +134,12 @@ export class MusicSourceManager {
       youtubeUrl: ytValidation.canonicalUrl!,
       youtubeVideoId: ytValidation.videoId,
       hasAuthorizedAudio: hasAudio,
-      status: hasAudio ? 'PRONTO PARA ANÁLISE' : 'AGUARDANDO ÁUDIO AUTORIZADO',
+      status,
+      mode,
       audioFileName: input.audioFileName,
       audioFileSize: audioSize,
-      registeredAt: new Date().toISOString()
+      registeredAt: new Date().toISOString(),
+      isEmbeddable: this.isEmbeddableVideoId(ytValidation.videoId)
     };
   }
 }

@@ -3,6 +3,7 @@ import { SmartChartEngine } from './catalog/smartChartEngine';
 import { OFFICIAL_BRAZILIAN_CATALOG } from './catalog/catalogData';
 import { UniversalChartImporter } from '../audio/universalChartImporter';
 import { initPreconvertedCharts } from './catalog/preconvertedCharts';
+import { RockAIStorageService } from './rockai/rockAIStorageService';
 
 export class BeatmapManager {
   private cache: Map<string, BeatmapByDifficulty> = new Map();
@@ -26,7 +27,13 @@ export class BeatmapManager {
       if (songMaps && songMaps[difficulty]) {
         result = songMaps[difficulty].map((n) => ({ ...n }));
       } else {
-        // Check UniversalChartImporter for real converted community chart
+        // Check RockAIStorageService for generated AI test charts
+        const rockAiChart = RockAIStorageService.getGeneratedChart(songId);
+        if (rockAiChart && rockAiChart.charts && rockAiChart.charts[difficulty]) {
+          this.cache.set(songId, rockAiChart.charts);
+          result = rockAiChart.charts[difficulty].map((n) => ({ ...n }));
+        } else {
+          // Check UniversalChartImporter for real converted community chart
         const convertedChart = UniversalChartImporter.getConvertedChart(songId);
         if (convertedChart && convertedChart[difficulty]) {
           this.cache.set(songId, convertedChart);
@@ -45,6 +52,7 @@ export class BeatmapManager {
           } else {
             // Fallback: generate default procedural map
             result = this.generateDefaultTrackMap(songId, 132, 50, difficulty);
+            }
           }
         }
       }
@@ -173,8 +181,10 @@ export class BeatmapManager {
     // 5. Sobrecarga (160 BPM, 42.0s)
     this.cache.set('sobrecarga', this.createSobrecargaMaps());
 
-    // 6. T.N.T. — AC/DC (126 BPM, 216s)
-    this.cache.set('tnt-acdc', this.createTNTMaps());
+    // 6. T.N.T. — AC/DC (Backup / Legacy Procedural Chart Preserved)
+    const tntLegacy = this.createTNTMaps();
+    this.cache.set('tnt-acdc', tntLegacy);
+    this.cache.set('tnt-acdc-backup', tntLegacy);
   }
 
   // --- Helper to build notes ---

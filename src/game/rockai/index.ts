@@ -1,5 +1,6 @@
 export * from './contracts';
 export * from './musicSourceManager';
+export * from './audioSourceResolver';
 export * from './audioPreparationService';
 export * from './guitarStemSeparator';
 export * from './realGuitarStemAdapter';

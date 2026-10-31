@@ -9,6 +9,8 @@ export const PILOT_SONG_V13_9: RegisteredSongDraft = {
   youtubeVideoId: '44XYEeD1A1U',
   hasAuthorizedAudio: false,
   status: 'AGUARDANDO ÁUDIO AUTORIZADO',
-  licenseNotice: 'Direitos autorais preservados. O áudio deve ser fornecido legitimamente pelo usuário ou titular.',
+  mode: 'YOUTUBE_LINK_ONLY',
+  isEmbeddable: true,
+  licenseNotice: 'Direitos autorais preservados. O áudio deve ser fornecido legitimamente por fonte autorizada.',
   registeredAt: '2026-10-31T01:30:00.000Z'
 };

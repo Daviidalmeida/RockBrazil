@@ -1125,6 +1125,16 @@
 
         <!-- Tab 1: CRIAR MÚSICA -->
         <div class="rockai-tab-panel" data-tab="create" style="display: flex; flex-direction: column; gap: 10px;">
+          <!-- V13.9.2: Mode Selector -->
+          <div style="display: flex; gap: 6px; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);">
+            <button id="rockai-mode-yt" class="rockai-mode-btn active" type="button" style="flex: 1; padding: 7px 4px; font-size: 11px; font-weight: bold; border: none; border-radius: 6px; background: #6366f1; color: #fff; cursor: pointer; text-align: center;">A) YOUTUBE — SOMENTE LINK</button>
+            <button id="rockai-mode-ai" class="rockai-mode-btn" type="button" style="flex: 1; padding: 7px 4px; font-size: 11px; font-weight: bold; border: none; border-radius: 6px; background: transparent; color: rgba(255,255,255,0.7); cursor: pointer; text-align: center;">B) ARQUIVO DE ÁUDIO — IA</button>
+          </div>
+
+          <div id="rockai-mode-desc" style="font-size: 11px; color: #a5b4fc; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 6px; padding: 6px 10px; line-height: 1.4;">
+            ℹ️ <strong>Modo Link:</strong> Cadastra a música via link do YouTube, prepara a interface de charts nas 4 dificuldades, permitindo editar no Editor Visual e sincronizar sem exigir upload de MP3.
+          </div>
+
           <div class="settings-group">
             <label for="rockai-yt-url">Link Oficial do YouTube:</label>
             <input type="text" id="rockai-yt-url" placeholder="https://www.youtube.com/watch?v=44XYEeD1A1U" class="rock-input" style="width: 100%; padding: 8px; border-radius: 6px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
@@ -1147,17 +1157,17 @@
             <input type="text" id="rockai-song-category" placeholder="Rock Internacional" class="rock-input" style="width: 100%; padding: 8px; border-radius: 6px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
           </div>
 
-          <div class="settings-group">
+          <div id="rockai-audio-group" class="settings-group hidden">
             <label for="rockai-audio-file">Arquivo de Áudio Autorizado (WAV, MP3, FLAC, OGG, M4A):</label>
             <input type="file" id="rockai-audio-file" accept="audio/*,.mp3,.wav,.flac,.ogg,.m4a" style="width: 100%; padding: 6px; background: rgba(0,0,0,0.4); border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); color: #fff;">
-            <span id="rockai-audio-hint" style="font-size: 11px; margin-top: 3px; display: block; color: rgba(255,255,255,0.6);">Insira o áudio original da faixa para processamento DSP/IA.</span>
+            <span id="rockai-audio-hint" style="font-size: 11px; margin-top: 3px; display: block; color: rgba(255,255,255,0.6);">Insira o áudio original para processamento neural (Demucs HTDemucs 6S + Basic Pitch).</span>
           </div>
 
-          <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 6px; padding: 8px; font-size: 11px; color: #fbbf24; line-height: 1.4;">
-            ⚖️ <strong>Conformidade e Integridade:</strong> O áudio para análise com IA deve ser fornecido legitimamente. Se houver apenas o link do YouTube, a música será cadastrada com o status <em>AGUARDANDO ÁUDIO AUTORIZADO</em>.
+          <div id="rockai-compliance-banner" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 6px; padding: 8px; font-size: 11px; color: #34d399; line-height: 1.4;">
+            ⚖️ <strong>Conformidade e Integridade:</strong> O áudio nunca é capturado ou extraído do YouTube sem autorização. Se não houver arquivo de áudio disponível para análise com IA, o status permanecerá <em>VÍDEO CADASTRADO / ÁUDIO PARA ANÁLISE INDISPONÍVEL</em>, mantendo o editor e o player 100% liberados.
           </div>
 
-          <button id="btn-rockai-analyze" class="btn-primary" style="padding: 10px; font-size: 13px; font-weight: bold; background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; border: none; border-radius: 6px; cursor: pointer; margin-top: 4px;">⚡ ANALISAR MÚSICA COM IA</button>
+          <button id="btn-rockai-analyze" class="btn-primary" style="padding: 10px; font-size: 13px; font-weight: bold; background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; border: none; border-radius: 6px; cursor: pointer; margin-top: 4px;">⚡ CADASTRAR MÚSICA & PREPARAR CHARTS</button>
         </div>
 
         <!-- Tab 2: PROGRESSO DO PROCESSAMENTO -->
