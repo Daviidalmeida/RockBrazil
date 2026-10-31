@@ -29,20 +29,20 @@ describe('ROCKBRAZIL BETA — SUÍTE DE REGRESSÃO E PERFORMANCE V5', () => {
     } as any;
 
     const renderer = new GameRenderer(dummyCanvas);
-    // V7: Restaura velocidade confortável normal de 1.35s conforme solicitado pelo jogador
-    expect(renderer.baseNoteSpeed).toBeCloseTo(1.35, 2);
+    // V13.8.3: Restaura velocidade confortável da esteira de 1.85s (HARD) com presets
+    expect(renderer.baseNoteSpeed).toBeCloseTo(1.85, 2);
 
-    // Suporta presets de velocidade: LENTA (1.65s), NORMAL (1.35s), RÁPIDA (1.05s)
+    // Suporta presets de velocidade: LENTA (2.20s), NORMAL (1.85s), RÁPIDA (1.55s)
     renderer.speedPreset = 'RÁPIDA';
-    expect(renderer.baseNoteSpeed).toBeCloseTo(1.05, 2);
+    expect(renderer.baseNoteSpeed).toBeCloseTo(1.55, 2);
     renderer.speedPreset = 'LENTA';
-    expect(renderer.baseNoteSpeed).toBeCloseTo(1.65, 2);
+    expect(renderer.baseNoteSpeed).toBeCloseTo(2.20, 2);
     renderer.speedPreset = 'NORMAL';
 
     // Em 120 BPM, uma semicolcheia (16th note) tem dt = 0.125s
     const dt16th = 0.125;
     const progressDiff = dt16th / renderer.noteSpeed;
-    expect(progressDiff).toBeGreaterThan(0.08);
+    expect(progressDiff).toBeGreaterThan(0.05);
   });
 
   it('2. Geometria de notas: ry reduzido para fretes horizontais sem colisão visual', () => {

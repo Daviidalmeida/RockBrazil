@@ -77,18 +77,26 @@ export class GameRenderer {
   readonly highwayTopWidthRatio = 0.28; // Narrow top for deep perspective
   readonly highwayBottomWidthRatio = 0.95; // Wide bottom for clear readability
   
-  // V7: Restored comfortable base travel time (1.35s NORMAL) with selectable presets
+  // V13.8.3: Comfortable highway approach times scaled by difficulty & speed presets
   public speedPreset: NoteSpeedPreset = 'NORMAL';
   public noteSpeedMultiplier = 1.0;
   public visualEffectsEnabled = true;
   public visualEffectsMode: 'NORMAL' | 'REDUZIDO' = 'NORMAL';
 
   get baseNoteSpeed(): number {
+    let base = 1.85;
+    switch (this.difficulty) {
+      case 'EASY': base = 2.20; break;
+      case 'MEDIUM': base = 2.00; break;
+      case 'HARD': base = 1.85; break;
+      case 'EXPERT': base = 1.70; break;
+      default: base = 1.85; break;
+    }
     switch (this.speedPreset) {
-      case 'LENTA': return 1.65;
-      case 'RÁPIDA': return 1.05;
+      case 'LENTA': return base + 0.35;
+      case 'RÁPIDA': return Math.max(1.25, base - 0.30);
       case 'NORMAL':
-      default: return 1.35;
+      default: return base;
     }
   }
 
@@ -298,8 +306,8 @@ export class GameRenderer {
     const horizonY = h * this.horizonYRatio;
     const strikeY = h * this.strikeLineYRatio;
 
-    // Non-linear natural foreshortening perspective
-    const persp = Math.pow(Math.max(0, Math.min(progress, 1.45)), 1.38);
+    // Non-linear natural foreshortening perspective (V13.8.3: power 1.24 for smooth readable glide)
+    const persp = Math.pow(Math.max(0, Math.min(progress, 1.45)), 1.24);
     const currentY = horizonY + (strikeY - horizonY) * persp;
 
     const topWidth = w * this.highwayTopWidthRatio;
@@ -730,7 +738,8 @@ export class GameRenderer {
       const timeRemaining = note.time - currentTime;
       const progress = 1.0 - (timeRemaining / this.noteSpeed);
 
-      if (progress < -0.06 || progress > 1.12) continue;
+      // V13.8.3: allow smooth vanishing-point appearance without abrupt popping
+      if (progress < -0.12 || progress > 1.15) continue;
       visibleNotes.push(note);
       if (progress >= 0 && progress <= 0.05) {
         SyncDiagnostics.get().recordFirstNoteVisible(note.time, currentTime, progress);

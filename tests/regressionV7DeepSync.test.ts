@@ -43,27 +43,27 @@ describe('ROCKBRAZIL BETA V7 — SUÍTE DE TESTES E VALIDAÇÃO COMPLETA', () =>
   };
 
   // ==========================================================================
-  // 1. Velocidade da Esteira e Presets Visuais (Fase 3)
+  // 1. Velocidade da Esteira e Presets Visuais (V13.8.3 Highway Comfort)
   // ==========================================================================
-  describe('1. Velocidade da Esteira e Presets Visuais (Fase 3)', () => {
-    it('deve restaurar velocidade NORMAL confortável de 1.35s como padrão', () => {
+  describe('1. Velocidade da Esteira e Presets Visuais (V13.8.3)', () => {
+    it('deve restaurar velocidade NORMAL confortável de 1.85s (HARD) como padrão', () => {
       const renderer = new GameRenderer(dummyCanvas);
       expect(renderer.speedPreset).toBe('NORMAL');
-      expect(renderer.baseNoteSpeed).toBeCloseTo(1.35, 2);
-      expect(renderer.noteSpeed).toBeCloseTo(1.35, 2);
+      expect(renderer.baseNoteSpeed).toBeCloseTo(1.85, 2);
+      expect(renderer.noteSpeed).toBeCloseTo(1.85, 2);
     });
 
-    it('deve suportar presets LENTA (1.65s), NORMAL (1.35s) e RÁPIDA (1.05s) sem alterar timestamps ou áudio', () => {
+    it('deve suportar presets LENTA (+0.35s), NORMAL (1.85s) e RÁPIDA (-0.30s) sem alterar timestamps ou áudio', () => {
       const renderer = new GameRenderer(dummyCanvas);
 
       renderer.speedPreset = 'LENTA';
-      expect(renderer.baseNoteSpeed).toBeCloseTo(1.65, 2);
+      expect(renderer.baseNoteSpeed).toBeCloseTo(2.20, 2);
 
       renderer.speedPreset = 'NORMAL';
-      expect(renderer.baseNoteSpeed).toBeCloseTo(1.35, 2);
+      expect(renderer.baseNoteSpeed).toBeCloseTo(1.85, 2);
 
       renderer.speedPreset = 'RÁPIDA';
-      expect(renderer.baseNoteSpeed).toBeCloseTo(1.05, 2);
+      expect(renderer.baseNoteSpeed).toBeCloseTo(1.55, 2);
 
       // A alteração de velocidade visual NÃO modifica tempo musical nem timestamps
       const noteTime = 5.0;
