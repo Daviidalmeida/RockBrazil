@@ -61,7 +61,7 @@ export class GameEngine {
     this.isDead = false;
     this.lastSustainTickTime = 0;
     this.activeNoteStartIndex = 0;
-    if (this.settings.muteOnMiss) {
+    if (this.settings.muteOnMiss !== false) {
       this.onMuteRequested?.(false);
     }
     this.chartTimeline.loadNotes(this.notes, difficulty);
@@ -309,7 +309,7 @@ export class GameEngine {
         this.onHit(result);
       }
 
-      if (this.settings.muteOnMiss) {
+      if (this.settings.muteOnMiss !== false) {
         this.onMuteRequested?.(false);
       }
 
@@ -325,7 +325,7 @@ export class GameEngine {
       this.onGameOver?.(this.getStats());
     }
 
-    if (this.settings.muteOnMiss) {
+    if (this.settings.muteOnMiss !== false) {
       this.onMuteRequested?.(true);
     }
 
@@ -385,7 +385,7 @@ export class GameEngine {
           this.onMiss(note.lane, note);
         }
 
-        if (this.settings.muteOnMiss) {
+        if (this.settings.muteOnMiss !== false) {
           this.onMuteRequested?.(true);
         }
 

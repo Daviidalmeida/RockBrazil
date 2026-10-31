@@ -10,6 +10,7 @@ export interface AudioPlaybackStatus {
   volume: number;
   isAudible: boolean;
   isManualMuted: boolean;
+  isMissMuted: boolean;
   isBuffering: boolean;
   mediaTime: number;
   songId: string | null;
@@ -43,6 +44,7 @@ export class AudioPlaybackController {
 
   private masterVolume: number = 0.85; // Default 85% audible
   private isManualMuted: boolean = false;
+  private isMissMuted: boolean = false;
   private isCurrentlyBuffering: boolean = false;
   private lastErrorMessage: string | null = null;
 
@@ -63,7 +65,7 @@ export class AudioPlaybackController {
 
   public setVolume(volume: number): void {
     this.masterVolume = Math.max(0, Math.min(1, volume));
-    if (!this.isManualMuted) {
+    if (!this.isManualMuted && !this.isMissMuted) {
       this.applyVolumeToActiveSource(this.masterVolume);
     }
   }
@@ -78,8 +80,10 @@ export class AudioPlaybackController {
       this.applyVolumeToActiveSource(0);
       this.ytPlayer.setMuted(true);
     } else {
-      this.applyVolumeToActiveSource(this.masterVolume);
-      this.ytPlayer.setMuted(false);
+      if (!this.isMissMuted) {
+        this.applyVolumeToActiveSource(this.masterVolume);
+        this.ytPlayer.setMuted(false);
+      }
     }
   }
 
@@ -87,16 +91,50 @@ export class AudioPlaybackController {
     return this.isManualMuted;
   }
 
-  /**
-   * V13.9.3: Gameplay misses or extra presses MUST NEVER mute the audio!
-   * Kept as a safe no-op to satisfy gameplay callers without silencing the track.
-   */
-  public handleGameplayMiss(): void {
-    // Deliberate no-op: gameplay continues with audible sound.
+  public isGameplayMissMuted(): boolean {
+    return this.isMissMuted;
   }
 
+  /**
+   * ROCKBRAZIL — REGRA DEFINITIVA DE ÁUDIO NO MISS:
+   * 1. Quando o jogador errar uma nota (MISS):
+   *    - Silenciar imediatamente a música.
+   *    - Manter o áudio avançando internamente.
+   *    - Manter a esteira e o relógio sincronizados.
+   * 2. Enquanto o jogador continuar errando:
+   *    - Manter a música muda.
+   *    - Não reiniciar nem pausar a reprodução.
+   *    - Não restaurar o volume por temporizador.
+   */
+  public handleGameplayMiss(): void {
+    if (this.isMissMuted) return; // Já silenciado por miss
+    this.isMissMuted = true;
+
+    if (this.activeSource === 'youtube') {
+      this.ytPlayer.setMuted(true);
+    } else if (this.activeSource === 'audio-buffer' || this.activeSource === 'procedural') {
+      this.audioManager.setMuteOnMiss(true);
+    }
+  }
+
+  /**
+   * ROCKBRAZIL — REGRA DEFINITIVA DE ÁUDIO NO HIT:
+   * 3. SOMENTE quando o jogador acertar uma nota válida (HIT):
+   *    - Restaurar o volume da música.
+   *    - Aplicar fade-in curto de 20 a 50ms.
+   *    - Não reiniciar nem alterar a posição.
+   */
   public handleGameplayHit(): void {
-    // Deliberate no-op: audio is already playing at audible level.
+    if (!this.isMissMuted) return; // Já audível
+    this.isMissMuted = false;
+
+    if (!this.isManualMuted) {
+      if (this.activeSource === 'youtube') {
+        this.ytPlayer.setMuted(false, true);
+      } else if (this.activeSource === 'audio-buffer' || this.activeSource === 'procedural') {
+        this.audioManager.setMuteOnMiss(false);
+      }
+    }
   }
 
   /**
@@ -108,6 +146,7 @@ export class AudioPlaybackController {
     this.activeSource = 'youtube';
     this.currentSongId = songId;
     this.lastErrorMessage = null;
+    this.isMissMuted = false;
 
     try {
       await this.ytPlayer.loadVideo(videoId);
@@ -134,6 +173,7 @@ export class AudioPlaybackController {
     this.activeSource = 'audio-buffer';
     this.currentSongId = songId;
     this.lastErrorMessage = null;
+    this.isMissMuted = false;
 
     try {
       await this.audioManager.ensureResumed();
@@ -159,6 +199,7 @@ export class AudioPlaybackController {
     this.activeSource = 'procedural';
     this.currentSongId = songId;
     this.lastErrorMessage = null;
+    this.isMissMuted = false;
 
     try {
       await this.audioManager.ensureResumed();
@@ -187,8 +228,14 @@ export class AudioPlaybackController {
   public resume(): void {
     if (this.activeSource === 'youtube') {
       this.ytPlayer.resume();
+      if (this.isMissMuted || this.isManualMuted) {
+        this.ytPlayer.setMuted(true);
+      }
     } else {
       this.audioManager.resume();
+      if (this.isMissMuted) {
+        this.audioManager.setMuteOnMiss(true);
+      }
     }
     this.setState(PlaybackState.PLAYING);
   }
@@ -198,6 +245,7 @@ export class AudioPlaybackController {
     this.stopLocalAudio();
     this.activeSource = 'none';
     this.isCurrentlyBuffering = false;
+    this.isMissMuted = false;
     this.setState(PlaybackState.READY);
   }
 
@@ -222,12 +270,15 @@ export class AudioPlaybackController {
       this.notifyBuffering(isBuffering);
     }
 
+    const isAudible = !this.isManualMuted && !this.isMissMuted && this.masterVolume > 0 && this.currentState === PlaybackState.PLAYING;
+
     return {
       activeSource: this.activeSource,
       playbackState: this.currentState,
       volume: this.masterVolume,
-      isAudible: !this.isManualMuted && this.masterVolume > 0 && this.currentState === PlaybackState.PLAYING,
+      isAudible,
       isManualMuted: this.isManualMuted,
+      isMissMuted: this.isMissMuted,
       isBuffering,
       mediaTime: this.getCurrentMediaTime(),
       songId: this.currentSongId,

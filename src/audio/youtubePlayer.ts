@@ -503,6 +503,7 @@ export class YouTubePlayerController {
     this.lastObservedPerfTime = 0;
     this.lastRawPlayerTime = -1;
     this.initialSample = -1;
+    this.isMissMuted = false;
   }
 
   public seekTo(seconds: number): void {
@@ -561,13 +562,25 @@ export class YouTubePlayerController {
     this.player?.setVolume?.(this.isMissMuted ? 0 : this.volume);
   }
 
-  public setMuted(muted: boolean): void {
+  public setMuted(muted: boolean, smoothFade = false): void {
     if (this.isMissMuted === muted) return; // V13.9 RockSync: evita postMessages redundantes no iframe
     this.isMissMuted = muted;
     if (muted) {
       this.player?.mute?.();
     } else {
-      this.player?.unMute?.();
+      if (smoothFade && this.volume > 0) {
+        // Fade-in curto de 20 a 50ms (35ms) respeitando limites da API oficial do YouTube
+        this.player?.setVolume?.(Math.round(this.volume * 0.35));
+        this.player?.unMute?.();
+        setTimeout(() => {
+          if (!this.isMissMuted) {
+            this.player?.setVolume?.(this.volume);
+          }
+        }, 35);
+      } else {
+        this.player?.unMute?.();
+        this.player?.setVolume?.(this.volume);
+      }
     }
   }
 

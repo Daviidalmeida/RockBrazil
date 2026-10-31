@@ -312,11 +312,7 @@ class RockBrazilGame {
       return await this.profileManager.getAllProfiles();
     };
     this.ui.onReturnToLibraryClicked = () => {
-      this.setGameplayViewport(false);
-      this.resetViewportScale();
-      this.audio.stop();
-      this.ytPlayer.stop();
-      this.state = GameState.SONG_SELECT;
+      this.stopMatchSession(GameState.SONG_SELECT);
       this.ui.showScreen(GameState.SONG_SELECT);
       this.ui.renderSongLibrary(this.library.getActiveSongs(), this.profileManager.getActiveProfile());
     };
@@ -446,6 +442,10 @@ class RockBrazilGame {
         case 'MISS':    this.showJudgement('ERRO',     'judge-miss');    break;
       }
       this.ui.showJudgment(result.judgment);
+      // V13.9.5 REGRA DEFINITIVA: HIT restaura volume com fade-in de 20-50ms sem pausar
+      if (result.judgment !== 'MISS') {
+        this.playbackController.handleGameplayHit();
+      }
     };
 
     this.engine.onMiss = (lane: Lane, note: Note) => {
@@ -453,12 +453,26 @@ class RockBrazilGame {
       // V13.8.1: Indicador de ERRO
       this.showJudgement('ERRO', 'judge-miss');
       this.ui.showJudgment('MISS');
-    };
-
-    // V13.9.3: Never auto-mute on miss! Audio remains audible and stable throughout the match.
-    this.engine.onMuteRequested = (_muted: boolean) => {
+      // V13.9.5 REGRA DEFINITIVA: MISS silencia imediatamente sem parar esteira ou relógio
       this.playbackController.handleGameplayMiss();
     };
+
+    // V13.9.5: Transições de silenciamento no erro (miss/extra press) e restauração no acerto (hit)
+    this.engine.onMuteRequested = (muted: boolean) => {
+      if (muted) {
+        this.playbackController.handleGameplayMiss();
+      } else {
+        this.playbackController.handleGameplayHit();
+      }
+    };
+
+    this.rockSync.setMuteCallback((muted: boolean) => {
+      if (muted) {
+        this.playbackController.handleGameplayMiss();
+      } else {
+        this.playbackController.handleGameplayHit();
+      }
+    });
 
     this.engine.onSustainTick = (lane: Lane) => {
       this.renderer.spawnSustainSparks(lane);
@@ -507,7 +521,7 @@ class RockBrazilGame {
 
     // Navigation
     this.ui.onOpenSongSelectClicked = (filter = 'all') => {
-      this.state = GameState.SONG_SELECT;
+      this.stopMatchSession(GameState.SONG_SELECT);
       const songs = this.library.getActiveSongs(filter);
       this.ui.renderSongLibrary(songs, this.profileManager.getActiveProfile(), filter);
       this.ui.showScreen(GameState.SONG_SELECT);
@@ -542,9 +556,7 @@ class RockBrazilGame {
     };
 
     this.ui.onReturnToMenuClicked = () => {
-      this.audio.stop();
-      this.ytPlayer.stop();
-      this.state = GameState.MENU;
+      this.stopMatchSession(GameState.MENU);
       this.ui.showScreen(GameState.MENU);
     };
 
@@ -1278,6 +1290,7 @@ class RockBrazilGame {
     this.clearCountdown();
     this.releaseAllLanes();
     this.setGameplayViewport(true);
+    this.playbackController.stop();
     this.audio.stop();
     this.ytPlayer.stop();
     this.ui.showAutoplayUnblockPrompt(false);
@@ -1602,6 +1615,23 @@ class RockBrazilGame {
     }
   }
 
+  /**
+   * 6. Ao clicar em SAIR / Trocar de tela:
+   * Para completamente o áudio, encerra a sessão e impede música tocando no menu.
+   */
+  private stopMatchSession(targetState: GameState = GameState.SONG_SELECT): void {
+    this.clearCountdown();
+    this.clearResumeCountdown();
+    this.releaseAllLanes();
+    this.setGameplayViewport(false);
+    this.resetViewportScale();
+    this.playbackController.stop();
+    this.audio.stop();
+    this.ytPlayer.stop();
+    this.masterClock.reset();
+    this.state = targetState;
+  }
+
   private pauseGame(): void {
     if (this.isFinishing) return;
     if (this.state !== GameState.PLAYING && this.state !== GameState.COUNTDOWN) return;
@@ -1673,6 +1703,7 @@ class RockBrazilGame {
   private async handleGameOver(stats: any): Promise<void> {
     this.clearCountdown();
     this.releaseAllLanes();
+    this.playbackController.stop();
     this.audio.stop();
     this.ytPlayer.stop();
     this.audio.playSfxGameOver();
@@ -1864,6 +1895,7 @@ class RockBrazilGame {
     const stats = this.engine.getStats();
 
     try {
+      this.playbackController.stop();
       this.audio.stop();
       this.ytPlayer.stop();
       this.audio.playSfxVictory();
