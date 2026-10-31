@@ -26,6 +26,8 @@ import { ChartTimeline } from './game/timeline/chartTimeline';
 import { AuthService } from './firebase/authService';
 import { FirestoreService } from './firebase/firestoreService';
 import { RankingService } from './firebase/rankingService';
+import { RockSyncEngine } from './game/sync/rockSyncEngine';
+import { RockAIView } from './ui/rockAIView';
 
 class RockBrazilGame {
   private settingsManager: SettingsManager;
@@ -43,6 +45,8 @@ class RockBrazilGame {
   private prestartSystem: PreStartSystem;
   private inputController: InputController;
   private sessionController: GameSessionController;
+  private rockSync: RockSyncEngine;
+  private rockAIView: RockAIView | null = null;
 
   private state: GameState = GameState.MENU;
   private currentSong: SongMetadata;
@@ -179,6 +183,7 @@ class RockBrazilGame {
       this.masterClock,
       this.engine.getChartTimeline()
     );
+    this.rockSync = new RockSyncEngine(this.masterClock);
 
     this.inputController = new InputController({
       onLanePress: (lane) => this.pressLane(lane),
@@ -202,6 +207,36 @@ class RockBrazilGame {
       this.beatmaps,
       this.audio
     );
+
+    const rockAIScreen = document.getElementById('screen-rockai');
+    if (rockAIScreen) {
+      this.rockAIView = new RockAIView(rockAIScreen);
+      this.rockAIView.onExitRequested = () => {
+        this.state = GameState.SETTINGS;
+        this.ui.showScreen(GameState.SETTINGS);
+      };
+      this.rockAIView.onOpenInEditorRequested = (songId, result) => {
+        const song: SongMetadata = this.library.getSongById(songId) || {
+          id: songId,
+          title: result.title,
+          artist: result.artist,
+          duration: result.duration,
+          bpm: result.bpm,
+          style: 'Rock',
+          type: 'youtube',
+          youtubeVideoId: result.youtubeVideoId,
+          isAvailable: true,
+          records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
+        };
+        this.currentSong = song;
+        this.state = GameState.NOTE_EDITOR;
+        this.ui.showScreen(GameState.NOTE_EDITOR);
+        this.editor.open(song, 'MEDIUM');
+      };
+      this.rockAIView.onTestPlayRequested = (song, diff, notes) => {
+        this.startNewMatch(song, diff, notes);
+      };
+    }
 
     this.setupEngineCallbacks();
     this.setupUICallbacks();
@@ -417,6 +452,7 @@ class RockBrazilGame {
 
   private setupEngineCallbacks(): void {
     this.engine.onHit = (result: HitResult) => {
+      this.rockSync.registerHit(result);
       // Partículas visuais e faíscas sem alterar a geometria ou causar tremedeira na pista
       this.renderer.spawnHitParticles(result.lane);
       switch (result.judgment) {
@@ -428,16 +464,19 @@ class RockBrazilGame {
       this.ui.showJudgment(result.judgment);
     };
 
-    this.engine.onMiss = () => {
+    this.engine.onMiss = (lane: Lane, note: Note) => {
+      this.rockSync.registerMiss(lane, note);
       // V13.8.1: Indicador de ERRO
       this.showJudgement('ERRO', 'judge-miss');
       this.ui.showJudgment('MISS');
     };
 
-    // V13: Silenciar música ao errar
+    // V13 & V13.9: Silenciar música ao errar com isolamento RockSync para evitar postMessages redundantes no iframe
     this.engine.onMuteRequested = (muted: boolean) => {
-      this.audio.setMuteOnMiss(muted);
-      this.ytPlayer.setMuted(muted);
+      if (this.rockSync.evaluateMuteTransition(muted)) {
+        this.audio.setMuteOnMiss(muted);
+        this.ytPlayer.setMuted(muted);
+      }
     };
 
     this.engine.onSustainTick = (lane: Lane) => {
@@ -1252,9 +1291,11 @@ class RockBrazilGame {
     // Obtém notas autênticas do chart com garantia estrita de pistas por dificuldade
     const rawNotes = customNotes || this.beatmaps.getBeatmap(this.currentSong.id, this.currentDifficulty);
 
-    // V7: Configura pistas ativas estritamente por dificuldade (3 no EASY, 4 no MEDIUM, 5 no HARD/EXPERT)
+    // V7 & V13.9: Configura pistas ativas estritamente por dificuldade e adapta horizonte se YouTube estiver ativo
     this.renderer.setDifficulty(this.currentDifficulty);
     this.renderer.setSongCover(song.coverUrl);
+    this.renderer.isYouTubeActive = (song.type === 'youtube');
+    this.rockSync.reset();
     this.ui.setDifficultyLanes(this.currentDifficulty);
 
     // Reinicializa o motor preservando 100% das notas autênticas
@@ -1637,6 +1678,7 @@ class RockBrazilGame {
       const hasLocal = this.currentSong.type === 'audio-file' || Boolean(this.currentSong.audioUrl) || Boolean(this.currentSong.audioBuffer);
       const isBuffering = !hasLocal && this.currentSong.type === 'youtube' && this.ytPlayer.isBuffering();
       this.masterClock.setBuffering(isBuffering);
+      this.rockSync.update(performance.now());
 
       const clockTime = this.masterClock.getTime();
       const songDuration = this.currentSong.duration;

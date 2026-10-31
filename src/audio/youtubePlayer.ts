@@ -532,7 +532,7 @@ export class YouTubePlayerController {
       this.lastObservedPerfTime = performance.now();
       return raw;
     }
-    return Math.max(0, this.lastObservedVideoTime + Math.min(0.1, Math.max(0, (performance.now() - this.lastObservedPerfTime) / 1000)));
+    return Math.max(0, this.lastObservedVideoTime + Math.min(0.75, Math.max(0, (performance.now() - this.lastObservedPerfTime) / 1000)));
   }
 
   public getDuration(): number {
@@ -562,13 +562,13 @@ export class YouTubePlayerController {
   }
 
   public setMuted(muted: boolean): void {
+    if (this.isMissMuted === muted) return; // V13.9 RockSync: evita postMessages redundantes no iframe
     this.isMissMuted = muted;
     if (muted) {
       this.player?.mute?.();
     } else {
       this.player?.unMute?.();
     }
-    this.player?.setVolume?.(muted ? 0 : this.volume);
   }
 
   public destroy(): void {

@@ -73,7 +73,10 @@ export class GameRenderer {
   private currentCoverUrl: string | null = null;
 
   // 3D Perspective parameters
-  readonly horizonYRatio = 0.085;       // Vanishing point Y (converging toward upper center)
+  public isYouTubeActive = false; // V13.9: Re-ancora o horizonte abaixo do player YouTube de 200x200px
+  get horizonYRatio(): number {
+    return this.isYouTubeActive ? 0.25 : 0.085;
+  }
   readonly strikeLineYRatio = 0.82;     // Strike line Y (receptors location)
   readonly highwayTopWidthRatio = 0.28; // Narrow top for deep perspective
   readonly highwayBottomWidthRatio = 0.95; // Wide bottom for clear readability

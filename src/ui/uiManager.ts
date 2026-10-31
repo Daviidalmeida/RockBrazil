@@ -64,6 +64,7 @@ export class UIManager {
   private screenSettings: HTMLElement;
   private screenHowToPlay: HTMLElement;
   private screenEditor: HTMLElement;
+  private screenRockAI: HTMLElement | null = null;
 
   // Profile elements
   private profileNameInput: HTMLInputElement;
@@ -204,6 +205,7 @@ export class UIManager {
     this.screenSettings = document.getElementById('screen-settings')!;
     this.screenHowToPlay = document.getElementById('screen-howtoplay')!;
     this.screenEditor = document.getElementById('screen-editor')!;
+    this.screenRockAI = document.getElementById('screen-rockai');
 
     this.profileNameInput = document.getElementById('profile-name-input') as HTMLInputElement;
     this.profileAvatarGrid = document.querySelector('.avatar-grid')!;
@@ -426,6 +428,10 @@ export class UIManager {
         this.currentRankDiff = (target.dataset.diff as Difficulty) || 'MEDIUM';
         this.loadRankingView('difficulty');
       });
+    });
+
+    document.getElementById('btn-open-rockai')?.addEventListener('click', () => {
+      this.showScreen(GameState.ROCK_AI);
     });
 
     document.getElementById('btn-open-editor')?.addEventListener('click', () => {
@@ -1260,6 +1266,7 @@ export class UIManager {
     this.screenHowToPlay.classList.toggle('hidden', state !== GameState.HOW_TO_PLAY);
     this.screenRanking.classList.toggle('hidden', (state as any) !== 'RANKING');
     this.screenEditor.classList.toggle('hidden', state !== GameState.NOTE_EDITOR);
+    this.screenRockAI?.classList.toggle('hidden', state !== GameState.ROCK_AI);
 
     if (state === GameState.PLAYING) {
       this.hudElement.classList.remove('hidden');

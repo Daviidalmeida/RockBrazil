@@ -875,6 +875,10 @@
           <button id="btn-switch-account-mode" class="notebook-bar-mini-btn" style="width: 100%; padding: 8px;">TROCAR DE CONTA / MODO DE ENTRADA</button>
         </div>
 
+        <div class="settings-group" style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 10px;">
+          <button id="btn-open-rockai" class="notebook-bar-mini-btn" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; font-weight: bold; border-radius: 6px; border: 1px solid rgba(167, 139, 250, 0.4); cursor: pointer;">⚡ ROCK AI — AUTOCHART & ADMIN</button>
+        </div>
+
         <div class="dialog-buttons">
           <button id="btn-save-settings" class="notebook-bar-btn btn-select">SALVAR E FECHAR</button>
         </div>
@@ -1078,6 +1082,115 @@
 
         <div class="editor-hint" style="font-size: 9px; color: #8c90a3; text-align: center;">
           💡 Clique na pista para criar nota. Arraste horizontalmente para tempo ou verticalmente para pista. Puxe a borda direita para notas longas. Espaço: play/pause. Delete: excluir.
+        </div>
+
+      </div>
+    </div>
+
+        <!-- 15. ROCK AI — AUTOCHART ENGINE & ADMIN -->
+    <div id="screen-rockai" class="overlay-screen hidden" style="padding: 12px; z-index: 70; background: rgba(10, 11, 18, 0.98); overflow-y: auto;">
+      <div class="rockai-screen-container" style="max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px;">
+        <!-- Header -->
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button id="btn-rockai-back" class="icon-button" aria-label="Voltar">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+              </svg>
+            </button>
+            <h2 style="font-family: var(--font-display); font-size: 22px; color: #a78bfa; margin: 0; letter-spacing: 1.5px;">⚡ ROCK AI ENGINE</h2>
+          </div>
+          <span style="font-size: 11px; background: rgba(167, 139, 250, 0.2); color: #c4b5fd; padding: 2px 8px; border-radius: 12px; font-weight: bold; border: 1px solid rgba(167, 139, 250, 0.4);">ADMIN V13.9</span>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="rockai-nav-tabs" style="display: flex; gap: 4px; background: rgba(255,255,255,0.06); padding: 4px; border-radius: 8px;">
+          <button class="rockai-tab-btn active" data-tab="create" style="flex: 1; padding: 6px; font-size: 11px; font-weight: bold; border: none; border-radius: 6px; background: #6366f1; color: #fff; cursor: pointer;">CRIAR MÚSICA</button>
+          <button class="rockai-tab-btn" data-tab="progress" style="flex: 1; padding: 6px; font-size: 11px; font-weight: bold; border: none; border-radius: 6px; background: transparent; color: rgba(255,255,255,0.7); cursor: pointer;">PROCESSO IA</button>
+          <button class="rockai-tab-btn" data-tab="sync" style="flex: 1; padding: 6px; font-size: 11px; font-weight: bold; border: none; border-radius: 6px; background: transparent; color: rgba(255,255,255,0.7); cursor: pointer;">SINCRONIZAR</button>
+          <button class="rockai-tab-btn" data-tab="drafts" style="flex: 1; padding: 6px; font-size: 11px; font-weight: bold; border: none; border-radius: 6px; background: transparent; color: rgba(255,255,255,0.7); cursor: pointer;">CATÁLOGO & CHARTS</button>
+        </div>
+
+        <!-- Tab 1: CRIAR MÚSICA -->
+        <div class="rockai-tab-panel" data-tab="create" style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="settings-group">
+            <label for="rockai-yt-url">Link Oficial do YouTube:</label>
+            <input type="text" id="rockai-yt-url" placeholder="https://www.youtube.com/watch?v=44XYEeD1A1U" class="rock-input" style="width: 100%; padding: 8px; border-radius: 6px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+            <span id="rockai-yt-hint" style="font-size: 11px; margin-top: 3px; display: block;"></span>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <div class="settings-group" style="flex: 1;">
+              <label for="rockai-song-title">Nome da Música:</label>
+              <input type="text" id="rockai-song-title" placeholder="Ex: Under the Bridge" class="rock-input" style="width: 100%; padding: 8px; border-radius: 6px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+            </div>
+            <div class="settings-group" style="flex: 1;">
+              <label for="rockai-song-artist">Artista / Banda:</label>
+              <input type="text" id="rockai-song-artist" placeholder="Ex: Red Hot Chili Peppers" class="rock-input" style="width: 100%; padding: 8px; border-radius: 6px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <label for="rockai-song-category">Categoria / Gênero:</label>
+            <input type="text" id="rockai-song-category" placeholder="Rock Internacional" class="rock-input" style="width: 100%; padding: 8px; border-radius: 6px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+          </div>
+
+          <div class="settings-group">
+            <label for="rockai-audio-file">Arquivo de Áudio Autorizado (WAV, MP3, FLAC, OGG, M4A):</label>
+            <input type="file" id="rockai-audio-file" accept="audio/*,.mp3,.wav,.flac,.ogg,.m4a" style="width: 100%; padding: 6px; background: rgba(0,0,0,0.4); border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); color: #fff;">
+            <span id="rockai-audio-hint" style="font-size: 11px; margin-top: 3px; display: block; color: rgba(255,255,255,0.6);">Insira o áudio original da faixa para processamento DSP/IA.</span>
+          </div>
+
+          <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 6px; padding: 8px; font-size: 11px; color: #fbbf24; line-height: 1.4;">
+            ⚖️ <strong>Conformidade e Integridade:</strong> O áudio para análise com IA deve ser fornecido legitimamente. Se houver apenas o link do YouTube, a música será cadastrada com o status <em>AGUARDANDO ÁUDIO AUTORIZADO</em>.
+          </div>
+
+          <button id="btn-rockai-analyze" class="btn-primary" style="padding: 10px; font-size: 13px; font-weight: bold; background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; border: none; border-radius: 6px; cursor: pointer; margin-top: 4px;">⚡ ANALISAR MÚSICA COM IA</button>
+        </div>
+
+        <!-- Tab 2: PROGRESSO DO PROCESSAMENTO -->
+        <div class="rockai-tab-panel hidden" data-tab="progress" style="display: flex; flex-direction: column; gap: 12px; text-align: center; padding: 20px 0;">
+          <div style="font-size: 13px; color: rgba(255,255,255,0.7);">STATUS DA OPERAÇÃO</div>
+          <div id="rockai-step-label" style="font-size: 16px; font-weight: bold; color: #a78bfa;">Aguardando início...</div>
+          
+          <div style="width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden; margin: 10px 0;">
+            <div id="rockai-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #6366f1, #10b981); transition: width 0.3s ease;"></div>
+          </div>
+          <div id="rockai-progress-text" style="font-size: 14px; font-weight: bold; color: #fff;">0%</div>
+
+          <button id="btn-rockai-cancel" class="hidden" style="padding: 6px 14px; font-size: 12px; background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 6px; cursor: pointer; align-self: center;">Cancelar Processamento</button>
+        </div>
+
+        <!-- Tab 3: SINCRONIZAR COM VÍDEO -->
+        <div class="rockai-tab-panel hidden" data-tab="sync" style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 13px; font-weight: bold; color: #fff;">Calibração de Offset (Vídeo ↔ Chart):</span>
+            <span id="rockai-align-status" class="rockai-status-badge nao_calibrado">NÃO CALIBRADO</span>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: center; gap: 12px; padding: 14px; background: rgba(0,0,0,0.4); border-radius: 8px;">
+            <span style="font-size: 14px; color: rgba(255,255,255,0.7);">Offset Atual:</span>
+            <span id="rockai-offset-val" style="font-size: 22px; font-weight: bold; color: #ffe600; font-family: monospace;">0 ms</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+            <button data-offset-delta="-100" style="padding: 8px; font-size: 12px; font-weight: bold; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 6px; cursor: pointer;">-100 ms</button>
+            <button data-offset-delta="-25" style="padding: 8px; font-size: 12px; font-weight: bold; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 6px; cursor: pointer;">-25 ms</button>
+            <button data-offset-delta="25" style="padding: 8px; font-size: 12px; font-weight: bold; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 6px; cursor: pointer;">+25 ms</button>
+            <button data-offset-delta="100" style="padding: 8px; font-size: 12px; font-weight: bold; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 6px; cursor: pointer;">+100 ms</button>
+          </div>
+
+          <div style="font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.4;">
+            💡 <em>Regra temporal: chartTime = videoTime + (offset / 1000). Valores positivos antecipam as notas na esteira; valores negativos retardam a chegada dos receptors.</em>
+          </div>
+
+          <button id="btn-rockai-validate-sync" class="btn-primary" style="padding: 9px; font-size: 12px; font-weight: bold; background: #10b981; color: #000; border: none; border-radius: 6px; cursor: pointer;">✓ CONFIRMAR: VALIDADO PELO USUÁRIO</button>
+        </div>
+
+        <!-- Tab 4: CATÁLOGO & CHARTS -->
+        <div class="rockai-tab-panel hidden" data-tab="drafts" style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px;">Rascunhos e Músicas Registradas:</div>
+          <div id="rockai-drafts-list"></div>
         </div>
 
       </div>
