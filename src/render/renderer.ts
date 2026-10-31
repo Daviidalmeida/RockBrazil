@@ -1,5 +1,6 @@
 import { SyncDiagnostics } from '../game/sync/syncDiagnostics';
 import { Note, Lane, Difficulty, getLanesForDifficulty, NoteSpeedPreset } from '../types';
+import { calculateApproachTime, BASE_APPROACH_TIMES } from '../game/speed/approachTimeCalculator';
 
 interface Particle {
   x: number;
@@ -84,24 +85,15 @@ export class GameRenderer {
   public visualEffectsMode: 'NORMAL' | 'REDUZIDO' = 'NORMAL';
 
   get baseNoteSpeed(): number {
-    let base = 1.85;
-    switch (this.difficulty) {
-      case 'EASY': base = 2.20; break;
-      case 'MEDIUM': base = 2.00; break;
-      case 'HARD': base = 1.85; break;
-      case 'EXPERT': base = 1.70; break;
-      default: base = 1.85; break;
-    }
-    switch (this.speedPreset) {
-      case 'LENTA': return base + 0.35;
-      case 'RÁPIDA': return Math.max(1.25, base - 0.30);
-      case 'NORMAL':
-      default: return base;
-    }
+    return calculateApproachTime(this.difficulty, 1.0, this.speedPreset);
   }
 
   get noteSpeed(): number {
-    return this.baseNoteSpeed / Math.max(0.6, Math.min(2.5, this.noteSpeedMultiplier));
+    return calculateApproachTime(
+      this.difficulty,
+      this.noteSpeedMultiplier,
+      this.speedPreset
+    );
   }
 
   get laneCount(): number {

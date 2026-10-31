@@ -118,23 +118,18 @@ html, body {
   pointer-events: none;
 }
 
-/* 1. Top Left YouTube Miniplayer (V13.8.4 Compact Discreet 200x200 CSS pixels) */
+/* 1. Top Left YouTube Miniplayer (V13.8.5 Discreto Widescreen 16:9 com Transparência Real nos Elementos Próprios) */
 .yt-miniplayer-box {
   position: absolute;
-  top: max(10px, env(safe-area-inset-top));
-  left: max(10px, env(safe-area-inset-left));
-  width: 200px;
-  height: 200px;
-  min-width: 200px;
-  min-height: 200px;
-  max-width: 200px;
-  max-height: 200px;
+  top: max(8px, env(safe-area-inset-top));
+  left: max(8px, env(safe-area-inset-left));
+  width: clamp(140px, 36vw, 175px);
+  aspect-ratio: 16 / 9;
   box-sizing: border-box;
-  aspect-ratio: auto;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   pointer-events: auto;
   z-index: 12;
@@ -4542,7 +4537,7 @@ button,
 
 .results-achievement-banner.hidden { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
 .hud-multiplier-stack { display: flex; flex-direction: column; align-items: center; width: 64px; }
-.youtube-active .hud-left-panel { top: calc(max(10px, env(safe-area-inset-top)) + 208px); }
+.youtube-active .hud-left-panel { top: calc(max(8px, env(safe-area-inset-top)) + clamp(140px, 36vw, 175px) * 9 / 16 + 8px); }
 
 /* ========================================================
    V13.8.2 CLOUD SYNC STATUS INDICATOR

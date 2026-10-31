@@ -41,16 +41,16 @@ describe('ROCKBRAZIL V13.8.3 — SUÍTE DE VELOCIDADE DA ESTEIRA E SINCRONISMO',
       renderer = new GameRenderer(dummyCanvas);
     });
 
-    it('deve fornecer 2.20s de tempo de aproximação no modo FÁCIL (EASY)', () => {
+    it('deve fornecer 1.90s de tempo de aproximação no modo FÁCIL (EASY) (V13.8.5 Agilizado)', () => {
       renderer.setDifficulty('EASY');
-      expect(renderer.baseNoteSpeed).toBeCloseTo(2.20, 2);
-      expect(renderer.noteSpeed).toBeCloseTo(2.20, 2);
+      expect(renderer.baseNoteSpeed).toBeCloseTo(1.90, 2);
+      expect(renderer.noteSpeed).toBeCloseTo(1.90, 2);
     });
 
-    it('deve fornecer 2.00s de tempo de aproximação no modo MÉDIO (MEDIUM)', () => {
+    it('deve fornecer 2.20s de tempo de aproximação no modo MÉDIO (MEDIUM) (V13.8.5 Confortável)', () => {
       renderer.setDifficulty('MEDIUM');
-      expect(renderer.baseNoteSpeed).toBeCloseTo(2.00, 2);
-      expect(renderer.noteSpeed).toBeCloseTo(2.00, 2);
+      expect(renderer.baseNoteSpeed).toBeCloseTo(2.20, 2);
+      expect(renderer.noteSpeed).toBeCloseTo(2.20, 2);
     });
 
     it('deve fornecer 1.85s de tempo de aproximação no modo DIFÍCIL (HARD)', () => {
@@ -59,10 +59,10 @@ describe('ROCKBRAZIL V13.8.3 — SUÍTE DE VELOCIDADE DA ESTEIRA E SINCRONISMO',
       expect(renderer.noteSpeed).toBeCloseTo(1.85, 2);
     });
 
-    it('deve fornecer 1.70s de tempo de aproximação no modo EXPERT', () => {
+    it('deve fornecer 1.65s de tempo de aproximação no modo EXPERT (V13.8.5)', () => {
       renderer.setDifficulty('EXPERT');
-      expect(renderer.baseNoteSpeed).toBeCloseTo(1.70, 2);
-      expect(renderer.noteSpeed).toBeCloseTo(1.70, 2);
+      expect(renderer.baseNoteSpeed).toBeCloseTo(1.65, 2);
+      expect(renderer.noteSpeed).toBeCloseTo(1.65, 2);
     });
   });
 
@@ -79,23 +79,23 @@ describe('ROCKBRAZIL V13.8.3 — SUÍTE DE VELOCIDADE DA ESTEIRA E SINCRONISMO',
 
     it('deve aplicar +0.35s para preset LENTA no HARD (2.20s)', () => {
       renderer.speedPreset = 'LENTA';
-      expect(renderer.baseNoteSpeed).toBeCloseTo(2.20, 2);
+      expect(renderer.noteSpeed).toBeCloseTo(2.20, 2);
     });
 
     it('deve aplicar baseline no preset NORMAL no HARD (1.85s)', () => {
       renderer.speedPreset = 'NORMAL';
-      expect(renderer.baseNoteSpeed).toBeCloseTo(1.85, 2);
+      expect(renderer.noteSpeed).toBeCloseTo(1.85, 2);
     });
 
     it('deve aplicar -0.30s para preset RÁPIDA no HARD (1.55s)', () => {
       renderer.speedPreset = 'RÁPIDA';
-      expect(renderer.baseNoteSpeed).toBeCloseTo(1.55, 2);
+      expect(renderer.noteSpeed).toBeCloseTo(1.55, 2);
     });
 
-    it('deve respeitar o piso mínimo de 1.25s no preset RÁPIDA para EXPERT', () => {
-      renderer.setDifficulty('EXPERT'); // base 1.70s
-      renderer.speedPreset = 'RÁPIDA'; // 1.70 - 0.30 = 1.40s >= 1.25s
-      expect(renderer.baseNoteSpeed).toBeCloseTo(1.40, 2);
+    it('deve respeitar o piso mínimo no preset RÁPIDA para EXPERT (1.35s)', () => {
+      renderer.setDifficulty('EXPERT'); // base 1.65s
+      renderer.speedPreset = 'RÁPIDA'; // 1.65 - 0.30 = 1.35s >= 1.20s
+      expect(renderer.noteSpeed).toBeCloseTo(1.35, 2);
     });
 
     it('deve aplicar noteSpeedMultiplier sem alterar timestamps ou áudio', () => {

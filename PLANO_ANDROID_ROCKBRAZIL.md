@@ -1,5 +1,5 @@
 # ROCKBRAZIL — PLANO ARQUITETURAL PARA APLICATIVO ANDROID
-**Versão:** V13.8.4  
+**Versão:** V13.8.5  
 **Data:** Outubro de 2026  
 **Status:** Planejamento e Preparação Arquitetural (Sem geração prematura de APK)  
 **Autor:** Antigravity / DeepMind Pair Programming  
@@ -123,9 +123,11 @@ A aba de Músicas Internacionais do RockBrazil utiliza a API oficial do YouTube 
   ```
 - O parâmetro `origin=https://localhost` satisfaz plenamente as verificações de CORS e IFrame do YouTube.
 
-### 2. Dimensões Mínimas e Transparência
-- Mantida a regra estabelecida na V13.8.4: dimensões estritas de **200x200 pixels CSS** (`.yt-miniplayer-box`), permitindo visualização discreta do vídeo oficial sem infringir as diretrizes de incorporação do YouTube (que proíbem ocultar totalmente o player ou reduzir abaixo de 200x200).
-- Fundo semitransparente discreto (`rgba(0, 0, 0, 0.8)`) e borda sutil de 1px.
+### 2. Dimensões Widescreen 16:9 e Transparência Discreta (V13.8.5)
+- **Formato Widescreen 16:9:** Restauração da proporção de vídeo (`aspect-ratio: 16 / 9`) com largura adaptativa `clamp(140px, 36vw, 175px)` posicionada no canto superior esquerdo. Reduz a área ocupada na tela em mais de 65% em comparação com caixas quadradas rígidas (área reduzida de 40.000 px² para ~11.000–17.000 px²), garantindo folga total para a esteira e notas verticais.
+- **Transparência Real de 80%:** Aplicada aos elementos de suporte próprios do RockBrazil (`rgba(0, 0, 0, 0.2)` na caixa contêiner e bordas sutis).
+- **Conformidade Estrita com Termos da API do YouTube:** Nenhuma propriedade de opacidade CSS é aplicada diretamente sobre o elemento `<iframe>` ou controles nativos do YouTube, respeitando a Seção III.A.2 dos *YouTube API Developer Terms* (que proíbe obscurecer logotipos, controles ou marcas oficiais).
+- **Ancoragem Dinâmica do HUD:** O painel esquerdo do HUD é recalculado dinamicamente para se posicionar imediatamente abaixo do player de vídeo, prevenindo qualquer sobreposição visual.
 
 ### 3. Permissões de Reprodução em Background
 - Vídeos do YouTube só reproduzirão enquanto o app estiver no primeiro plano com a tela ativa (em total conformidade com os Termos de Serviço da API do YouTube).
@@ -197,7 +199,7 @@ A aba de Músicas Internacionais do RockBrazil utiliza a API oficial do YouTube 
 
 ### 1. Telas de 90Hz, 120Hz e 144Hz (ProMotion / Fluid Display)
 - O loop de jogo do RockBrazil (`engine.ts` e `renderer.ts`) utiliza `requestAnimationFrame` acoplado ao `performance.now()`.
-- O cálculo da descida das notas é baseado em tempo contínuo decorrido (`elapsedSec`), não em frames fixos. Isso significa que em telas de 120Hz, o jogo roda automaticamente a 120 FPS com extrema suavidade visual, mantendo rigorosamente a velocidade calibrada na V13.8.3.
+- O cálculo da descida das notas é baseado em tempo contínuo decorrido (`elapsedSec`), não em frames fixos. Isso significa que em telas de 120Hz, o jogo roda automaticamente a 120 FPS com extrema suavidade visual, mantendo rigorosamente a calibração de tempo de aproximação (approach time) estabelecida na V13.8.5 via módulo único `src/game/speed/approachTimeCalculator.ts` (FÁCIL: 1.90s ágil; MÉDIO: 2.20s confortável; DIFÍCIL: 1.85s; EXPERT: 1.65s).
 
 ### 2. Otimização de Entrada por Toque
 - `touch-action: none` aplicado estritamente no `#canvas-container` e `#game-canvas`.
@@ -238,7 +240,7 @@ Apenas as permissões mínimas indispensáveis serão solicitadas (sem acesso in
 
 ## CONCLUSÃO E PRÓXIMOS PASSOS QUANDO AUTORIZADO
 
-A base de código atual do RockBrazil (V13.8.4) está totalmente alinhada e pronta para o encapsulamento no Capacitor. Quando o desenvolvimento do APK nativo for formalmente iniciado nas etapas futuras do roadmap, a estrutura de comandos será:
+A base de código atual do RockBrazil (V13.8.5) está totalmente alinhada e pronta para o encapsulamento no Capacitor. Quando o desenvolvimento do APK nativo for formalmente iniciado nas etapas futuras do roadmap, a estrutura de comandos será:
 
 1. `npm install @capacitor/core @capacitor/cli @capacitor/android`
 2. `npx cap init RockBrazil com.rockbrazil.game --web-dir dist`

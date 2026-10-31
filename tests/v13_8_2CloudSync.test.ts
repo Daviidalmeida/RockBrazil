@@ -59,13 +59,13 @@ describe('ROCKBRAZIL V13.8.2 — SUÍTE DE TESTES: SINCRONIZAÇÃO EM NUVEM E PL
   const styleCss = fs.readFileSync(path.join(rootDir, 'src/style.css'), 'utf-8');
 
   // ========================================================
-  // FASE 1: PLAYER COMPACTO DO YOUTUBE (RESOLUÇÃO 200x200)
+  // FASE 1: PLAYER COMPACTO DO YOUTUBE (WIDESCREEN 16:9 DISCRETO V13.8.5)
   // ========================================================
-  describe('Fase 1: Player Compacto do YouTube (200x200 CSS)', () => {
-    it('deve definir .yt-miniplayer-box com largura e altura exatas de 200px sem corte', () => {
+  describe('Fase 1: Player Compacto do YouTube (Widescreen 16:9 Discreto V13.8.5)', () => {
+    it('deve definir .yt-miniplayer-box com proporção widescreen 16:9 sem corte', () => {
       expect(styleCss).toContain('.yt-miniplayer-box');
-      expect(styleCss).toMatch(/width:\s*200px/);
-      expect(styleCss).toMatch(/height:\s*200px/);
+      expect(styleCss).toMatch(/clamp\(140px,\s*36vw,\s*175px\)/);
+      expect(styleCss).toContain('aspect-ratio: 16 / 9;');
     });
 
     it('NÃO deve aplicar transform: scale() no container do miniplayer ou iframe', () => {
@@ -76,13 +76,13 @@ describe('ROCKBRAZIL V13.8.2 — SUÍTE DE TESTES: SINCRONIZAÇÃO EM NUVEM E PL
     });
 
     it('deve posicionar o miniplayer no topo esquerdo com suporte a safe-area-inset', () => {
-      expect(styleCss).toContain('top: max(10px, env(safe-area-inset-top));');
-      expect(styleCss).toContain('left: max(10px, env(safe-area-inset-left));');
+      expect(styleCss).toContain('top: max(8px, env(safe-area-inset-top));');
+      expect(styleCss).toContain('left: max(8px, env(safe-area-inset-left));');
     });
 
     it('deve manter o painel HUD esquerdo posicionado abaixo do player quando ativo', () => {
       expect(styleCss).toContain('.youtube-active .hud-left-panel');
-      expect(styleCss).toContain('calc(max(10px, env(safe-area-inset-top)) + 208px)');
+      expect(styleCss).toContain('calc(max(8px, env(safe-area-inset-top)) + clamp(140px, 36vw, 175px) * 9 / 16 + 8px)');
     });
 
     it('deve manter o botão de pausa no canto superior direito com z-index elevado', () => {

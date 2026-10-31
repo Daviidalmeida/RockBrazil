@@ -710,13 +710,7 @@ class RockBrazilGame {
       this.ytPlayer.setVolume(updated.musicVolume * 100);
       this.engine.updateSettings(updated);
       this.renderer.noteSpeedMultiplier = updated.noteSpeedMultiplier;
-      if (updated.noteSpeedMultiplier <= 0.85) {
-        this.renderer.speedPreset = 'LENTA';
-      } else if (updated.noteSpeedMultiplier >= 1.25) {
-        this.renderer.speedPreset = 'RÁPIDA';
-      } else {
-        this.renderer.speedPreset = 'NORMAL';
-      }
+      this.renderer.speedPreset = updated.noteSpeedPreset || 'NORMAL';
       this.renderer.visualEffectsEnabled = updated.visualEffectsEnabled;
       this.renderer.visualEffectsMode = updated.visualEffectsMode || 'NORMAL';
       if (this.currentSong) {

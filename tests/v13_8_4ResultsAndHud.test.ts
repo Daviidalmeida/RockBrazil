@@ -108,20 +108,16 @@ describe('ROCKBRAZIL V13.8.4 — HUD COMPACTO, SHOW FINALIZADO E SINCRONISMO INT
     });
   });
 
-  describe('4. Player YouTube Discreto (200x200 CSS pixels e 80% opacidade)', () => {
-    it('deve respeitar estritamente o tamanho mínimo de 200x200 da API do YouTube', () => {
-      expect(styleCss).toContain('width: 200px;');
-      expect(styleCss).toContain('height: 200px;');
-      expect(styleCss).toContain('min-width: 200px;');
-      expect(styleCss).toContain('min-height: 200px;');
-      expect(styleCss).toContain('max-width: 200px;');
-      expect(styleCss).toContain('max-height: 200px;');
+  describe('4. Player YouTube Discreto (16:9 widescreen compacto e 80% de transparência)', () => {
+    it('deve ter proporção widescreen 16:9 compacta sem bloquear a esteira', () => {
+      expect(styleCss).toContain('aspect-ratio: 16 / 9;');
+      expect(styleCss).toContain('clamp(140px, 36vw, 175px);');
     });
 
-    it('deve ter wrapper externo discreto com 80% de opacidade e borda sutil de 1px', () => {
-      expect(styleCss).toContain('background: rgba(0, 0, 0, 0.8);');
-      expect(styleCss).toContain('border: 1px solid rgba(255, 255, 255, 0.2);');
-      expect(styleCss).toContain('box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);');
+    it('deve ter wrapper com 80% de transparência (rgba(0,0,0,0.2)) e borda discreta', () => {
+      expect(styleCss).toContain('background: rgba(0, 0, 0, 0.2);');
+      expect(styleCss).toContain('border: 1px solid rgba(255, 255, 255, 0.15);');
+      expect(styleCss).toContain('box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);');
     });
   });
 
