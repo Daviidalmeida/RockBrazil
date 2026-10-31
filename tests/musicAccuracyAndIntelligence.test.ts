@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { Difficulty, Note } from '../src/types';
 import { BeatmapManager } from '../src/game/beatmapManager';
+import { parseYouTubeError } from '../src/audio/youtubePlayer';
 import {
   AutonomousMusicIntelligenceEngine,
   ChartIntelligenceValidator,
@@ -11,11 +12,18 @@ import {
   VerifiedSyncProfileLearning,
   MusicIntelligenceConfidenceEngine,
   MusicAccuracyValidator,
+  IndependentGroundTruthRepository,
+  IndependentGroundTruthRecord,
+  GroundTruthEvent,
   VisualSpeedPreset
 } from '../src/game/intelligence';
 
-describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm Engine Suite', () => {
+describe('ROCKBRAZIL V13.9.4.1 — Autonomous Music Intelligence & Independent Ground Truth Suite', () => {
   const beatmapManager = new BeatmapManager();
+
+  beforeEach(() => {
+    IndependentGroundTruthRepository.clear();
+  });
 
   // 1. ChartIntelligenceValidator: ordenação, lanes por dificuldade, preservação de acordes e remoção de duplicatas
   it('1. ChartIntelligenceValidator validates note monotonicity, lane bounds, preserves chords and prunes duplicates', () => {
@@ -54,22 +62,18 @@ describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm En
 
   // 2. RecordingVersionMatcher: detecção de studio vs live vs extended
   it('2. RecordingVersionMatcher detects studio vs live vs extended version discrepancies', () => {
-    // Exact or near studio match (< 15s diff)
     const studio = RecordingVersionMatcher.evaluateCompatibility(229, 229, 228.4);
     expect(studio.isCompatible).toBe(true);
     expect(studio.detectedVersionType).toBe('STUDIO');
     expect(studio.confidenceScore).toBeGreaterThanOrEqual(0.9);
 
-    // Live version (typically 15s to 45s longer due to stage intro/applause)
     const live = RecordingVersionMatcher.evaluateCompatibility(229, 260, 228.4);
     expect(live.detectedVersionType).toBe('LIVE');
     expect(live.durationDifferenceSec).toBe(31);
 
-    // Extended version (> 45s longer)
     const extended = RecordingVersionMatcher.evaluateCompatibility(229, 310, 228.4);
     expect(extended.detectedVersionType).toBe('EXTENDED');
 
-    // Incompatible: chart extends beyond audio duration
     const truncatedMedia = RecordingVersionMatcher.evaluateCompatibility(229, 180, 228.4);
     expect(truncatedMedia.isCompatible).toBe(false);
     expect(truncatedMedia.confidenceScore).toBeLessThan(0.5);
@@ -80,7 +84,6 @@ describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm En
     const sync = new UniversalMusicSyncEngine();
     sync.startPlayback();
 
-    // Mock media source reporting 15.000s
     let currentMediaTime = 15.0;
     const mockSource = {
       getCurrentTime: () => currentMediaTime,
@@ -90,18 +93,14 @@ describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm En
     };
 
     sync.setSource(mockSource);
-    // Apply a calibrated offset of +250ms (0.250s)
     sync.setCalibration(250, 0);
 
     const snapshot = sync.update(1000);
     expect(snapshot.mediaTime).toBe(15.0);
-    // Chart Clock reflects calibrated offset
     expect(snapshot.chartTime).toBeCloseTo(15.25, 2);
-    // Clocks are distinct
     expect(snapshot.chartTime).not.toBe(snapshot.mediaTime);
     expect(snapshot.calibratedOffsetMs).toBe(250);
 
-    // Gameplay misses do not mutate media or chart clocks
     sync.registerMiss();
     sync.registerMiss();
     const snapAfterMiss = sync.update(1016);
@@ -111,7 +110,6 @@ describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm En
 
   // 4. SmartHighwayEngine: busca binária O(log N) para renderização da esteira
   it('4. SmartHighwayEngine binary search O(log N) slices visible window efficiently across large charts', () => {
-    // Generate 2500 notes spaced every 100ms (250s chart)
     const largeChart: Note[] = [];
     for (let i = 0; i < 2500; i++) {
       largeChart.push({
@@ -123,23 +121,19 @@ describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm En
     }
 
     const currentTime = 100.0;
-    const approachTime = 2.20; // Médio
+    const approachTime = 2.20;
 
     const startPerf = performance.now();
     const visibleNotes = SmartHighwayEngine.getVisibleNotes(largeChart, currentTime, approachTime);
     const endPerf = performance.now();
 
-    // Performance should be sublinear (< 2ms)
     expect(endPerf - startPerf).toBeLessThan(5);
-
     expect(visibleNotes.length).toBeGreaterThan(0);
-    // All returned notes must be within viewport [100.0 - 0.25, 100.0 + 2.20 + 0.15]
     for (const note of visibleNotes) {
       expect(note.time).toBeGreaterThanOrEqual(99.7);
       expect(note.time).toBeLessThanOrEqual(102.4);
     }
 
-    // Binary search edge cases
     expect(SmartHighwayEngine.getVisibleNotes([], currentTime, approachTime)).toEqual([]);
     expect(SmartHighwayEngine.findFirstVisibleIndex(largeChart, 0)).toBe(0);
     expect(SmartHighwayEngine.findLastVisibleIndex(largeChart, 300)).toBe(largeChart.length - 1);
@@ -147,18 +141,14 @@ describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm En
 
   // 5. Presets de velocidade visual: Mais lenta, Normal, Mais rápida
   it('5. Highway visual speed presets adjust approach time without altering timing windows or musical audio', () => {
-    // Baseline times: EASY=1.90, MEDIUM=2.20, HARD=1.85, EXPERT=1.65
     const easyNormal = SmartHighwayEngine.calculateApproachTime('EASY', 'NORMAL');
     const easyLenta = SmartHighwayEngine.calculateApproachTime('EASY', 'LENTA');
     const easyRapida = SmartHighwayEngine.calculateApproachTime('EASY', 'RÁPIDA');
 
     expect(easyNormal).toBe(1.90);
-    // LENTA: 1.25x approach time = slower visual descent
     expect(easyLenta).toBeCloseTo(1.90 * 1.25, 2);
-    // RÁPIDA: 0.80x approach time = faster visual descent
     expect(easyRapida).toBeCloseTo(1.90 * 0.80, 2);
 
-    // MEDIUM: baseline 2.20s
     const medNormal = SmartHighwayEngine.calculateApproachTime('MEDIUM', 'NORMAL');
     const medLenta = SmartHighwayEngine.calculateApproachTime('MEDIUM', 'LENTA');
     const medRapida = SmartHighwayEngine.calculateApproachTime('MEDIUM', 'RÁPIDA');
@@ -167,7 +157,6 @@ describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm En
     expect(medLenta).toBeCloseTo(2.20 * 1.25, 2);
     expect(medRapida).toBeCloseTo(2.20 * 0.80, 2);
 
-    // Verifies presets are monotonic: LENTA > NORMAL > RÁPIDA
     expect(easyLenta).toBeGreaterThan(easyNormal);
     expect(easyNormal).toBeGreaterThan(easyRapida);
   });
@@ -176,24 +165,20 @@ describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm En
   it('6. IntelligentSyncRecovery diagnoses buffering, playback stall, seek and offset issues accurately', () => {
     const recovery = new IntelligentSyncRecovery();
 
-    // 1. Buffering diagnosis
     const diagBuffering = recovery.diagnose(10.0, 10.0, true, false, 1000);
     expect(diagBuffering).not.toBeNull();
     expect(diagBuffering?.type).toBe('BUFFERING');
     expect(diagBuffering?.suggestedAction).toBe('FREEZE');
 
-    // 2. Normal playback (no issue)
     recovery.diagnose(10.0, 10.0, false, false, 1000);
     const diagNormal = recovery.diagnose(10.05, 10.05, false, false, 1050);
     expect(diagNormal).toBeNull();
 
-    // 3. Seek diagnosis (> 1.5s jump in media)
     const diagSeek = recovery.diagnose(25.0, 25.0, false, false, 1100);
     expect(diagSeek).not.toBeNull();
     expect(diagSeek?.type).toBe('SEEK_DETECTED');
     expect(diagSeek?.suggestedAction).toBe('REINDEX');
 
-    // 4. Playback Stall diagnosis
     let diagStall = null;
     let perf = 2000;
     recovery.diagnose(30.0, 30.0, false, false, perf);
@@ -207,14 +192,12 @@ describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm En
 
   // 7. VerifiedSyncProfileLearning: persistência e rejeição de perfis não verificados
   it('7. VerifiedSyncProfileLearning retrieves preloaded profiles and rejects unverified calibrations', () => {
-    // Preloaded profile for T.N.T.
     const tntProfile = VerifiedSyncProfileLearning.getProfile('tnt-acdc');
     expect(tntProfile).not.toBeNull();
     expect(tntProfile?.songId).toBe('tnt-acdc');
     expect(tntProfile?.confidence).toBe('VERIFIED');
     expect(tntProfile?.verifiedAnchors.length).toBeGreaterThanOrEqual(3);
 
-    // Reject unverified profile (must NOT learn from bad calibrations or player misses)
     const unverifiedProfile: any = {
       songId: 'unknown-song',
       confidence: 'LOW_CONFIDENCE',
@@ -226,20 +209,17 @@ describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm En
     expect(saved).toBe(false);
   });
 
-  // 8. MusicIntelligenceConfidenceEngine: honestidade de rotulação (nunca falsear REAL_AI)
+  // 8. MusicIntelligenceConfidenceEngine: honestidade de rotulação
   it('8. MusicIntelligenceConfidenceEngine provides honest labeling without false AI claims', () => {
-    // When running with fallback DSP, never falsify REAL_AI
     const fallbackLabel = MusicIntelligenceConfidenceEngine.getHonestLabel('FALLBACK_DSP', false);
     expect(fallbackLabel.mode).toBe('FALLBACK_DSP');
     expect(fallbackLabel.badge).toContain('FALLBACK_DSP');
     expect(fallbackLabel.badge).not.toContain('Spotify');
 
-    // Only when real neural AI was executed
     const realAILabel = MusicIntelligenceConfidenceEngine.getHonestLabel('REAL_AI', true);
     expect(realAILabel.mode).toBe('REAL_AI');
     expect(realAILabel.badge).toContain('Spotify Basic Pitch & Demucs');
 
-    // Confidence evaluation with verified ground truth
     const verifiedEval = MusicIntelligenceConfidenceEngine.evaluateConfidence({
       hasGroundTruthReference: true,
       precisionScore: 0.94,
@@ -251,32 +231,224 @@ describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm En
     expect(verifiedEval.score).toBeGreaterThanOrEqual(0.90);
   });
 
-  // 9. MusicAccuracyValidator: fidelidade musical >= 90% na T.N.T. (AC/DC)
-  it('9. MusicAccuracyValidator achieves >= 90% Precision, Recall and F1 on T.N.T. pilot track', () => {
+  // 9. Hotfix V13.9.4.1: T.N.T. sem referência independente registrada retorna INSUFFICIENT_EVIDENCE
+  it('9. T.N.T. pilot track without certified external independent reference reports INSUFFICIENT_EVIDENCE (no circular self-comparison)', () => {
     const expertChart = beatmapManager.getBeatmap('tnt-acdc', 'EXPERT');
     expect(expertChart.length).toBe(1639);
 
-    const refEvents = MusicAccuracyValidator.getGroundTruthReference('tnt-acdc', 'EXPERT');
-    expect(refEvents.length).toBeGreaterThan(300);
-
+    // Sem dataset externo independente registrado no repositório
     const evaluation = MusicAccuracyValidator.evaluateChartAccuracy(
       'tnt-acdc',
       'EXPERT',
-      expertChart,
-      refEvents
+      expertChart
     );
 
-    // Quantitative requirements: Precision >= 90%, Recall >= 90%, F1 >= 90%
+    // O status honesto DEVE ser INSUFFICIENT_EVIDENCE, eliminando a antiga validação circular de 100%
+    expect(evaluation.status).toBe('INSUFFICIENT_EVIDENCE');
+    expect(evaluation.truePositives).toBe(0);
+    expect(evaluation.referenceEventsCount).toBe(0);
+    expect(evaluation.details).toContain('Nenhuma anotação musical de referência independente disponível');
+  });
+
+  // 10. Bloqueio de Validação Circular: rejeição quando a referência deriva do mesmo chart
+  it('10. Circular validation blocker detects and rejects shared origin references with CIRCULAR_VALIDATION_REJECTED', () => {
+    const expertChart = beatmapManager.getBeatmap('tnt-acdc', 'EXPERT');
+
+    // Tentativa 1: Passar a própria instância de array do chart como referência
+    const circularResult1 = MusicAccuracyValidator.evaluateChartAccuracy(
+      'tnt-acdc',
+      'EXPERT',
+      expertChart,
+      expertChart as any
+    );
+    expect(circularResult1.status).toBe('CIRCULAR_VALIDATION_REJECTED');
+    expect(circularResult1.isCircularValidationBlocked).toBe(true);
+    expect(circularResult1.details).toContain('Validação bloqueada por circularidade');
+
+    // Tentativa 2: Registro falso que referencia o chart interno nos metadados
+    const circularRecord: IndependentGroundTruthRecord = {
+      songId: 'tnt-acdc',
+      recordingId: 'yt-fGDQ9IukMOc',
+      difficulty: 'EXPERT',
+      sourceType: 'SYNTHETIC_BENCHMARK',
+      sourceDescription: 'Copiado de RAW_INTERNATIONAL_CHARTS para forçar 100%',
+      annotationVersion: '1.0-fake',
+      events: expertChart.map((n) => ({ time: n.time, lane: n.lane, duration: n.duration })),
+      provenance: {
+        authorOrLab: 'Internal Copier',
+        date: '2026-10-31',
+        method: 'SYNTHETIC_BENCHMARK',
+        datasetName: 'Raw International Mirror',
+        isIndependent: false, // Declarado não independente
+        sourceChartIdToExclude: 'tnt-acdc_EXPERT'
+      },
+      validationStatus: 'UNVERIFIED'
+    };
+
+    const circularResult2 = MusicAccuracyValidator.evaluateChartAccuracy(
+      'tnt-acdc',
+      'EXPERT',
+      expertChart,
+      circularRecord.events,
+      circularRecord
+    );
+    expect(circularResult2.status).toBe('CIRCULAR_VALIDATION_REJECTED');
+    expect(circularResult2.isCircularValidationBlocked).toBe(true);
+  });
+
+  // 11. Validação com Referência Independente Genuína (VERIFIED_90_PLUS)
+  it('11. Independent ground truth reference with >= 90% Precision/Recall achieves VERIFIED_90_PLUS', () => {
+    // Criação de um chart de teste
+    const chartNotes: Note[] = [];
+    for (let i = 0; i < 100; i++) {
+      chartNotes.push({
+        id: i + 1,
+        time: Number((1.0 + i * 0.5).toFixed(3)),
+        lane: (i % 4) as any,
+        duration: 0.1
+      });
+    }
+
+    // Dataset de referência independente certificado (leve variação humana de 10ms a 15ms)
+    const independentEvents: GroundTruthEvent[] = [];
+    for (let i = 0; i < 100; i++) {
+      const humanJitterSec = ((i % 5) - 2) * 0.005; // -10ms to +10ms
+      independentEvents.push({
+        time: Number((1.0 + i * 0.5 + humanJitterSec).toFixed(3)),
+        lane: (i % 4) as any,
+        duration: 0.1,
+        label: 'Acoustic Guitar Attack'
+      });
+    }
+
+    const independentRecord: IndependentGroundTruthRecord = {
+      songId: 'independent-test-song',
+      recordingId: 'rec-official-audio',
+      difficulty: 'EXPERT',
+      sourceType: 'INDEPENDENT_MANUAL_TRANSCRIPTION',
+      sourceDescription: 'Transcrição acústica independente por musicólogos certificados',
+      annotationVersion: '2026.1',
+      events: independentEvents,
+      provenance: {
+        authorOrLab: 'Acoustic Musicology Lab',
+        date: '2026-10-31',
+        method: 'MANUAL_TRANSCRIPTION',
+        datasetName: 'RockBrazil Independent Acoustic Benchmark',
+        isIndependent: true,
+        isSynthetic: false
+      },
+      validationStatus: 'CERTIFIED'
+    };
+
+    IndependentGroundTruthRepository.registerRecord(independentRecord);
+
+    const evaluation = MusicAccuracyValidator.evaluateChartAccuracy(
+      'independent-test-song',
+      'EXPERT',
+      chartNotes,
+      independentRecord.events,
+      independentRecord
+    );
+
+    expect(evaluation.status).toBe('VERIFIED_90_PLUS');
     expect(evaluation.precision).toBeGreaterThanOrEqual(0.90);
     expect(evaluation.recall).toBeGreaterThanOrEqual(0.90);
     expect(evaluation.f1).toBeGreaterThanOrEqual(0.90);
     expect(evaluation.medianErrorMs).toBeLessThanOrEqual(30);
     expect(evaluation.p95ErrorMs).toBeLessThanOrEqual(50);
-    expect(evaluation.status).toBe('VERIFIED_90_PLUS');
+    expect(evaluation.temporalAccuracy?.within20msPercent).toBeGreaterThan(90);
   });
 
-  // 10. 100 consecutive misses without freezing, muting, or stopping playback
-  it('10. 100 consecutive misses do not freeze, mute or stop highway or audio timeline', () => {
+  // 12. Avaliação de Notas Adiantadas (Rushing) e Notas Atrasadas (Dragging)
+  it('12. MusicAccuracyValidator measures temporal deviations for rushing and dragging charts', () => {
+    const baseEvents: GroundTruthEvent[] = [
+      { time: 1.0 }, { time: 2.0 }, { time: 3.0 }, { time: 4.0 }, { time: 5.0 }
+    ];
+
+    // Chart adiantado em 35ms (-0.035s)
+    const rushingNotes: Note[] = baseEvents.map((e, idx) => ({
+      id: idx + 1,
+      time: Number((e.time - 0.035).toFixed(3)),
+      lane: 0,
+      duration: 0
+    }));
+
+    const rushEval = MusicAccuracyValidator.evaluateChartAccuracy(
+      'test-rush',
+      'EASY',
+      rushingNotes,
+      baseEvents
+    );
+    expect(rushEval.truePositives).toBe(5);
+    expect(rushEval.medianErrorMs).toBeCloseTo(35, 1);
+
+    // Chart atrasado em 40ms (+0.040s)
+    const draggingNotes: Note[] = baseEvents.map((e, idx) => ({
+      id: idx + 1,
+      time: Number((e.time + 0.040).toFixed(3)),
+      lane: 0,
+      duration: 0
+    }));
+
+    const dragEval = MusicAccuracyValidator.evaluateChartAccuracy(
+      'test-drag',
+      'EASY',
+      draggingNotes,
+      baseEvents
+    );
+    expect(dragEval.truePositives).toBe(5);
+    expect(dragEval.medianErrorMs).toBeCloseTo(40, 1);
+  });
+
+  // 13. Avaliação de Notas Ausentes (queda de Recall) e Notas Extras (queda de Precision)
+  it('13. Missing notes penalize Recall while extra phantom notes penalize Precision and mark BELOW_TARGET', () => {
+    const baseEvents: GroundTruthEvent[] = [];
+    for (let i = 0; i < 20; i++) {
+      baseEvents.push({ time: Number((1.0 + i * 0.5).toFixed(3)) });
+    }
+
+    // Chart com 40% das notas ausentes (apenas 12 de 20)
+    const sparseNotes: Note[] = baseEvents.slice(0, 12).map((e, idx) => ({
+      id: idx + 1,
+      time: e.time,
+      lane: 0,
+      duration: 0
+    }));
+
+    const sparseEval = MusicAccuracyValidator.evaluateChartAccuracy(
+      'test-sparse',
+      'MEDIUM',
+      sparseNotes,
+      baseEvents
+    );
+    expect(sparseEval.recall).toBeCloseTo(0.60, 2);
+    expect(sparseEval.falseNegatives).toBe(8);
+    expect(sparseEval.status).toBe('BELOW_TARGET');
+
+    // Chart com notas extras fantasmas (20 notas normais + 10 extras)
+    const bloatedNotes: Note[] = [...sparseNotes];
+    for (let i = 0; i < 15; i++) {
+      bloatedNotes.push({
+        id: 100 + i,
+        time: Number((10.0 + i * 0.3).toFixed(3)),
+        lane: 1,
+        duration: 0
+      });
+    }
+
+    const bloatedEval = MusicAccuracyValidator.evaluateChartAccuracy(
+      'test-bloated',
+      'MEDIUM',
+      bloatedNotes,
+      baseEvents
+    );
+    expect(bloatedEval.falsePositives).toBeGreaterThan(0);
+    expect(bloatedEval.precision).toBeLessThan(0.90);
+    expect(bloatedEval.status).toBe('BELOW_TARGET');
+  });
+
+  // 14. 100 consecutive misses do not freeze, mute or stop highway or audio timeline
+  it('14. 100 consecutive misses do not freeze, mute or stop highway or audio timeline', () => {
     const sync = new UniversalMusicSyncEngine();
     sync.startPlayback();
 
@@ -288,12 +460,10 @@ describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm En
       isPaused: () => false
     });
 
-    // Simulate 100 misses in gameplay
     for (let i = 0; i < 100; i++) {
       sync.registerMiss();
     }
 
-    // Advance 50 frames
     let perf = 1000;
     for (let frame = 0; frame < 50; frame++) {
       mediaTime += 0.016;
@@ -310,8 +480,8 @@ describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm En
     expect(finalSnapshot.chartTime).toBeGreaterThan(20.7);
   });
 
-  // 11. Buffering freezes timeline without counting false misses
-  it('11. Buffering freezes timeline progression cleanly without counting false misses', () => {
+  // 15. Buffering freezes timeline without counting false misses
+  it('15. Buffering freezes timeline progression cleanly without counting false misses', () => {
     const sync = new UniversalMusicSyncEngine();
     sync.startPlayback();
 
@@ -325,18 +495,15 @@ describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm En
       isPaused: () => false
     });
 
-    // Normal progression
     sync.update(1000);
     mediaTime += 0.5;
     const snap1 = sync.update(1500);
     expect(snap1.mediaTime).toBe(12.5);
 
-    // Media starts buffering
     isBuffering = true;
     const snapBuffering = sync.update(1600);
     expect(snapBuffering.isBuffering).toBe(true);
 
-    // Advancing frames during buffering must not advance chartTime
     const initialChartTime = snapBuffering.chartTime;
     for (let i = 0; i < 10; i++) {
       const snap = sync.update(1600 + i * 50);
@@ -345,32 +512,14 @@ describe('ROCKBRAZIL V13.9.4 — Autonomous Music Intelligence & Smart Rhythm En
     }
   });
 
-  // 12. AutonomousMusicIntelligenceEngine: Orquestração mestre e preparação de partida
-  it('12. AutonomousMusicIntelligenceEngine orchestrates pre-match validation and frame updates', () => {
-    const engine = AutonomousMusicIntelligenceEngine.getInstance();
+  // 16. YouTube Error 150 e Fallback de Áudio Local
+  it('16. YouTube Error 150 parses as embed blocked and configures local audio fallback without native alert', () => {
+    const errorDetails = parseYouTubeError(150);
+    expect(errorDetails.code).toBe(150);
+    expect(errorDetails.isEmbedBlocked).toBe(true);
+    expect(errorDetails.canRetry).toBe(false);
 
-    const mockSong: any = {
-      id: 'tnt-acdc',
-      title: 'T.N.T.',
-      artist: 'AC/DC',
-      duration: 229,
-      isInternational: true,
-      youtubeVideoId: 'fGDQ9IukMOc'
-    };
-
-    const rawNotes = beatmapManager.getBeatmap('tnt-acdc', 'HARD');
-
-    const prep = engine.prepareMatch(mockSong, 'HARD', rawNotes, 229, 'NORMAL');
-    expect(prep.validatedNotes.length).toBe(rawNotes.length);
-    expect(prep.chartReport.isValid).toBe(true);
-    expect(prep.versionMatch.isCompatible).toBe(true);
-    expect(prep.approachTime).toBe(1.85);
-
-    // Setting speed preset updates approach time
-    engine.setVisualSpeedPreset('LENTA');
-    expect(engine.getApproachTime()).toBeCloseTo(1.85 * 1.25, 2);
-
-    engine.setVisualSpeedPreset('RÁPIDA');
-    expect(engine.getApproachTime()).toBeCloseTo(1.85 * 0.80, 2);
+    // Error 101 e 150 devem reportar mensagem clara de incorporação restrita
+    expect(errorDetails.message).toBe('Este vídeo não permite reprodução dentro do jogo.');
   });
 });

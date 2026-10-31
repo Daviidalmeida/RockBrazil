@@ -7,6 +7,7 @@ import { IntelligentSyncRecovery, SyncIssueDiagnostic } from './intelligentSyncR
 import { VerifiedSyncProfileLearning } from './verifiedSyncProfileLearning';
 import { MusicIntelligenceConfidenceEngine } from './musicIntelligenceConfidenceEngine';
 import { MusicAccuracyValidator } from './musicAccuracyValidator';
+import { IndependentGroundTruthRepository } from './independentGroundTruthRepository';
 import {
   AccuracyEvaluationResult,
   ChartIntegrityReport,
@@ -113,10 +114,11 @@ export class AutonomousMusicIntelligenceEngine {
     // 4. Calculate comfortable visual approach time
     this.currentApproachTime = SmartHighwayEngine.calculateApproachTime(difficulty, speedPreset);
 
-    // 5. Evaluate confidence
+    // 5. Evaluate confidence with honest ground truth checking
+    const hasCertifiedRef = IndependentGroundTruthRepository.hasCertifiedIndependentReference(song.id, difficulty);
     this.confidence = MusicIntelligenceConfidenceEngine.evaluateConfidence({
-      hasGroundTruthReference: song.id === 'tnt-acdc',
-      precisionScore: 0.94,
+      hasGroundTruthReference: hasCertifiedRef,
+      precisionScore: hasCertifiedRef ? 0.94 : undefined,
       hasVerifiedAnchors: Boolean(profile && profile.verifiedAnchors.length >= 2),
       chartIntegrityValid: report.isValid,
       engineMode: song.isInternational ? 'YOUTUBE_CALIBRATED' : 'FALLBACK_DSP'

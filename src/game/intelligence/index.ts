@@ -6,6 +6,7 @@ export * from './smartHighwayEngine';
 export * from './intelligentSyncRecovery';
 export * from './verifiedSyncProfileLearning';
 export * from './musicIntelligenceConfidenceEngine';
+export * from './independentGroundTruthRepository';
 export * from './musicAccuracyValidator';
 export * from './smartChartController';
 export * from './autonomousMusicIntelligenceEngine';

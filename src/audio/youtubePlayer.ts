@@ -50,7 +50,7 @@ export function parseYouTubeError(errCode: any): YouTubeErrorDetails {
       return {
         code: numCode,
         title: 'Incorporação Desativada (Código ' + numCode + ')',
-        message: 'O proprietário deste vídeo desativou a reprodução incorporada em sites externos.',
+        message: 'Este vídeo não permite reprodução dentro do jogo.',
         canRetry: false,
         isEmbedBlocked: true
       };
@@ -79,7 +79,7 @@ export function youtubeErrorMessage(code: number | string): string {
     case 2: return 'O identificador deste vídeo é inválido.';
     case 5: return 'O navegador não conseguiu reproduzir este vídeo em HTML5.';
     case 100: return 'Este vídeo foi removido ou está privado.';
-    case 101: case 150: return 'O proprietário não permite incorporar este vídeo no jogo.';
+    case 101: case 150: return 'Este vídeo não permite reprodução dentro do jogo.';
     case 153: return 'O YouTube recusou a identificação da origem. Abra o jogo pelo endereço HTTPS oficial.';
     case 'CHART_VIDEO_MISMATCH': return 'A duração deste vídeo não cobre o chart, ou ainda não foi informada pelo YouTube. A versão da gravação precisa ser conferida antes de jogar.';
     case 'API_TIMEOUT': return 'A API do YouTube não respondeu. Verifique a conexão ou os bloqueadores e tente novamente.';

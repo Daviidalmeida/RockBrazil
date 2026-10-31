@@ -13,7 +13,8 @@ import { VisualEditor } from './editor/visualEditor';
 import { ZipChartLoader } from './audio/zipChartLoader';
 import { UniversalChartImporter } from './audio/universalChartImporter';
 import { applyEffectsPreference } from './game/visualEffects';
-import { YouTubePlayerController, youtubeErrorMessage } from './audio/youtubePlayer';
+import { YouTubePlayerController, youtubeErrorMessage, parseYouTubeError, YouTubeErrorDetails } from './audio/youtubePlayer';
+import { RecordingVersionMatcher } from './game/intelligence/recordingVersionMatcher';
 import { AutoMusicFinder } from './game/catalog/musicFinder';
 import { CalibrationManager } from './game/sync/calibrationManager';
 import { UnifiedMasterClock } from './game/sync/masterClock';
@@ -126,30 +127,7 @@ class RockBrazilGame {
       },
       onError: (errCode, details) => {
         console.warn('[YouTube] Erro ao carregar vídeo do YouTube:', errCode, details);
-        if (typeof (this as any).handleYouTubeFailure === 'function') {
-          (this as any).handleYouTubeFailure(errCode);
-        }
-        if (this.state === GameState.COUNTDOWN || (this.state as any) === 'WAITING_FOR_AUDIO' || this.state === GameState.PLAYING) {
-          this.clearCountdown();
-          this.masterClock.pause();
-          this.audio.stop();
-          this.ytPlayer.stop();
-          this.ui.showAutoplayUnblockPrompt(false);
-          const errorInfo = details || {
-            code: errCode,
-            title: 'Aviso do YouTube',
-            message: `Este vídeo está temporariamente indisponível para incorporação direta (Código ${errCode}).`,
-            canRetry: true
-          };
-          this.ui.showYouTubeErrorModal(errorInfo, () => {
-            if (this.currentSong && this.currentDifficulty) {
-              this.startNewMatch(this.currentSong, this.currentDifficulty);
-            }
-          }, () => {
-            this.state = GameState.SONG_SELECT;
-            this.ui.showScreen(GameState.SONG_SELECT);
-          });
-        }
+        this.handleYouTubeFailure(errCode, details);
       },
       onEnded: () => {
         if (this.state === GameState.PLAYING && !this.isFinishing) {
@@ -1572,15 +1550,45 @@ class RockBrazilGame {
     }
   }
 
-  private handleYouTubeFailure(code: number | string): void {
-    this.clearCountdown(); this.clearResumeCountdown();
-    this.masterClock.pause(); this.audio.stop(); this.ytPlayer.stop();
-    this.releaseAllLanes(); this.setGameplayViewport(false);
+  private handleYouTubeFailure(code: number | string, details?: YouTubeErrorDetails): void {
+    this.clearCountdown();
+    this.clearResumeCountdown();
+    this.masterClock.pause();
+    this.audio.stop();
+    this.ytPlayer.stop();
+    this.releaseAllLanes();
+    this.setGameplayViewport(false);
     this.ui.showAutoplayUnblockPrompt(false);
     this.ui.setYouTubePlayerVisibility(false);
-    this.state = GameState.SONG_SELECT;
-    this.ui.showScreen(GameState.SONG_SELECT);
-    alert(`${youtubeErrorMessage(code)} (Código ${code}). A partida foi interrompida sem gravar resultado ou cobrar RockCoins.`);
+
+    const parsedDetails = details || parseYouTubeError(code);
+    const numCode = Number(code);
+    const isEmbedBlocked = numCode === 101 || numCode === 150 || parsedDetails.isEmbedBlocked;
+
+    const errorInfo = {
+      code,
+      title: isEmbedBlocked ? 'Incorporação Desativada' : (parsedDetails.title || 'Aviso do YouTube'),
+      message: isEmbedBlocked
+        ? 'Este vídeo não permite reprodução dentro do jogo.'
+        : (parsedDetails.message || 'Este vídeo está temporariamente indisponível para reprodução.'),
+      canRetry: !isEmbedBlocked && parsedDetails.canRetry
+    };
+
+    this.ui.showYouTubeErrorModal(
+      errorInfo,
+      () => {
+        if (this.currentSong && this.currentDifficulty) {
+          this.startNewMatch(this.currentSong, this.currentDifficulty);
+        }
+      },
+      () => {
+        this.state = GameState.SONG_SELECT;
+        this.ui.showScreen(GameState.SONG_SELECT);
+      },
+      (file: File) => {
+        this.testWithLocalAudio(file);
+      }
+    );
   }
 
   private async ensureYouTubePlayerReady(): Promise<void> {
@@ -1815,8 +1823,26 @@ class RockBrazilGame {
     try {
       await this.audio.ensureResumed();
       const audioBuffer = await this.audio.decodeAudioFile(file);
+
+      // Validação de compatibilidade e duração (gravação real)
+      const durationSec = audioBuffer.duration;
+      const expectedDuration = this.currentSong.duration;
+      const comp = RecordingVersionMatcher.evaluateCompatibility(
+        expectedDuration,
+        durationSec,
+        this.currentSong.duration
+      );
+
+      if (!comp.isCompatible) {
+        const proceed = confirm(
+          `Aviso de Compatibilidade: O áudio selecionado tem ${Math.round(durationSec)}s, mas o mapa musical espera ~${Math.round(expectedDuration)}s.\n\nDeseja testar mesmo assim?`
+        );
+        if (!proceed) return;
+      }
+
       this.currentSong.audioBuffer = audioBuffer;
       this.currentSong.type = 'audio-file';
+      // Reutiliza o chart existente sem cobrar RockCoins
       await this.startNewMatch(this.currentSong, this.currentDifficulty);
     } catch (err: any) {
       console.error('[testWithLocalAudio] Falha ao carregar áudio local:', err);
