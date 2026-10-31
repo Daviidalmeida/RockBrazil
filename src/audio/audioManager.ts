@@ -58,6 +58,7 @@ export class AudioManager {
    * Plays a 1-sample silent buffer to force the iOS hardware CoreAudio bus to engage.
    */
   async unlockAudioContext(): Promise<void> {
+    if (typeof window === 'undefined') return;
     if (!this.ctx) {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioCtx) {
@@ -89,6 +90,7 @@ export class AudioManager {
   }
 
   async init(): Promise<void> {
+    if (typeof window === 'undefined') return;
     if (!this.ctx) {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.ctx = new AudioCtx();
@@ -141,6 +143,14 @@ export class AudioManager {
     }
     if (this.sfxGainNode && this.ctx) {
       this.sfxGainNode.gain.setValueAtTime(settings.sfxVolume, this.ctx.currentTime);
+    }
+  }
+
+  setMasterVolume(vol: number): void {
+    this.settings.musicVolume = vol;
+    this.synth.setVolume(vol);
+    if (this.fileGainNode && this.ctx) {
+      this.fileGainNode.gain.setValueAtTime(vol, this.ctx.currentTime);
     }
   }
 

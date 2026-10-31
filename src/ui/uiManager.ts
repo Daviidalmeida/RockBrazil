@@ -5,6 +5,7 @@ import { RockCoinsManager } from '../game/economy/rockCoinsManager';
 import { RankingService } from '../firebase/rankingService';
 import { INTERNATIONAL_METADATA_CONFIG } from '../game/catalog/internationalCatalog';
 import { CalibrationManager } from '../game/sync/calibrationManager';
+import { RockSyncDiagnosticsData } from '../game/sync/rockSyncAutoFix';
 
 export function renderAvatarHtml(avatar?: string, className: string = 'avatar-thumb-img'): string {
   if (!avatar) {
@@ -162,6 +163,11 @@ export class UIManager {
   public onAvatarConfirmed?: (avatarId: string) => void;
   public googlePhotoUrlProvider?: () => string | undefined;
   public onExportDataRequested?: () => void;
+
+  // V13.9.3: RockSync Diagnostics callbacks
+  public onTestSyncClicked?: () => void;
+  public onRecalibrateOffsetClicked?: () => void;
+  public onExportDiagnosticsClicked?: () => void;
   public onRankingFilterChanged?: (songId: string, diff: Difficulty) => void;
   public onRefreshLinksClicked?: () => void;
 
@@ -550,6 +556,30 @@ export class UIManager {
     });
     document.getElementById('btn-songs-pause')?.addEventListener('click', () => {
       this.onOpenSongSelectClicked?.();
+    });
+
+    // V13.9.3: RockSync Diagnostics Panel bindings
+    document.getElementById('btn-pause-diagnostics')?.addEventListener('click', () => {
+      this.toggleRockSyncDiagnostics();
+    });
+    document.getElementById('btn-diag-close')?.addEventListener('click', () => {
+      this.setRockSyncDiagnosticsVisibility(false);
+    });
+    document.getElementById('btn-diag-test-sync')?.addEventListener('click', () => {
+      this.onTestSyncClicked?.();
+    });
+    document.getElementById('btn-diag-recalibrate')?.addEventListener('click', () => {
+      this.onRecalibrateOffsetClicked?.();
+    });
+    document.getElementById('btn-diag-export')?.addEventListener('click', () => {
+      this.onExportDiagnosticsClicked?.();
+    });
+
+    // Dev hotkey: F8 or backtick toggles diagnostics
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'F8' || (e.ctrlKey && e.key === 'd')) {
+        this.toggleRockSyncDiagnostics();
+      }
     });
 
     // Autoplay unblock button
@@ -1980,5 +2010,86 @@ export class UIManager {
         btn.classList.remove('hidden-lane');
       }
     });
+  }
+
+  /**
+   * V13.9.3: Toggles the RockSync Diagnostics developer panel
+   */
+  public toggleRockSyncDiagnostics(): void {
+    const el = document.getElementById('panel-rocksync-diagnostics');
+    if (!el) return;
+    const isVisible = el.style.display !== 'none';
+    el.style.display = isVisible ? 'none' : 'block';
+  }
+
+  public setRockSyncDiagnosticsVisibility(visible: boolean): void {
+    const el = document.getElementById('panel-rocksync-diagnostics');
+    if (el) el.style.display = visible ? 'block' : 'none';
+  }
+
+  public updateRockSyncDiagnostics(data: Partial<RockSyncDiagnosticsData>): void {
+    const el = document.getElementById('panel-rocksync-diagnostics');
+    if (!el || el.style.display === 'none') return;
+
+    if (data.songId !== undefined) {
+      const songEl = document.getElementById('diag-val-song');
+      if (songEl) songEl.textContent = data.songId;
+    }
+    if (data.difficulty !== undefined) {
+      const diffEl = document.getElementById('diag-val-diff');
+      if (diffEl) diffEl.textContent = data.difficulty;
+    }
+    if (data.activeSource !== undefined) {
+      const srcEl = document.getElementById('diag-val-source');
+      if (srcEl) srcEl.textContent = data.activeSource;
+    }
+    if (data.playerState !== undefined) {
+      const stateEl = document.getElementById('diag-val-state');
+      if (stateEl) stateEl.textContent = data.playerState;
+    }
+    if (data.mediaTime !== undefined) {
+      const mtEl = document.getElementById('diag-val-media-time');
+      if (mtEl) mtEl.textContent = `${data.mediaTime.toFixed(3)}s`;
+    }
+    if (data.effectiveChartTime !== undefined) {
+      const ctEl = document.getElementById('diag-val-chart-time');
+      if (ctEl) ctEl.textContent = `${data.effectiveChartTime.toFixed(3)}s`;
+    }
+    if (data.appliedOffsetMs !== undefined) {
+      const offEl = document.getElementById('diag-val-offset');
+      if (offEl) offEl.textContent = `${data.appliedOffsetMs > 0 ? '+' : ''}${data.appliedOffsetMs}ms`;
+    }
+    if (data.estimatedDriftMs !== undefined) {
+      const driftEl = document.getElementById('diag-val-drift');
+      if (driftEl) driftEl.textContent = `${data.estimatedDriftMs > 0 ? '+' : ''}${data.estimatedDriftMs}ms`;
+    }
+    if (data.totalNotesLoaded !== undefined) {
+      const tnEl = document.getElementById('diag-val-total-notes');
+      if (tnEl) tnEl.textContent = `${data.totalNotesLoaded}`;
+    }
+    if (data.renderedNotesCount !== undefined) {
+      const rnEl = document.getElementById('diag-val-rendered-notes');
+      if (rnEl) rnEl.textContent = `${data.renderedNotesCount}`;
+    }
+    if (data.judgedNotesCount !== undefined) {
+      const jnEl = document.getElementById('diag-val-judged-notes');
+      if (jnEl) jnEl.textContent = `${data.judgedNotesCount}`;
+    }
+    if (data.nextNoteTimestamp !== undefined) {
+      const nnEl = document.getElementById('diag-val-next-note');
+      if (nnEl) nnEl.textContent = data.nextNoteTimestamp > 0 ? `Lane ${data.nextNoteLane ?? 0} @ ${data.nextNoteTimestamp.toFixed(2)}s` : 'Fim';
+    }
+    if (data.fps !== undefined) {
+      const fpsEl = document.getElementById('diag-val-fps');
+      if (fpsEl) fpsEl.textContent = `${data.fps} FPS / ${(data.averageFrameTimeMs || 16.6).toFixed(1)}ms`;
+    }
+    if (data.isBuffering !== undefined) {
+      const bufEl = document.getElementById('diag-val-buffering');
+      if (bufEl) bufEl.textContent = data.isBuffering ? 'SIM (Pausado)' : 'Não';
+    }
+    if (data.engineMode !== undefined) {
+      const modeEl = document.getElementById('diag-val-mode');
+      if (modeEl) modeEl.textContent = data.engineMode;
+    }
   }
 }

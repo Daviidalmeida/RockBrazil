@@ -28,12 +28,15 @@ import { FirestoreService } from './firebase/firestoreService';
 import { RankingService } from './firebase/rankingService';
 import { RockSyncEngine } from './game/sync/rockSyncEngine';
 import { RockAIView } from './ui/rockAIView';
+import { AudioPlaybackController } from './audio/audioPlaybackController';
+import { RockSyncAutoFix } from './game/sync/rockSyncAutoFix';
 
 class RockBrazilGame {
   private settingsManager: SettingsManager;
   private profileManager: ProfileManager;
   private audio: AudioManager;
   private ytPlayer: YouTubePlayerController;
+  private playbackController: AudioPlaybackController;
   private musicFinder: AutoMusicFinder;
   private beatmaps: BeatmapManager;
   private library: SongLibrary;
@@ -184,6 +187,7 @@ class RockBrazilGame {
       this.engine.getChartTimeline()
     );
     this.rockSync = new RockSyncEngine(this.masterClock);
+    this.playbackController = new AudioPlaybackController(this.audio, this.ytPlayer);
 
     this.inputController = new InputController({
       onLanePress: (lane) => this.pressLane(lane),
@@ -471,12 +475,9 @@ class RockBrazilGame {
       this.ui.showJudgment('MISS');
     };
 
-    // V13 & V13.9: Silenciar música ao errar com isolamento RockSync para evitar postMessages redundantes no iframe
-    this.engine.onMuteRequested = (muted: boolean) => {
-      if (this.rockSync.evaluateMuteTransition(muted)) {
-        this.audio.setMuteOnMiss(muted);
-        this.ytPlayer.setMuted(muted);
-      }
+    // V13.9.3: Never auto-mute on miss! Audio remains audible and stable throughout the match.
+    this.engine.onMuteRequested = (_muted: boolean) => {
+      this.playbackController.handleGameplayMiss();
     };
 
     this.engine.onSustainTick = (lane: Lane) => {
@@ -746,6 +747,7 @@ class RockBrazilGame {
     this.ui.onSettingsChanged = (newSettings) => {
       const updated = this.settingsManager.saveSettings(newSettings);
       this.audio.updateSettings(updated);
+      this.playbackController.setVolume(updated.musicVolume);
       this.ytPlayer.setVolume(updated.musicVolume * 100);
       this.engine.updateSettings(updated);
       this.renderer.noteSpeedMultiplier = updated.noteSpeedMultiplier;
@@ -790,6 +792,49 @@ class RockBrazilGame {
 
     this.ui.onTestBeepClicked = () => {
       this.audio.playSfxCountdown();
+    };
+
+    // V13.9.3: RockSync Diagnostics developer panel actions
+    this.ui.onTestSyncClicked = () => {
+      const clockTime = this.masterClock.getTime();
+      const mediaTime = this.playbackController.getCurrentMediaTime();
+      const diffMs = Math.round((clockTime - mediaTime) * 1000);
+      alert(`[ROCKSYNC DIAGNÓSTICO]\nTempo Mídia: ${mediaTime.toFixed(3)}s\nTempo Chart: ${clockTime.toFixed(3)}s\nDeslocamento: ${diffMs > 0 ? '+' : ''}${diffMs}ms\nStatus: ${Math.abs(diffMs) < 60 ? 'EXCELENTE' : 'CALIBRAÇÃO RECOMENDADA'}`);
+    };
+
+    this.ui.onRecalibrateOffsetClicked = () => {
+      const songId = this.currentSong?.id;
+      if (!songId) return;
+      const current = CalibrationManager.getSongOffsetMs(songId);
+      const input = prompt(`Ajustar Calibração de Offset (ms) para "${this.currentSong.title}":`, current.toString());
+      if (input !== null) {
+        const val = parseInt(input, 10);
+        if (!isNaN(val)) {
+          CalibrationManager.setSongOffsetMs(songId, val);
+          this.masterClock.setOffsets(val, this.settingsManager.getSettings().audioOffsetMs || 0);
+          alert(`Offset atualizado para ${val > 0 ? '+' : ''}${val}ms.`);
+        }
+      }
+    };
+
+    this.ui.onExportDiagnosticsClicked = () => {
+      const report = {
+        song: this.currentSong ? { id: this.currentSong.id, title: this.currentSong.title, artist: this.currentSong.artist } : null,
+        difficulty: this.currentDifficulty,
+        clockTime: this.masterClock.getTime(),
+        mediaTime: this.playbackController.getCurrentMediaTime(),
+        offsetMs: CalibrationManager.getSongOffsetMs(this.currentSong?.id || ''),
+        stats: this.engine.getStats(),
+        health: this.rockSync.getHealthReport(),
+        renderedNotes: this.renderer.renderedNotesCount,
+        timestamp: new Date().toISOString()
+      };
+      const json = JSON.stringify(report, null, 2);
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        navigator.clipboard.writeText(json).catch(() => {});
+      }
+      console.log('[ROCKSYNC DIAGNOSTICS SNAPSHOT]', report);
+      alert('Relatório de diagnóstico exportado para o console e copiado para a área de transferência!');
     };
   }
 
@@ -1554,8 +1599,7 @@ class RockBrazilGame {
     this.clearResumeCountdown();
     this.state = GameState.PAUSED;
     this.masterClock.pause();
-    this.audio.pause();
-    this.ytPlayer.pause();
+    this.playbackController.pause();
     this.ui.showScreen(GameState.PAUSED);
   }
 
@@ -1707,6 +1751,33 @@ class RockBrazilGame {
           this.currentSong.bpm
         );
         this.ui.updateHUD(this.engine.getStats(), clockTime, this.currentSong.duration);
+
+        // V13.9.3: Update RockSync Diagnostics panel
+        const notes = this.engine.getNotes();
+        const unjudged = notes.find((n) => !n.hit && !n.missed);
+        const stats = this.engine.getStats();
+        const health = this.rockSync.getHealthReport();
+        const appliedOffset = CalibrationManager.getSongOffsetMs(this.currentSong?.id || '') + (this.settingsManager.getSettings().audioOffsetMs || 0);
+
+        this.ui.updateRockSyncDiagnostics({
+          songId: this.currentSong ? `${this.currentSong.title} (${this.currentSong.id})` : '-',
+          difficulty: this.currentDifficulty,
+          activeSource: this.playbackController.getStatus().activeSource,
+          playerState: isBuffering ? 'BUFFERING' : this.state,
+          mediaTime: this.playbackController.getCurrentMediaTime(),
+          effectiveChartTime: clockTime,
+          appliedOffsetMs: appliedOffset,
+          estimatedDriftMs: health.clockDriftMs,
+          totalNotesLoaded: notes.length,
+          renderedNotesCount: this.renderer.renderedNotesCount,
+          judgedNotesCount: (stats.hitsCount ?? (stats.perfectCount + stats.greatCount + stats.goodCount)) + stats.missCount,
+          nextNoteTimestamp: unjudged?.time ?? -1,
+          nextNoteLane: unjudged?.lane ?? 0,
+          fps: health.fps,
+          averageFrameTimeMs: 1000 / Math.max(1, health.fps),
+          isBuffering,
+          engineMode: 'REAL_AI'
+        });
       }
     } else if (this.state === GameState.PAUSED || this.isResumingCountdown) {
       // Congela notas exatamente no instante pausado

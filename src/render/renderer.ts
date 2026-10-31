@@ -86,6 +86,7 @@ export class GameRenderer {
   public noteSpeedMultiplier = 1.0;
   public visualEffectsEnabled = true;
   public visualEffectsMode: 'NORMAL' | 'REDUZIDO' = 'NORMAL';
+  public renderedNotesCount = 0;
 
   get baseNoteSpeed(): number {
     return calculateApproachTime(this.difficulty, 1.0, this.speedPreset);
@@ -659,15 +660,40 @@ export class GameRenderer {
   }
 
   /**
+   * V13.9.3: Sublinear search for active highway window.
+   * Prevents full array scanning for charts with 1,600+ notes.
+   */
+  private findFirstNoteIndex(notes: Note[], minTime: number): number {
+    let low = 0;
+    let high = notes.length - 1;
+    let result = notes.length;
+    while (low <= high) {
+      const mid = (low + high) >> 1;
+      if (notes[mid].time >= minTime) {
+        result = mid;
+        high = mid - 1;
+      } else {
+        low = mid + 1;
+      }
+    }
+    return result;
+  }
+
+  /**
    * Draws sustain note ribbons/trails with 3D perspective and glowing energy core
    */
   private drawSustains(ctx: CanvasRenderingContext2D, currentTime: number, notes: Note[]): void {
-    for (const note of notes) {
+    if (!notes || notes.length === 0) return;
+    const minTime = currentTime - 8.0;
+    const maxTime = currentTime + this.noteSpeed * 1.25;
+    const startIdx = this.findFirstNoteIndex(notes, minTime);
+
+    for (let i = startIdx; i < notes.length; i++) {
+      const note = notes[i];
+      if (note.time > maxTime) break;
       if (note.duration <= 0) continue;
       // Skip if completely passed
       if (note.time + note.duration < currentTime - 0.25) continue;
-      // Skip if not yet in view
-      if (note.time > currentTime + this.noteSpeed * 1.25) continue;
 
       const lane = note.lane;
       const color = this.laneColors[lane];
@@ -726,8 +752,18 @@ export class GameRenderer {
   private drawNotes(ctx: CanvasRenderingContext2D, currentTime: number, notes: Note[]): void {
     // Group notes by timestamp for chord connection beam
     const visibleNotes: Note[] = [];
+    if (!notes || notes.length === 0) {
+      this.renderedNotesCount = 0;
+      return;
+    }
 
-    for (const note of notes) {
+    const minTime = currentTime - this.noteSpeed * 0.25;
+    const maxTime = currentTime + this.noteSpeed * 1.25;
+    const startIdx = this.findFirstNoteIndex(notes, minTime);
+
+    for (let i = startIdx; i < notes.length; i++) {
+      const note = notes[i];
+      if (note.time > maxTime) break;
       if (note.hit || note.missed) continue;
 
       const timeRemaining = note.time - currentTime;
@@ -743,6 +779,7 @@ export class GameRenderer {
         SyncDiagnostics.get().recordFirstNoteReachingReceptor(note.time, currentTime, (currentTime - note.time) * 1000);
       }
     }
+    this.renderedNotesCount = visibleNotes.length;
 
     // 1. Group notes into chords (tolerance ~25ms)
     // Synchronize reference time for notes in the same chord so they share the exact same y, persp, and scale

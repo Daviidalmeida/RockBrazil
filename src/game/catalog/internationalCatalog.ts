@@ -74,6 +74,19 @@ export const INTERNATIONAL_METADATA_CONFIG: Record<string, InternationalSongConf
       "HARD",
       "EXPERT"
     ]
+  },
+  "tnt-acdc": {
+    "recordingVersion": "Clipe Oficial / Gravação de Estúdio (T.N.T. / High Voltage)",
+    "defaultOffsetMs": 0,
+    "charter": "Rock AI AutoChart Pro",
+    "year": 1975,
+    "status": "PRONTA PARA TESTE",
+    "availableDifficulties": [
+      "EASY",
+      "MEDIUM",
+      "HARD",
+      "EXPERT"
+    ]
   }
 };
 
@@ -238,5 +251,36 @@ export const INTERNATIONAL_SONGS_CATALOG: (SongMetadata & {
     "recordingVersion": "Clipe Oficial 4K Upgrade (Meteora)",
     "charter": "Harmonix",
     "year": 2003
+  },
+  {
+    "id": "tnt-acdc",
+    "title": "T.N.T.",
+    "artist": "AC/DC",
+    "duration": 229,
+    "bpm": 130,
+    "style": "🎸 Internacional • Classic Hard Rock",
+    "type": "youtube",
+    "youtubeVideoId": "fGDQ9IukMOc",
+    "youtubeUrl": "https://www.youtube.com/watch?v=fGDQ9IukMOc",
+    "youtubeChannel": "AC/DC",
+    "youtubeDuration": "3:50",
+    "matchConfidence": 100,
+    "embeddingStatus": "ELIGIBLE_OFFICIAL",
+    "reviewStatus": "VERIFIED",
+    "licenseStatus": "EMBED_ALLOWED",
+    "chartStatus": "CUSTOM",
+    "isAvailable": true,
+    "coverUrl": "images/intl-covers/intl-acdc-highway-to-hell.jpg",
+    "records": {
+      "EASY": null,
+      "MEDIUM": null,
+      "HARD": null,
+      "EXPERT": null
+    },
+    "isInternational": true,
+    "internationalStatus": "PRONTA PARA TESTE",
+    "recordingVersion": "Clipe Oficial / Gravação de Estúdio (T.N.T. / High Voltage)",
+    "charter": "Rock AI AutoChart Pro",
+    "year": 1975
   }
 ];

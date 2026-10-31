@@ -5,6 +5,7 @@ import { Difficulty, Note } from '../src/types';
 import { UnifiedMasterClock } from '../src/game/sync/masterClock';
 import { RockSyncEngine } from '../src/game/sync/rockSyncEngine';
 import { PlaybackState } from '../src/types';
+import { BeatmapManager } from '../src/game/beatmapManager';
 
 describe('V13.9.2 — T.N.T. (AC/DC) Real Pipeline & RockSync Validation Suite', () => {
   const resultJsonPath = 'C:/Users/David/.gemini/antigravity/brain/153405fa-0626-4238-a695-fe54343e80ab/scratch/tnt_autochart_result.json';
@@ -129,5 +130,30 @@ describe('V13.9.2 — T.N.T. (AC/DC) Real Pipeline & RockSync Validation Suite',
     expect(rse.getState().consecutiveMisses).toBe(100);
     expect(rse.getState().frozenStreakCount).toBe(0);
     expect(masterClock.getTime()).toBeCloseTo(15.0, 1);
+  });
+
+  it('9. BeatmapManager retrieves the authentic converted charts for T.N.T. across all 4 difficulties', () => {
+    const bm = new BeatmapManager();
+    const easy = bm.getBeatmap('tnt-acdc', 'EASY');
+    const medium = bm.getBeatmap('tnt-acdc', 'MEDIUM');
+    const hard = bm.getBeatmap('tnt-acdc', 'HARD');
+    const expert = bm.getBeatmap('tnt-acdc', 'EXPERT');
+
+    expect(easy.length).toBe(703);
+    expect(medium.length).toBe(1125);
+    expect(hard.length).toBe(1518);
+    expect(expert.length).toBe(1639);
+
+    // EASY lanes are strictly in 0, 1, 2
+    for (const n of easy) {
+      expect(n.lane).toBeGreaterThanOrEqual(0);
+      expect(n.lane).toBeLessThanOrEqual(2);
+    }
+
+    // MEDIUM lanes in 0, 1, 2, 3
+    for (const n of medium) {
+      expect(n.lane).toBeGreaterThanOrEqual(0);
+      expect(n.lane).toBeLessThanOrEqual(3);
+    }
   });
 });

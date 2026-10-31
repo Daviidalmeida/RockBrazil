@@ -653,6 +653,7 @@
           <button id="btn-restart-pause" class="notebook-bar-btn">REINICIAR</button>
           <button id="btn-config-pause" class="notebook-bar-btn">CONFIGURAÇÕES</button>
           <button id="btn-songs-pause" class="notebook-bar-btn btn-back">SAIR DA MÚSICA</button>
+          <button id="btn-pause-diagnostics" class="notebook-bar-mini-btn" style="margin-top: 8px; font-size: 10px; opacity: 0.8; border-color: #00f0ff; color: #0088aa;">⚡ ROCKSINC DIAGNOSTICS</button>
         </div>
       </div>
     </div>
@@ -1221,6 +1222,36 @@
           <div id="rockai-drafts-list"></div>
         </div>
 
+      </div>
+    </div>
+
+    <!-- 13. ROCKSINC DIAGNOSTICS DEV PANEL (V13.9.3) -->
+    <div id="panel-rocksync-diagnostics" class="dev-panel" style="display: none; position: fixed; bottom: 12px; right: 12px; width: 330px; background: rgba(10, 14, 26, 0.96); border: 1px solid #00f0ff; border-radius: 8px; color: #fff; font-family: monospace; font-size: 11px; z-index: 9999; padding: 12px; box-shadow: 0 4px 24px rgba(0, 240, 255, 0.35);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,240,255,0.3); padding-bottom: 6px; margin-bottom: 8px;">
+        <span style="font-weight: bold; color: #00f0ff; letter-spacing: 1px;">⚡ ROCKSYNC DIAGNOSTICS</span>
+        <button id="btn-diag-close" style="background: none; border: none; color: #ff0055; cursor: pointer; font-size: 14px; font-weight: bold;">✕</button>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; line-height: 1.4;">
+        <div>Música:</div><div id="diag-val-song" style="text-align: right; color: #ffe600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</div>
+        <div>Dificuldade:</div><div id="diag-val-diff" style="text-align: right; color: #00f0ff;">-</div>
+        <div>Fonte Áudio:</div><div id="diag-val-source" style="text-align: right; color: #00ff66;">-</div>
+        <div>Estado Player:</div><div id="diag-val-state" style="text-align: right;">-</div>
+        <div>Tempo Mídia:</div><div id="diag-val-media-time" style="text-align: right;">0.000s</div>
+        <div>Tempo Chart:</div><div id="diag-val-chart-time" style="text-align: right; color: #00f0ff;">0.000s</div>
+        <div>Offset Aplicado:</div><div id="diag-val-offset" style="text-align: right;">0ms</div>
+        <div>Drift Estimado:</div><div id="diag-val-drift" style="text-align: right;">0ms</div>
+        <div>Notas Carregadas:</div><div id="diag-val-total-notes" style="text-align: right; color: #ffe600;">0</div>
+        <div>Notas Renderizadas:</div><div id="diag-val-rendered-notes" style="text-align: right;">0</div>
+        <div>Notas Julgadas:</div><div id="diag-val-judged-notes" style="text-align: right;">0</div>
+        <div>Próxima Nota:</div><div id="diag-val-next-note" style="text-align: right;">-</div>
+        <div>FPS / Frame Time:</div><div id="diag-val-fps" style="text-align: right; color: #00ff66;">60 / 16.6ms</div>
+        <div>Buffering:</div><div id="diag-val-buffering" style="text-align: right;">Não</div>
+        <div>Modo RockAI:</div><div id="diag-val-mode" style="text-align: right; color: #ff0055;">REAL_AI</div>
+      </div>
+      <div style="display: flex; gap: 6px; margin-top: 10px;">
+        <button id="btn-diag-test-sync" style="flex: 1; padding: 4px; background: #00f0ff; color: #000; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 9px;">TESTAR SINCRONIA</button>
+        <button id="btn-diag-recalibrate" style="flex: 1; padding: 4px; background: #ffe600; color: #000; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 9px;">RECALIBRAR</button>
+        <button id="btn-diag-export" style="flex: 1; padding: 4px; background: #7928ca; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 9px;">EXPORTAR</button>
       </div>
     </div>
 

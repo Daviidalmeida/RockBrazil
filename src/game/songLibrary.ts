@@ -93,14 +93,16 @@ export class SongLibrary {
       records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
     }));
 
-    // Official International Catalog (V13.6)
+    // Official International Catalog (V13.6 + V13.9.3 T.N.T.)
     const internationalCatalog = INTERNATIONAL_SONGS_CATALOG.map((s) => ({
       ...s,
       records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
     }));
 
     // Preserves procedural songs as legacy backup so existing regression tests and features remain stable
-    this.songs = [...brazilianCatalog, ...internationalCatalog, ...this.legacyBackup.map((s) => ({ ...s }))];
+    // Filter out tnt-acdc from legacy procedural so there is NO duplicate!
+    const filteredLegacy = this.legacyBackup.filter((s) => s.id !== 'tnt-acdc').map((s) => ({ ...s }));
+    this.songs = [...brazilianCatalog, ...internationalCatalog, ...filteredLegacy];
   }
 
   /**

@@ -4,6 +4,7 @@ import { OFFICIAL_BRAZILIAN_CATALOG } from './catalog/catalogData';
 import { UniversalChartImporter } from '../audio/universalChartImporter';
 import { initPreconvertedCharts } from './catalog/preconvertedCharts';
 import { RockAIStorageService } from './rockai/rockAIStorageService';
+import { RockSyncAutoFix } from './sync/rockSyncAutoFix';
 
 export class BeatmapManager {
   private cache: Map<string, BeatmapByDifficulty> = new Map();
@@ -18,47 +19,49 @@ export class BeatmapManager {
   getBeatmap(songId: string, difficulty: Difficulty): Note[] {
     let result: Note[];
 
-    // Check localStorage for custom user overrides first
-    const localSaved = this.loadFromStorage(songId, difficulty);
-    if (localSaved && localSaved.length > 0) {
-      result = localSaved.map((n) => ({ ...n }));
+    // 1. Check UniversalChartImporter for authentic pre-converted / international community chart
+    const convertedChart = UniversalChartImporter.getConvertedChart(songId);
+    if (convertedChart && convertedChart[difficulty] && convertedChart[difficulty].length > 0) {
+      this.cache.set(songId, convertedChart);
+      result = convertedChart[difficulty].map((n) => ({ ...n }));
     } else {
-      const songMaps = this.cache.get(songId);
-      if (songMaps && songMaps[difficulty]) {
-        result = songMaps[difficulty].map((n) => ({ ...n }));
+      // 2. Check localStorage for custom user overrides (must have >= 20 notes to prevent single-note corruption)
+      const localSaved = this.loadFromStorage(songId, difficulty);
+      if (localSaved && localSaved.length >= 20) {
+        result = localSaved.map((n) => ({ ...n }));
       } else {
-        // Check RockAIStorageService for generated AI test charts
-        const rockAiChart = RockAIStorageService.getGeneratedChart(songId);
-        if (rockAiChart && rockAiChart.charts && rockAiChart.charts[difficulty]) {
-          this.cache.set(songId, rockAiChart.charts);
-          result = rockAiChart.charts[difficulty].map((n) => ({ ...n }));
+        const songMaps = this.cache.get(songId);
+        if (songMaps && songMaps[difficulty] && songMaps[difficulty].length > 0) {
+          result = songMaps[difficulty].map((n) => ({ ...n }));
         } else {
-          // Check UniversalChartImporter for real converted community chart
-        const convertedChart = UniversalChartImporter.getConvertedChart(songId);
-        if (convertedChart && convertedChart[difficulty]) {
-          this.cache.set(songId, convertedChart);
-          result = convertedChart[difficulty].map((n) => ({ ...n }));
-        } else {
-          // Check official Brazilian catalog for Smart Chart generation
-          const officialSong = OFFICIAL_BRAZILIAN_CATALOG.find((s) => s.id === songId);
-          if (officialSong) {
-            const generated = SmartChartEngine.generateChartsForSong(
-              officialSong.id,
-              officialSong.bpm,
-              officialSong.duration
-            );
-            this.cache.set(officialSong.id, generated);
-            result = generated[difficulty].map((n) => ({ ...n }));
+          // 3. Check RockAIStorageService for generated AI test charts
+          const rockAiChart = RockAIStorageService.getGeneratedChart(songId);
+          if (rockAiChart && rockAiChart.charts && rockAiChart.charts[difficulty]) {
+            this.cache.set(songId, rockAiChart.charts);
+            result = rockAiChart.charts[difficulty].map((n) => ({ ...n }));
           } else {
-            // Fallback: generate default procedural map
-            result = this.generateDefaultTrackMap(songId, 132, 50, difficulty);
+            // 4. Check official Brazilian catalog for Smart Chart generation
+            const officialSong = OFFICIAL_BRAZILIAN_CATALOG.find((s) => s.id === songId);
+            if (officialSong) {
+              const generated = SmartChartEngine.generateChartsForSong(
+                officialSong.id,
+                officialSong.bpm,
+                officialSong.duration
+              );
+              this.cache.set(officialSong.id, generated);
+              result = generated[difficulty].map((n) => ({ ...n }));
+            } else {
+              // Fallback: generate default procedural map
+              result = this.generateDefaultTrackMap(songId, 132, 50, difficulty);
             }
           }
         }
       }
     }
 
-    return this.sanitizeDifficultyNotes(result, difficulty);
+    const sanitized = this.sanitizeDifficultyNotes(result, difficulty);
+    const { repairedNotes } = RockSyncAutoFix.validateAndRepairChart(sanitized);
+    return repairedNotes;
   }
 
   /**
@@ -181,9 +184,8 @@ export class BeatmapManager {
     // 5. Sobrecarga (160 BPM, 42.0s)
     this.cache.set('sobrecarga', this.createSobrecargaMaps());
 
-    // 6. T.N.T. — AC/DC (Backup / Legacy Procedural Chart Preserved)
+    // 6. T.N.T. — AC/DC (Backup / Legacy Procedural Chart Preserved under 'tnt-acdc-backup')
     const tntLegacy = this.createTNTMaps();
-    this.cache.set('tnt-acdc', tntLegacy);
     this.cache.set('tnt-acdc-backup', tntLegacy);
   }
 

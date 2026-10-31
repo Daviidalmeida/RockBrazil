@@ -57,8 +57,9 @@ describe('ROCKBRAZIL V13.6 — SUÍTE DE TESTES INTERNACIONAIS E IMPORTADOR ZIP'
       expect(processed.charter).toBe('CI Tester');
       expect(processed.compactCharts.EXPERT.length).toBe(2);
 
-      // Valida que o catálogo internacional compilado possui exatamente as 5 músicas
-      expect(INTERNATIONAL_SONGS_CATALOG.length).toBe(5);
+      // Valida que o catálogo internacional compilado possui as músicas internacionais (mínimo 5, agora 6 com T.N.T.)
+      expect(INTERNATIONAL_SONGS_CATALOG.length).toBeGreaterThanOrEqual(5);
+      expect(INTERNATIONAL_SONGS_CATALOG.some(s => s.id === 'tnt-acdc')).toBe(true);
     });
 
     it('2. Deve rejeitar e lançar erro ao receber um arquivo ZIP corrompido', async () => {
@@ -312,9 +313,10 @@ describe('ROCKBRAZIL V13.6 — SUÍTE DE TESTES INTERNACIONAIS E IMPORTADOR ZIP'
       const leaked = brazilianSongs.some(s => s.isInternational || s.id.startsWith('intl-'));
       expect(leaked).toBe(false);
 
-      // As 5 internacionais devem estar no catálogo internacional
+      // As internacionais devem estar no catálogo internacional (mínimo 5, 6 com T.N.T.)
       const intlSongs = lib.getInternationalSongs();
-      expect(intlSongs.length).toBe(5);
+      expect(intlSongs.length).toBeGreaterThanOrEqual(5);
+      expect(intlSongs.some(s => s.id === 'tnt-acdc')).toBe(true);
     });
   });
 

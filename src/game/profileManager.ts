@@ -818,8 +818,8 @@ export class ProfileManager {
   }
 
   public isSongUnlocked(songId: string): boolean {
-    if (songId.startsWith('intl-')) {
-      return true; // Músicas internacionais são gratuitas e desbloqueadas para teste
+    if (songId.startsWith('intl-') || songId === 'tnt-acdc') {
+      return true; // Músicas internacionais e T.N.T. são gratuitas e desbloqueadas para teste imediato
     }
     const profile = this.getActiveProfile();
     if (!profile.unlockedSongIds || profile.unlockedSongIds.length === 0) {

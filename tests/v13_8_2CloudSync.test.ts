@@ -381,7 +381,7 @@ describe('ROCKBRAZIL V13.8.2 — SUÍTE DE TESTES: SINCRONIZAÇÃO EM NUVEM E PL
     });
 
     it('deve preservar as 5 músicas internacionais gratuitas de teste no INTERNATIONAL_SONGS_CATALOG', () => {
-      expect(INTERNATIONAL_SONGS_CATALOG.length).toBe(5);
+      expect(INTERNATIONAL_SONGS_CATALOG.length).toBe(6);
       const intlIds = INTERNATIONAL_SONGS_CATALOG.map((s) => s.id);
       expect(intlIds).toContain('intl-acdc-highway-to-hell');
       expect(intlIds).toContain('intl-gnr-paradise-city');
