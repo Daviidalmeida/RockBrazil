@@ -38,21 +38,23 @@ describe('ROCKBRAZIL V14.6.1 — AUDITORIA DE SEGURANÇA E PROTEÇÃO DE USERS/{
     it('1.4. define funções auxiliares de integridade econômica para users/{userId}', () => {
       expect(rules).toContain('function isValidUserProfileKeys()');
       expect(rules).toContain('function isValidUserProfileData()');
+      expect(rules).toContain('function isNotModifyingEconomy()');
       expect(rules).toContain('function getResourceCoins()');
       expect(rules).toContain('function getResourceEarned()');
       expect(rules).toContain('function getResourceSpent()');
       expect(rules).toContain('function getResourceUnlockedSize()');
     });
 
-    it('1.5. impõe teto absoluto e limites matemáticos de RockCoins', () => {
+    it('1.5. impõe teto absoluto e limites matemáticos estritos de RockCoins (máx 5 por partida)', () => {
       expect(rules).toContain('request.resource.data.totalCoinsEarned <= 500000');
       expect(rules).toContain('request.resource.data.rockCoins <= request.resource.data.totalCoinsEarned');
-      expect(rules).toContain('(request.resource.data.totalCoinsEarned - getResourceEarned()) <= 150');
+      expect(rules).toContain('(request.resource.data.totalCoinsEarned - getResourceEarned()) <= 5');
     });
 
-    it('1.6. impõe limites de segurança contra desbloqueio fraudulento de músicas', () => {
-      expect(rules).toContain('(request.resource.data.unlockedSongIds.size() - getResourceUnlockedSize()) <= 5');
-      expect(rules).toContain('request.resource.data.totalCoinsSpent > getResourceSpent()');
+    it('1.6. impõe limites de segurança contra desbloqueio fraudulento de músicas e ledger atômico', () => {
+      expect(rules).toContain('(request.resource.data.unlockedSongIds.size() - getResourceUnlockedSize()) == 1');
+      expect(rules).toContain('(request.resource.data.totalCoinsSpent - getResourceSpent()) >= 5');
+      expect(rules).toContain('match /economy_ledger/{ledgerId}');
     });
   });
 
@@ -155,40 +157,42 @@ describe('ROCKBRAZIL V14.6.1 — AUDITORIA DE SEGURANÇA E PROTEÇÃO DE USERS/{
       if (!isValidUserProfileKeys(updated)) return false;
       if (!isValidUserProfileData(auth, updated)) return false;
 
-      // 1. Integridade de músicas: desbloqueios anteriores nunca podem ser revogados
-      const existingSongs = Array.isArray(existing.unlockedSongIds) ? existing.unlockedSongIds : ['mam-1406', 'cap-sua-maneira', 'pit-chip-novo'];
-      if (!existingSongs.every((id: string) => updated.unlockedSongIds.includes(id))) return false;
+      // CAMADA 1: Se o cliente NÃO está alterando economia/inventário diretamente
+      const economyKeys = ['rockCoins', 'totalCoinsEarned', 'totalCoinsSpent', 'unlockedSongIds', 'transactions'];
+      const isEconomyModified = economyKeys.some(k => {
+        return JSON.stringify(existing[k]) !== JSON.stringify(updated[k]);
+      });
 
-      const prevUnlockedCount = getResourceUnlockedSize(existing);
-      const newUnlockedCount = updated.unlockedSongIds.length;
-      if (newUnlockedCount < prevUnlockedCount) return false;
-      if ((newUnlockedCount - prevUnlockedCount) > 5) return false;
-
-      // 2. Proteção Econômica de Desbloqueio
-      const prevSpent = getResourceSpent(existing);
-      const prevEarned = getResourceEarned(existing);
-      const spentIncreased = updated.totalCoinsSpent > prevSpent;
-      const earnedIncreased = updated.totalCoinsEarned > prevEarned;
-      if (newUnlockedCount > prevUnlockedCount && !spentIncreased && !earnedIncreased) {
-        return false;
+      if (!isEconomyModified) {
+        return true; // Atualização legítima de preferências/perfil/recordes
       }
 
-      // 3. Integridade de Moedas Ganhas
-      if (updated.totalCoinsEarned < prevEarned) return false;
-      if ((updated.totalCoinsEarned - prevEarned) > 150) return false;
-
-      // 4. Integridade de Saldo
+      // CAMADA 2: Se alterou economia, DEVE respeitar a estrita transação atômica (máx 5 moedas / 1 música com gasto)
+      const prevEarned = getResourceEarned(existing);
+      const prevSpent = getResourceSpent(existing);
       const prevCoins = getResourceCoins(existing);
+      const prevUnlockedCount = getResourceUnlockedSize(existing);
+      const newUnlockedCount = updated.unlockedSongIds.length;
+
+      // Ganho de partida limitado estritamente a 5 moedas
+      if ((updated.totalCoinsEarned - prevEarned) > 5) return false;
+      if (updated.totalCoinsEarned < prevEarned) return false;
+      if (updated.totalCoinsSpent < prevSpent) return false;
+
+      // Saldo só sobe se ganho subiu na mesma medida
       if (updated.rockCoins > prevCoins) {
-        if ((updated.rockCoins - prevCoins) > (updated.totalCoinsEarned - prevEarned)) {
+        if ((updated.rockCoins - prevCoins) !== (updated.totalCoinsEarned - prevEarned)) {
           return false;
         }
       }
 
-      // 5. Integridade de Gastos
-      if (updated.totalCoinsSpent < prevSpent) return false;
-      if (updated.rockCoins < prevCoins && updated.totalCoinsSpent <= prevSpent) {
-        return false;
+      // Desbloqueio atômico de compra: máx 1 música por operação, exigindo gasto >= 5 moedas
+      if (newUnlockedCount !== prevUnlockedCount) {
+        if ((newUnlockedCount - prevUnlockedCount) !== 1) return false;
+        const existingSongs = Array.isArray(existing.unlockedSongIds) ? existing.unlockedSongIds : ['mam-1406', 'cap-sua-maneira', 'pit-chip-novo'];
+        if (!existingSongs.every((id: string) => updated.unlockedSongIds.includes(id))) return false;
+        if ((updated.totalCoinsSpent - prevSpent) < 5) return false;
+        if ((prevCoins - updated.rockCoins) < 5) return false;
       }
 
       return true;
@@ -320,13 +324,23 @@ describe('ROCKBRAZIL V14.6.1 — AUDITORIA DE SEGURANÇA E PROTEÇÃO DE USERS/{
       expect(simulateUpdateUser(validAuth, 'user_123', existing, freeUnlockHacked)).toBe(false);
     });
 
-    it('2.11. Bloqueia desbloqueio em massa de músicas (> 5 músicas em uma única sincronização)', () => {
+    it('2.11. Bloqueia salto de ganho maior que 5 moedas por sincronização (ex: tentar +10 ou +150 moedas de uma vez)', () => {
+      const existing = { ...initialValidProfile, rockCoins: 10, totalCoinsEarned: 20, totalCoinsSpent: 10 };
+      const cheatedJump = {
+        ...existing,
+        rockCoins: 20, // +10 moedas
+        totalCoinsEarned: 30 // +10 moedas
+      };
+      expect(simulateUpdateUser(validAuth, 'user_123', existing, cheatedJump)).toBe(false);
+    });
+
+    it('2.11b. Bloqueia desbloqueio de múltiplas músicas em uma única operação (máximo 1 por compra)', () => {
       const existing = { ...initialValidProfile, rockCoins: 100, totalCoinsEarned: 200, totalCoinsSpent: 100 };
       const massUnlock = {
         ...existing,
-        rockCoins: 50,
-        totalCoinsSpent: 150,
-        unlockedSongIds: [...existing.unlockedSongIds, 's1', 's2', 's3', 's4', 's5', 's6', 's7', 's8']
+        rockCoins: 90,
+        totalCoinsSpent: 110,
+        unlockedSongIds: [...existing.unlockedSongIds, 's1', 's2']
       };
       expect(simulateUpdateUser(validAuth, 'user_123', existing, massUnlock)).toBe(false);
     });

@@ -88,6 +88,13 @@ service cloud.firestore {
       ]);
     }
 
+    // Verifica se a atualização NÃO está alterando nenhum campo econômico ou de inventário
+    function isNotModifyingEconomy() {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+        'rockCoins', 'totalCoinsEarned', 'totalCoinsSpent', 'unlockedSongIds', 'transactions'
+      ]);
+    }
+
     // Extrai com segurança campos numéricos de recurso existente (compatibilidade legada)
     function getResourceCoins() {
       return ('rockCoins' in resource.data && resource.data.rockCoins is number)
@@ -169,43 +176,76 @@ service cloud.firestore {
           request.resource.data.season == resource.data.season &&
           isValidUserProfileKeys() &&
           isValidUserProfileData() &&
-          // 1. Integridade de Músicas: desbloqueios anteriores nunca podem ser revogados
-          request.resource.data.unlockedSongIds.hasAll(
-            ('unlockedSongIds' in resource.data && resource.data.unlockedSongIds is list)
-              ? resource.data.unlockedSongIds : ['mam-1406', 'cap-sua-maneira', 'pit-chip-novo']
-          ) &&
-          // Limite de taxa de desbloqueio por sincronização (máximo 5 novas músicas por sync)
-          (request.resource.data.unlockedSongIds.size() - getResourceUnlockedSize()) <= 5 &&
-          (request.resource.data.unlockedSongIds.size() >= getResourceUnlockedSize()) &&
-          // 2. Proteção Econômica de Desbloqueio:
-          // Se músicas novas foram desbloqueadas, o jogador DEVE ter gasto RockCoins (totalCoinsSpent aumentou)
-          // OU concluído partidas comprovadas (totalCoinsEarned aumentou)
           (
-            request.resource.data.unlockedSongIds.size() == getResourceUnlockedSize() ||
-            request.resource.data.totalCoinsSpent > getResourceSpent() ||
-            request.resource.data.totalCoinsEarned > getResourceEarned()
-          ) &&
-          // 3. Integridade de Moedas Ganhas (totalCoinsEarned):
-          // Moedas ganhas no histórico não podem sofrer regressão
-          request.resource.data.totalCoinsEarned >= getResourceEarned() &&
-          // Ganho máximo por sincronização limitado a 150 moedas (evita injeção arbitrária)
-          (request.resource.data.totalCoinsEarned - getResourceEarned()) <= 150 &&
-          // 4. Integridade de Saldo (rockCoins):
-          // Se o saldo aumentou, o total ganho DEVE ter aumentado proporcionalmente
-          (
-            request.resource.data.rockCoins <= getResourceCoins() ||
-            (request.resource.data.rockCoins - getResourceCoins()) <= (request.resource.data.totalCoinsEarned - getResourceEarned())
-          ) &&
-          // 5. Integridade de Gastos (totalCoinsSpent):
-          // Total gasto no histórico não pode sofrer regressão
-          request.resource.data.totalCoinsSpent >= getResourceSpent() &&
-          // Se o saldo diminuiu por compra, o gasto deve ter aumentado
-          (
-            request.resource.data.rockCoins >= getResourceCoins() ||
-            request.resource.data.totalCoinsSpent > getResourceSpent()
+            // CAMADA 1: Atualização normal de perfil (nome, avatar, settings, records, achievements)
+            // O cliente é terminantemente impedido de modificar saldos ou inventário diretamente
+            isNotModifyingEconomy() ||
+            // CAMADA 2: Transação atômica estritamente calibrada (máximo 5 moedas por partida concluída)
+            (
+              // Ganho estrito de partida: no máximo 5 moedas por conclusão de música
+              (request.resource.data.totalCoinsEarned - getResourceEarned()) <= 5 &&
+              request.resource.data.totalCoinsEarned >= getResourceEarned() &&
+              request.resource.data.totalCoinsSpent >= getResourceSpent() &&
+              // Se o saldo aumentou, o delta de rockCoins é rigorosamente idêntico ao delta ganho
+              (
+                request.resource.data.rockCoins <= getResourceCoins() ||
+                (request.resource.data.rockCoins - getResourceCoins()) == (request.resource.data.totalCoinsEarned - getResourceEarned())
+              ) &&
+              // Desbloqueio atômico de compra: no máximo 1 música por operação, exigindo gasto comprovado >= 5 moedas
+              (
+                request.resource.data.unlockedSongIds.size() == getResourceUnlockedSize() ||
+                (
+                  (request.resource.data.unlockedSongIds.size() - getResourceUnlockedSize()) == 1 &&
+                  request.resource.data.unlockedSongIds.hasAll(
+                    ('unlockedSongIds' in resource.data && resource.data.unlockedSongIds is list)
+                      ? resource.data.unlockedSongIds : ['mam-1406', 'cap-sua-maneira', 'pit-chip-novo']
+                  ) &&
+                  (request.resource.data.totalCoinsSpent - getResourceSpent()) >= 5 &&
+                  (getResourceCoins() - request.resource.data.rockCoins) >= 5
+                )
+              )
+            )
           )
         )
       );
+
+      // =========================================================================
+      // SUBCOLEÇÃO: users/{userId}/economy_ledger/{ledgerId} — LIVRO-RAZÃO ATÔMICO
+      // =========================================================================
+      match /economy_ledger/{ledgerId} {
+        allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+        allow update, delete: if false;
+        allow create: if request.auth != null && (
+          isAdmin() ||
+          (
+            request.auth.uid == userId &&
+            request.resource.data.keys().hasOnly([
+              'idempotencyKey', 'type', 'songId', 'difficulty', 'earnedCoins',
+              'cost', 'score', 'accuracy', 'hits', 'misses', 'matchTimestamp',
+              'processedAt', 'purchasedAt', 'purchaseTxId'
+            ]) &&
+            request.resource.data.type in ['EARN', 'SPEND'] &&
+            (
+              request.resource.data.type != 'EARN' ||
+              (
+                request.resource.data.earnedCoins is number &&
+                request.resource.data.earnedCoins >= 0 &&
+                request.resource.data.earnedCoins <= 5 &&
+                ledgerId == request.resource.data.idempotencyKey &&
+                request.resource.data.matchTimestamp is number
+              )
+            ) &&
+            (
+              request.resource.data.type != 'SPEND' ||
+              (
+                request.resource.data.cost is number &&
+                request.resource.data.cost >= 0 &&
+                request.resource.data.cost <= 100
+              )
+            )
+          )
+        );
+      }
     }
 
     // =========================================================================
