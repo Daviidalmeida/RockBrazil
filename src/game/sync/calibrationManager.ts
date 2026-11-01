@@ -3,11 +3,11 @@ import { INTERNATIONAL_SYNC_REGISTRY } from './internationalSyncRegistry';
 import { RockSyncProfileRepository } from '../rockchart/sync/rockSyncProfileRepository';
 
 export class CalibrationManager {
-  private static readonly STORAGE_KEY = 'rockbrazil_calibration_v2';
+  private static readonly STORAGE_KEY = 'rockbrazil_calibration_v3';
   private static cache: Record<string, SongCalibration> | null = null;
 
   // V8: Brazilian charts are normalized at source (0ms).
-  // V14.1: Consult verified RockSyncProfileRepository first, then INTERNATIONAL_SYNC_REGISTRY
+  // V14.1/V14.2.1: Consult verified RockSyncProfileRepository first, then INTERNATIONAL_SYNC_REGISTRY
   private static getVerifiedDefault(songId: string, videoId = ''): number {
     try {
       const profile = RockSyncProfileRepository.getInstance().getProfileForSong(songId, videoId);
@@ -30,8 +30,9 @@ export class CalibrationManager {
     this.cache = {};
     try {
       if (typeof window !== 'undefined' && window.localStorage) {
-        // Clean legacy v1 storage if present to avoid old test offsets
+        // Clean legacy v1 and v2 storage to avoid obsolete videoclip offsets (e.g. -3800ms)
         window.localStorage.removeItem('rockbrazil_calibration_v1');
+        window.localStorage.removeItem('rockbrazil_calibration_v2');
         const raw = window.localStorage.getItem(this.STORAGE_KEY);
         if (raw) {
           this.cache = JSON.parse(raw);
@@ -56,21 +57,25 @@ export class CalibrationManager {
   public static getCalibration(songId: string, videoId = ''): SongCalibration {
     const data = this.load();
     const defaultOffset = this.getVerifiedDefault(songId, videoId);
-    if (!data[songId]) {
+    // V14.2.1: Se a calibração não existe ou se o vídeo ativo mudou (ex: substituição de videoclipe por Topic),
+    // atualiza para o offset verificado da fonte ativa
+    if (!data[songId] || (videoId && data[songId].videoId !== videoId)) {
       data[songId] = {
         songId,
-        videoId,
+        videoId: videoId || data[songId]?.videoId || '',
         chartOffsetMs: defaultOffset,
         inputLatencyMs: 0,
         calibrationStatus: defaultOffset !== 0 ? 'VERIFIED' : 'DEFAULT',
         lastCalibrated: Date.now()
       };
+      this.persist();
     }
     return { ...data[songId] };
   }
 
   public static getSongOffsetMs(songId: string, videoId = ''): number {
-    return this.getCalibration(songId, videoId).chartOffsetMs || 0;
+    const resolvedVideoId = videoId || INTERNATIONAL_SYNC_REGISTRY[songId]?.youtubeVideoId || '';
+    return this.getCalibration(songId, resolvedVideoId).chartOffsetMs || 0;
   }
 
   public static getOffsetForSong(songId: string, videoId = ''): number {

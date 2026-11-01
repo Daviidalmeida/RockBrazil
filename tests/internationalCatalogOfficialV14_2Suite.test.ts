@@ -136,10 +136,10 @@ describe('ROCKBRAZIL V14.2 — SUÍTE OFICIAL DO CATÁLOGO INTERNACIONAL & GIVEN
       expect(song?.style).toContain('Minutes to Midnight');
     });
 
-    it('T02. Associação com vídeo oficial do YouTube (0xyxtzD54rM / Official Audio)', () => {
+    it('T02. Associação com gravação oficial do YouTube (D93vYwuMeUw / Official Audio / Topic)', () => {
       const song = INTERNATIONAL_SONGS_CATALOG.find((s) => s.id === GIVEN_UP_ID);
-      expect(song?.youtubeVideoId).toBe('0xyxtzD54rM');
-      expect(song?.youtubeChannel).toBe('Linkin Park');
+      expect(song?.youtubeVideoId).toBe('D93vYwuMeUw');
+      expect(song?.youtubeChannel).toBe('Linkin Park - Topic');
       expect(song?.embeddingStatus).toBe('ELIGIBLE_OFFICIAL');
       expect(song?.licenseStatus).toBe('EMBED_ALLOWED');
     });
@@ -269,14 +269,14 @@ describe('ROCKBRAZIL V14.2 — SUÍTE OFICIAL DO CATÁLOGO INTERNACIONAL & GIVEN
     });
 
     it('T19. CalibrationManager retorna 0ms para o áudio de estúdio de Given Up', () => {
-      const offset = CalibrationManager.getSongOffsetMs(GIVEN_UP_ID, '0xyxtzD54rM');
+      const offset = CalibrationManager.getSongOffsetMs(GIVEN_UP_ID, 'D93vYwuMeUw');
       expect(offset).toBe(0);
     });
 
     it('T20. RockSyncProfileRepository registra perfil canônico VERIFIED para Given Up', () => {
       const profile = RockSyncProfileRepository.getInstance().getProfileForSong(GIVEN_UP_ID);
       expect(profile).toBeDefined();
-      expect(profile?.youtubeVideoId).toBe('0xyxtzD54rM');
+      expect(profile?.youtubeVideoId).toBe('D93vYwuMeUw');
       expect(profile?.validationStatus).toBe('VERIFIED');
       expect(profile?.offsetMs).toBe(0);
     });
@@ -434,7 +434,7 @@ describe('ROCKBRAZIL V14.2 — SUÍTE OFICIAL DO CATÁLOGO INTERNACIONAL & GIVEN
         id: 'intl-gnr-paradise-city',
         title: 'Paradise City',
         artist: "Guns N' Roses",
-        youtubeVideoId: 'Rbm6GXllBiw',
+        youtubeVideoId: 'WJUInYShJYo',
         expectedBpm: 120,
         expectedOffset: 0,
         diffCounts: { EASY: 521, MEDIUM: 1093, HARD: 1940, EXPERT: 2411 }
@@ -443,7 +443,7 @@ describe('ROCKBRAZIL V14.2 — SUÍTE OFICIAL DO CATÁLOGO INTERNACIONAL & GIVEN
         id: 'intl-gnr-sweet-child-o-mine',
         title: "Sweet Child o' Mine",
         artist: "Guns N' Roses",
-        youtubeVideoId: '1w7OgIMMRc4',
+        youtubeVideoId: 'MNrgf3GNNXw',
         expectedBpm: 128,
         expectedOffset: 0,
         diffCounts: { EASY: 581, MEDIUM: 711, HARD: 968, EXPERT: 1095 }
@@ -452,16 +452,16 @@ describe('ROCKBRAZIL V14.2 — SUÍTE OFICIAL DO CATÁLOGO INTERNACIONAL & GIVEN
         id: 'intl-gnr-welcome-to-the-jungle',
         title: 'Welcome to the Jungle',
         artist: "Guns N' Roses",
-        youtubeVideoId: 'o1tj2zJ2Wvg',
+        youtubeVideoId: 'FN7ECSHb5xs',
         expectedBpm: 100,
-        expectedOffset: -3800,
+        expectedOffset: 0,
         diffCounts: { EASY: 437, MEDIUM: 631, HARD: 855, EXPERT: 1248 }
       },
       {
         id: 'intl-lp-numb',
         title: 'Numb',
         artist: 'Linkin Park',
-        youtubeVideoId: 'kXYiU_JCYtU',
+        youtubeVideoId: 'u-IcadiJCrE',
         expectedBpm: 110,
         expectedOffset: 0,
         diffCounts: { EASY: 93, MEDIUM: 165, HARD: 189, EXPERT: 211 }
@@ -470,7 +470,7 @@ describe('ROCKBRAZIL V14.2 — SUÍTE OFICIAL DO CATÁLOGO INTERNACIONAL & GIVEN
         id: 'intl-lp-given-up',
         title: 'Given Up',
         artist: 'Linkin Park',
-        youtubeVideoId: '0xyxtzD54rM',
+        youtubeVideoId: 'D93vYwuMeUw',
         expectedBpm: 100,
         expectedOffset: 0,
         diffCounts: { EASY: 165, MEDIUM: 394, HARD: 625, EXPERT: 832 }

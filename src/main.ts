@@ -1356,7 +1356,7 @@ class RockBrazilGame {
     // V14.2 Relógio Único: UnifiedMasterClock aplica songOffset e globalOffset exatamente uma vez.
     // GameEngine opera em modo de relógio unificado, eliminando qualquer dedução duplicada de audioOffsetMs.
     this.masterClock.setOffsets(
-      CalibrationManager.getSongOffsetMs(song.id),
+      CalibrationManager.getSongOffsetMs(song.id, song.youtubeVideoId),
       this.settingsManager.getSettings().audioOffsetMs || 0
     );
     this.engine.setUnifiedClockMode(true);
@@ -1845,7 +1845,7 @@ class RockBrazilGame {
         const unjudged = notes.find((n) => !n.hit && !n.missed);
         const stats = this.engine.getStats();
         const health = this.rockSync.getHealthReport();
-        const appliedOffset = CalibrationManager.getSongOffsetMs(this.currentSong?.id || '') + (this.settingsManager.getSettings().audioOffsetMs || 0);
+        const appliedOffset = CalibrationManager.getSongOffsetMs(this.currentSong?.id || '', this.currentSong?.youtubeVideoId) + (this.settingsManager.getSettings().audioOffsetMs || 0);
 
         this.ui.updateRockSyncDiagnostics({
           songId: this.currentSong ? `${this.currentSong.title} (${this.currentSong.id})` : '-',

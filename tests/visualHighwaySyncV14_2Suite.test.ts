@@ -416,7 +416,7 @@ describe('ROCKBRAZIL V14.2 — SUÍTE DE TESTES: CORREÇÃO DEFINITIVA DA ESTEIR
   // --------------------------------------------------------------------------
   it('13. Offsets musicais são aplicados exatamente uma vez sem dedução duplicada no GameEngine', () => {
     const songId = 'intl-gnr-welcome-to-the-jungle';
-    const profileOffsetMs = CalibrationManager.getSongOffsetMs(songId); // -3800ms
+    const profileOffsetMs = CalibrationManager.getSongOffsetMs(songId, 'o1tj2zJ2Wvg'); // -3800ms para clipe MTV com intro narrativa
     const globalOffsetMs = 0;
 
     const clock = new UnifiedMasterClock();

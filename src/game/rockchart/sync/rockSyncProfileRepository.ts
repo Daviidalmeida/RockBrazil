@@ -2,7 +2,7 @@ import { RockSyncProfile, ValidationStatus, SyncMethod, ChartSourceProviderId } 
 import { Difficulty } from '../../../types';
 
 export class RockSyncProfileRepository {
-  private static readonly STORAGE_KEY = 'rockbrazil_sync_profiles_v14';
+  private static readonly STORAGE_KEY = 'rockbrazil_sync_profiles_v14_2_1';
   private static instance: RockSyncProfileRepository | null = null;
 
   private profiles: Map<string, RockSyncProfile> = new Map();
@@ -125,19 +125,31 @@ export class RockSyncProfileRepository {
         chartId: 'chart-gnr-wttj-canonical',
         chartVersion: '1.0',
         chartSource: 'ROCKBRAZIL_INTERNAL',
-        recordingId: 'rec-gnr-wttj-official-video',
+        recordingId: 'rec-gnr-wttj-topic-audio',
+        youtubeVideoId: 'FN7ECSHb5xs',
+        difficulty: 'HARD',
+        offsetMs: 0,
+        timeScale: 1.0,
+        syncMethod: 'STUDIO_TIMESTAMP_ALIGNED',
+        evidenceSource: 'Áudio Oficial Topic / Appetite for Destruction (Universal Music Group)',
+        validationStatus: 'VERIFIED',
+        notes: 'Áudio oficial Topic sem narrativa de ônibus. Riff de delay entra em 0.0s e 1º acorde em 3.269s coincidente com chart em 0ms.',
+        updatedAt: '2026-11-01T00:00:00Z'
+      },
+      {
+        songId: 'intl-gnr-welcome-to-the-jungle',
+        chartId: 'chart-gnr-wttj-canonical',
+        chartVersion: '1.0',
+        chartSource: 'ROCKBRAZIL_INTERNAL',
+        recordingId: 'rec-gnr-wttj-official-video-legacy',
         youtubeVideoId: 'o1tj2zJ2Wvg',
         difficulty: 'HARD',
-        // No clipe oficial (o1tj2zJ2Wvg), a introdução narrativa (chegada do ônibus em Los Angeles) dura 3.8s.
-        // O riff de delay de Slash entra aos ~3.8s e o 1º acorde acentuado ocorre aos 7.07s.
-        // O chart de estúdio tem a primeira nota aos 3.269s.
-        // Alinhamento matemático: 3.269s - 7.070s = -3.801s (~ -3800ms).
         offsetMs: -3800,
         timeScale: 1.0,
         syncMethod: 'OFFICIAL_VIDEO_ALIGNMENT',
         evidenceSource: 'Auditoria visual e temporal do clipe oficial Appetite for Destruction 1987 (Intro Detector V2)',
         validationStatus: 'VERIFIED',
-        notes: 'Abertura narrativa do ônibus (0-3.8s) calibrada com entrada do riff aos 3.8s e 1º acorde aos 7.07s.',
+        notes: 'Perfil histórico para o clipe MTV de 1987 (3.8s de intro narrativa do ônibus).',
         updatedAt: '2026-10-31T22:25:00Z'
       },
       {
@@ -161,64 +173,64 @@ export class RockSyncProfileRepository {
         chartId: 'chart-gnr-scom-canonical',
         chartVersion: '1.0',
         chartSource: 'ROCKBRAZIL_INTERNAL',
-        recordingId: 'rec-gnr-scom-official-video',
-        youtubeVideoId: '1w7OgIMMRc4',
+        recordingId: 'rec-gnr-scom-topic-audio',
+        youtubeVideoId: 'MNrgf3GNNXw',
         difficulty: 'HARD',
         offsetMs: 0,
         timeScale: 1.0,
         syncMethod: 'STUDIO_TIMESTAMP_ALIGNED',
-        evidenceSource: 'Clipe oficial Guns N Roses VEVO',
-        validationStatus: 'NEEDS_REVIEW',
-        notes: 'Aguardando validação com vídeo oficial.',
-        updatedAt: '2026-10-31T21:40:00Z'
+        evidenceSource: 'Áudio Oficial Topic / Appetite for Destruction (Universal Music Group)',
+        validationStatus: 'VERIFIED',
+        notes: 'Áudio oficial Topic de estúdio em 0ms.',
+        updatedAt: '2026-11-01T00:00:00Z'
       },
       {
         songId: 'intl-lp-numb',
         chartId: 'chart-lp-numb-harmonix',
         chartVersion: '1.0',
         chartSource: 'COMMUNITY_UPLOAD',
-        recordingId: 'rec-lp-numb-4k-video',
-        youtubeVideoId: 'kXYiU_JCYtU',
+        recordingId: 'rec-lp-numb-topic-audio',
+        youtubeVideoId: 'u-IcadiJCrE',
         difficulty: 'HARD',
         offsetMs: 0,
         timeScale: 1.0,
         syncMethod: 'STUDIO_TIMESTAMP_ALIGNED',
-        evidenceSource: 'Clipe oficial Linkin Park 4K Upgrade',
-        validationStatus: 'AUTO_MATCHED',
-        notes: 'Introdução aos 11.182s alinhada com piano inicial.',
-        updatedAt: '2026-10-31T21:40:00Z'
+        evidenceSource: 'Áudio Oficial Topic / Meteora (Warner Records)',
+        validationStatus: 'VERIFIED',
+        notes: 'Áudio oficial Topic de estúdio em 0ms.',
+        updatedAt: '2026-11-01T00:00:00Z'
       },
       {
         songId: 'intl-gnr-paradise-city',
         chartId: 'chart-gnr-pc-zantor',
         chartVersion: '1.0',
         chartSource: 'ROCKBRAZIL_INTERNAL',
-        recordingId: 'rec-gnr-pc-official-video',
-        youtubeVideoId: 'Rbm6GXllBiw',
+        recordingId: 'rec-gnr-pc-topic-audio',
+        youtubeVideoId: 'WJUInYShJYo',
         difficulty: 'HARD',
         offsetMs: 0,
         timeScale: 1.0,
         syncMethod: 'STUDIO_TIMESTAMP_ALIGNED',
-        evidenceSource: 'Clipe Oficial Appetite for Destruction 1987',
+        evidenceSource: 'Áudio Oficial Topic / Appetite for Destruction (Universal Music Group)',
         validationStatus: 'VERIFIED',
-        notes: 'Gravação oficial de estúdio Geffen Records em 0ms.',
-        updatedAt: '2026-10-31T23:30:00Z'
+        notes: 'Áudio oficial Topic de estúdio em 0ms.',
+        updatedAt: '2026-11-01T00:00:00Z'
       },
       {
         songId: 'intl-lp-given-up',
         chartId: 'chart-lp-given-up-canonical',
         chartVersion: '1.0',
         chartSource: 'ROCKBRAZIL_INTERNAL',
-        recordingId: 'rec-lp-given-up-official-audio',
-        youtubeVideoId: '0xyxtzD54rM',
+        recordingId: 'rec-lp-given-up-topic-audio',
+        youtubeVideoId: 'D93vYwuMeUw',
         difficulty: 'HARD',
         offsetMs: 0,
         timeScale: 1.0,
         syncMethod: 'STUDIO_TIMESTAMP_ALIGNED',
-        evidenceSource: 'Áudio Oficial Warner Records / Minutes to Midnight 2007',
+        evidenceSource: 'Áudio Oficial Topic / Minutes to Midnight (Warner Records)',
         validationStatus: 'VERIFIED',
-        notes: 'Áudio oficial do canal Linkin Park em 0ms.',
-        updatedAt: '2026-10-31T23:30:00Z'
+        notes: 'Áudio oficial Topic de estúdio em 0ms.',
+        updatedAt: '2026-11-01T00:00:00Z'
       }
     ];
 
