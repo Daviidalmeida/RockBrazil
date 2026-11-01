@@ -29,6 +29,7 @@ import { FirestoreService } from './firebase/firestoreService';
 import { RankingService } from './firebase/rankingService';
 import { RockSyncEngine } from './game/sync/rockSyncEngine';
 import { RockAIView } from './ui/rockAIView';
+import { RockChartStudioView } from './ui/rockChartStudioView';
 import { AudioPlaybackController } from './audio/audioPlaybackController';
 import { RockSyncAutoFix } from './game/sync/rockSyncAutoFix';
 import { AutonomousMusicIntelligenceEngine } from './game/intelligence';
@@ -53,6 +54,7 @@ class RockBrazilGame {
   private rockSync: RockSyncEngine;
   private musicIntelligence = AutonomousMusicIntelligenceEngine.getInstance();
   private rockAIView: RockAIView | null = null;
+  private rockChartStudioView: RockChartStudioView | null = null;
 
   private state: GameState = GameState.MENU;
   private currentSong: SongMetadata;
@@ -219,6 +221,22 @@ class RockBrazilGame {
       };
       this.rockAIView.onTestPlayRequested = (song, diff, notes) => {
         this.startNewMatch(song, diff, notes);
+      };
+    }
+
+    const studioScreen = document.getElementById('screen-rockchart-studio');
+    if (studioScreen) {
+      this.rockChartStudioView = new RockChartStudioView(studioScreen);
+      this.rockChartStudioView.render();
+      this.rockChartStudioView.onExitRequested = () => {
+        this.state = GameState.SETTINGS;
+        this.ui.showScreen(GameState.SETTINGS);
+      };
+      this.rockChartStudioView.onTestPlayRequested = (song, diff, notes) => {
+        this.startNewMatch(song, diff, notes);
+      };
+      this.ui.onRockChartStudioOpened = () => {
+        this.rockChartStudioView?.render();
       };
     }
 
@@ -1327,9 +1345,11 @@ class RockBrazilGame {
       }
       if (sessionId !== this.currentMatchSessionId) return;
       this.masterClock.setSource(this.ytPlayer);
+      this.masterClock.configureForSource('youtube');
     } else {
       this.playbackController.setActiveSource(song.type === 'procedural' ? 'procedural' : 'audio-buffer', song.id);
       this.masterClock.setSource(this.audio);
+      this.masterClock.configureForSource(song.type === 'procedural' ? 'procedural' : 'audio-buffer');
       this.ytPlayer.stop();
       this.ui.setYouTubePlayerVisibility(false);
     }

@@ -66,6 +66,7 @@ export class UIManager {
   private screenHowToPlay: HTMLElement;
   private screenEditor: HTMLElement;
   private screenRockAI: HTMLElement | null = null;
+  private screenRockChartStudio: HTMLElement | null = null;
 
   // Profile elements
   private profileNameInput: HTMLInputElement;
@@ -154,6 +155,7 @@ export class UIManager {
 
   // Editor callbacks
   public onOpenEditorClicked?: () => void;
+  public onRockChartStudioOpened?: () => void;
   public onImportZipFile?: (file: File) => void;
   public onPlayAsGuestClicked?: () => void;
 
@@ -212,6 +214,7 @@ export class UIManager {
     this.screenHowToPlay = document.getElementById('screen-howtoplay')!;
     this.screenEditor = document.getElementById('screen-editor')!;
     this.screenRockAI = document.getElementById('screen-rockai');
+    this.screenRockChartStudio = document.getElementById('screen-rockchart-studio');
 
     this.profileNameInput = document.getElementById('profile-name-input') as HTMLInputElement;
     this.profileAvatarGrid = document.querySelector('.avatar-grid')!;
@@ -434,6 +437,10 @@ export class UIManager {
         this.currentRankDiff = (target.dataset.diff as Difficulty) || 'MEDIUM';
         this.loadRankingView('difficulty');
       });
+    });
+
+    document.getElementById('btn-open-rockchart-studio')?.addEventListener('click', () => {
+      this.showScreen(GameState.ROCKCHART_STUDIO);
     });
 
     document.getElementById('btn-open-rockai')?.addEventListener('click', () => {
@@ -1339,6 +1346,11 @@ export class UIManager {
     this.screenRanking.classList.toggle('hidden', (state as any) !== 'RANKING');
     this.screenEditor.classList.toggle('hidden', state !== GameState.NOTE_EDITOR);
     this.screenRockAI?.classList.toggle('hidden', state !== GameState.ROCK_AI);
+    this.screenRockChartStudio?.classList.toggle('hidden', state !== GameState.ROCKCHART_STUDIO);
+
+    if (state === GameState.ROCKCHART_STUDIO) {
+      this.onRockChartStudioOpened?.();
+    }
 
     if (state === GameState.PLAYING) {
       this.hudElement.classList.remove('hidden');
@@ -1771,7 +1783,9 @@ export class UIManager {
       return profile?.unlockedSongIds ? profile.unlockedSongIds.includes(songId) : true;
     };
 
-    const unlockedSongs = songs.filter((s) => isSongUnlocked(s.id));
+    const unlockedSongs = songs
+      .filter((s) => isSongUnlocked(s.id))
+      .filter((s) => s.id !== 'tnt-acdc' || (s.isAvailable !== false && (s as any).isPlayable !== false));
 
     // Atualiza saldo permanente de RockCoins no cabeçalho da biblioteca (🪙 [VALOR])
     const coinValEl = document.getElementById('library-rockcoins-val');

@@ -19,6 +19,7 @@ export class MusicTimeline {
   private source: AudioTimeSource | null = null;
   private songOffsetSec = 0;
   private globalOffsetSec = 0;
+  private systemicCompensationSec = 0;
   private frozenTime = 0;
   private isPaused = false;
   private _isBufferingState = false;
@@ -77,8 +78,16 @@ export class MusicTimeline {
     return this.globalOffsetSec;
   }
 
+  public setSystemicCompensationSec(sec: number): void {
+    this.systemicCompensationSec = sec;
+  }
+
+  public getSystemicCompensationSec(): number {
+    return this.systemicCompensationSec;
+  }
+
   public getTotalOffsetSec(): number {
-    return this.songOffsetSec + this.globalOffsetSec;
+    return this.songOffsetSec + this.globalOffsetSec + this.systemicCompensationSec;
   }
 
   /**

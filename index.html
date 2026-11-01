@@ -884,7 +884,8 @@
           <button id="btn-switch-account-mode" class="notebook-bar-mini-btn" style="width: 100%; padding: 8px;">TROCAR DE CONTA / MODO DE ENTRADA</button>
         </div>
 
-        <div class="settings-group" style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 10px;">
+        <div class="settings-group" style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+          <button id="btn-open-rockchart-studio" class="notebook-bar-mini-btn" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #ff6b00, #ea580c); color: #fff; font-weight: bold; border-radius: 6px; border: 1px solid rgba(255, 107, 0, 0.4); cursor: pointer;">🎸 ROCKCHART AI STUDIO (V14.0)</button>
           <button id="btn-open-rockai" class="notebook-bar-mini-btn" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; font-weight: bold; border-radius: 6px; border: 1px solid rgba(167, 139, 250, 0.4); cursor: pointer;">⚡ ROCK AI — AUTOCHART & ADMIN</button>
         </div>
 
@@ -1096,7 +1097,10 @@
       </div>
     </div>
 
-        <!-- 15. ROCK AI — AUTOCHART ENGINE & ADMIN -->
+    <!-- 15. ROCKCHART AI STUDIO (V14.0) -->
+    <div id="screen-rockchart-studio" class="overlay-screen hidden" style="padding: 12px; z-index: 75; background: rgba(10, 11, 18, 0.98); overflow-y: auto;"></div>
+
+    <!-- 15. ROCK AI — AUTOCHART ENGINE & ADMIN -->
     <div id="screen-rockai" class="overlay-screen hidden" style="padding: 12px; z-index: 70; background: rgba(10, 11, 18, 0.98); overflow-y: auto;">
       <div class="rockai-screen-container" style="max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px;">
         <!-- Header -->

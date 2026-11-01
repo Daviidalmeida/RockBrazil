@@ -269,7 +269,7 @@ export const INTERNATIONAL_SONGS_CATALOG: (SongMetadata & {
     "reviewStatus": "VERIFIED",
     "licenseStatus": "EMBED_ALLOWED",
     "chartStatus": "CUSTOM",
-    "isAvailable": true,
+    "isAvailable": false,
     "coverUrl": "images/intl-covers/intl-acdc-highway-to-hell.jpg",
     "records": {
       "EASY": null,
