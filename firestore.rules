@@ -56,7 +56,9 @@ service cloud.firestore {
       return !('email' in request.resource.data) &&
         !('token' in request.resource.data) &&
         !('password' in request.resource.data) &&
-        !('secret' in request.resource.data);
+        !('secret' in request.resource.data) &&
+        !('admin' in request.resource.data) &&
+        !('role' in request.resource.data);
     }
 
     // Verifica se o usuário autenticado possui credenciais válidas de administrador
@@ -69,11 +71,141 @@ service cloud.firestore {
     }
 
     // =========================================================================
-    // COLEÇÃO: users/{userId} — PERFIS PRIVADOS DE JOGADORES
+    // VALIDAÇÕES ESPECÍFICAS DE PERFIL DE USUÁRIO E ECONOMIA (V14.6.1)
     // =========================================================================
-    // Apenas o próprio usuário autenticado pode ler ou gravar em seu perfil
+
+    // Chaves permitidas e obrigatórias no documento de perfil
+    function isValidUserProfileKeys() {
+      return request.resource.data.keys().hasOnly([
+        'uid', 'name', 'avatar',
+        'rockCoins', 'totalCoinsEarned', 'totalCoinsSpent',
+        'unlockedSongIds', 'achievements', 'records', 'settings',
+        'transactions', 'season', 'migrationVersion', 'lastPlayedAt', 'updatedAt'
+      ]) && request.resource.data.keys().hasAll([
+        'uid', 'name', 'avatar',
+        'rockCoins', 'totalCoinsEarned', 'totalCoinsSpent',
+        'unlockedSongIds', 'season', 'updatedAt'
+      ]);
+    }
+
+    // Extrai com segurança campos numéricos de recurso existente (compatibilidade legada)
+    function getResourceCoins() {
+      return ('rockCoins' in resource.data && resource.data.rockCoins is number)
+        ? resource.data.rockCoins : 0;
+    }
+
+    function getResourceEarned() {
+      return ('totalCoinsEarned' in resource.data && resource.data.totalCoinsEarned is number)
+        ? resource.data.totalCoinsEarned : getResourceCoins();
+    }
+
+    function getResourceSpent() {
+      return ('totalCoinsSpent' in resource.data && resource.data.totalCoinsSpent is number)
+        ? resource.data.totalCoinsSpent : 0;
+    }
+
+    function getResourceUnlockedSize() {
+      return ('unlockedSongIds' in resource.data && resource.data.unlockedSongIds is list)
+        ? resource.data.unlockedSongIds.size() : 3;
+    }
+
+    // Validação de tipos e limites dos campos de perfil
+    function isValidUserProfileData() {
+      return request.resource.data.uid is string &&
+        request.resource.data.uid == request.auth.uid &&
+        isValidPlayerName(request.resource.data.name) &&
+        isValidAvatar(request.resource.data.avatar) &&
+        isValidSeason(request.resource.data.season) &&
+        request.resource.data.updatedAt is number &&
+        request.resource.data.rockCoins is number &&
+        request.resource.data.rockCoins >= 0 &&
+        request.resource.data.totalCoinsEarned is number &&
+        request.resource.data.totalCoinsEarned >= 0 &&
+        request.resource.data.totalCoinsSpent is number &&
+        request.resource.data.totalCoinsSpent >= 0 &&
+        // Teto absoluto de moedas para prevenir overflow e números astronômicos
+        request.resource.data.totalCoinsEarned <= 500000 &&
+        // Invariante de solvência: saldo atual não pode superar o total ganho
+        request.resource.data.rockCoins <= request.resource.data.totalCoinsEarned &&
+        // Músicas desbloqueadas: lista com no mínimo as 3 gratuitas padrão e no máximo catálogo total
+        request.resource.data.unlockedSongIds is list &&
+        request.resource.data.unlockedSongIds.size() >= 3 &&
+        request.resource.data.unlockedSongIds.size() <= 250 &&
+        request.resource.data.unlockedSongIds.hasAll(['mam-1406', 'cap-sua-maneira', 'pit-chip-novo']) &&
+        // Tipos opcionais válidos quando presentes
+        (!('achievements' in request.resource.data) || request.resource.data.achievements is map) &&
+        (!('records' in request.resource.data) || request.resource.data.records is map) &&
+        (!('settings' in request.resource.data) || request.resource.data.settings is map) &&
+        (!('transactions' in request.resource.data) || request.resource.data.transactions is list) &&
+        (!('migrationVersion' in request.resource.data) || request.resource.data.migrationVersion is number) &&
+        (!('lastPlayedAt' in request.resource.data) || request.resource.data.lastPlayedAt is number) &&
+        hasNoPrivateData();
+    }
+
+    // =========================================================================
+    // COLEÇÃO: users/{userId} — PERFIS PRIVADOS DE JOGADORES (V14.6.1 BLINDADA)
+    // =========================================================================
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      // Leitura permitida para o próprio usuário autenticado ou administrador
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+
+      // Bloqueio rigoroso de exclusão de perfis pelos clientes
+      allow delete: if false;
+
+      // Criação de perfil inicial (novo jogador autenticado ou migração inicial de convidado)
+      allow create: if request.auth != null && request.auth.uid == userId &&
+        isValidUserProfileKeys() &&
+        isValidUserProfileData() &&
+        // Limite plausível para conta recém-criada (impede bot inicial com milhões de moedas)
+        request.resource.data.totalCoinsEarned <= 10000 &&
+        request.resource.data.unlockedSongIds.size() <= 50;
+
+      // Atualização de perfil: impede manipulação de moedas, liberação fraudulenta de músicas e regressão de dados
+      allow update: if request.auth != null && (
+        isAdmin() ||
+        (
+          request.auth.uid == userId &&
+          request.resource.data.uid == resource.data.uid &&
+          request.resource.data.season == resource.data.season &&
+          isValidUserProfileKeys() &&
+          isValidUserProfileData() &&
+          // 1. Integridade de Músicas: desbloqueios anteriores nunca podem ser revogados
+          request.resource.data.unlockedSongIds.hasAll(
+            ('unlockedSongIds' in resource.data && resource.data.unlockedSongIds is list)
+              ? resource.data.unlockedSongIds : ['mam-1406', 'cap-sua-maneira', 'pit-chip-novo']
+          ) &&
+          // Limite de taxa de desbloqueio por sincronização (máximo 5 novas músicas por sync)
+          (request.resource.data.unlockedSongIds.size() - getResourceUnlockedSize()) <= 5 &&
+          (request.resource.data.unlockedSongIds.size() >= getResourceUnlockedSize()) &&
+          // 2. Proteção Econômica de Desbloqueio:
+          // Se músicas novas foram desbloqueadas, o jogador DEVE ter gasto RockCoins (totalCoinsSpent aumentou)
+          // OU concluído partidas comprovadas (totalCoinsEarned aumentou)
+          (
+            request.resource.data.unlockedSongIds.size() == getResourceUnlockedSize() ||
+            request.resource.data.totalCoinsSpent > getResourceSpent() ||
+            request.resource.data.totalCoinsEarned > getResourceEarned()
+          ) &&
+          // 3. Integridade de Moedas Ganhas (totalCoinsEarned):
+          // Moedas ganhas no histórico não podem sofrer regressão
+          request.resource.data.totalCoinsEarned >= getResourceEarned() &&
+          // Ganho máximo por sincronização limitado a 150 moedas (evita injeção arbitrária)
+          (request.resource.data.totalCoinsEarned - getResourceEarned()) <= 150 &&
+          // 4. Integridade de Saldo (rockCoins):
+          // Se o saldo aumentou, o total ganho DEVE ter aumentado proporcionalmente
+          (
+            request.resource.data.rockCoins <= getResourceCoins() ||
+            (request.resource.data.rockCoins - getResourceCoins()) <= (request.resource.data.totalCoinsEarned - getResourceEarned())
+          ) &&
+          // 5. Integridade de Gastos (totalCoinsSpent):
+          // Total gasto no histórico não pode sofrer regressão
+          request.resource.data.totalCoinsSpent >= getResourceSpent() &&
+          // Se o saldo diminuiu por compra, o gasto deve ter aumentado
+          (
+            request.resource.data.rockCoins >= getResourceCoins() ||
+            request.resource.data.totalCoinsSpent > getResourceSpent()
+          )
+        )
+      );
     }
 
     // =========================================================================

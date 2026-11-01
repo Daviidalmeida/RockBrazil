@@ -104,9 +104,14 @@ describe('ROCKBRAZIL — REVISÃO DE SEGURANÇA DO FIRESTORE & TEMPORADA 1', () 
       expect(rules).toContain("!('password' in request.resource.data)");
     });
 
-    it('1.13. preserva isolamento estrito dos perfis privados em users/{userId}', () => {
+    it('1.13. preserva isolamento estrito e proteção granular contra fraudes em users/{userId}', () => {
       expect(rules).toContain("match /users/{userId}");
-      expect(rules).toContain("allow read, write: if request.auth != null && request.auth.uid == userId;");
+      expect(rules).toContain("allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());");
+      expect(rules).toContain("allow delete: if false;");
+      expect(rules).toContain("allow create: if request.auth != null &&");
+      expect(rules).toContain("allow update: if request.auth != null && (");
+      expect(rules).toContain("isValidUserProfileKeys()");
+      expect(rules).toContain("isValidUserProfileData()");
     });
 
     it('1.14. possui regra global padrão de negação para qualquer coleção não especificada', () => {
