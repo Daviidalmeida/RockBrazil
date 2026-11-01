@@ -148,12 +148,12 @@ export class RockSyncProfileRepository {
         recordingId: 'rec-acdc-river-plate-live',
         youtubeVideoId: 'gEPmA3USJdI',
         difficulty: 'HARD',
-        offsetMs: 0,
+        offsetMs: -2000,
         timeScale: 1.0,
-        syncMethod: 'STUDIO_TIMESTAMP_ALIGNED',
+        syncMethod: 'OFFICIAL_VIDEO_ALIGNMENT',
         evidenceSource: 'Gravação ao vivo River Plate 2009',
-        validationStatus: 'AUTO_MATCHED',
-        notes: 'Abertura direta aos 0:00 com gritos da plateia.',
+        validationStatus: 'VERIFIED',
+        notes: 'Offset oficial de -2000ms compensando abertura da plateia argentina.',
         updatedAt: '2026-10-31T21:40:00Z'
       },
       {
@@ -187,6 +187,38 @@ export class RockSyncProfileRepository {
         validationStatus: 'AUTO_MATCHED',
         notes: 'Introdução aos 11.182s alinhada com piano inicial.',
         updatedAt: '2026-10-31T21:40:00Z'
+      },
+      {
+        songId: 'intl-gnr-paradise-city',
+        chartId: 'chart-gnr-pc-zantor',
+        chartVersion: '1.0',
+        chartSource: 'ROCKBRAZIL_INTERNAL',
+        recordingId: 'rec-gnr-pc-official-video',
+        youtubeVideoId: 'Rbm6GXllBiw',
+        difficulty: 'HARD',
+        offsetMs: 0,
+        timeScale: 1.0,
+        syncMethod: 'STUDIO_TIMESTAMP_ALIGNED',
+        evidenceSource: 'Clipe Oficial Appetite for Destruction 1987',
+        validationStatus: 'VERIFIED',
+        notes: 'Gravação oficial de estúdio Geffen Records em 0ms.',
+        updatedAt: '2026-10-31T23:30:00Z'
+      },
+      {
+        songId: 'intl-lp-given-up',
+        chartId: 'chart-lp-given-up-canonical',
+        chartVersion: '1.0',
+        chartSource: 'ROCKBRAZIL_INTERNAL',
+        recordingId: 'rec-lp-given-up-official-audio',
+        youtubeVideoId: '0xyxtzD54rM',
+        difficulty: 'HARD',
+        offsetMs: 0,
+        timeScale: 1.0,
+        syncMethod: 'STUDIO_TIMESTAMP_ALIGNED',
+        evidenceSource: 'Áudio Oficial Warner Records / Minutes to Midnight 2007',
+        validationStatus: 'VERIFIED',
+        notes: 'Áudio oficial do canal Linkin Park em 0ms.',
+        updatedAt: '2026-10-31T23:30:00Z'
       }
     ];
 

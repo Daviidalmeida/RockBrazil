@@ -75,12 +75,25 @@ export const INTERNATIONAL_METADATA_CONFIG: Record<string, InternationalSongConf
       "EXPERT"
     ]
   },
+  "intl-lp-given-up": {
+    "recordingVersion": "Áudio Oficial / Gravação de Estúdio (Minutes to Midnight)",
+    "defaultOffsetMs": 0,
+    "charter": "RockChart AI Pro",
+    "year": 2007,
+    "status": "PRONTA PARA TESTE",
+    "availableDifficulties": [
+      "EASY",
+      "MEDIUM",
+      "HARD",
+      "EXPERT"
+    ]
+  },
   "tnt-acdc": {
     "recordingVersion": "Clipe Oficial / Gravação de Estúdio (T.N.T. / High Voltage)",
     "defaultOffsetMs": 0,
     "charter": "Rock AI AutoChart Pro",
     "year": 1975,
-    "status": "PRONTA PARA TESTE",
+    "status": "VÍDEO INDISPONÍVEL",
     "availableDifficulties": [
       "EASY",
       "MEDIUM",
@@ -253,6 +266,40 @@ export const INTERNATIONAL_SONGS_CATALOG: (SongMetadata & {
     "year": 2003
   },
   {
+    "id": "intl-lp-given-up",
+    "title": "Given Up",
+    "artist": "Linkin Park",
+    "duration": 189,
+    "bpm": 100,
+    "style": "🎸 Internacional • Minutes to Midnight",
+    "type": "youtube",
+    "youtubeVideoId": "0xyxtzD54rM",
+    "youtubeUrl": "https://www.youtube.com/watch?v=0xyxtzD54rM",
+    "youtubeChannel": "Linkin Park",
+    "youtubeDuration": "3:09",
+    "matchConfidence": 100,
+    "embeddingStatus": "ELIGIBLE_OFFICIAL",
+    "reviewStatus": "VERIFIED",
+    "licenseStatus": "EMBED_ALLOWED",
+    "chartStatus": "CUSTOM",
+    "isAvailable": true,
+    "coverUrl": "images/intl-covers/intl-lp-given-up.jpg",
+    "records": {
+      "EASY": null,
+      "MEDIUM": null,
+      "HARD": null,
+      "EXPERT": null
+    },
+    "isInternational": true,
+    "internationalStatus": "PRONTA PARA TESTE",
+    "recordingVersion": "Áudio Oficial / Gravação de Estúdio (Minutes to Midnight)",
+    "charter": "RockChart AI Pro",
+    "year": 2007
+  }
+];
+
+export const ARCHIVED_INTERNATIONAL_SONGS: typeof INTERNATIONAL_SONGS_CATALOG = [
+  {
     "id": "tnt-acdc",
     "title": "T.N.T.",
     "artist": "AC/DC",
@@ -278,7 +325,7 @@ export const INTERNATIONAL_SONGS_CATALOG: (SongMetadata & {
       "EXPERT": null
     },
     "isInternational": true,
-    "internationalStatus": "PRONTA PARA TESTE",
+    "internationalStatus": "VÍDEO INDISPONÍVEL",
     "recordingVersion": "Clipe Oficial / Gravação de Estúdio (T.N.T. / High Voltage)",
     "charter": "Rock AI AutoChart Pro",
     "year": 1975

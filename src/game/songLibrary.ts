@@ -100,8 +100,7 @@ export class SongLibrary {
     }));
 
     // Preserves procedural songs as legacy backup so existing regression tests and features remain stable
-    // Filter out tnt-acdc from legacy procedural so there is NO duplicate!
-    const filteredLegacy = this.legacyBackup.filter((s) => s.id !== 'tnt-acdc').map((s) => ({ ...s }));
+    const filteredLegacy = this.legacyBackup.map((s) => ({ ...s }));
     this.songs = [...brazilianCatalog, ...internationalCatalog, ...filteredLegacy];
   }
 

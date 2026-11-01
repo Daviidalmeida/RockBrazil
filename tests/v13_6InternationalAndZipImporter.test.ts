@@ -57,9 +57,9 @@ describe('ROCKBRAZIL V13.6 — SUÍTE DE TESTES INTERNACIONAIS E IMPORTADOR ZIP'
       expect(processed.charter).toBe('CI Tester');
       expect(processed.compactCharts.EXPERT.length).toBe(2);
 
-      // Valida que o catálogo internacional compilado possui as músicas internacionais (mínimo 5, agora 6 com T.N.T.)
+      // Valida que o catálogo internacional compilado possui as músicas internacionais (mínimo 5, 6 com Given Up)
       expect(INTERNATIONAL_SONGS_CATALOG.length).toBeGreaterThanOrEqual(5);
-      expect(INTERNATIONAL_SONGS_CATALOG.some(s => s.id === 'tnt-acdc')).toBe(true);
+      expect(INTERNATIONAL_SONGS_CATALOG.some(s => s.id === 'intl-lp-given-up')).toBe(true);
     });
 
     it('2. Deve rejeitar e lançar erro ao receber um arquivo ZIP corrompido', async () => {
@@ -313,10 +313,10 @@ describe('ROCKBRAZIL V13.6 — SUÍTE DE TESTES INTERNACIONAIS E IMPORTADOR ZIP'
       const leaked = brazilianSongs.some(s => s.isInternational || s.id.startsWith('intl-'));
       expect(leaked).toBe(false);
 
-      // As internacionais devem estar no catálogo internacional (mínimo 5, 6 com T.N.T.)
+      // As internacionais devem estar no catálogo internacional (mínimo 5, 6 com Given Up)
       const intlSongs = lib.getInternationalSongs();
       expect(intlSongs.length).toBeGreaterThanOrEqual(5);
-      expect(intlSongs.some(s => s.id === 'tnt-acdc')).toBe(true);
+      expect(intlSongs.some(s => s.id === 'intl-lp-given-up')).toBe(true);
     });
   });
 

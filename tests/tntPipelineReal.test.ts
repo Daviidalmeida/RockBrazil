@@ -9,7 +9,8 @@ import { SongLibrary } from '../src/game/songLibrary';
 import { ProfileManager } from '../src/game/profileManager';
 import {
   INTERNATIONAL_METADATA_CONFIG,
-  INTERNATIONAL_SONGS_CATALOG
+  INTERNATIONAL_SONGS_CATALOG,
+  ARCHIVED_INTERNATIONAL_SONGS
 } from '../src/game/catalog/internationalCatalog';
 import { RAW_INTERNATIONAL_CHARTS } from '../src/game/catalog/internationalChartsRegistry';
 
@@ -20,7 +21,7 @@ describe('V13.9.3.1 — T.N.T. (AC/DC) Real Pipeline & RockSync Validation Suite
 
   // 1. Integridade de Metadados e Duração
   it('1. Audio integrity: duration is 229s (03:49) and title/artist are T.N.T. by AC/DC', () => {
-    const catalogEntry = INTERNATIONAL_SONGS_CATALOG.find((s) => s.id === 'tnt-acdc');
+    const catalogEntry = ARCHIVED_INTERNATIONAL_SONGS.find((s) => s.id === 'tnt-acdc');
     expect(catalogEntry).toBeDefined();
     expect(catalogEntry?.title).toBe('T.N.T.');
     expect(catalogEntry?.artist).toBe('AC/DC');
@@ -29,17 +30,17 @@ describe('V13.9.3.1 — T.N.T. (AC/DC) Real Pipeline & RockSync Validation Suite
 
     const config = INTERNATIONAL_METADATA_CONFIG['tnt-acdc'];
     expect(config).toBeDefined();
-    expect(config.status).toBe('PRONTA PARA TESTE');
+    expect(config.status).toBe('VÍDEO INDISPONÍVEL');
   });
 
   // 2. Detecção Real de BPM e Associação de Vídeo
   it('2. Real BPM detection: calculated at 130 BPM and associated with official YouTube video fGDQ9IukMOc', () => {
-    const catalogEntry = INTERNATIONAL_SONGS_CATALOG.find((s) => s.id === 'tnt-acdc');
+    const catalogEntry = ARCHIVED_INTERNATIONAL_SONGS.find((s) => s.id === 'tnt-acdc');
     expect(catalogEntry).toBeDefined();
     expect(catalogEntry?.bpm).toBe(130);
     expect(catalogEntry?.bpm).not.toBe(120);
     expect(catalogEntry?.youtubeVideoId).toBe('fGDQ9IukMOc');
-    expect(catalogEntry?.internationalStatus).toBe('PRONTA PARA TESTE');
+    expect(catalogEntry?.internationalStatus).toBe('VÍDEO INDISPONÍVEL');
   });
 
   // 3. Extensão Completa do Chart (Sem Truncamento)
@@ -117,16 +118,20 @@ describe('V13.9.3.1 — T.N.T. (AC/DC) Real Pipeline & RockSync Validation Suite
   });
 
   // 7. Integração no Catálogo Internacional e Desbloqueio
-  it('7. Catalog integration: T.N.T. is listed in international catalog and accessible for gameplay', () => {
+  it('7. Catalog integration: T.N.T. historical preservation in archived catalog', () => {
+    // T.N.T. foi desativada por erro 150 do YT e substituída no catálogo ativo por Given Up
     const intlSongs = library.getActiveSongs('international');
-    const customSongs = library.getActiveSongs('custom');
+    expect(intlSongs.some((s) => s.id === 'tnt-acdc')).toBe(false);
+    expect(intlSongs.some((s) => s.id === 'intl-lp-given-up')).toBe(true);
 
-    expect(intlSongs.some((s) => s.id === 'tnt-acdc')).toBe(true);
-    expect(customSongs.some((s) => s.id === 'tnt-acdc')).toBe(true);
+    const archivedEntry = ARCHIVED_INTERNATIONAL_SONGS.find((s) => s.id === 'tnt-acdc');
+    expect(archivedEntry).toBeDefined();
+    expect(archivedEntry?.isAvailable).toBe(false);
+    expect(archivedEntry?.internationalStatus).toBe('VÍDEO INDISPONÍVEL');
 
-    // Verificação de desbloqueio de teste garantido
-    const isUnlocked = profileManager.isSongUnlocked('tnt-acdc');
-    expect(isUnlocked).toBe(true);
+    // Chart histórico preservado na íntegra em RAW_INTERNATIONAL_CHARTS
+    const expert = bm.getBeatmap('tnt-acdc', 'EXPERT');
+    expect(expert.length).toBe(1639);
   });
 
   // 8. Estabilidade do Relógio RockSync com Múltiplos Erros Consecutivos

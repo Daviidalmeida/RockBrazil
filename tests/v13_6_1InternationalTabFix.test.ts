@@ -34,14 +34,14 @@ describe('ROCKBRAZIL V13.6.1 — AUDITORIA E TESTE DA ABA INTERNACIONAIS', () =>
     const intlSongs = library.getActiveSongs('international');
     expect(intlSongs.length).toBe(6);
 
-    // IDs das músicas internacionais incluindo T.N.T.
+    // IDs das 6 músicas internacionais definitivas (V14.2 Given Up substitui T.N.T.)
     const ids = customSongs.map(s => s.id);
     expect(ids).toContain('intl-gnr-paradise-city');
     expect(ids).toContain('intl-lp-numb');
     expect(ids).toContain('intl-gnr-sweet-child-o-mine');
     expect(ids).toContain('intl-gnr-welcome-to-the-jungle');
     expect(ids).toContain('intl-acdc-highway-to-hell');
-    expect(ids).toContain('tnt-acdc');
+    expect(ids).toContain('intl-lp-given-up');
   });
 
   it('3. Ao filtrar por "all", o catálogo exibe as 162 músicas brasileiras originais', () => {

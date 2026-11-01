@@ -94,6 +94,21 @@ export const INTERNATIONAL_SYNC_REGISTRY: Record<string, InternationalSyncEntry>
     syncMethod: 'STUDIO_TIMESTAMP_ALIGNED',
     audioReferenceMatch: 'EXACT_MATCH',
     notes: 'Chart oficial Harmonix Rock Band mapeado com fidelidade ao clipe oficial 4K em 0ms.'
+  },
+  'intl-lp-given-up': {
+    songId: 'intl-lp-given-up',
+    title: 'Given Up',
+    artist: 'Linkin Park',
+    youtubeVideoId: '0xyxtzD54rM',
+    youtubeChannel: 'Linkin Park',
+    recordingVersion: 'Áudio Oficial / Minutes to Midnight (2007)',
+    chartAuthor: 'RockChart AI Pro',
+    year: 2007,
+    chartVideoOffsetMs: 0,
+    verified: true,
+    syncMethod: 'STUDIO_TIMESTAMP_ALIGNED',
+    audioReferenceMatch: 'EXACT_MATCH',
+    notes: 'Áudio oficial do canal oficial Linkin Park (0xyxtzD54rM), alinhado com 0ms de offset.'
   }
 };
 
@@ -104,6 +119,9 @@ INTERNATIONAL_SYNC_REGISTRY['gnr-sweet-child-o-mine'] = INTERNATIONAL_SYNC_REGIS
 INTERNATIONAL_SYNC_REGISTRY['gnr-welcome-to-the-jungle'] = INTERNATIONAL_SYNC_REGISTRY['intl-gnr-welcome-to-the-jungle'];
 INTERNATIONAL_SYNC_REGISTRY['linkin-park-numb'] = INTERNATIONAL_SYNC_REGISTRY['intl-lp-numb'];
 INTERNATIONAL_SYNC_REGISTRY['intl-linkin-park-numb'] = INTERNATIONAL_SYNC_REGISTRY['intl-lp-numb'];
+INTERNATIONAL_SYNC_REGISTRY['lp-given-up'] = INTERNATIONAL_SYNC_REGISTRY['intl-lp-given-up'];
+INTERNATIONAL_SYNC_REGISTRY['intl-linkin-park-given-up'] = INTERNATIONAL_SYNC_REGISTRY['intl-lp-given-up'];
+INTERNATIONAL_SYNC_REGISTRY['linkin-park-given-up'] = INTERNATIONAL_SYNC_REGISTRY['intl-lp-given-up'];
 
 /**
  * Helper to retrieve official verified offset for any international song.
