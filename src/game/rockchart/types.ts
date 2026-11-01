@@ -17,6 +17,7 @@ export interface ChartSearchResult {
   format: '.chart' | '.mid' | '.sng' | '.zip' | 'ini';
   sourceUrl: string;
   directDownloadUrl?: string;
+  albumArtUrl?: string;
   hasGuitar: boolean;
   hasSolo?: boolean;
   hasLyrics?: boolean;
@@ -71,25 +72,34 @@ export interface RockSyncProfile {
   chartId: string;
   chartVersion: string;
   chartSource: ChartSourceProviderId;
-  recordingId: string;
+  recordingId?: string;
   youtubeVideoId: string;
-  difficulty: Difficulty;
+  difficulty?: Difficulty;
   offsetMs: number;
-  timeScale: number;
+  timeScale?: number;
   segmentCorrections?: { segmentStartSec: number; offsetDeltaMs: number }[];
   syncMethod: SyncMethod;
   evidenceSource: string;
   validationStatus: ValidationStatus;
   notes?: string;
+  confidenceScore?: number;
+  audioReferenceMatch?: string;
+  firstAcousticNoteSec?: number;
+  detectedIntroSilenceSec?: number;
   updatedAt: string;
 }
 
 export interface RawChartData {
-  fileFormat: '.chart' | '.mid' | '.ini' | '.zip';
-  rawContent: string | ArrayBuffer | Uint8Array;
+  fileFormat: '.chart' | '.mid' | '.ini' | '.zip' | '.sng';
+  rawContent?: string | ArrayBuffer | Uint8Array;
   charter?: string;
   resolution?: number;
   extractedMetadata?: Record<string, string | number>;
+  offsetSec?: number;
+  name?: string;
+  artist?: string;
+  instrumentTrack?: string;
+  metadata?: Record<string, any>;
 }
 
 export interface RockChartImportResult {
@@ -150,8 +160,13 @@ export interface RockChartValidationReport {
 }
 
 export interface AdminCredentials {
+  uid?: string;
   email: string;
+  displayName?: string;
+  photoURL?: string;
+  authProvider?: string;
   token?: string;
   sessionExpiry?: number;
+  verifiedAt?: number;
   role: 'SUPER_ADMIN' | 'CATALOG_EDITOR' | 'USER';
 }

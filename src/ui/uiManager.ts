@@ -1,8 +1,9 @@
 import { reducedEffects } from '../game/visualEffects';
 import { GameStats, HitJudgment, GameState, Lane, SongMetadata, Difficulty, GameSettings } from '../types';
-import { PlayerProfile, LeaderboardEntry, RecordMatchResult, AchievementDefinition, ProfileStats } from '../game/profileManager';
+import { PlayerProfile, LeaderboardEntry, RecordMatchResult, AchievementDefinition, ProfileStats, ProfileManager } from '../game/profileManager';
 import { RockCoinsManager } from '../game/economy/rockCoinsManager';
 import { RankingService } from '../firebase/rankingService';
+import { AdminAuthService } from '../firebase/adminAuthService';
 import { INTERNATIONAL_METADATA_CONFIG } from '../game/catalog/internationalCatalog';
 import { CalibrationManager } from '../game/sync/calibrationManager';
 import { RockSyncDiagnosticsData } from '../game/sync/rockSyncAutoFix';
@@ -65,7 +66,6 @@ export class UIManager {
   private screenSettings: HTMLElement;
   private screenHowToPlay: HTMLElement;
   private screenEditor: HTMLElement;
-  private screenRockAI: HTMLElement | null = null;
   private screenRockChartStudio: HTMLElement | null = null;
 
   // Profile elements
@@ -145,7 +145,7 @@ export class UIManager {
   public onUnblockCancelClicked?: () => void;
   public onReturnToLibraryClicked?: () => void;
   public onUnlockSongRequested?: (song: SongMetadata) => Promise<{ success: boolean; error?: string; remainingCoins?: number }>;
-  public isSongUnlockedChecker?: (songId: string) => boolean;
+  public isSongUnlockedChecker?: (songId: string, metadata?: SongMetadata) => boolean;
   public getProfileStatsProvider?: () => any;
   public getAllProfilesProvider?: () => Promise<PlayerProfile[]>;
   private modalUnlockSong: HTMLElement | null = null;
@@ -213,7 +213,6 @@ export class UIManager {
     this.screenSettings = document.getElementById('screen-settings')!;
     this.screenHowToPlay = document.getElementById('screen-howtoplay')!;
     this.screenEditor = document.getElementById('screen-editor')!;
-    this.screenRockAI = document.getElementById('screen-rockai');
     this.screenRockChartStudio = document.getElementById('screen-rockchart-studio');
 
     this.profileNameInput = document.getElementById('profile-name-input') as HTMLInputElement;
@@ -439,12 +438,20 @@ export class UIManager {
       });
     });
 
-    document.getElementById('btn-open-rockchart-studio')?.addEventListener('click', () => {
-      this.showScreen(GameState.ROCKCHART_STUDIO);
+    // V14.6: Exibir botão do RockChart Studio EXCLUSIVAMENTE para administrador autenticado
+    const updateAdminButtonVisibility = () => {
+      const btn = document.getElementById('btn-open-rockchart-studio');
+      if (!btn) return;
+      const isAdmin = !!AdminAuthService.getActiveAdminUser();
+      btn.style.display = isAdmin ? 'block' : 'none';
+    };
+    updateAdminButtonVisibility();
+    AdminAuthService.onAuthStateChanged(() => {
+      updateAdminButtonVisibility();
     });
 
-    document.getElementById('btn-open-rockai')?.addEventListener('click', () => {
-      this.showScreen(GameState.ROCK_AI);
+    document.getElementById('btn-open-rockchart-studio')?.addEventListener('click', () => {
+      this.showScreen(GameState.ROCKCHART_STUDIO);
     });
 
     document.getElementById('btn-open-editor')?.addEventListener('click', () => {
@@ -471,7 +478,7 @@ export class UIManager {
     document.getElementById('btn-song-select-play')?.addEventListener('click', () => {
       if (!this.currentSelectedSong) return;
       const isUnlocked = this.isSongUnlockedChecker
-        ? this.isSongUnlockedChecker(this.currentSelectedSong.id)
+        ? this.isSongUnlockedChecker(this.currentSelectedSong.id, this.currentSelectedSong)
         : (this.currentActiveProfile?.unlockedSongIds ? this.currentActiveProfile.unlockedSongIds.includes(this.currentSelectedSong.id) : true);
 
       if (!isUnlocked) {
@@ -995,13 +1002,22 @@ export class UIManager {
     if (cover) cover.src = song.coverUrl || 'images/default-cover.png';
     if (title) title.textContent = song.title;
     if (artist) artist.textContent = song.artist;
-    if (costAmount) costAmount.textContent = '5 RockCoins';
+
+    const cost = (song.unlockCost !== undefined && song.unlockCost > 0) ? song.unlockCost : 5;
+    if (costAmount) costAmount.textContent = `${cost} RockCoins`;
+    if (btnConfirm) btnConfirm.textContent = `DESBLOQUEAR POR ${cost} ROCKCOINS`;
 
     const balance = profile?.rockCoins || 0;
     if (currentBalance) currentBalance.textContent = `${balance} RockCoins`;
 
-    if (balance < 5) {
-      insufficientMsg?.classList.remove('hidden');
+    if (balance < cost) {
+      if (insufficientMsg) {
+        insufficientMsg.innerHTML = `
+          <div class="warning-title">⚠️ ROCKCOINS INSUFICIENTES</div>
+          <p class="warning-desc">Você possui <b>${balance} RockCoins</b>. Faltam <b>${cost - balance} RockCoins</b> para desbloquear esta música.</p>
+        `;
+        insufficientMsg.classList.remove('hidden');
+      }
       btnConfirm?.classList.add('hidden');
       btnCancel?.classList.add('hidden');
       btnBack?.classList.remove('hidden');
@@ -1345,8 +1361,36 @@ export class UIManager {
     this.screenHowToPlay.classList.toggle('hidden', state !== GameState.HOW_TO_PLAY);
     this.screenRanking.classList.toggle('hidden', (state as any) !== 'RANKING');
     this.screenEditor.classList.toggle('hidden', state !== GameState.NOTE_EDITOR);
-    this.screenRockAI?.classList.toggle('hidden', state !== GameState.ROCK_AI);
     this.screenRockChartStudio?.classList.toggle('hidden', state !== GameState.ROCKCHART_STUDIO);
+
+    // V14.6: Marca d'água discreta de Modo Admin Teste
+    const watermark = document.getElementById('admin-test-mode-badge');
+    const isAdminTesting = ProfileManager.getInstance().isAdminTestMode();
+    if (state === GameState.PLAYING || state === GameState.COUNTDOWN || state === GameState.PAUSED) {
+      if (isAdminTesting) {
+        if (!watermark) {
+          const badge = document.createElement('div');
+          badge.id = 'admin-test-mode-badge';
+          badge.textContent = 'MODO ADMIN — TESTE';
+          badge.setAttribute(
+            'style',
+            'position: fixed; top: 12px; right: 12px; z-index: 99999; background: rgba(245, 158, 11, 0.95); color: #000; font-weight: 900; font-size: 11px; padding: 5px 12px; border-radius: 4px; letter-spacing: 0.5px; box-shadow: 0 0 12px rgba(245, 158, 11, 0.6); pointer-events: none; font-family: monospace; border: 1px solid rgba(255, 255, 255, 0.6);'
+          );
+          document.body.appendChild(badge);
+        } else {
+          watermark.style.display = 'block';
+        }
+      } else if (watermark) {
+        watermark.style.display = 'none';
+      }
+    } else {
+      if (watermark) {
+        watermark.style.display = 'none';
+      }
+      if (state === GameState.MENU || state === GameState.SONG_SELECT) {
+        ProfileManager.getInstance().setAdminTestMode(false);
+      }
+    }
 
     if (state === GameState.ROCKCHART_STUDIO) {
       this.onRockChartStudioOpened?.();
@@ -1767,25 +1811,29 @@ export class UIManager {
     }
     const profile = this.currentActiveProfile;
 
-    // Regra V13.5: O catálogo exibe SOMENTE as músicas já desbloqueadas pelo jogador!
-    // V13.6: Músicas internacionais são sempre desbloqueadas e gratuitas para teste!
-    const isSongUnlocked = (songId: string) => {
-      const s = songs.find((item) => item.id === songId);
-      if (s?.isInternational) {
-        return true;
+    // V14.6: Checagem individual de desbloqueio com suporte a metadados de gratuidade e custo
+    const isSongUnlocked = (song: SongMetadata) => {
+      if (this.isSongUnlockedChecker) {
+        return this.isSongUnlockedChecker(song.id, song);
+      }
+      return profile?.unlockedSongIds ? profile.unlockedSongIds.includes(song.id) : true;
+    };
+
+    const displaySongs = songs.filter((s) => {
+      if (s.id === 'tnt-acdc' && s.isAvailable === false && (s as any).isPlayable === false) {
+        return false;
       }
       if (isIntlTab) {
         return true;
       }
-      if (this.isSongUnlockedChecker) {
-        return this.isSongUnlockedChecker(songId);
+      if (isSongUnlocked(s)) {
+        return true;
       }
-      return profile?.unlockedSongIds ? profile.unlockedSongIds.includes(songId) : true;
-    };
-
-    const unlockedSongs = songs
-      .filter((s) => isSongUnlocked(s.id))
-      .filter((s) => s.id !== 'tnt-acdc' || (s.isAvailable !== false && (s as any).isPlayable !== false));
+      if (s.isFree === false || (s.unlockCost !== undefined && s.unlockCost > 0)) {
+        return true;
+      }
+      return false;
+    });
 
     // Atualiza saldo permanente de RockCoins no cabeçalho da biblioteca (🪙 [VALOR])
     const coinValEl = document.getElementById('library-rockcoins-val');
@@ -1794,12 +1842,13 @@ export class UIManager {
     }
 
     // Atualiza o contador de progresso da coleção
+    const unlockedCount = displaySongs.filter((s) => isSongUnlocked(s)).length;
     const progEl = document.getElementById('collection-progress-pill');
     if (progEl) {
       if (isIntlTab) {
-        progEl.textContent = `${unlockedSongs.length} INTERNACIONAIS (TESTE)`;
+        progEl.textContent = `${unlockedCount} / ${displaySongs.length} INTERNACIONAIS`;
       } else {
-        progEl.textContent = `${unlockedSongs.length} / 162 MÚSICAS`;
+        progEl.textContent = `${unlockedCount} / 162 MÚSICAS`;
       }
     }
 
@@ -1808,12 +1857,13 @@ export class UIManager {
       titleEl.textContent = 'SELEÇÃO DE MÚSICAS';
     }
 
-    if (!this.currentSelectedSong || !unlockedSongs.some((s) => s.id === this.currentSelectedSong?.id)) {
-      this.currentSelectedSong = unlockedSongs[0] || null;
+    if (!this.currentSelectedSong || !displaySongs.some((s) => s.id === this.currentSelectedSong?.id)) {
+      this.currentSelectedSong = displaySongs[0] || null;
     }
 
-    let rowsHtml = unlockedSongs.map((song, index) => {
+    let rowsHtml = displaySongs.map((song, index) => {
       const isSelected = this.currentSelectedSong?.id === song.id;
+      const unlocked = isSongUnlocked(song);
 
       // Extrai melhor pontuação e estrelas
       let bestStars = 0;
@@ -1857,6 +1907,12 @@ export class UIManager {
         statusBadgeHtml = `<span class="intl-status-badge ${cls}">${status}</span>`;
       }
 
+      let lockBadgeHtml = '';
+      if (!unlocked) {
+        const cost = (song.unlockCost !== undefined && song.unlockCost > 0) ? song.unlockCost : 5;
+        lockBadgeHtml = `<span class="locked-cost-pill" style="margin-left: 6px; padding: 2px 8px; border-radius: 4px; background: rgba(234, 179, 8, 0.2); border: 1px solid #eab308; color: #ffe600; font-size: 11px; font-weight: bold;">🔒 ${cost} RC</span>`;
+      }
+
       let fileNoticeHtml = '';
       if (!song.isAvailable && song.requiresFile) {
         fileNoticeHtml = `
@@ -1871,6 +1927,9 @@ export class UIManager {
       }
 
       const coverSrc = song.coverUrl || 'images/default-cover.png';
+      const statsBlockHtml = unlocked
+        ? `<div class="row-stars">${starsHtml}</div><div class="row-score">${scoreText}</div>`
+        : `<div class="row-lock-info" style="display: flex; align-items: center; justify-content: flex-end;">${lockBadgeHtml}</div>`;
 
       return `
         <div class="notebook-song-row ${isSelected ? 'selected' : ''}" data-song-id="${song.id}">
@@ -1885,8 +1944,7 @@ export class UIManager {
             </div>
           </div>
           <div class="row-song-stats">
-            <div class="row-stars">${starsHtml}</div>
-            <div class="row-score">${scoreText}</div>
+            ${statsBlockHtml}
           </div>
         </div>
       `;
@@ -1894,7 +1952,7 @@ export class UIManager {
 
     // Append Card Misterioso APENAS na aba brasileira
     if (!isIntlTab) {
-      if (unlockedSongs.length < 162) {
+      if (unlockedCount < 162) {
         rowsHtml += `
           <div class="notebook-song-row mystery-song-card" id="card-mystery-song" role="button" tabindex="0" aria-label="Desbloquear Próxima Música por 5 RockCoins">
             <div class="mystery-card-left">
@@ -1936,6 +1994,12 @@ export class UIManager {
         const songId = (e.currentTarget as HTMLElement).dataset.songId;
         const song = songs.find((s) => s.id === songId);
         if (!song) return;
+
+        if (!isSongUnlocked(song)) {
+          this.currentSelectedSong = song;
+          this.openUnlockModal(song, profile);
+          return;
+        }
 
         if (this.currentSelectedSong?.id === song.id) {
           if (song.isInternational) {

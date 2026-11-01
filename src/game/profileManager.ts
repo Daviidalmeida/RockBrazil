@@ -2,6 +2,7 @@ import { Difficulty, GameSettings, SongRecord, GameStats, SongMetadata } from '.
 import { RockCoinsManager } from './economy/rockCoinsManager';
 import { FirestoreService } from '../firebase/firestoreService';
 import { OFFICIAL_BRAZILIAN_CATALOG } from './catalog/catalogData';
+import { PersistentCatalogService } from './catalog/persistentCatalogService';
 
 export const INITIAL_UNLOCKED_SONG_IDS: string[] = ['mam-1406', 'cap-sua-maneira', 'pit-chip-novo'];
 export const UNLOCK_COST_ROCKCOINS = 5;
@@ -192,15 +193,36 @@ export interface RecordMatchResult {
   isNewRecord: boolean;
   previousBestScore: number;
   newScore: number;
-  record: SongRecord;
+  record: SongRecord | null;
   earnedCoins?: number;
   totalCoins?: number;
 }
 
 export class ProfileManager {
+  private static instance: ProfileManager | null = null;
   private static DB_NAME = 'RockBrazilProfilesDB';
   private static STORE_NAME = 'profiles';
   private activeProfile: PlayerProfile | null = null;
+  private adminTestMode = false;
+
+  public static getInstance(): ProfileManager {
+    if (!this.instance) {
+      this.instance = new ProfileManager();
+    }
+    return this.instance;
+  }
+
+  constructor() {
+    ProfileManager.instance = this;
+  }
+
+  public setAdminTestMode(active: boolean): void {
+    this.adminTestMode = active;
+  }
+
+  public isAdminTestMode(): boolean {
+    return this.adminTestMode;
+  }
 
   public static GUEST_PROFILE: PlayerProfile = {
     id: 'guest',
@@ -388,6 +410,32 @@ export class ProfileManager {
         profile.unlockedSongIds = [...INITIAL_UNLOCKED_SONG_IDS];
       }
       profile.migrationVersion = 14.0;
+    }
+
+    // V14.6: Preservação total e migração idempotente de dados
+    if (!profile.migrationVersion || profile.migrationVersion < 14.6) {
+      if (!profile.unlockedSongIds || profile.unlockedSongIds.length === 0) {
+        profile.unlockedSongIds = [...INITIAL_UNLOCKED_SONG_IDS];
+      }
+      if (profile.rockCoins === undefined || profile.rockCoins === null || isNaN(profile.rockCoins)) {
+        profile.rockCoins = 0;
+      }
+      if (profile.totalCoinsEarned === undefined) {
+        profile.totalCoinsEarned = profile.rockCoins;
+      }
+      if (profile.totalCoinsSpent === undefined) {
+        profile.totalCoinsSpent = 0;
+      }
+      if (!profile.transactions) {
+        profile.transactions = [];
+      }
+      if (!profile.records) {
+        profile.records = {};
+      }
+      if (!profile.history) {
+        profile.history = [];
+      }
+      profile.migrationVersion = 14.6;
     }
 
     // Garante preferências de áudio e muteOnMiss
@@ -677,6 +725,18 @@ export class ProfileManager {
     const hits = stats.hitsCount ?? (stats.perfectCount + stats.greatCount + stats.goodCount);
     const misses = stats.missCount ?? 0;
     const playableCount = stats.playableNotesCount ?? (hits + misses);
+
+    // MODO ADMIN — TESTE: Não altera perfil, não adiciona moedas, não grava records
+    if (this.adminTestMode) {
+      return {
+        isNewRecord: false,
+        previousBestScore: 0,
+        newScore: stats.score,
+        record: null,
+        earnedCoins: 0,
+        totalCoins: this.activeProfile?.rockCoins || 0
+      };
+    }
     // V13.6: Músicas internacionais em teste não geram RockCoins
     const earnedCoins = isInternational ? 0 : RockCoinsManager.calculateReward(
       diff,
@@ -817,37 +877,96 @@ export class ProfileManager {
     };
   }
 
-  public isSongUnlocked(songId: string): boolean {
-    if (songId.startsWith('intl-') || songId === 'tnt-acdc') {
-      return true; // Músicas internacionais e T.N.T. são gratuitas e desbloqueadas para teste imediato
+  public isSongUnlocked(songId: string, metadata?: SongMetadata): boolean {
+    // 0. Modo Administrador para Testes: acesso irrestrito sem custo
+    if (this.adminTestMode) {
+      return true;
     }
+
     const profile = this.getActiveProfile();
-    if (!profile.unlockedSongIds || profile.unlockedSongIds.length === 0) {
-      return INITIAL_UNLOCKED_SONG_IDS.includes(songId);
+
+    // 1. Músicas iniciais padrão gratuitas
+    if (INITIAL_UNLOCKED_SONG_IDS.includes(songId)) {
+      return true;
     }
-    return profile.unlockedSongIds.includes(songId);
+
+    // 2. Desbloqueio permanente já registrado no perfil (nunca é revogado)
+    if (profile.unlockedSongIds && profile.unlockedSongIds.includes(songId)) {
+      return true;
+    }
+
+    // 3. REGRA DE TRANSIÇÃO JUSTA (GRANDFATHERING) — Fase 4 e Fase 10:
+    // Se o jogador já possui recorde / histórico salvo nesta música, significa que já a jogou
+    // enquanto era gratuita. Mantém acesso perpétuo e gratuito!
+    const hasRecord = profile.records && profile.records[songId] && Object.values(profile.records[songId]).some((r) => r && ((r.bestScore ?? 0) > 0 || (r.score ?? 0) > 0));
+    const hasHistory = profile.history && profile.history.some((h) => h.songId === songId);
+    if (hasRecord || hasHistory) {
+      if (!profile.unlockedSongIds) {
+        profile.unlockedSongIds = [...INITIAL_UNLOCKED_SONG_IDS];
+      }
+      if (!profile.unlockedSongIds.includes(songId)) {
+        profile.unlockedSongIds.push(songId);
+        this.saveProfileToDB(profile).catch(() => {});
+      }
+      return true;
+    }
+
+    // 4. Se metadata explícita foi fornecida
+    if (metadata) {
+      if (metadata.isFree === true || (metadata.unlockCost !== undefined && metadata.unlockCost === 0)) {
+        return true;
+      }
+      if (metadata.isFree === false && (metadata.unlockCost || 0) > 0) {
+        return false;
+      }
+    }
+
+    // 5. Verificar no catálogo gerenciado persistente
+    try {
+      const managed = PersistentCatalogService.getInstance().getManagedSong(songId);
+      if (managed) {
+        if (managed.isFree === false && (managed.unlockCost || 0) > 0) {
+          return false;
+        }
+        if (managed.isFree === true || managed.unlockCost === 0) {
+          return true;
+        }
+      }
+    } catch {
+      // Ignora falha de inicialização em ambiente de teste unitário puro
+    }
+
+    // 6. Músicas internacionais e T.N.T. mantêm gratuidade padrão a menos que configuradas como bloqueadas
+    if (songId.startsWith('intl-') || songId === 'tnt-acdc') {
+      return true;
+    }
+
+    return false;
   }
 
   public async unlockSong(
     songId: string,
     songTitle?: string,
-    cost: number = UNLOCK_COST_ROCKCOINS
-  ): Promise<{ success: boolean; error?: string; remainingCoins?: number }> {
+    cost?: number
+  ): Promise<{ success: boolean; error?: string; remainingCoins?: number; requiredCoins?: number }> {
     const profile = this.getActiveProfile();
     if (this.isSongUnlocked(songId)) {
       return { success: true, remainingCoins: profile.rockCoins || 0 };
     }
+
+    const unlockCost = cost !== undefined ? Math.max(0, cost) : UNLOCK_COST_ROCKCOINS;
     const currentCoins = profile.rockCoins || 0;
-    if (currentCoins < cost) {
+    if (currentCoins < unlockCost) {
       return {
         success: false,
         error: 'ROCKCOINS_INSUFFICIENT',
-        remainingCoins: currentCoins
+        remainingCoins: currentCoins,
+        requiredCoins: unlockCost
       };
     }
 
-    profile.rockCoins = currentCoins - cost;
-    profile.totalCoinsSpent = (profile.totalCoinsSpent || 0) + cost;
+    profile.rockCoins = currentCoins - unlockCost;
+    profile.totalCoinsSpent = (profile.totalCoinsSpent || 0) + unlockCost;
     if (!profile.unlockedSongIds) {
       profile.unlockedSongIds = [...INITIAL_UNLOCKED_SONG_IDS];
     }
@@ -860,7 +979,7 @@ export class ProfileManager {
     profile.transactions.push({
       id: `tx_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
       type: 'SPEND',
-      amount: cost,
+      amount: unlockCost,
       description: `Desbloqueio de música: ${songTitle || songId}`,
       songId,
       timestamp: Date.now()

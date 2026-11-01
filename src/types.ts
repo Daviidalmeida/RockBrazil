@@ -157,13 +157,20 @@ export interface SongMetadata {
   embeddingStatus?: 'ELIGIBLE_OFFICIAL' | 'VERIFIED' | 'COMMUNITY';
   reviewStatus?: 'VERIFIED' | 'PENDING' | 'REJECTED';
   licenseStatus?: 'EMBED_ALLOWED' | 'EMBED_RESTRICTED';
-  chartStatus?: 'SMART_CHART_READY' | 'CUSTOM' | 'MIDI';
+  chartStatus?: 'SMART_CHART_READY' | 'CUSTOM' | 'MIDI' | 'COMMUNITY_VERIFIED';
 
   // V13.6 International Songs Integration
   isInternational?: boolean;
-  internationalStatus?: 'PRONTA PARA TESTE' | 'CHART EM PREPARAÇÃO' | 'VÍDEO NÃO CONFIGURADO' | 'VÍDEO INDISPONÍVEL';
+  internationalStatus?: 'PRONTA PARA TESTE' | 'CHART EM PREPARAÇÃO' | 'VÍDEO NÃO CONFIGURADO' | 'VÍDEO INDISPONÍVEL' | 'RASCUNHO ADMIN' | 'SUSPENSA / DESPUBLICADA';
   recordingVersion?: string;
   charter?: string;
+  year?: number | string;
+  album?: string;
+
+  // V14.6 Category, Pricing & RockCoins Integration
+  category?: 'MINHAS_MUSICAS' | 'INTERNACIONAL';
+  isFree?: boolean;
+  unlockCost?: number;
 }
 
 export type NoteSpeedPreset = 'LENTA' | 'NORMAL' | 'RÁPIDA';

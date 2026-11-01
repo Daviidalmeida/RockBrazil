@@ -59,6 +59,15 @@ service cloud.firestore {
         !('secret' in request.resource.data);
     }
 
+    // Verifica se o usuário autenticado possui credenciais válidas de administrador
+    function isAdmin() {
+      return request.auth != null && (
+        request.auth.token.admin == true ||
+        request.auth.token.role == 'SUPER_ADMIN' ||
+        (request.auth.token.email is string && request.auth.token.email == 'admin@rockbrazil.com.br')
+      );
+    }
+
     // =========================================================================
     // COLEÇÃO: users/{userId} — PERFIS PRIVADOS DE JOGADORES
     // =========================================================================
@@ -173,6 +182,52 @@ service cloud.firestore {
         request.resource.data.updatedAt is number &&
         isValidSeason(request.resource.data.season) &&
         hasNoPrivateData();
+    }
+
+    // =========================================================================
+    // COLEÇÃO: admin_users/{userId} — PRIVILÉGIOS DE ADMINISTRAÇÃO DO ESTÚDIO
+    // =========================================================================
+    match /admin_users/{userId} {
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      // Apenas administradores confirmados por token podem gravar privilégios administrativos
+      // Um usuário comum NUNCA pode se promover ou alterar este documento
+      allow write: if isAdmin();
+    }
+
+    // =========================================================================
+    // COLEÇÃO: published_songs/{songId} — CATÁLOGO OFICIAL DE MÚSICAS PUBLICADAS
+    // =========================================================================
+    match /published_songs/{songId} {
+      // Visitantes e jogadores comuns podem consultar as músicas publicadas
+      allow read: if true;
+      // Apenas administradores autenticados podem publicar, editar ou excluir músicas
+      allow write: if isAdmin();
+    }
+
+    // =========================================================================
+    // COLEÇÃO: sync_profiles/{songId} — REGISTROS DE SINCRONIZAÇÃO MUSICAL
+    // =========================================================================
+    match /sync_profiles/{songId} {
+      // Leitura pública para sincronização da esteira no jogo
+      allow read: if true;
+      // Apenas administradores autenticados podem alterar perfis de sincronização
+      allow write: if isAdmin();
+    }
+
+    // =========================================================================
+    // COLEÇÃO: admin_history/{historyId} — HISTÓRICO DE AUDITORIA ADMINISTRATIVA
+    // =========================================================================
+    match /admin_history/{historyId} {
+      // Histórico confidencial de curadoria exclusivo para administradores
+      allow read, write: if isAdmin();
+    }
+
+    // =========================================================================
+    // COLEÇÃO: publication_settings/{settingId} — CONFIGURAÇÕES DE PUBLICAÇÃO
+    // =========================================================================
+    match /publication_settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     // =========================================================================

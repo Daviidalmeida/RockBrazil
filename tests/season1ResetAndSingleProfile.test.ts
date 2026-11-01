@@ -101,7 +101,7 @@ describe('ROCKBRAZIL — RESET TOTAL (TEMPORADA 1) & V13.4 PERFIL ÚNICO', () =>
       expect(activeProfile.history).toHaveLength(0);
       expect(activeProfile.totalCoinsEarned).toBe(0);
       expect(activeProfile.totalCoinsSpent).toBe(0);
-      expect(activeProfile.migrationVersion).toBe(MIGRATION_VERSION_S1);
+      expect(activeProfile.migrationVersion).toBeGreaterThanOrEqual(MIGRATION_VERSION_S1);
 
       // Exatamente 3 músicas desbloqueadas
       expect(activeProfile.unlockedSongIds).toEqual(['mam-1406', 'cap-sua-maneira', 'pit-chip-novo']);

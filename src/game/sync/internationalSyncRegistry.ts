@@ -102,13 +102,13 @@ export const INTERNATIONAL_SYNC_REGISTRY: Record<string, InternationalSyncEntry>
     youtubeVideoId: 'D93vYwuMeUw',
     youtubeChannel: 'Linkin Park - Topic',
     recordingVersion: 'Áudio Oficial / Topic (Minutes to Midnight, 2007)',
-    chartAuthor: 'RockChart AI Pro',
+    chartAuthor: 'heather (Chorus Encore)',
     year: 2007,
     chartVideoOffsetMs: 0,
     verified: true,
     syncMethod: 'STUDIO_TIMESTAMP_ALIGNED',
     audioReferenceMatch: 'EXACT_MATCH',
-    notes: 'Áudio oficial Topic / YouTube Music (Warner Records). 0-1.7s chaves, 1.7-4.8s palmas, 4.80s primeiro acorde de guitarra com 0ms de offset.'
+    notes: 'Áudio oficial Topic / YouTube Music (Warner Records). Chart autêntico importado do Chorus Encore por heather (200.1 BPM). 0-1.7s chaves, 1.7-4.8s palmas, 4.827s primeiro acorde de guitarra com 0ms de offset.'
   }
 };
 

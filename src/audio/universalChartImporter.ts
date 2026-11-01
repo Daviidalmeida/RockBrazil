@@ -4,6 +4,7 @@ import { MidiChartParser } from './midiChartParser';
 import { REAL_COMMUNITY_CHARTS } from '../game/catalog/realChartsRegistry';
 import { LISARB2_COMMUNITY_CHARTS } from '../game/catalog/lisarb2ChartsRegistry';
 import { INTERNATIONAL_COMMUNITY_CHARTS } from '../game/catalog/internationalChartsRegistry';
+import { SngPackageParser } from '../game/rockchart/importer/sngPackageParser';
 
 export type InstrumentTrackType =
   | 'guitar'
@@ -449,12 +450,33 @@ export class UniversalChartImporter {
   }
 
   /**
-   * Parses SNG file containers
+   * Parses SNG file containers using the native SngPackageParser
    */
   public static async parseSngContainer(data: ArrayBuffer | Uint8Array): Promise<UniversalChartResult> {
     const uint8 = data instanceof Uint8Array ? data : new Uint8Array(data);
 
-    // Look for embedded .chart or .mid magic within SNG stream
+    if (SngPackageParser.isSng(uint8)) {
+      const sng = SngPackageParser.parseSngPackage(uint8);
+
+      let result: UniversalChartResult;
+      if (sng.chartText) {
+        result = UniversalChartImporter.parseChartText(sng.chartText);
+      } else if (sng.midiData) {
+        result = UniversalChartImporter.parseMidiFile(sng.midiData);
+      } else {
+        throw new Error('Contêiner .sng válido, porém nenhum arquivo de notas (.chart ou .mid) foi encontrado dentro.');
+      }
+
+      result.metadata.sourceFormat = '.sng';
+      if (sng.metadata.name) result.metadata.name = sng.metadata.name;
+      if (sng.metadata.artist) result.metadata.artist = sng.metadata.artist;
+      if (sng.metadata.charter) {
+        result.metadata.charter = SngPackageParser.stripRichTags(sng.metadata.charter);
+      }
+      return result;
+    }
+
+    // Fallback: Look for embedded .chart or .mid magic within SNG stream
     // 1. Check for text "[Song]" or "[SyncTrack]"
     const textChunk = new TextDecoder('utf-8', { fatal: false }).decode(uint8.subarray(0, Math.min(uint8.length, 65536)));
     if (textChunk.includes('[Song]') || textChunk.includes('[SyncTrack]')) {
@@ -496,6 +518,11 @@ export class UniversalChartImporter {
     const uint8 = data instanceof Uint8Array ? data : new Uint8Array(data);
     const lowerName = filename.toLowerCase();
 
+    // Check SNG magic: SNGPKG
+    if (SngPackageParser.isSng(uint8) || lowerName.endsWith('.sng')) {
+      return UniversalChartImporter.parseSngContainer(uint8);
+    }
+
     // Check ZIP magic: PK\x03\x04
     if (uint8.length >= 4 && uint8[0] === 0x50 && uint8[1] === 0x4B && uint8[2] === 0x03 && uint8[3] === 0x04) {
       return UniversalChartImporter.parseZipPackage(uint8);
@@ -510,11 +537,6 @@ export class UniversalChartImporter {
     if (lowerName.endsWith('.chart') || lowerName.endsWith('.txt')) {
       const text = new TextDecoder('utf-8').decode(uint8);
       return UniversalChartImporter.parseChartText(text);
-    }
-
-    // Check .sng format
-    if (lowerName.endsWith('.sng')) {
-      return UniversalChartImporter.parseSngContainer(uint8);
     }
 
     // Fallback: try decoding as text first
@@ -721,6 +743,10 @@ export class UniversalChartImporter {
 
   public static registerConvertedChart(songId: string, chart: BeatmapByDifficulty): void {
     this.CONVERTED_REGISTRY.set(songId, chart);
+  }
+
+  public static deregisterConvertedChart(songId: string): void {
+    this.CONVERTED_REGISTRY.delete(songId);
   }
 
   public static getConvertedChart(songId: string): BeatmapByDifficulty | undefined {

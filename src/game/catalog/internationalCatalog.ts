@@ -78,7 +78,7 @@ export const INTERNATIONAL_METADATA_CONFIG: Record<string, InternationalSongConf
   "intl-lp-given-up": {
     "recordingVersion": "Áudio Oficial / Topic (Minutes to Midnight)",
     "defaultOffsetMs": 0,
-    "charter": "RockChart AI Pro",
+    "charter": "heather (Chorus Encore)",
     "year": 2007,
     "status": "PRONTA PARA TESTE",
     "availableDifficulties": [
@@ -293,7 +293,7 @@ export const INTERNATIONAL_SONGS_CATALOG: (SongMetadata & {
     "isInternational": true,
     "internationalStatus": "PRONTA PARA TESTE",
     "recordingVersion": "Áudio Oficial / Topic (Minutes to Midnight)",
-    "charter": "RockChart AI Pro",
+    "charter": "heather (Chorus Encore)",
     "year": 2007
   }
 ];

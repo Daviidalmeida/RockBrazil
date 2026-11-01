@@ -33,7 +33,13 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
     strictPort: true,
-    cors: true
+    cors: true,
+    watch: {
+      ignored: ['**/external-tools/**', '**/dist/**']
+    }
+  },
+  optimizeDeps: {
+    entries: ['index.html']
   },
   preview: {
     host: '0.0.0.0',

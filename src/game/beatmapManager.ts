@@ -5,6 +5,7 @@ import { UniversalChartImporter } from '../audio/universalChartImporter';
 import { initPreconvertedCharts } from './catalog/preconvertedCharts';
 import { RockAIStorageService } from './rockai/rockAIStorageService';
 import { RockSyncAutoFix } from './sync/rockSyncAutoFix';
+import { PersistentCatalogService } from './catalog/persistentCatalogService';
 
 export class BeatmapManager {
   private cache: Map<string, BeatmapByDifficulty> = new Map();
@@ -20,7 +21,7 @@ export class BeatmapManager {
     let result: Note[];
 
     // 1. Check UniversalChartImporter for authentic pre-converted / international community chart
-    const convertedChart = UniversalChartImporter.getConvertedChart(songId);
+    const convertedChart = UniversalChartImporter.getConvertedChart(songId) || PersistentCatalogService.getInstance().getManagedBeatmap(songId);
     if (convertedChart && convertedChart[difficulty] && convertedChart[difficulty].length > 0) {
       this.cache.set(songId, convertedChart);
       result = convertedChart[difficulty].map((n) => ({ ...n }));

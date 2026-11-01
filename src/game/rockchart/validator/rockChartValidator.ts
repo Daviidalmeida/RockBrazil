@@ -11,6 +11,22 @@ import { MusicAccuracyValidator } from '../../intelligence/musicAccuracyValidato
 
 export class RockChartValidator {
   /**
+   * Validação isolada da estrutura de notas (pistas, timestamps, acordes, limites)
+   */
+  public static validateBeatmapStructure(
+    notes: Note[],
+    difficulty: Difficulty = 'EXPERT',
+    durationSec = 9999
+  ): { isValid: boolean; errors: string[]; warnings: string[] } {
+    const result = this.validateStructural(difficulty, notes, durationSec);
+    return {
+      isValid: result.valid,
+      errors: result.errors,
+      warnings: result.warnings
+    };
+  }
+
+  /**
    * Executa a auditoria completa do chart dividida estritamente em:
    * 1. Validação Estrutural
    * 2. Validação Temporal
@@ -78,6 +94,10 @@ export class RockChartValidator {
     const seenLaneTime = new Set<string>();
     const chordSizeMap = new Map<number, number>();
 
+    if (notes.length === 0) {
+      errors.push(`O chart não contém nenhuma nota jogável para a dificuldade ${difficulty}.`);
+    }
+
     for (let i = 0; i < notes.length; i++) {
       const n = notes[i];
 
@@ -96,7 +116,7 @@ export class RockChartValidator {
       // Pista inválida
       if (n.lane < 0 || n.lane > maxAllowedLane) {
         invalidLanesCount++;
-        errors.push(`Nota #${n.id} em pista inválida para ${difficulty}: ${n.lane} (máximo permitido: ${maxAllowedLane})`);
+        errors.push(`Pista inválida para ${difficulty} na nota #${n.id ?? i}: ${n.lane} (máximo permitido: ${maxAllowedLane})`);
       }
 
       // Duplicata exata na mesma pista e timestamp (tolerância 5ms)
@@ -117,6 +137,7 @@ export class RockChartValidator {
 
       // Ordem cronológica
       if (i > 0 && n.time < notes[i - 1].time) {
+        errors.push(`Timestamp fora de ordem cronológica na posição #${i}: ${n.time}s < ${notes[i - 1].time}s`);
         warnings.push(`Notas fora de ordem cronológica detectadas na posição #${i}`);
       }
     }

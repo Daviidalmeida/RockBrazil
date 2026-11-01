@@ -44,6 +44,7 @@ yarn-error.log*
 .system_generated/
 .user_uploaded/
 scratch/
+external-tools/
 
 # Sistema operacional
 .DS_Store

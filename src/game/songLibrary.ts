@@ -1,6 +1,7 @@
 import { SongMetadata, Difficulty, SongRecord } from '../types';
 import { OFFICIAL_BRAZILIAN_CATALOG } from './catalog/catalogData';
 import { INTERNATIONAL_SONGS_CATALOG } from './catalog/internationalCatalog';
+import { PersistentCatalogService } from './catalog/persistentCatalogService';
 
 export const LEGACY_PROCEDURAL_SONGS: SongMetadata[] = [
   {
@@ -84,36 +85,85 @@ export class SongLibrary {
   constructor() {
     this.initDefaultSongs();
     this.loadRecordsFromStorage();
+    PersistentCatalogService.getInstance().onCatalogChanged(() => {
+      this.refreshPublishedSongs();
+    });
   }
 
   private initDefaultSongs(): void {
     // Official Brazilian Catalog (162 songs)
     const brazilianCatalog = OFFICIAL_BRAZILIAN_CATALOG.map((s) => ({
       ...s,
+      category: s.category || 'MINHAS_MUSICAS',
+      isFree: s.isFree !== undefined ? s.isFree : true,
+      unlockCost: s.unlockCost !== undefined ? s.unlockCost : 0,
       records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
     }));
 
     // Official International Catalog (V13.6 + V13.9.3 T.N.T.)
     const internationalCatalog = INTERNATIONAL_SONGS_CATALOG.map((s) => ({
       ...s,
+      category: s.category || 'INTERNACIONAL',
+      isFree: s.isFree !== undefined ? s.isFree : true,
+      unlockCost: s.unlockCost !== undefined ? s.unlockCost : 0,
       records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
     }));
 
-    // Preserves procedural songs as legacy backup so existing regression tests and features remain stable
-    const filteredLegacy = this.legacyBackup.map((s) => ({ ...s }));
-    this.songs = [...brazilianCatalog, ...internationalCatalog, ...filteredLegacy];
+    // Custom dynamically published songs from PersistentCatalogService
+    const customPublished = PersistentCatalogService.getInstance().getPublishedSongs().map((s) => ({
+      ...s,
+      records: { EASY: null, MEDIUM: null, HARD: null, EXPERT: null }
+    }));
+
+    // Deduplica pelo ID (se uma música do catálogo fixo for sobrescrita por publicação customizada, a customizada tem precedência)
+    const songMap = new Map<string, SongMetadata>();
+    for (const s of [...brazilianCatalog, ...internationalCatalog]) {
+      songMap.set(s.id, s);
+    }
+    for (const s of customPublished) {
+      songMap.set(s.id, s);
+    }
+    for (const s of this.legacyBackup) {
+      if (!songMap.has(s.id)) {
+        songMap.set(s.id, { ...s });
+      }
+    }
+
+    this.songs = Array.from(songMap.values());
+  }
+
+  /**
+   * Atualiza a biblioteca com novas músicas publicadas dinamicamente
+   */
+  public refreshPublishedSongs(): void {
+    const existingRecords = new Map<string, typeof this.songs[0]['records']>();
+    for (const s of this.songs) {
+      if (s.records) existingRecords.set(s.id, s.records);
+    }
+
+    this.initDefaultSongs();
+
+    for (const s of this.songs) {
+      const rec = existingRecords.get(s.id);
+      if (rec) s.records = rec;
+    }
+    this.loadRecordsFromStorage();
   }
 
   /**
    * Returns active songs according to active tab filter:
-   * - 'all' (default): 162 Brazilian songs
-   * - 'custom' | 'international': 5 International songs
+   * - 'all' | 'minhas-musicas': Brazilian / Minhas Músicas
+   * - 'custom' | 'international' | 'internacionais': International songs
    */
   getActiveSongs(filter = 'all'): SongMetadata[] {
-    if (filter === 'custom' || filter === 'international') {
-      return this.songs.filter((s) => s.isInternational === true);
+    const isIntlFilter = filter === 'custom' || filter === 'international' || filter === 'internacionais';
+    if (isIntlFilter) {
+      return this.songs.filter((s) => s.category === 'INTERNACIONAL' || (s.category === undefined && s.isInternational === true));
     }
-    return this.songs.filter((s) => !s.isInternational && (s.type === 'youtube' || s.type === 'audio-file' || s.id.startsWith('custom-')) && s.id !== 'tnt-acdc');
+    return this.songs.filter((s) => {
+      const isIntl = s.category === 'INTERNACIONAL' || (s.category === undefined && s.isInternational === true);
+      return !isIntl && (s.type === 'youtube' || s.type === 'audio-file' || s.id.startsWith('custom-')) && s.id !== 'tnt-acdc';
+    });
   }
 
   getBrazilianSongs(): SongMetadata[] {
@@ -128,6 +178,10 @@ export class SongLibrary {
    * Returns all songs including legacy procedural backup
    */
   getSongs(): SongMetadata[] {
+    return this.songs;
+  }
+
+  getAllSongs(): SongMetadata[] {
     return this.songs;
   }
 

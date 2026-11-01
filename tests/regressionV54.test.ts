@@ -255,9 +255,9 @@ describe('ROCKBRAZIL V5.4 — SUÍTE COMPLETA DE REGRESSÃO E CONFORMIDADE', () 
       // Linha de Fogo na Highway
       expect(html).toContain('id="highway-flame-line"');
 
-      // Encerramento Especial "AQUI É ROCKBRAZIL!"
+      // Encerramento Especial "Rock Brazil"
       expect(html).toContain('id="overlay-rockbrazil-celebration"');
-      expect(html).toContain('AQUI É ROCKBRAZIL!');
+      expect(html).toContain('Rock Brazil');
 
       // Botões da lista de músicas (V11: barra limpa apenas com voltar e selecionar)
       expect(html).toContain('id="btn-song-select-back"');

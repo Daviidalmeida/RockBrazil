@@ -13,7 +13,7 @@ import {
 } from 'firebase/firestore';
 import { db, auth } from './firebaseConfig';
 import { PlayerProfile, Difficulty, SongRecord, GameStats } from '../types';
-import { RecordMatchResult } from '../game/profileManager';
+import { RecordMatchResult, ProfileManager } from '../game/profileManager';
 import { AuthService } from './authService';
 
 export const CURRENT_SEASON = 's1';
@@ -89,6 +89,11 @@ export class RankingService {
     stats: GameStats,
     recordResult: RecordMatchResult
   ): Promise<boolean> {
+    // V14.6: No modo Administrador de Testes, nenhuma pontuação é publicada no ranking
+    if (ProfileManager.getInstance().isAdminTestMode()) {
+      return false;
+    }
+
     if (!this.isEligibleForRanking(profile)) {
       return false;
     }

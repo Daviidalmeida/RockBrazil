@@ -2,6 +2,7 @@ import { RockChartImportResult, RawChartData, ChartSourceProviderId } from '../t
 import { UniversalChartImporter, UniversalChartResult } from '../../../audio/universalChartImporter';
 import { MidiChartParser } from '../../../audio/midiChartParser';
 import { BeatmapByDifficulty, Difficulty, Note, Lane } from '../../../types';
+import { SngPackageParser } from './sngPackageParser';
 
 export class RockChartImporter {
   /**
@@ -127,8 +128,9 @@ export class RockChartImporter {
     return result;
   }
 
-  private static detectFormat(fileName: string, buffer: any): '.chart' | '.mid' | '.ini' | '.zip' {
+  private static detectFormat(fileName: string, buffer: any): '.chart' | '.mid' | '.ini' | '.zip' | '.sng' {
     const lower = fileName.toLowerCase();
+    if (lower.endsWith('.sng') || (buffer instanceof Uint8Array && SngPackageParser.isSng(buffer))) return '.sng';
     if (lower.endsWith('.chart')) return '.chart';
     if (lower.endsWith('.mid') || lower.endsWith('.midi')) return '.mid';
     if (lower.endsWith('.ini')) return '.ini';
