@@ -113,19 +113,19 @@ export class RockSyncAutoMatch {
         recordingId: 'rec-gnr-wttj-official-video',
         youtubeVideoId: 'o1tj2zJ2Wvg',
         difficulty,
-        offsetMs: -13731, // Abertura narrativa de Axl Rose (17s video vs 3.269s chart)
+        offsetMs: -3800, // Auditado V14.1: intro narrativa do clipe de 3.8s alinhada ao 1º acorde em 7.07s (nota 3.269s)
         timeScale: 1.0,
-        syncMethod: 'STUDIO_TIMESTAMP_ALIGNED',
-        evidenceSource: 'Clipe Oficial Appetite for Destruction com alinhamento narrativo de introdução',
+        syncMethod: 'OFFICIAL_VIDEO_ALIGNMENT',
+        evidenceSource: 'Clipe Oficial Appetite for Destruction com alinhamento narrativo de introdução (Intro Detector V2)',
         validationStatus: 'VERIFIED',
         updatedAt: new Date().toISOString()
       };
       this.repository.saveProfile(wttjProfile);
       return {
         profile: wttjProfile,
-        confidenceScore: 0.95,
+        confidenceScore: 0.98,
         matchType: 'EXACT_KNOWN_PROFILE',
-        reason: 'Alinhamento verificado para o clipe oficial com abertura de Axl Rose.',
+        reason: 'Alinhamento verificado para o clipe oficial com abertura narrativa de 3.8s (offset corrigido para -3800ms).',
         recommendedAction: 'AUTOMATIC_APPLY'
       };
     }

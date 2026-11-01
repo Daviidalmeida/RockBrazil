@@ -1,13 +1,23 @@
 import { SongCalibration } from '../../types';
 import { INTERNATIONAL_SYNC_REGISTRY } from './internationalSyncRegistry';
+import { RockSyncProfileRepository } from '../rockchart/sync/rockSyncProfileRepository';
 
 export class CalibrationManager {
   private static readonly STORAGE_KEY = 'rockbrazil_calibration_v2';
   private static cache: Record<string, SongCalibration> | null = null;
 
   // V8: Brazilian charts are normalized at source (0ms).
-  // V13.8.4: International songs sync defaults driven by INTERNATIONAL_SYNC_REGISTRY
-  private static getVerifiedDefault(songId: string): number {
+  // V14.1: Consult verified RockSyncProfileRepository first, then INTERNATIONAL_SYNC_REGISTRY
+  private static getVerifiedDefault(songId: string, videoId = ''): number {
+    try {
+      const profile = RockSyncProfileRepository.getInstance().getProfileForSong(songId, videoId);
+      if (profile && (profile.validationStatus === 'VERIFIED' || profile.validationStatus === 'AUTO_MATCHED')) {
+        return profile.offsetMs;
+      }
+    } catch {
+      // Ignora falhas em ambientes de teste sem repositório montado
+    }
+
     if (INTERNATIONAL_SYNC_REGISTRY[songId]) {
       return INTERNATIONAL_SYNC_REGISTRY[songId].chartVideoOffsetMs;
     }
@@ -45,7 +55,7 @@ export class CalibrationManager {
 
   public static getCalibration(songId: string, videoId = ''): SongCalibration {
     const data = this.load();
-    const defaultOffset = this.getVerifiedDefault(songId);
+    const defaultOffset = this.getVerifiedDefault(songId, videoId);
     if (!data[songId]) {
       data[songId] = {
         songId,
@@ -59,12 +69,12 @@ export class CalibrationManager {
     return { ...data[songId] };
   }
 
-  public static getSongOffsetMs(songId: string): number {
-    return this.getCalibration(songId).chartOffsetMs || 0;
+  public static getSongOffsetMs(songId: string, videoId = ''): number {
+    return this.getCalibration(songId, videoId).chartOffsetMs || 0;
   }
 
-  public static getOffsetForSong(songId: string): number {
-    return this.getSongOffsetMs(songId);
+  public static getOffsetForSong(songId: string, videoId = ''): number {
+    return this.getSongOffsetMs(songId, videoId);
   }
 
   public static setSongOffsetMs(songId: string, offsetMs: number, videoId = ''): SongCalibration {
@@ -72,7 +82,7 @@ export class CalibrationManager {
     data[songId] = {
       songId,
       videoId: videoId || data[songId]?.videoId || '',
-      chartOffsetMs: Math.max(-5000, Math.min(5000, Math.round(offsetMs))),
+      chartOffsetMs: Math.max(-120000, Math.min(120000, Math.round(offsetMs))),
       inputLatencyMs: data[songId]?.inputLatencyMs || 0,
       calibrationStatus: 'USER_CALIBRATED',
       lastCalibrated: Date.now()

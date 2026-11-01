@@ -61,6 +61,7 @@ export type ValidationStatus =
 export type SyncMethod =
   | 'ACOUSTIC_GROUND_TRUTH'
   | 'STUDIO_TIMESTAMP_ALIGNED'
+  | 'OFFICIAL_VIDEO_ALIGNMENT'
   | 'MANUAL_CALIBRATION'
   | 'AUTO_MATCHED'
   | 'SYNC_NOT_VERIFIED';

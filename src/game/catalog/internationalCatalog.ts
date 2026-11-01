@@ -51,7 +51,7 @@ export const INTERNATIONAL_METADATA_CONFIG: Record<string, InternationalSongConf
   },
   "intl-gnr-welcome-to-the-jungle": {
     "recordingVersion": "Clipe Oficial (Appetite for Destruction)",
-    "defaultOffsetMs": 0,
+    "defaultOffsetMs": -3800,
     "charter": "Comunidade",
     "year": 1987,
     "status": "PRONTA PARA TESTE",

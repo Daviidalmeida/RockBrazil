@@ -11,6 +11,8 @@ import { RockChartImporter } from '../importer/rockChartImporter';
 import { RockSyncAutoMatch } from '../sync/rockSyncAutoMatch';
 import { RockSyncProfileRepository } from '../sync/rockSyncProfileRepository';
 import { RockChartValidator } from '../validator/rockChartValidator';
+import { RockSyncIntelligentMatcher } from '../sync/rockSyncIntelligentMatcher';
+import { RockSyncQualityGate, QualityGateEvaluation } from '../sync/rockSyncQualityGate';
 import { AuthService } from '../../../firebase/authService';
 import { Difficulty, Note, SongMetadata } from '../../../types';
 import { SongLibrary } from '../../songLibrary';
@@ -34,6 +36,8 @@ export class RockChartStudio {
   private providerRegistry = ChartProviderRegistry.getInstance();
   private autoMatch = new RockSyncAutoMatch();
   private profileRepo = RockSyncProfileRepository.getInstance();
+
+  private intelligentMatcher = new RockSyncIntelligentMatcher();
 
   private sessionState: StudioSessionState = {
     currentQuery: {},
@@ -151,27 +155,47 @@ export class RockChartStudio {
 
     const chart = this.sessionState.importedChart;
     const hardNotes = chart.derivedCharts.HARD;
-    const firstNote = hardNotes[0]?.time || 0;
-    const lastNote = hardNotes[hardNotes.length - 1]?.time || chart.durationSec;
 
-    const matchResult = this.autoMatch.match({
+    const matchResult = this.intelligentMatcher.match({
       songId: chart.songId,
       chartId: `chart-${chart.songId}`,
+      chartVersion: '1.0',
       chartSource: chart.sourceProvider,
-      chartDurationSec: chart.durationSec,
-      firstNoteTimeSec: firstNote,
-      lastNoteTimeSec: lastNote,
       notes: hardNotes,
+      chartDurationSec: chart.durationSec,
+      bpm: chart.bpm,
       youtubeVideoId: videoId.trim(),
-      youtubeVideoDurationSec: videoDurationSec,
+      youtubeDurationSec: videoDurationSec || chart.durationSec,
       artist: chart.artist,
-      title: chart.title
+      title: chart.title,
+      difficulty: 'HARD'
     });
 
     this.sessionState.autoMatchProfile = matchResult.profile;
     this.profileRepo.saveProfile(matchResult.profile);
 
     return matchResult.profile;
+  }
+
+  /**
+   * Avalia o chart e a sincronização com o RockSync Quality Gate
+   */
+  public runQualityGate(difficulty: Difficulty = 'HARD'): QualityGateEvaluation {
+    if (!this.sessionState.importedChart) {
+      throw new Error('Nenhum chart disponível para avaliação de Quality Gate.');
+    }
+    const chart = this.sessionState.importedChart;
+    const notes = chart.derivedCharts[difficulty] || [];
+    return RockSyncQualityGate.evaluate({
+      songId: chart.songId,
+      title: chart.title,
+      artist: chart.artist,
+      notes,
+      chartDurationSec: chart.durationSec,
+      youtubeVideoId: this.sessionState.youtubeVideoId,
+      youtubeDurationSec: chart.durationSec,
+      existingProfile: this.sessionState.autoMatchProfile
+    });
   }
 
   /**

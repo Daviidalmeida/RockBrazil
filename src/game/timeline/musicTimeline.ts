@@ -178,6 +178,10 @@ export class MusicTimeline {
     this.lastReportedTime = 0;
   }
 
+  protected getRawSourceTime(): number {
+    return this.source ? this.source.getCurrentTime() : 0;
+  }
+
   /**
    * Returns high-precision non-decreasing reference time (in seconds).
    * Exact rule: when getTime() == note.time, the note is mathematically
@@ -229,7 +233,7 @@ export class MusicTimeline {
     }
 
     // 5. Source time + song offset + global offset applied exactly once
-    const sourceRaw = this.source.getCurrentTime();
+    const sourceRaw = this.getRawSourceTime();
     const calculated = sourceRaw + this.getTotalOffsetSec();
 
     // Prevent backwards roll from minor network jitter / timer quantization

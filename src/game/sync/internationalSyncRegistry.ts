@@ -74,11 +74,11 @@ export const INTERNATIONAL_SYNC_REGISTRY: Record<string, InternationalSyncEntry>
     recordingVersion: 'Clipe Oficial / Appetite for Destruction (1987)',
     chartAuthor: 'Comunidade',
     year: 1987,
-    chartVideoOffsetMs: 0,
+    chartVideoOffsetMs: -3800,
     verified: true,
-    syncMethod: 'STUDIO_TIMESTAMP_ALIGNED',
+    syncMethod: 'OFFICIAL_VIDEO_ALIGNMENT',
     audioReferenceMatch: 'EXACT_MATCH',
-    notes: 'Clipe oficial com abertura narrativa de Axl Rose; introdução alinhada com delay inicial em 0ms.'
+    notes: 'Auditado V14.1: clipe oficial possui 3.8s de intro narrativa (chegada do ônibus). Riff entra aos 3.8s e 1º acorde aos 7.07s alinhado à 1ª nota do chart (3.269s).'
   },
   'intl-lp-numb': {
     songId: 'intl-lp-numb',

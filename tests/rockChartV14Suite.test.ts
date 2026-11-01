@@ -220,7 +220,7 @@ describe('ROCKBRAZIL V14.0 — SUÍTE DE TESTES ROCKCHART AI + ROCKSYNC AUTOSYNC
 
     expect(result.matchType).toBe('EXACT_KNOWN_PROFILE');
     expect(result.profile.validationStatus).toBe('VERIFIED');
-    expect(result.profile.offsetMs).toBe(-13731);
+    expect(result.profile.offsetMs).toBe(-3800);
     expect(result.recommendedAction).toBe('AUTOMATIC_APPLY');
   });
 

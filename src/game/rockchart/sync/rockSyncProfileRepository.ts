@@ -40,6 +40,33 @@ export class RockSyncProfileRepository {
     return null;
   }
 
+  /**
+   * Busca perfil ativo para uma música, opcionalmente filtrando por vídeo e dificuldade.
+   */
+  public getProfileForSong(songId: string, youtubeVideoId?: string, difficulty?: Difficulty): RockSyncProfile | null {
+    const cleanSong = songId.trim();
+    for (const [, prof] of this.profiles.entries()) {
+      if (prof.songId === cleanSong) {
+        if (youtubeVideoId && prof.youtubeVideoId !== youtubeVideoId.trim()) {
+          continue;
+        }
+        if (difficulty && prof.difficulty !== difficulty) {
+          continue;
+        }
+        return { ...prof };
+      }
+    }
+    // Fallback sem filtrar por dificuldade se houver perfil para a música
+    for (const [, prof] of this.profiles.entries()) {
+      if (prof.songId === cleanSong) {
+        if (!youtubeVideoId || prof.youtubeVideoId === youtubeVideoId.trim()) {
+          return { ...prof, difficulty: difficulty || 'HARD' };
+        }
+      }
+    }
+    return null;
+  }
+
   public saveProfile(profile: RockSyncProfile): void {
     const key = RockSyncProfileRepository.buildProfileKey(
       profile.songId,
@@ -101,16 +128,17 @@ export class RockSyncProfileRepository {
         recordingId: 'rec-gnr-wttj-official-video',
         youtubeVideoId: 'o1tj2zJ2Wvg',
         difficulty: 'HARD',
-        // No clipe oficial (o1tj2zJ2Wvg), Slash inicia o riff de guitarra aos 17.0s.
-        // O chart de estúdio tinha notas iniciando aos 3.269s.
-        // Diferença = +13.731s. Somado à compensação de latência do iframe (+200ms) = 13.931s
-        offsetMs: -13731,
+        // No clipe oficial (o1tj2zJ2Wvg), a introdução narrativa (chegada do ônibus em Los Angeles) dura 3.8s.
+        // O riff de delay de Slash entra aos ~3.8s e o 1º acorde acentuado ocorre aos 7.07s.
+        // O chart de estúdio tem a primeira nota aos 3.269s.
+        // Alinhamento matemático: 3.269s - 7.070s = -3.801s (~ -3800ms).
+        offsetMs: -3800,
         timeScale: 1.0,
-        syncMethod: 'STUDIO_TIMESTAMP_ALIGNED',
-        evidenceSource: 'Auditoria visual e acústica do clipe Appetite for Destruction 1987',
+        syncMethod: 'OFFICIAL_VIDEO_ALIGNMENT',
+        evidenceSource: 'Auditoria visual e temporal do clipe oficial Appetite for Destruction 1987 (Intro Detector V2)',
         validationStatus: 'VERIFIED',
-        notes: 'Abertura narrativa de Axl Rose (0-17s) calibrada com início do riff aos 17.0s.',
-        updatedAt: '2026-10-31T21:40:00Z'
+        notes: 'Abertura narrativa do ônibus (0-3.8s) calibrada com entrada do riff aos 3.8s e 1º acorde aos 7.07s.',
+        updatedAt: '2026-10-31T22:25:00Z'
       },
       {
         songId: 'intl-acdc-highway-to-hell',

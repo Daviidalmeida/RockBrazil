@@ -249,7 +249,8 @@ export class RockChartStudioView {
       try {
         const profile = this.studio.associateYouTubeVideo(ytId);
         const report = this.studio.runValidation('HARD');
-        syncReport.innerHTML = `Perfil: <b>${profile.validationStatus}</b> | Offset: <b>${profile.offsetMs}ms</b> | Método: ${profile.syncMethod}<br><span style="color: #94a3b8; font-size: 12px;">${profile.evidenceSource}</span>`;
+        const qg = this.studio.runQualityGate('HARD');
+        syncReport.innerHTML = `Perfil: <b>${profile.validationStatus}</b> | Offset: <b>${profile.offsetMs}ms</b> | Método: ${profile.syncMethod}<br><span style="color: #38bdf8;">Quality Gate V14.1: <b>${qg.gateStatus}</b></span> (${qg.recordingMatch.reason})<br><span style="color: #94a3b8; font-size: 12px;">${profile.evidenceSource}</span>`;
         validSummary.innerHTML = `Auditoria: <b>${report.overallStatus}</b> | Estrutural: ${report.structural.valid ? 'VÁLIDO' : 'ERROS'} | Musical: ${report.musicalAccuracy.status}`;
       } catch (e: any) {
         syncReport.textContent = `Erro: ${e.message}`;
