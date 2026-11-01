@@ -438,19 +438,17 @@ export class UIManager {
       });
     });
 
-    // V14.6: Exibir botão do RockChart Studio EXCLUSIVAMENTE para administrador autenticado
-    const updateAdminButtonVisibility = () => {
-      const btn = document.getElementById('btn-open-rockchart-studio');
-      if (!btn) return;
-      const isAdmin = !!AdminAuthService.getActiveAdminUser();
-      btn.style.display = isAdmin ? 'block' : 'none';
-    };
-    updateAdminButtonVisibility();
+    // V14.6.1: Exibir botões do RockChart Studio EXCLUSIVAMENTE para administrador autenticado
+    this.updateAdminStatus();
     AdminAuthService.onAuthStateChanged(() => {
-      updateAdminButtonVisibility();
+      this.updateAdminStatus();
     });
 
     document.getElementById('btn-open-rockchart-studio')?.addEventListener('click', () => {
+      this.showScreen(GameState.ROCKCHART_STUDIO);
+    });
+
+    document.getElementById('btn-menu-rockchart-studio')?.addEventListener('click', () => {
       this.showScreen(GameState.ROCKCHART_STUDIO);
     });
 
@@ -774,6 +772,7 @@ export class UIManager {
       if (hint) hint.textContent = 'Trocar';
     }
     this.updateRankingButtonVisibility(profile);
+    this.updateAdminStatus();
   }
 
   updateRankingButtonVisibility(profile: PlayerProfile | null): void {
@@ -785,6 +784,25 @@ export class UIManager {
       } else {
         btnMenuRank.classList.add('hidden');
       }
+    }
+  }
+
+  /**
+   * V14.6.1: Atualiza dinamicamente a visibilidade dos botões do RockChart Studio
+   * tanto no Menu Principal quanto na tela de Configurações, validando permissões de administrador.
+   */
+  public updateAdminStatus(): void {
+    const isAdmin = !!AdminAuthService.getActiveAdminUser();
+
+    const btnSettings = document.getElementById('btn-open-rockchart-studio');
+    if (btnSettings) {
+      btnSettings.style.display = isAdmin ? 'block' : 'none';
+    }
+
+    const btnMenu = document.getElementById('btn-menu-rockchart-studio');
+    if (btnMenu) {
+      btnMenu.classList.toggle('hidden', !isAdmin);
+      btnMenu.style.display = isAdmin ? 'flex' : 'none';
     }
   }
 
@@ -1394,6 +1412,10 @@ export class UIManager {
 
     if (state === GameState.ROCKCHART_STUDIO) {
       this.onRockChartStudioOpened?.();
+    }
+
+    if (state === GameState.MENU || state === GameState.SETTINGS) {
+      this.updateAdminStatus();
     }
 
     if (state === GameState.PLAYING) {

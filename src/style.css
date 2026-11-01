@@ -4877,3 +4877,62 @@ button,
     min-height: 46px !important;
   }
 }
+
+
+/* ========================================================
+   V14.6.1: Botão de Acesso Rápido ao RockChart Studio no Menu Principal
+   ======================================================== */
+.admin-header-pill {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(255, 107, 0, 0.95), rgba(234, 88, 12, 0.98));
+  border: 1.5px solid #ffaa40;
+  border-radius: 20px;
+  padding: 6px 14px;
+  color: #fff;
+  font-family: var(--font-display, sans-serif);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(255, 107, 0, 0.5), 0 0 12px rgba(255, 107, 0, 0.4);
+  transition: all 0.2s ease;
+}
+
+.admin-header-pill:hover {
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 0, 0.8), 0 0 18px rgba(255, 170, 64, 0.7);
+  border-color: #fff;
+}
+
+.admin-header-pill:active {
+  transform: translateX(-50%) scale(0.96);
+}
+
+.admin-header-pill.hidden {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .admin-header-pill {
+    top: 52px;
+    left: 14px;
+    transform: none;
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+  .admin-header-pill:hover {
+    transform: translateY(-2px);
+  }
+  .admin-header-pill:active {
+    transform: scale(0.96);
+  }
+}

@@ -52,3 +52,9 @@ Thumbs.db
 *.local
 .env
 .env.*.local
+
+# Chaves e Credenciais de Serviço (Privadas)
+*serviceAccount*.json
+*serviceAccountKey*.json
+*credentials*.json
+service-account*.json

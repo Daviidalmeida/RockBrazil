@@ -3,7 +3,8 @@ import {
   signInWithEmailAndPassword,
   updatePassword,
   sendPasswordResetEmail,
-  signOut
+  signOut,
+  onAuthStateChanged
 } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { db, auth } from './firebaseConfig';
@@ -52,6 +53,7 @@ export class AdminAuthService {
 
   private static inMemoryAdminUser: AdminCredentials | null = null;
   private static authStateListeners: Set<(user: AdminCredentials | null) => void> = new Set();
+  private static isListenerInitialized = false;
 
   public static onAuthStateChanged(callback: (user: AdminCredentials | null) => void): () => void {
     this.authStateListeners.add(callback);
@@ -65,6 +67,54 @@ export class AdminAuthService {
       } catch {
         // Ignora erros em listeners
       }
+    }
+  }
+
+  /**
+   * Inicializa o observador do Firebase Auth para sincronizar automaticamente
+   * os privilégios de administrador sem exigir recarregamento da página.
+   */
+  public static initAuthListener(): void {
+    if (this.isListenerInitialized) return;
+    this.isListenerInitialized = true;
+
+    if (auth) {
+      onAuthStateChanged(auth, async (user) => {
+        await this.syncWithFirebaseUser(user, true);
+      });
+    }
+  }
+
+  /**
+   * Sincroniza o usuário do Firebase com o estado administrativo em memória.
+   * Quando forceRefresh for true, força atualização das Custom Claims (getIdTokenResult(true)).
+   */
+  public static async syncWithFirebaseUser(
+    user: User | null,
+    forceRefresh: boolean = true
+  ): Promise<AdminCredentials | null> {
+    if (!user) {
+      this.inMemoryAdminUser = null;
+      this.notifyAuthStateChanged(null);
+      return null;
+    }
+
+    try {
+      const verification = await this.verifyAdminStatus(user, forceRefresh);
+      if (verification.isAdmin) {
+        this.inMemoryAdminUser = this.toAdminCredentials(user, verification.role || 'SUPER_ADMIN');
+        this.notifyAuthStateChanged(this.inMemoryAdminUser);
+        return this.inMemoryAdminUser;
+      } else {
+        this.inMemoryAdminUser = null;
+        this.notifyAuthStateChanged(null);
+        return null;
+      }
+    } catch (err) {
+      console.warn('[AdminAuthService] Erro ao sincronizar status de admin:', err);
+      this.inMemoryAdminUser = null;
+      this.notifyAuthStateChanged(null);
+      return null;
     }
   }
 
@@ -280,8 +330,9 @@ export class AdminAuthService {
   /**
    * Valida rigorosamente no backend se o usuário possui privilégios de administrador.
    * Não confia em localStorage ou sessionStorage.
+   * Quando forceRefresh for true, força atualização das Custom Claims junto ao Google (getIdTokenResult(true)).
    */
-  public static async verifyAdminStatus(user: User | null): Promise<AdminVerificationResult> {
+  public static async verifyAdminStatus(user: User | null, forceRefresh: boolean = true): Promise<AdminVerificationResult> {
     if (!user || !user.email) {
       return {
         isAdmin: false,
@@ -298,9 +349,21 @@ export class AdminAuthService {
     // =========================================================================
     try {
       if (typeof user.getIdTokenResult === 'function') {
-        const tokenResult = await user.getIdTokenResult();
+        let tokenResult: any = null;
+        try {
+          tokenResult = await user.getIdTokenResult(forceRefresh);
+        } catch {
+          // Fallback em caso de indisponibilidade momentânea de rede
+          tokenResult = await user.getIdTokenResult(false);
+        }
         const claims = tokenResult?.claims || {};
-        if (claims.admin === true || claims.role === 'admin' || claims.role === 'SUPER_ADMIN') {
+        if (
+          claims.admin === true ||
+          claims.role === 'admin' ||
+          claims.role === 'SUPER_ADMIN' ||
+          claims.is_admin === true ||
+          claims.isAdmin === true
+        ) {
           return {
             isAdmin: true,
             user,
@@ -433,4 +496,9 @@ export class AdminAuthService {
   public static setActiveAdminUserForTest(user: AdminCredentials | null): void {
     this.inMemoryAdminUser = user;
   }
+}
+
+// Inicializa automaticamente o observador de autenticação no navegador
+if (typeof window !== 'undefined' && auth) {
+  AdminAuthService.initAuthListener();
 }

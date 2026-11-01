@@ -25,6 +25,7 @@ import { GameSessionController } from './game/session/gameSessionController';
 import { SessionState } from './game/session/sessionState';
 import { ChartTimeline } from './game/timeline/chartTimeline';
 import { AuthService } from './firebase/authService';
+import { AdminAuthService } from './firebase/adminAuthService';
 import { FirestoreService } from './firebase/firestoreService';
 import { RankingService } from './firebase/rankingService';
 import { RockSyncEngine } from './game/sync/rockSyncEngine';
@@ -229,8 +230,8 @@ class RockBrazilGame {
       this.rockChartStudioView = new RockChartStudioView(studioScreen);
       this.rockChartStudioView.render();
       this.rockChartStudioView.onExitRequested = () => {
-        this.state = GameState.SETTINGS;
-        this.ui.showScreen(GameState.SETTINGS);
+        this.state = GameState.MENU;
+        this.ui.showScreen(GameState.MENU);
       };
       this.rockChartStudioView.onTestPlayRequested = (song, diff, notes) => {
         this.startNewMatch(song, diff, notes);
@@ -292,9 +293,11 @@ class RockBrazilGame {
         const confirmLogout = confirm(`Você está conectado como ${activeProf.name}.\nDeseja sair da conta Google?`);
         if (confirmLogout) {
           await AuthService.signOutUser();
+          await AdminAuthService.signOutAdmin();
           await this.profileManager.switchProfile('guest');
           const guestProf = this.profileManager.getActiveProfile();
           this.ui.setProfileHeader(guestProf);
+          this.ui.updateAdminStatus();
           this.ui.openPlayerProfilesModal();
           this.ui.renderSongLibrary(this.library.getActiveSongs(), guestProf);
         }
@@ -304,6 +307,8 @@ class RockBrazilGame {
         this.ui.showLoginLoading(false);
         if (user) {
           await this.handleUserAuthenticated(user);
+          await AdminAuthService.syncWithFirebaseUser(user, true);
+          this.ui.updateAdminStatus();
           const updatedProf = this.profileManager.getActiveProfile();
           this.ui.openPlayerProfilesModal();
           this.ui.renderSongLibrary(this.library.getActiveSongs(), updatedProf);
@@ -370,7 +375,11 @@ class RockBrazilGame {
       AuthService.onAuthChange(async (user) => {
         if (user) {
           await this.handleUserAuthenticated(user);
+          await AdminAuthService.syncWithFirebaseUser(user, true);
+        } else {
+          await AdminAuthService.syncWithFirebaseUser(null, false);
         }
+        this.ui.updateAdminStatus();
       });
     } else {
       // Primeira visita: apresenta tela de login oficial V13.2
@@ -521,6 +530,8 @@ class RockBrazilGame {
       this.ui.showLoginLoading(false);
       if (user) {
         await this.handleUserAuthenticated(user);
+        await AdminAuthService.syncWithFirebaseUser(user, true);
+        this.ui.updateAdminStatus();
         this.state = GameState.MENU;
         this.ui.showScreen(GameState.MENU);
       } else if (error) {
@@ -531,8 +542,10 @@ class RockBrazilGame {
     this.ui.onPlayAsGuestWelcomeClicked = async () => {
       this.ui.showLoginLoading(true);
       await AuthService.signInAsGuest();
+      await AdminAuthService.signOutAdmin();
       const guest = this.profileManager.setGuestMode();
       this.ui.setProfileHeader(guest);
+      this.ui.updateAdminStatus();
       this.ui.showLoginLoading(false);
       this.state = GameState.MENU;
       this.ui.showScreen(GameState.MENU);
@@ -545,6 +558,8 @@ class RockBrazilGame {
       }
       // V13.4: Sair da conta desconecta sem converter o perfil Google em convidado
       await AuthService.signOutUser();
+      await AdminAuthService.signOutAdmin();
+      this.ui.updateAdminStatus();
       this.state = GameState.LOGIN;
       this.ui.showScreen(GameState.LOGIN);
     };

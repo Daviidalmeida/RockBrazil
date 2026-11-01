@@ -98,6 +98,13 @@ export class RockChartStudio {
 
   private constructor() {
     // Sessão validada exclusivamente através de tokens criptográficos do Firebase
+    AdminAuthService.onAuthStateChanged((admin) => {
+      this.adminUser = admin;
+    });
+    const activeAdmin = AdminAuthService.getActiveAdminUser();
+    if (activeAdmin) {
+      this.adminUser = activeAdmin;
+    }
   }
 
   public static getInstance(): RockChartStudio {
@@ -134,7 +141,7 @@ export class RockChartStudio {
     // Se um User do Firebase foi fornecido diretamente
     if (typeof (target as any).getIdTokenResult === 'function') {
       const user = target as User;
-      const verification = await AdminAuthService.verifyAdminStatus(user);
+      const verification = await AdminAuthService.verifyAdminStatus(user, true);
       if (verification.isAdmin) {
         this.adminUser = AdminAuthService.toAdminCredentials(user, verification.role || 'SUPER_ADMIN');
         this.logAdminAuthSuccess(this.adminUser.email, verification.method || 'FIREBASE');
@@ -206,13 +213,24 @@ export class RockChartStudio {
   }
 
   public isAdminAuthenticated(): boolean {
-    if (!this.adminUser) return false;
+    if (!this.adminUser) {
+      const active = AdminAuthService.getActiveAdminUser();
+      if (active) {
+        this.adminUser = active;
+        return true;
+      }
+      return false;
+    }
     if (this.adminUser.sessionExpiry && Date.now() > this.adminUser.sessionExpiry) {
       this.adminUser = null;
       AdminAuthService.signOutAdmin().catch(() => {});
       return false;
     }
     return true;
+  }
+
+  public setAdminUser(user: AdminCredentials | null): void {
+    this.adminUser = user;
   }
 
   public getAdminUser(): AdminCredentials | null {
