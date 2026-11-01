@@ -12,10 +12,10 @@ describe('ROCKBRAZIL V14.5 — AUDITORIA DE SEGURANÇA DO FIREBASE & CONTROLE AD
   // SEÇÃO 1: AUDITORIA ESTÁTICA DAS REGRAS DO FIRESTORE (firestore.rules)
   // =========================================================================
   describe('1. Auditoria Estática de Regras do Firestore', () => {
-    it('1.1. define a função de autorização administrativa isAdmin() sem chamadas get() ou exists()', () => {
+    it('1.1. define a função de autorização administrativa isAdmin() sem chamadas get() ou exists() e sem permitir privilégios apenas por email', () => {
       expect(rules).toContain('function isAdmin()');
       expect(rules).toContain('request.auth.token.admin == true');
-      expect(rules).toContain("request.auth.token.email == 'admin@rockbrazil.com.br'");
+      expect(rules).not.toContain("request.auth.token.email == 'admin@rockbrazil.com.br'");
 
       // Conformidade com Spark Plan (zero leituras extras de documentos)
       expect(/get\s*\(/g.test(rules)).toBe(false);
@@ -50,7 +50,7 @@ describe('ROCKBRAZIL V14.5 — AUDITORIA DE SEGURANÇA DO FIREBASE & CONTROLE AD
       const token = auth.token || {};
       if (token.admin === true) return true;
       if (token.role === 'SUPER_ADMIN') return true;
-      if (typeof token.email === 'string' && token.email === 'admin@rockbrazil.com.br') return true;
+      // Nenhuma regra permite privilégios administrativos apenas por correspondência de e-mail
       return false;
     };
 
@@ -84,19 +84,20 @@ describe('ROCKBRAZIL V14.5 — AUDITORIA DE SEGURANÇA DO FIREBASE & CONTROLE AD
       expect(simulateAdminUsersWrite(attackerAuth)).toBe(false);
     });
 
-    it('2.4. Comprovado: Um administrador autenticado consegue realizar operações autorizadas', () => {
+    it('2.4. Comprovado: Um administrador autenticado com Custom Claim consegue realizar operações autorizadas, mas sem Claim é rejeitado', () => {
       const adminAuthClaim = {
         uid: 'admin_uid_001',
         token: { email: 'gestor@rockbrazil.com.br', admin: true }
       };
-      const adminAuthCanonical = {
+      const unverifiedEmailOnly = {
         uid: 'admin_uid_002',
         token: { email: 'admin@rockbrazil.com.br' }
       };
 
       expect(simulatePublishedSongWrite(adminAuthClaim)).toBe(true);
-      expect(simulatePublishedSongWrite(adminAuthCanonical)).toBe(true);
+      expect(simulatePublishedSongWrite(unverifiedEmailOnly)).toBe(false);
       expect(simulateAdminUsersWrite(adminAuthClaim)).toBe(true);
+      expect(simulateAdminUsersWrite(unverifiedEmailOnly)).toBe(false);
     });
 
     it('2.5. Comprovado: Uma sessão expirada perde o acesso imediatamente', async () => {

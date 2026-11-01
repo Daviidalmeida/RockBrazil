@@ -60,11 +60,11 @@ service cloud.firestore {
     }
 
     // Verifica se o usuário autenticado possui credenciais válidas de administrador
+    // Privilégios concedidos exclusivamente por Custom Claims criptográficos verificados do Firebase
     function isAdmin() {
       return request.auth != null && (
         request.auth.token.admin == true ||
-        request.auth.token.role == 'SUPER_ADMIN' ||
-        (request.auth.token.email is string && request.auth.token.email == 'admin@rockbrazil.com.br')
+        request.auth.token.role == 'SUPER_ADMIN'
       );
     }
 
