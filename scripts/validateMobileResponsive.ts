@@ -78,11 +78,19 @@ function createStaticDistServer(port: number): Promise<http.Server> {
 }
 
 async function runMobileAudit() {
-  const PORT = 5188;
-  console.log(`🚀 Iniciando servidor estático do build de produção em http://127.0.0.1:${PORT}...`);
-  const server = await createStaticDistServer(PORT);
-  const serverUrl = `http://127.0.0.1:${PORT}/RockBrazil/`;
-  console.log(`✓ Servidor rodando em ${serverUrl}`);
+  const targetArg = process.argv[2];
+  let server: http.Server | null = null;
+  let serverUrl = targetArg;
+
+  if (!serverUrl) {
+    const PORT = 5188;
+    console.log(`🚀 Iniciando servidor estático do build de produção em http://127.0.0.1:${PORT}...`);
+    server = await createStaticDistServer(PORT);
+    serverUrl = `http://127.0.0.1:${PORT}/RockBrazil/`;
+    console.log(`✓ Servidor local rodando em ${serverUrl}`);
+  } else {
+    console.log(`🌐 Auditando URL remota/produção fornecida: ${serverUrl}`);
+  }
 
   const browser = await chromium.launch({
     channel: 'msedge',
@@ -355,7 +363,7 @@ async function runMobileAudit() {
     }
   } finally {
     await browser.close();
-    server.close();
+    if (server) (server as http.Server).close();
   }
 
   console.log('\n========================================================');
