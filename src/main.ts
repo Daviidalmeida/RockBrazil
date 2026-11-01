@@ -779,7 +779,7 @@ class RockBrazilGame {
       if (this.currentSong) {
         this.masterClock.setOffsets(
           CalibrationManager.getSongOffsetMs(this.currentSong.id),
-          0
+          updated.audioOffsetMs || 0
         );
       }
       const active = this.profileManager.getActiveProfile();
@@ -1353,12 +1353,13 @@ class RockBrazilGame {
       this.ytPlayer.stop();
       this.ui.setYouTubePlayerVisibility(false);
     }
-    // V8 Single Source of Truth: GameEngine applies settings.audioOffsetMs.
-    // Master clock sets song calibration offset (0ms for normalized charts), avoiding double offset.
+    // V14.2 Relógio Único: UnifiedMasterClock aplica songOffset e globalOffset exatamente uma vez.
+    // GameEngine opera em modo de relógio unificado, eliminando qualquer dedução duplicada de audioOffsetMs.
     this.masterClock.setOffsets(
       CalibrationManager.getSongOffsetMs(song.id),
-      0
+      this.settingsManager.getSettings().audioOffsetMs || 0
     );
+    this.engine.setUnifiedClockMode(true);
 
     // Obtém notas autênticas do chart com garantia estrita de pistas por dificuldade
     const rawNotes = customNotes || this.beatmaps.getBeatmap(this.currentSong.id, this.currentDifficulty);

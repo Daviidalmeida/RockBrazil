@@ -176,6 +176,9 @@ export class MusicTimeline {
     this._isBufferingState = false;
     this.frozenTime = 0;
     this.lastReportedTime = 0;
+    this.songOffsetSec = 0;
+    this.globalOffsetSec = 0;
+    this.systemicCompensationSec = 0;
   }
 
   protected getRawSourceTime(): number {

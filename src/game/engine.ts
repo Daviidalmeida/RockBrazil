@@ -223,7 +223,26 @@ export class GameEngine {
     return this.activePressedLanes.has(lane);
   }
 
+  // V14.2: Modo de Relógio Único — quando ativo, o GameEngine confia estritamente
+  // no UnifiedMasterClock e não aplica deduções duplicadas de audioOffsetMs.
+  private useUnifiedClock = false;
+
+  public setUnifiedClockMode(enabled: boolean): void {
+    this.useUnifiedClock = enabled;
+  }
+
+  public isUnifiedClockMode(): boolean {
+    return this.useUnifiedClock;
+  }
+
+  public getJudgmentTime(rawTime: number): number {
+    return this.adjustTime(rawTime);
+  }
+
   private adjustTime(rawTime: number): number {
+    if (this.useUnifiedClock) {
+      return rawTime;
+    }
     return rawTime - (this.settings.audioOffsetMs / 1000);
   }
 

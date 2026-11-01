@@ -1,4 +1,5 @@
 import { SyncDiagnostics } from '../game/sync/syncDiagnostics';
+import { HighwaySyncDiagnostics } from '../game/sync/highwaySyncDiagnostics';
 import { Note, Lane, Difficulty, getLanesForDifficulty, NoteSpeedPreset } from '../types';
 import { calculateApproachTime, BASE_APPROACH_TIMES } from '../game/speed/approachTimeCalculator';
 
@@ -292,7 +293,49 @@ export class GameRenderer {
    * Calculates 3D perspective position (x, y, scale, laneWidth) for a given lane and progress
    * Progress: 0.0 at horizon, 1.0 at strike line
    */
-  private getLanePositionAtProgress(
+  /**
+   * V14.2: Métodos de Cálculo Matemático Unificado da Esteira
+   */
+  public getStrikeLineY(): number {
+    return this.height * this.strikeLineYRatio;
+  }
+
+  public calculateTimeUntilHit(noteTime: number, currentTime: number): number {
+    return noteTime - currentTime;
+  }
+
+  public calculateProgress(noteTime: number, currentTime: number): number {
+    const timeUntilHit = this.calculateTimeUntilHit(noteTime, currentTime);
+    return 1.0 - (timeUntilHit / this.noteSpeed);
+  }
+
+  public calculateVisualY(noteTime: number, currentTime: number): number {
+    const progress = this.calculateProgress(noteTime, currentTime);
+    return this.getLanePositionAtProgress(0, progress).y;
+  }
+
+  public getReceptorCoordinates(lane: Lane): { x: number; y: number; radius: number } {
+    const p = this.getLanePositionAtProgress(lane, 1.0);
+    return { x: p.x, y: p.y, radius: p.laneWidth * 0.38 };
+  }
+
+  public getNoteCoordinates(lane: Lane, noteTime: number, currentTime: number): {
+    x: number; y: number; rx: number; ry: number; scale: number; timeUntilHit: number; progress: number;
+  } {
+    const progress = this.calculateProgress(noteTime, currentTime);
+    const p = this.getLanePositionAtProgress(lane, progress);
+    return {
+      x: p.x,
+      y: p.y,
+      rx: p.laneWidth * 0.44 * p.scale,
+      ry: p.laneWidth * 0.17 * p.scale,
+      scale: p.scale,
+      timeUntilHit: noteTime - currentTime,
+      progress
+    };
+  }
+
+  public getLanePositionAtProgress(
     lane: Lane,
     progress: number
   ): { x: number; y: number; laneWidth: number; scale: number; currentWidth: number; highwayLeft: number } {
@@ -841,6 +884,17 @@ export class GameRenderer {
       const progress = 1.0 - (timeRemaining / this.noteSpeed);
 
       const { x, y, laneWidth, scale } = this.getLanePositionAtProgress(note.lane, progress);
+      if (HighwaySyncDiagnostics.get().isActive) {
+        HighwaySyncDiagnostics.get().recordNoteObservation(
+          note,
+          currentTime,
+          currentTime,
+          currentTime,
+          y,
+          this.height * this.strikeLineYRatio,
+          note.judgment || 'PENDING'
+        );
+      }
       const color = this.laneColors[note.lane];
 
       // Proportional oval geometry preserving original gameplay hitboxes
